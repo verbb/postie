@@ -1,0 +1,43 @@
+{% extends 'postie/_layouts/layout' %}
+
+{% set title = "Postie Settings" | t %}
+
+{% set navItems = {
+    'license': { title: "License" | t },
+    'address': { title: "Origin Address" | t },
+} %}
+
+{% if craft.postie.isLicensed %}
+    {% set navItems = navItems|merge({
+        'products': { title: "Products" | t },
+    }) %}
+{% endif %}
+
+{% set navItems = navItems|merge({
+    'provider-heading': { heading: "Provider" | t },
+}) %}
+
+{% for key, provider in providers %}
+    {% set navItems = navItems|merge({
+        (provider.getHandle()): {
+            title: provider.getName()
+        }
+    }) %}
+{% endfor %}
+
+{% set selectedItem = craft.request.getSegment(3) %}
+{% set docTitle = navItems[selectedItem].title~' - '~title %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li><a href="{{ url('postie/settings/' ~ id) }}"{% if id == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}

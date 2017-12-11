@@ -1,0 +1,25 @@
+{
+	"name": "verbb/postie",
+	"description": "Plugin for Craft Commerce providing shipping methods as Australian Post, UPS, DHL and many more. It is easy extendable to implement your own shipping method.",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Verbb",
+			"homepage": "http://verbb.io/"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0",
+		"fontis/auspost-api-php": "*",
+		"jeremy-dunn/php-fedex-api-wrapper": "*",
+		"vinceg/usps-php-api": "*"
+	},
+	"config": {
+		"vendor-dir": "postie/vendor"
+	},
+	"autoload": {
+		"psr-4": {
+			"Postie\\": "postie/Postie"
+		}
+	}
+}

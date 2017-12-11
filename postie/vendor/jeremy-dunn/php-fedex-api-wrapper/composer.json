@@ -1,0 +1,35 @@
+{
+    "name": "jeremy-dunn/php-fedex-api-wrapper",
+    "description": "API Wrapper for Fedex web services",
+    "keywords": ["shipping","fedex","soap"],
+    "homepage": "https://github.com/JeremyDunn/php-fedex-api-wrapper",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeremy Dunn",
+            "email": "jeremy@jsdunn.info",
+            "homepage": "http://www.jsdunn.info"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "symfony/console": "2.*",
+        "apigen/apigen": "^4.1",
+        "phpunit/phpunit": "^5.7",
+        "fzaninotto/faker": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "FedEx\\": "src/FedEx/",
+            "FedEx\\Utility\\": "util/",
+            "FedEx\\Tests\\": "tests/FedEx/Tests"
+        }
+    },
+    "scripts": {
+        "generate-src": "@php ./util/generate-classes-from-wsdls.php generate",
+        "generate-documentation": "apigen generate -d ./doc -s ./src"
+    }
+}

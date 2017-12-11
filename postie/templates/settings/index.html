@@ -1,0 +1,5 @@
+{% if craft.postie.isLicensed %}
+    {% redirect 'postie/settings/address' %}
+{% else %}
+    {% redirect 'postie/settings/license' %}
+{% endif %}

@@ -1,0 +1,187 @@
+{% extends "postie/_layouts/settings" %}
+
+{% set providersConf = craft.config.get('providers', 'postie') %}
+{% if providersConf and providersConf[provider.getHandle()] is defined %}
+    {% set providerConfig = providersConf[provider.getHandle()] is defined ? providersConf[provider.getHandle()] : [] %}
+    {% set providerSettings = providersConf[provider.getHandle()].settings is defined ? providersConf[provider.getHandle()].settings : [] %}
+    {% set shippingMethodSettings = providersConf[provider.getHandle()].services is defined ? providersConf[provider.getHandle()].services : [] %}
+{% else %}
+    {% set providerSettings = [] %}
+    {% set shippingMethodSettings = [] %}
+{% endif %}
+
+{% if craft.postie.isLicensed %}
+    {% set fullPageForm = true %}
+{% endif %}
+
+{% block blockContent %}
+
+    {{ getCsrfInput() }}
+    <input type="hidden" name="action" value="postie/providers/save">
+    <input type="hidden" name="redirect" value="postie/settings/{{ provider.getHandle() }}">
+    <input type="hidden" name="handle" value="{{ provider.getHandle() }}">
+
+    <h1>{{ provider.getName() }}</h1>
+
+    {% set placeholder = (providerSettings['name'] is defined) ? providerSettings['name'] : false %}
+    {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+
+    {{ forms.textField({
+        label: "Name" | t,
+        name: 'name',
+        value: model.name,
+        required: true,
+        errors: model.getErrors('name'),
+        disabled: placeholder,
+        placeholder: placeholder,
+        warning: warning,
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: "Enabled" | t,
+        name: 'enabled',
+        on: model.enabled,
+        disabled: craft.postie.isLicensed == false,
+        errors: model.getErrors('enabled'),
+    }) }}
+
+    <hr />
+
+    <h2>{{ "API Settings"|t }}</h2>
+
+    {% include provider.getSettingsTemplate() %}
+
+    {% namespace 'settings' %}
+
+        {% for paramKey, paramValue in model.settings %}
+
+            {% set paramLabel = (paramKey) | replace('/([A-Z])/', ' $1') | title | replace('/\\bApi\\b/', 'API') | t %}
+            {% set placeholder = (providerSettings[paramKey] is defined) ? providerSettings[paramKey] : false %}
+            {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+
+            {{ forms.textField({
+                label: paramLabel,
+                id: paramKey,
+                name: paramKey,
+                value: paramValue,
+                required: true,
+                disabled: placeholder,
+                placeholder: placeholder,
+                warning: warning,
+                errors: model.getErrors(paramKey),
+            }) }}
+
+        {% endfor %}
+
+    {% endnamespace %}
+
+    <hr />
+
+    <table id="fields" class="data fullwidth collapsible">
+        <tr>
+            <td>
+                {% set placeholder = (providerConfig['markUpRate'] is defined) ? providerConfig['markUpRate'] : false %}
+                {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+
+                {{ forms.textField({
+                    label: 'Markup Rate' | t,
+                    instructions: 'Shipping costs added to the order as a whole. Leave it blank to disable this rate.' | t,
+                    id: 'markUpRate',
+                    name: 'markUpRate',
+                    value: model.markUpRate,
+                    disabled: placeholder,
+                    placeholder: placeholder,
+                    warning: warning,
+                }) }}
+            </td>
+            <td>
+                {% set placeholder = (providerConfig['markUpBase'] is defined) ? providerConfig['markUpBase'] : false %}
+                {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+                {% set value = placeholder ? placeholder : model.markUpBase %}
+
+                {{ forms.selectField({
+                    label: 'Markup Base' | t,
+                    instructions: 'Add percentage between 1 and 100 or pure value. Can be ignored when rate is empty.' | t,
+                    id: 'markUpBase',
+                    name: 'markUpBase',
+                    options: craft.postie.getProviderMarkUpBaseOptions(),
+                    value: value,
+                    disabled: placeholder,
+                    warning: warning,
+                }) }}
+            </td>
+        </tr>
+    </table>
+
+    <hr />
+
+    <h2>{{ "Shipping Methods" | t }}</h2>
+
+    <table id="fields" class="data fullwidth collapsible">
+
+        <thead>
+        <tr>
+            <th colspan="2">&nbsp;</th>
+            <th>
+                {{ forms.lightswitchField({
+                    id: 'allShippingMethods',
+                    on: shippingMethods[0].enabled,
+                }) }}
+            </th>
+        </tr>
+
+        <tr>
+            <th scope="col">{{ "Name"|t }}</th>
+            <th scope="col">{{ "Handle"|t }}</th>
+            <th scope="col">{{ "Enabled"|t }}</th>
+        </tr>
+        </thead>
+
+        <tbody id="shippingMethods">
+
+            {% for shippingMethod in shippingMethods %}
+
+                {% namespace 'shippingMethods[' ~ shippingMethod.handle ~']' %}
+                <tr>
+                    <td width="45%">
+                        {% set placeholder = (shippingMethodSettings[shippingMethod.handle] is defined) ? shippingMethodSettings[shippingMethod.handle] : false %}
+                        {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+                        {% set value = placeholder ? placeholder : shippingMethod.name %}
+
+                        {{ forms.textField({
+                            name: 'name',
+                            value: value,
+                            errors: shippingMethod.getErrors('name'),
+                            disabled: placeholder,
+                            placeholder: placeholder,
+                            warning: warning,
+                        }) }}
+                    </td>
+                    <td width="45%">
+                        <code>{{ shippingMethod.handle }}</code>
+                        {% if placeholder %}
+                            <input type="hidden" name="name" value="{{ placeholder }}">
+                            <input type="hidden" name="enabled" value="{{ shippingMethod.enabled }}">
+                        {% endif %}
+                    </td>
+
+                    <td class="nowrap" width="10%">
+                        {{ forms.lightswitchField({
+                            name: 'enabled',
+                            value: shippingMethod.enabled,
+                            on: shippingMethod.enabled,
+                            placeholder: placeholder,
+                            disabled: placeholder,
+                        }) }}
+                    </td>
+                </tr>
+                {% endnamespace  %}
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+{% endblock %}
+
+{% includejsresource 'postie/js/Postie.js' %}
