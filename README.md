@@ -10,7 +10,7 @@ Visit the [Postie Plugin page](https://verbb.io/craft-plugins/postie) for all do
 
 ## Support
 
-Get in touch with us via the [Postie Support page](https://verbb.io/craft-plugins/postie/support) or by [creating a Github issue](/verbb/postie/issues)
+Get in touch with us via the [Postie Support page](https://verbb.io/craft-plugins/postie/support) or by [creating a Github issue](https://github.com/verbb/postie/issues)
 
 <h2></h2>
 
