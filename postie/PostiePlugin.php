@@ -38,12 +38,12 @@ class PostiePlugin extends BasePlugin
 
     public function getDocumentationUrl()
     {
-        return $this->getPluginUrl() . '/blob/master/README.md';
+        return $this->getPluginUrl() . '/blob/craft-2/README.md';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/verbb/postie/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/postie/craft-2/changelog.json';
     }
 
     /**
