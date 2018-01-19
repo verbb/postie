@@ -62,6 +62,8 @@ class Postie_ProvidersController extends BaseController
 
     /**
      * Provider Save
+     *
+     * @throws HttpException
      */
     public function actionSave()
     {

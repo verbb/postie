@@ -107,11 +107,12 @@ class PostiePlugin extends BasePlugin
     public function registerCpRoutes()
     {
         return [
-            'postie/settings/license'         => ['action' => 'postie/license/edit'],
-            'postie/settings/address'         => ['action' => 'postie/address'],
-            'postie/settings/provider'        => ['action' => 'postie/providers'],
-            'postie/settings/products'        => ['action' => 'postie/products'],
-            'postie/settings/(?P<handle>\w+)' => ['action' => 'postie/providers/edit'],
+            'postie/settings/license'                                    => ['action' => 'postie/license/edit'],
+            'postie/settings/address'                                    => ['action' => 'postie/address'],
+            'postie/settings/provider'                                   => ['action' => 'postie/providers'],
+            'postie/settings/products'                                   => ['action' => 'postie/products'],
+            'postie/settings/(?P<handle>\w+)'                            => ['action' => 'postie/providers/edit'],
+            'postie/settings/(?P<handle>\w+)/shippingmethod/(?P<id>\w+)' => ['action' => 'postie/shippingMethods/edit'],
         ];
     }
 
@@ -139,12 +140,11 @@ class PostiePlugin extends BasePlugin
      */
     public function getCpAlerts($path, $fetch)
     {
-        if ($path !== 'postie/settings/license' && !PostieHelper::getLicenseService()->isLicensed())
-        {
+        if ($path !== 'postie/settings/license' && !PostieHelper::getLicenseService()->isLicensed()) {
             $alert = 'You haven’t entered your Postie license key yet.';
-            $alert.= '<a class="go" href="' . UrlHelper::getCpUrl('postie/settings/license') . '">Resolve</a>';
+            $alert .= '<a class="go" href="' . UrlHelper::getCpUrl('postie/settings/license') . '">Resolve</a>';
 
-            return array($alert);
+            return [$alert];
         }
 
         return null;

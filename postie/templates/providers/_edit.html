@@ -148,14 +148,17 @@
                         {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
                         {% set value = placeholder ? placeholder : shippingMethod.name %}
 
-                        {{ forms.textField({
-                            name: 'name',
-                            value: value,
-                            errors: shippingMethod.getErrors('name'),
-                            disabled: placeholder,
-                            placeholder: placeholder,
-                            warning: warning,
-                        }) }}
+                        <div class="field">
+                            {%- spaceless %}
+                                <a href="{{ provider.getHandle() }}/shippingmethod/{{ shippingMethod.handle }}">
+                                    <span class="status{% if shippingMethod.enabled %} enabled{% endif %}"></span>
+                                    <strong>{{ shippingMethod.name }}</strong>
+                                </a>
+                                {% if warning %}
+                                    <p class="warning">{{ warning }}</p>
+                                {% endif %}
+                            {% endspaceless -%}
+                        </div>
                     </td>
                     <td width="45%">
                         <code>{{ shippingMethod.handle }}</code>
@@ -164,7 +167,6 @@
                             <input type="hidden" name="enabled" value="{{ shippingMethod.enabled }}">
                         {% endif %}
                     </td>
-
                     <td class="nowrap" width="10%">
                         {{ forms.lightswitchField({
                             name: 'enabled',
