@@ -17,6 +17,7 @@ class Postie_ShippingMethodModel extends BaseModel
     // =========================================================================
 
     private $_provider;
+    private $_shippingMethodCategories;
 
 
     // Public Methods
@@ -62,6 +63,26 @@ class Postie_ShippingMethodModel extends BaseModel
         }
 
         return $this->_provider = PostieHelper::getProvidersService()->getProviderById($this->providerId);
+    }
+
+    /**
+     * @return Postie_ShippingMethodCategoryModel[]
+     */
+    public function getShippingMethodCategories()
+    {
+        if($this->_shippingMethodCategories) {
+            return $this->_shippingMethodCategories;
+        }
+
+        return $this->_shippingMethodCategories = PostieHelper::getShippingMethodsService()->getShippingMethodCategoriesByMethodId($this->id);
+    }
+
+    /**
+     * @param Postie_ShippingMethodCategoryModel[] $models
+     */
+    public function setShippingMethodCategories(array $models)
+    {
+        $this->_shippingMethodCategories = $models;
     }
 
     /**

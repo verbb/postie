@@ -54,6 +54,16 @@ class PostieHelper
     }
 
     /**
+     * Get instance of Postie_ShippingMethodCategoriesService
+     *
+     * @return Postie_ShippingMethodCategoriesService
+     */
+    public static function getShippingMethodCategoriesService()
+    {
+        return craft()->postie_shippingMethodCategories;
+    }
+
+    /**
      * Get instance of Postie_LicenseService
      *
      * @return Postie_LicenseService

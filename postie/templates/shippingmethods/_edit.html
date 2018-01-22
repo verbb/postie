@@ -65,7 +65,8 @@
         <br>
 
         <h3>{{ "Shipping Category Conditions"|t }}</h3>
-        {% set shippingCategories = craft.commerce.shippingCategories%}
+
+        {% set shippingCategories = craft.commerce.shippingCategories %}
         {% if shippingCategories %}
             <table id="shipping-categories-conditions" class="data fullwidth collapsible">
                 <thead>
@@ -83,8 +84,8 @@
                         </th>
                         <td data-title="{{ 'Condition'|t }}">
                             {{ forms.selectField({
-                                name: 'ruleCategories['~shippingCategory.id~'][condition]',
-                                value: shippingRule.getShippingRuleCategories[shippingCategory.id].condition ?? 'allow',
+                                name: 'shippingCategories['~shippingCategory.id~'][condition]',
+                                value: shippingMethod.getShippingMethodCategories[shippingCategory.id].condition ?? 'allow',
                                 options: categoryShippingOptions
                             }) }}
                         </td>

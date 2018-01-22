@@ -30,7 +30,25 @@ class Postie_ShippingMethodsService extends BaseApplicationComponent
     }
 
     /**
-     * Get shipping methods by handle
+     * Get shipping method by id
+     *
+     * @param int $shippingMethodId
+     *
+     * @return Postie_ShippingMethodModel
+     */
+    public function getShippingMethodById($shippingMethodId)
+    {
+        $methodRecord = Postie_ShippingMethodRecord::model()->findByAttributes(['id' => $shippingMethodId]);
+
+        if (!$methodRecord) {
+            return new Postie_ShippingMethodModel();
+        }
+
+        return Postie_ShippingMethodModel::populateModel($methodRecord);
+    }
+
+    /**
+     * Get shipping method by handle
      *
      * @param string $shippingMethodHandle
      *
@@ -45,6 +63,22 @@ class Postie_ShippingMethodsService extends BaseApplicationComponent
         }
 
         return Postie_ShippingMethodModel::populateModel($methodRecord);
+    }
+
+    /**
+     * Get shipping method categories by shipping method id
+     *
+     * @param int $shippingMethodId
+     *
+     * @return Postie_ShippingMethodCategoryModel[]
+     */
+    public function getShippingMethodCategoriesByMethodId($shippingMethodId)
+    {
+        $record = Postie_ShippingMethodCategoryRecord::model()->findAllByAttributes([
+            'shippingMethodId' => $shippingMethodId,
+        ]);
+
+        return Postie_ShippingMethodCategoryModel::populateModels($record, 'shippingCategoryId');
     }
 
     /**
@@ -84,6 +118,36 @@ class Postie_ShippingMethodsService extends BaseApplicationComponent
         if (!$shippingMethodRecord->save()) {
 
             return false;
+        }
+
+        // Save shipping method category conditions
+        if ($shippingMethod->getShippingMethodCategories()) {
+
+            // Now that we have a record ID, save it on the model
+            $shippingMethod->id = $shippingMethodRecord->id;
+
+            // Delete already existing categories
+            PostieHelper::getShippingMethodCategoriesService()->deleteShippingMethodCategoriesByMethodId($shippingMethod->id);
+
+            // Generate a shipping method category record for all categories regardless of data submitted
+            foreach (craft()->commerce_shippingCategories->getAllShippingCategories() as $shippingCategory)
+            {
+                if(isset($shippingMethod->getShippingMethodCategories()[$shippingCategory->id])
+                    && $methodCategory = $shippingMethod->getShippingMethodCategories()[$shippingCategory->id])
+                {
+                    $condition = $methodCategory->condition;
+                } else {
+                    $condition = Commerce_ShippingRuleCategoryRecord::CONDITION_ALLOW;
+                }
+
+                $shippingMethodCategory = new Postie_ShippingMethodCategoryModel();
+                $shippingMethodCategory->shippingMethodId = $shippingMethod->id;
+                $shippingMethodCategory->shippingCategoryId = $shippingCategory->id;
+                $shippingMethodCategory->condition = $condition;
+
+                // save shipping method category
+                PostieHelper::getShippingMethodCategoriesService()->saveShippingMethodCategory($shippingMethodCategory);
+            }
         }
 
         return true;

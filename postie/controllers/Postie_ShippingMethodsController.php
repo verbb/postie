@@ -76,9 +76,17 @@ class Postie_ShippingMethodsController extends BaseController
         $shippingMethod->name = craft()->request->getPost('name', $shippingMethod->name);
         $shippingMethod->enabled = craft()->request->getPost('enabled') ? 1 : 0;
 
-        // @TODO save shipping category conditions
-        //...
+        // Set shipping category conditions
+        $categories = [];
+        foreach (craft()->request->getPost('shippingCategories') as $key => $category)
+        {
+            $categories[$key] = Postie_ShippingMethodCategoryModel::populateModel($category);
+            $categories[$key]->shippingCategoryId = $key;
+        }
 
+        $shippingMethod->setShippingMethodCategories($categories);
+
+        // Save it
         if (PostieHelper::getShippingMethodsService()->saveShippingMethod($shippingMethod)) {
             craft()->userSession->setNotice(Craft::t('Shipping method saved.'));
         } else {
