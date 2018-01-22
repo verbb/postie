@@ -75,7 +75,7 @@ class PostieShippingMethod implements ShippingMethod
 	 */
 	public function getCpEditUrl()
 	{
-        return  UrlHelper::getCpUrl() . '/postie/settings/' . $this->_providerHandle;
+        return  UrlHelper::getCpUrl() . '/postie/settings/' . $this->_providerHandle . '/shippingmethod/' . $this->getHandle();
 	}
 
 	/**
