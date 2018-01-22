@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.0.1",
+        "downloadUrl": "https://github.com/verbb/postie/archive/1.0.1.zip",
+        "date": "2018-01-23T00:00:00+10:00",
+        "notes": [
+            "[Added] Add management of shipping category conditions for shipping methods."
+        ]
+    },
+    {
         "version": "1.0.0",
         "downloadUrl": "https://github.com/verbb/postie/archive/1.0.0.zip",
         "date": "2017-12-12T00:00:00+10:00",
