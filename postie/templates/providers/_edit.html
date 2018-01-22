@@ -145,6 +145,7 @@
                 <tr>
                     <td width="45%">
                         {% set placeholder = (shippingMethodSettings[shippingMethod.handle] is defined) ? shippingMethodSettings[shippingMethod.handle] : false %}
+                        {% set shippingMethodName = placeholder ? placeholder : shippingMethod.name %}
                         {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
                         {% set value = placeholder ? placeholder : shippingMethod.name %}
 
@@ -152,7 +153,7 @@
                             {%- spaceless %}
                                 <a href="{{ provider.getHandle() }}/shippingmethod/{{ shippingMethod.handle }}">
                                     <span class="status{% if shippingMethod.enabled %} enabled{% endif %}"></span>
-                                    <strong>{{ shippingMethod.name }}</strong>
+                                    <strong>{{ shippingMethodName }}</strong>
                                 </a>
                                 {% if warning %}
                                     <p class="warning">{{ warning }}</p>
@@ -162,8 +163,8 @@
                     </td>
                     <td width="45%">
                         <code>{{ shippingMethod.handle }}</code>
+                        <input type="hidden" name="name" value="{{ shippingMethodName }}">
                         {% if placeholder %}
-                            <input type="hidden" name="name" value="{{ placeholder }}">
                             <input type="hidden" name="enabled" value="{{ shippingMethod.enabled }}">
                         {% endif %}
                     </td>
@@ -172,8 +173,6 @@
                             name: 'enabled',
                             value: shippingMethod.enabled,
                             on: shippingMethod.enabled,
-                            placeholder: placeholder,
-                            disabled: placeholder,
                         }) }}
                     </td>
                 </tr>

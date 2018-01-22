@@ -54,10 +54,7 @@
             name: 'enabled',
             value: 1,
             checked: shippingMethod.enabled,
-            errors: shippingMethod.getErrors('enabled'),
-            disabled: placeholder,
-            placeholder: placeholder,
-            warning: warning
+            errors: shippingMethod.getErrors('enabled')
         }) }}
 
         {% if placeholder %}
