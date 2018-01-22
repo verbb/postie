@@ -4,6 +4,7 @@ namespace Postie;
 
 use Commerce\Interfaces\ShippingRule;
 use Craft\Commerce_OrderModel;
+use Craft\Commerce_ShippingRuleCategoryRecord;
 use Craft\Postie_ProviderRecord;
 use Craft\PostieHelper;
 use Postie\Providers\BaseProvider;
@@ -51,7 +52,57 @@ class PostieShippingRule implements ShippingRule
      */
     public function matchOrder(Commerce_OrderModel $order)
     {
-        return $this->_price ? true : false;
+        $shippingMethod = PostieHelper::getShippingMethodsService()->getShippingMethodModelByHandle($this->_handle);
+
+        // Is the method enabled?
+        if (!$shippingMethod->enabled) {
+            return false;
+        }
+
+        // Is a price set?
+        if (!$this->_price) {
+            return false;
+        }
+
+        $shippingMethodCategories = $shippingMethod->getShippingMethodCategories();
+
+        $orderShippingCategories = [];
+        foreach ($order->lineItems as $lineItem) {
+            $orderShippingCategories[] = $lineItem->shippingCategoryId;
+        }
+        $orderShippingCategories = array_unique($orderShippingCategories);
+
+        $disallowedCategories = [];
+        $allowedCategories = [];
+        $requiredCategories = [];
+        foreach ($shippingMethodCategories as $methodCategory) {
+            if ($methodCategory->condition == Commerce_ShippingRuleCategoryRecord::CONDITION_DISALLOW) {
+                $disallowedCategories[] = $methodCategory->shippingCategoryId;
+            }
+
+            if ($methodCategory->condition == Commerce_ShippingRuleCategoryRecord::CONDITION_ALLOW) {
+                $allowedCategories[] = $methodCategory->shippingCategoryId;
+            }
+
+            if ($methodCategory->condition == Commerce_ShippingRuleCategoryRecord::CONDITION_REQUIRE) {
+                $requiredCategories[] = $methodCategory->shippingCategoryId;
+            }
+        }
+
+        // Does the order have any disallowed categories in the cart?
+        $result = array_intersect($orderShippingCategories, $disallowedCategories);
+        if (!empty($result)) {
+            return false;
+        }
+
+        // Does the order have all required categories in the cart?
+        $result = !array_diff($requiredCategories, $orderShippingCategories);
+        if (!$result) {
+            return false;
+        }
+
+        // all rules match
+        return true;
     }
 
     /**
