@@ -31,7 +31,7 @@ class FedExProvider extends BaseProvider
 
         $this->_settings = $this->getProviderSettings(self::$handle);
         $this->_name = $this->_settings['name'];
-        $this->_services = $this->_settings['services'];
+        // $this->_services = $this->_settings['services'];
 
         //turn off SOAP wsdl caching
         ini_set("soap.wsdl_cache_enabled", "0");
