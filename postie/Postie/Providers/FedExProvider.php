@@ -98,11 +98,13 @@ class FedExProvider extends BaseProvider
         $cacheKey = 'postie-shipment-' . $signature;
 
         // Get services from the cache (if any)
-        $this->_services = craft()->cache->get($cacheKey);
+        if (craft()->config->get('disableCache', 'postie') !== true) {
+            $this->_services = craft()->cache->get($cacheKey);
 
-        // If is it not in the cache get services via API
-        if ($this->_services !== false) {
-            return $this->_services;
+            // If is it not in the cache get services via API
+            if ($this->_services !== false) {
+                return $this->_services;
+            }
         }
 
         $response = null;

@@ -120,19 +120,23 @@ abstract class BaseProvider
      */
     public function getShippingRate($handle, Commerce_OrderModel $order)
     {
-        // Setup some caching mechanism to save API requests
-        $signature = $this->_getSignature($handle, $order);
-        $cacheKey = 'postie-shipment-' . $signature;
+        if (craft()->config->get('disableCache', 'postie') !== true) {        
+            // Setup some caching mechanism to save API requests
+            $signature = $this->_getSignature($handle, $order);
+            $cacheKey = 'postie-shipment-' . $signature;
 
-        // Get the rate from the cache (if any)
-        $shippingRate = craft()->cache->get($cacheKey);
+            // Get the rate from the cache (if any)
+            $shippingRate = craft()->cache->get($cacheKey);
 
-        // If is it not in the cache get rate via API
-        if ($shippingRate === false) {
+            // If is it not in the cache get rate via API
+            if ($shippingRate === false) {
+                $shippingRate = $this->createShipping($handle, $order);
+
+                // Set this in our cache for the next request to be much quicker
+                craft()->cache->set($cacheKey, $shippingRate, 0);
+            }
+        } else {
             $shippingRate = $this->createShipping($handle, $order);
-
-            // Set this in our cache for the next request to be much quicker
-            craft()->cache->set($cacheKey, $shippingRate, 0);
         }
 
         return $shippingRate;
