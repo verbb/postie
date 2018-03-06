@@ -180,7 +180,7 @@ class FedExProvider extends BaseProvider
             $rateServiceRequest = new Request();
 
             // Check for devMode and set test or production endpoint
-            if (craft()->config->get('devMode')) {
+            if (craft()->config->get('useTestEndpoint', 'postie') === true) {
                 $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
             } else {
                 $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
