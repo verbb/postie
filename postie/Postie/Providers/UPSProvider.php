@@ -195,7 +195,7 @@ class UPSProvider extends BaseProvider
                     $shipToAddress->setCity($destinationAddress['city']);
                     $shipToAddress->setStateProvinceCode($destinationAddress['state']);
                     $shipToAddress->setPostalCode($destinationAddress['zip']);
-                    $shipToAddress->setCountryCode($destinationAddress['country']);\
+                    $shipToAddress->setCountryCode($destinationAddress['country']);
 
                     if ($dimensions['weight'] == 0) {
                         return false;
