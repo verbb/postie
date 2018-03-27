@@ -45,14 +45,27 @@ class UPSProvider extends BaseProvider
             $this->_services = $settings['services'];
         }
 
+        $accessKey = '';
+        $userId = '';
+        $password = '';
+
         if (craft()->config->get('devMode')) {
-            $accessKey = $settings['settings']['testApiKey'] ?? '';
+            if (isset($settings['settings']['testApiKey'])) {
+                $accessKey = $settings['settings']['testApiKey'];
+            }
         } else {
-            $accessKey = $settings['settings']['apiKey'] ?? '';
+            if (isset($settings['settings']['apiKey'])) {
+                $accessKey = $settings['settings']['apiKey'];
+            }
         }
 
-        $userId = $settings['settings']['username'] ?? '';
-        $password = $settings['settings']['password'] ?? '';
+        if (isset($settings['settings']['username'])) {
+            $userId = $settings['settings']['username'];
+        }
+
+        if (isset($settings['settings']['password'])) {
+            $password = $settings['settings']['password'];
+        }
 
         $this->_client = new Rate($accessKey, $userId, $password);
     }
@@ -136,7 +149,11 @@ class UPSProvider extends BaseProvider
                     PostiePlugin::log('UPS API domestic rate service call', LogLevel::Info);
 
                     // Specify our Account Number
-                    $userId = $settings['settings']['username'] ?? '';
+                    if (isset($settings['settings']['username'])) {
+                        $userId = $settings['settings']['username'];
+                    } else {
+                        return;
+                    }
 
                     $shipper = new Shipper();
                     $shipper->setShipperNumber($userId);
