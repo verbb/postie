@@ -143,141 +143,144 @@ class USPSProvider extends BaseProvider
         $cacheKey = 'postie-shipment-' . $signature;
 
         // Get services from the cache (if any)
-        $this->_services = craft()->cache->get($cacheKey);
+        if (craft()->config->get('disableCache', 'postie') !== true) {
+            $this->_services = craft()->cache->get($cacheKey);
 
-        // If is it not in the cache get services via API
-        if ($this->_services === false) {
-
-            $dimensions = $this->_getDimensions($order);
-            $info = null;
-
-            try {
-                if ($order->shippingAddress->country->iso == 'US') {
-
-                    // Logging
-                    PostiePlugin::log('USPS API domestic rate service call', LogLevel::Info);
-
-                    // Create new package object and assign the properties
-                    // apparently the order you assign them is important so make sure
-                    // to set them as the example below
-                    // set the RatePackage for more info about the constants
-                    $package = new RatePackage();
-
-                    // Set service
-                    $package->setService(RatePackage::SERVICE_ALL);
-                    $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
-
-                    $package->setZipOrigination($this->_originAddress['postalCode']);
-                    $package->setZipDestination($order->shippingAddress->zipCode);
-                    // weights are in pounds and ounces, no metric system (kg)
-                    $package->setPounds($dimensions['weight']);
-                    $package->setOunces(0);
-                    $package->setContainer('');
-                    $package->setSize(RatePackage::SIZE_REGULAR);
-                    $package->setField('Machinable', true);
-
-                    // add the package to the client stack
-                    $this->_client->addPackage($package);
-                } else {
-
-                    // Logging
-                    PostiePlugin::log('USPS API international rate service call', LogLevel::Info);
-
-                    // Set international flag
-                    $this->_client->setInternationalCall(true);
-                    $this->_client->addExtraOption('Revision', 2);
-
-                    $package = new RatePackage();
-                    // weights are in pounds and ounces, no metric system (kg)
-                    $package->setPounds($dimensions['weight']);
-                    $package->setOunces(0);
-                    $package->setField('Machinable', 'True');
-                    $package->setField('MailType', 'Package');
-                    // value of content necessary for export
-                    $package->setField('ValueOfContents', $order->getTotalSaleAmount());
-                    $package->setField('Country', $order->shippingAddress->country);
-
-                    // Check if dimensions greater then 12 inches then set LARGE package
-                    if ($dimensions['width'] > 12 || $dimensions['height'] > 12 || $dimensions['length'] > 12) {
-                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                        $package->setField('Size', 'LARGE');
-                    } else {
-                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                        $package->setField('Size', 'REGULAR');
-                    }
-
-                    $package->setField('Width', $dimensions['width']);
-                    $package->setField('Length', $dimensions['height']);
-                    $package->setField('Height', $dimensions['length']);
-                    // Girth are relevant when CONTAINER_NONRECTANGULAR
-                    $package->setField('Girth', $dimensions['width'] * 2 + $dimensions['length'] * 2);
-
-                    $package->setField('OriginZip', $this->_originAddress['postalCode']);
-                    $package->setField('CommercialFlag', 'N');
-                    $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
-                    $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
-
-                    // add the package to the client stack
-                    $this->_client->addPackage($package);
-                }
-            } catch (\Exception $e) {
-
-                $msg = str_replace(PHP_EOL, ' ', $e->getMessage());
-                PostiePlugin::log($msg, LogLevel::Error, true);
+            // If is it not in the cache get services via API
+            if ($this->_services !== false) {
+                return $this->_services;
             }
+        }
 
-            // Perform the request
-            $this->_client->getRate();
+        $dimensions = $this->_getDimensions($order);
+        $info = null;
 
-            // handle response
-            if ($this->_client->isSuccess()) {
-                $arrayResponse = $this->_client->getArrayResponse();
+        try {
+            if ($order->shippingAddress->country->iso == 'US') {
 
-                if (isset($arrayResponse['RateV4Response']['Package']['Postage'])) {
+                // Logging
+                PostiePlugin::log('USPS API domestic rate service call', LogLevel::Info);
 
-                    foreach ($arrayResponse['RateV4Response']['Package']['Postage'] as $service) {
+                // Create new package object and assign the properties
+                // apparently the order you assign them is important so make sure
+                // to set them as the example below
+                // set the RatePackage for more info about the constants
+                $package = new RatePackage();
 
-                        $serviceHandle = $this->_parseServiceHandle($service['MailService']);
+                // Set service
+                $package->setService(RatePackage::SERVICE_ALL);
+                $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
+
+                $package->setZipOrigination($this->_originAddress['postalCode']);
+                $package->setZipDestination($order->shippingAddress->zipCode);
+                // weights are in pounds and ounces, no metric system (kg)
+                $package->setPounds($dimensions['weight']);
+                $package->setOunces(0);
+                $package->setContainer('');
+                $package->setSize(RatePackage::SIZE_REGULAR);
+                $package->setField('Machinable', true);
+
+                // add the package to the client stack
+                $this->_client->addPackage($package);
+            } else {
+
+                // Logging
+                PostiePlugin::log('USPS API international rate service call', LogLevel::Info);
+
+                // Set international flag
+                $this->_client->setInternationalCall(true);
+                $this->_client->addExtraOption('Revision', 2);
+
+                $package = new RatePackage();
+                // weights are in pounds and ounces, no metric system (kg)
+                $package->setPounds($dimensions['weight']);
+                $package->setOunces(0);
+                $package->setField('Machinable', 'True');
+                $package->setField('MailType', 'Package');
+                // value of content necessary for export
+                $package->setField('ValueOfContents', $order->getTotalSaleAmount());
+                $package->setField('Country', $order->shippingAddress->country);
+
+                // Check if dimensions greater then 12 inches then set LARGE package
+                if ($dimensions['width'] > 12 || $dimensions['height'] > 12 || $dimensions['length'] > 12) {
+                    $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
+                    $package->setField('Size', 'LARGE');
+                } else {
+                    $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
+                    $package->setField('Size', 'REGULAR');
+                }
+
+                $package->setField('Width', $dimensions['width']);
+                $package->setField('Length', $dimensions['height']);
+                $package->setField('Height', $dimensions['length']);
+                // Girth are relevant when CONTAINER_NONRECTANGULAR
+                $package->setField('Girth', $dimensions['width'] * 2 + $dimensions['length'] * 2);
+
+                $package->setField('OriginZip', $this->_originAddress['postalCode']);
+                $package->setField('CommercialFlag', 'N');
+                $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
+                $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
+
+                // add the package to the client stack
+                $this->_client->addPackage($package);
+            }
+        } catch (\Exception $e) {
+
+            $msg = str_replace(PHP_EOL, ' ', $e->getMessage());
+            PostiePlugin::log($msg, LogLevel::Error, true);
+        }
+
+        // Perform the request
+        $this->_client->getRate();
+
+        // handle response
+        if ($this->_client->isSuccess()) {
+            $arrayResponse = $this->_client->getArrayResponse();
+
+            if (isset($arrayResponse['RateV4Response']['Package']['Postage'])) {
+
+                foreach ($arrayResponse['RateV4Response']['Package']['Postage'] as $service) {
+
+                    $serviceHandle = $this->_parseServiceHandle($service['MailService']);
+                    $serviceName = $this->_getShippingMethodName($serviceHandle);
+
+                    if ($serviceName) {
+                        $this->_services[$serviceHandle] = [
+                            'name' => $serviceName,
+                            'rate' => $service['Rate'],
+                        ];
+                    }
+                }
+            } else {
+
+                if (isset($arrayResponse['IntlRateV2Response']['Package']['Service'])) {
+
+                    foreach ($arrayResponse['IntlRateV2Response']['Package']['Service'] as $service) {
+
+                        $serviceHandle = $this->_parseServiceHandle($service['SvcDescription']);
                         $serviceName = $this->_getShippingMethodName($serviceHandle);
 
                         if ($serviceName) {
                             $this->_services[$serviceHandle] = [
                                 'name' => $serviceName,
-                                'rate' => $service['Rate'],
+                                'rate' => $service['Postage'],
                             ];
                         }
                     }
                 } else {
+                    // Error logging
+                    PostiePlugin::log('No Services found', LogLevel::Error, true);
 
-                    if (isset($arrayResponse['IntlRateV2Response']['Package']['Service'])) {
-
-                        foreach ($arrayResponse['IntlRateV2Response']['Package']['Service'] as $service) {
-
-                            $serviceHandle = $this->_parseServiceHandle($service['SvcDescription']);
-                            $serviceName = $this->_getShippingMethodName($serviceHandle);
-
-                            if ($serviceName) {
-                                $this->_services[$serviceHandle] = [
-                                    'name' => $serviceName,
-                                    'rate' => $service['Postage'],
-                                ];
-                            }
-                        }
-                    } else {
-                        // Error logging
-                        PostiePlugin::log('No Services found', LogLevel::Error, true);
-
-                        // Set empty array for caching purposes
-                        $this->_services = [];
-                    }
+                    // Set empty array for caching purposes
+                    $this->_services = [];
                 }
-            } else {
-                // Error logging
-                PostiePlugin::log($this->_client->getErrorMessage(), LogLevel::Error, true);
-
-                // Set empty array for caching purposes
-                $this->_services = [];
             }
+        } else {
+            // Error logging
+            PostiePlugin::log($this->_client->getErrorMessage(), LogLevel::Error, true);
+
+            // Set empty array for caching purposes
+            $this->_services = [];
         }
 
         // Set this in our cache for the next request to be much quicker

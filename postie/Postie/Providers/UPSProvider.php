@@ -136,109 +136,114 @@ class UPSProvider extends BaseProvider
         // Get services from the cache (if any)
         $this->_services = craft()->cache->get($cacheKey);
 
-        // If is it not in the cache get services via API
-        if ($this->_services === false) {
+        if (craft()->config->get('disableCache', 'postie') !== true) {
+            $this->_services = craft()->cache->get($cacheKey);
 
-            $dimensions = $this->_getDimensions($order);
-            $info = null;
-
-            try {
-                if ($order->shippingAddress->country->iso == 'US') {
-
-                    // Logging
-                    PostiePlugin::log('UPS API domestic rate service call', LogLevel::Info);
-
-                    // Specify our Account Number
-                    if (isset($settings['settings']['username'])) {
-                        $userId = $settings['settings']['username'];
-                    } else {
-                        return;
-                    }
-
-                    $shipper = new Shipper();
-                    $shipper->setShipperNumber($userId);
-
-                    $shipment = new Shipment();
-                    $shipment->setShipper($shipper);
-
-                    // From address
-                    $originAddress = $this->_originAddress;
-                    
-                    $destinationAddress = [
-                        'name' => $order->shippingAddress->getFullName(),
-                        'street1' => $order->shippingAddress->address1,
-                        'street2' => $order->shippingAddress->address2,
-                        'city' => $order->shippingAddress->city,
-                        'state' => $order->shippingAddress->getState() ? $order->shippingAddress->getState()->abbreviation : $order->shippingAddress->getStateText(),
-                        'zip' => $order->shippingAddress->zipCode,
-                        'country' => $order->shippingAddress->getCountry()->iso,
-                        'phone' => $order->shippingAddress->phone,
-                        'company' => $order->shippingAddress->businessName,
-                        'email' => $order->email,
-                        'federal_tax_id' => $order->shippingAddress->businessTaxId
-                    ];
-
-                    $shipperAddress = $shipment->getShipper()->getAddress();
-
-                    $shipperAddress->setAddressLine1($originAddress['streetAddressLine1']);
-                    $shipperAddress->setAddressLine2($originAddress['streetAddressLine2']);
-                    $shipperAddress->setCity($originAddress['city']);
-                    $shipperAddress->setStateProvinceCode($originAddress['state']);
-                    $shipperAddress->setPostalCode($originAddress['postalCode']);
-
-                    // Destination Address
-                    $shipTo = $shipment->getShipTo();
-
-                    $shipToAddress = $shipTo->getAddress();
-                    $shipToAddress->setAddressLine1($destinationAddress['street1']);
-                    $shipToAddress->setAddressLine2($destinationAddress['street2']);
-                    $shipToAddress->setCity($destinationAddress['city']);
-                    $shipToAddress->setStateProvinceCode($destinationAddress['state']);
-                    $shipToAddress->setPostalCode($destinationAddress['zip']);
-                    $shipToAddress->setCountryCode($destinationAddress['country']);
-
-                    if ($dimensions['weight'] == 0) {
-                        return false;
-                    }
-
-                    $package = new Package();
-                    $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                    $package->getPackageWeight()->setWeight($dimensions['weight']);
-
-                    $packageDimensions = new Dimensions();
-                    $packageDimensions->setHeight($dimensions['length']);
-                    $packageDimensions->setWidth($dimensions['width']);
-                    $packageDimensions->setLength($dimensions['height']);
-
-                    $unit = new UnitOfMeasurement;
-                    $unit->setCode(UnitOfMeasurement::UOM_IN);
-
-                    $packageDimensions->setUnitOfMeasurement($unit);
-                    $package->setDimensions($packageDimensions);
-
-                    $shipment->addPackage($package);
-
-                    $shipment->setNumOfPiecesInShipment(1);
-                }
-
-                // Perform the request
-                $rates = $this->_client->shopRates($shipment);
-
-                foreach ($rates->RatedShipment as $rate) {
-                    $serviceHandle = $this->_getServiceHandle($rate->Service->getCode());
-                    $serviceName = $rate->Service->getName();
-                    $monetaryValue = $rate->TotalCharges->MonetaryValue;
-
-                    $this->_services[$serviceHandle] = [
-                        'name' => $serviceName,
-                        'rate' => $monetaryValue,
-                    ];
-                }
-
-            } catch (\Exception $e) {
-                $msg = str_replace(PHP_EOL, ' ', $e->getMessage());
-                PostiePlugin::log($msg, LogLevel::Error, true);
+            // If is it not in the cache get services via API
+            if ($this->_services !== false) {
+                return $this->_services;
             }
+        }
+
+        $dimensions = $this->_getDimensions($order);
+        $info = null;
+
+        try {
+            if ($order->shippingAddress->country->iso == 'US') {
+
+                // Logging
+                PostiePlugin::log('UPS API domestic rate service call', LogLevel::Info);
+
+                // Specify our Account Number
+                if (isset($settings['settings']['username'])) {
+                    $userId = $settings['settings']['username'];
+                } else {
+                    return;
+                }
+
+                $shipper = new Shipper();
+                $shipper->setShipperNumber($userId);
+
+                $shipment = new Shipment();
+                $shipment->setShipper($shipper);
+
+                // From address
+                $originAddress = $this->_originAddress;
+                
+                $destinationAddress = [
+                    'name' => $order->shippingAddress->getFullName(),
+                    'street1' => $order->shippingAddress->address1,
+                    'street2' => $order->shippingAddress->address2,
+                    'city' => $order->shippingAddress->city,
+                    'state' => $order->shippingAddress->getState() ? $order->shippingAddress->getState()->abbreviation : $order->shippingAddress->getStateText(),
+                    'zip' => $order->shippingAddress->zipCode,
+                    'country' => $order->shippingAddress->getCountry()->iso,
+                    'phone' => $order->shippingAddress->phone,
+                    'company' => $order->shippingAddress->businessName,
+                    'email' => $order->email,
+                    'federal_tax_id' => $order->shippingAddress->businessTaxId
+                ];
+
+                $shipperAddress = $shipment->getShipper()->getAddress();
+
+                $shipperAddress->setAddressLine1($originAddress['streetAddressLine1']);
+                $shipperAddress->setAddressLine2($originAddress['streetAddressLine2']);
+                $shipperAddress->setCity($originAddress['city']);
+                $shipperAddress->setStateProvinceCode($originAddress['state']);
+                $shipperAddress->setPostalCode($originAddress['postalCode']);
+
+                // Destination Address
+                $shipTo = $shipment->getShipTo();
+
+                $shipToAddress = $shipTo->getAddress();
+                $shipToAddress->setAddressLine1($destinationAddress['street1']);
+                $shipToAddress->setAddressLine2($destinationAddress['street2']);
+                $shipToAddress->setCity($destinationAddress['city']);
+                $shipToAddress->setStateProvinceCode($destinationAddress['state']);
+                $shipToAddress->setPostalCode($destinationAddress['zip']);
+                $shipToAddress->setCountryCode($destinationAddress['country']);
+
+                if ($dimensions['weight'] == 0) {
+                    return false;
+                }
+
+                $package = new Package();
+                $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
+                $package->getPackageWeight()->setWeight($dimensions['weight']);
+
+                $packageDimensions = new Dimensions();
+                $packageDimensions->setHeight($dimensions['length']);
+                $packageDimensions->setWidth($dimensions['width']);
+                $packageDimensions->setLength($dimensions['height']);
+
+                $unit = new UnitOfMeasurement;
+                $unit->setCode(UnitOfMeasurement::UOM_IN);
+
+                $packageDimensions->setUnitOfMeasurement($unit);
+                $package->setDimensions($packageDimensions);
+
+                $shipment->addPackage($package);
+
+                $shipment->setNumOfPiecesInShipment(1);
+            }
+
+            // Perform the request
+            $rates = $this->_client->shopRates($shipment);
+
+            foreach ($rates->RatedShipment as $rate) {
+                $serviceHandle = $this->_getServiceHandle($rate->Service->getCode());
+                $serviceName = $rate->Service->getName();
+                $monetaryValue = $rate->TotalCharges->MonetaryValue;
+
+                $this->_services[$serviceHandle] = [
+                    'name' => $serviceName,
+                    'rate' => $monetaryValue,
+                ];
+            }
+
+        } catch (\Exception $e) {
+            $msg = str_replace(PHP_EOL, ' ', $e->getMessage());
+            PostiePlugin::log($msg, LogLevel::Error, true);
         }
 
         // Set this in our cache for the next request to be much quicker
