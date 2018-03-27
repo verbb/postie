@@ -6,9 +6,16 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
+    'Ups\\' => array($vendorDir . '/gabrielbull/ups-api/src'),
     'USPS\\' => array($vendorDir . '/vinceg/usps-php-api/src'),
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Postie\\' => array($baseDir . '/postie/Postie'),
+    'PhpUnitsOfMeasure\\' => array($vendorDir . '/php-units-of-measure/php-units-of-measure/source'),
+    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
+    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
+    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'FedEx\\Utility\\' => array($vendorDir . '/jeremy-dunn/php-fedex-api-wrapper/util'),
     'FedEx\\Tests\\' => array($vendorDir . '/jeremy-dunn/php-fedex-api-wrapper/tests/FedEx/Tests'),
     'FedEx\\' => array($vendorDir . '/jeremy-dunn/php-fedex-api-wrapper/src/FedEx'),

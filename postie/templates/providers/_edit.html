@@ -113,75 +113,77 @@
         </tr>
     </table>
 
-    <hr />
+    {% if shippingMethods | length %}
+        <hr />
 
-    <h2>{{ "Shipping Methods" | t }}</h2>
+        <h2>{{ "Shipping Methods" | t }}</h2>
 
-    <table id="fields" class="data fullwidth collapsible">
+        <table id="fields" class="data fullwidth collapsible">
 
-        <thead>
-        <tr>
-            <th colspan="2">&nbsp;</th>
-            <th>
-                {{ forms.lightswitchField({
-                    id: 'allShippingMethods',
-                    on: shippingMethods[0].enabled,
-                }) }}
-            </th>
-        </tr>
+            <thead>
+            <tr>
+                <th colspan="2">&nbsp;</th>
+                <th>
+                    {{ forms.lightswitchField({
+                        id: 'allShippingMethods',
+                        on: shippingMethods[0].enabled,
+                    }) }}
+                </th>
+            </tr>
 
-        <tr>
-            <th scope="col">{{ "Name"|t }}</th>
-            <th scope="col">{{ "Handle"|t }}</th>
-            <th scope="col">{{ "Enabled"|t }}</th>
-        </tr>
-        </thead>
+            <tr>
+                <th scope="col">{{ "Name"|t }}</th>
+                <th scope="col">{{ "Handle"|t }}</th>
+                <th scope="col">{{ "Enabled"|t }}</th>
+            </tr>
+            </thead>
 
-        <tbody id="shippingMethods">
+            <tbody id="shippingMethods">
 
-            {% for shippingMethod in shippingMethods %}
+                {% for shippingMethod in shippingMethods %}
 
-                {% namespace 'shippingMethods[' ~ shippingMethod.handle ~']' %}
-                <tr>
-                    <td width="45%">
-                        {% set placeholder = (shippingMethodSettings[shippingMethod.handle] is defined) ? shippingMethodSettings[shippingMethod.handle] : false %}
-                        {% set shippingMethodName = placeholder ? placeholder : shippingMethod.name %}
-                        {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
-                        {% set value = placeholder ? placeholder : shippingMethod.name %}
+                    {% namespace 'shippingMethods[' ~ shippingMethod.handle ~']' %}
+                    <tr>
+                        <td width="45%">
+                            {% set placeholder = (shippingMethodSettings[shippingMethod.handle] is defined) ? shippingMethodSettings[shippingMethod.handle] : false %}
+                            {% set shippingMethodName = placeholder ? placeholder : shippingMethod.name %}
+                            {% set warning = placeholder ? "This is being overridden in {file}." | t({file: 'craft/config/postie.php'}) %}
+                            {% set value = placeholder ? placeholder : shippingMethod.name %}
 
-                        <div class="field">
-                            {%- spaceless %}
-                                <a href="{{ provider.getHandle() }}/shippingmethod/{{ shippingMethod.handle }}">
-                                    <span class="status{% if shippingMethod.enabled %} enabled{% endif %}"></span>
-                                    <strong>{{ shippingMethodName }}</strong>
-                                </a>
-                                {% if warning %}
-                                    <p class="warning">{{ warning }}</p>
-                                {% endif %}
-                            {% endspaceless -%}
-                        </div>
-                    </td>
-                    <td width="45%">
-                        <code>{{ shippingMethod.handle }}</code>
-                        <input type="hidden" name="name" value="{{ shippingMethodName }}">
-                        {% if placeholder %}
-                            <input type="hidden" name="enabled" value="{{ shippingMethod.enabled }}">
-                        {% endif %}
-                    </td>
-                    <td class="nowrap" width="10%">
-                        {{ forms.lightswitchField({
-                            name: 'enabled',
-                            value: shippingMethod.enabled,
-                            on: shippingMethod.enabled,
-                        }) }}
-                    </td>
-                </tr>
-                {% endnamespace  %}
-            {% endfor %}
+                            <div class="field">
+                                {%- spaceless %}
+                                    <a href="{{ provider.getHandle() }}/shippingmethod/{{ shippingMethod.handle }}">
+                                        <span class="status{% if shippingMethod.enabled %} enabled{% endif %}"></span>
+                                        <strong>{{ shippingMethodName }}</strong>
+                                    </a>
+                                    {% if warning %}
+                                        <p class="warning">{{ warning }}</p>
+                                    {% endif %}
+                                {% endspaceless -%}
+                            </div>
+                        </td>
+                        <td width="45%">
+                            <code>{{ shippingMethod.handle }}</code>
+                            <input type="hidden" name="name" value="{{ shippingMethodName }}">
+                            {% if placeholder %}
+                                <input type="hidden" name="enabled" value="{{ shippingMethod.enabled }}">
+                            {% endif %}
+                        </td>
+                        <td class="nowrap" width="10%">
+                            {{ forms.lightswitchField({
+                                name: 'enabled',
+                                value: shippingMethod.enabled,
+                                on: shippingMethod.enabled,
+                            }) }}
+                        </td>
+                    </tr>
+                    {% endnamespace  %}
+                {% endfor %}
 
-        </tbody>
+            </tbody>
 
-    </table>
+        </table>
+    {% endif %}
 
 {% endblock %}
 

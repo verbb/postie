@@ -12,7 +12,9 @@
 		"composer/installers": "~1.0",
 		"fontis/auspost-api-php": "*",
 		"jeremy-dunn/php-fedex-api-wrapper": "*",
-		"vinceg/usps-php-api": "*"
+		"vinceg/usps-php-api": "*",
+		"gabrielbull/ups-api": "^0.8.0",
+		"php-units-of-measure/php-units-of-measure": "^2.1"
 	},
 	"config": {
 		"vendor-dir": "postie/vendor"

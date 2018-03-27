@@ -6,9 +6,16 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit876b8d39f44628fbb8d9926e686968dc
 {
+    public static $files = array (
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'U' => 
         array (
+            'Ups\\' => 4,
             'USPS\\' => 5,
         ),
         'S' => 
@@ -17,7 +24,16 @@ class ComposerStaticInit876b8d39f44628fbb8d9926e686968dc
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
             'Postie\\' => 7,
+            'PhpUnitsOfMeasure\\' => 18,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
         ),
         'F' => 
         array (
@@ -32,6 +48,10 @@ class ComposerStaticInit876b8d39f44628fbb8d9926e686968dc
     );
 
     public static $prefixDirsPsr4 = array (
+        'Ups\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gabrielbull/ups-api/src',
+        ),
         'USPS\\' => 
         array (
             0 => __DIR__ . '/..' . '/vinceg/usps-php-api/src',
@@ -40,9 +60,33 @@ class ComposerStaticInit876b8d39f44628fbb8d9926e686968dc
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
         'Postie\\' => 
         array (
             0 => __DIR__ . '/../../..' . '/postie/Postie',
+        ),
+        'PhpUnitsOfMeasure\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-units-of-measure/php-units-of-measure/source',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
         'FedEx\\Utility\\' => 
         array (

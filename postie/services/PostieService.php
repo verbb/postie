@@ -6,6 +6,7 @@ use Postie\Providers\BaseProvider;
 use Postie\Providers\AustraliaPostProvider;
 use Postie\Providers\FedExProvider;
 use Postie\Providers\USPSProvider;
+use Postie\Providers\UPSProvider;
 
 class PostieService extends BaseApplicationComponent
 {
@@ -70,7 +71,7 @@ class PostieService extends BaseApplicationComponent
             }
 
             // Get USPS/FedEx service list via API call
-            if ($provider instanceof USPSProvider || $provider instanceof FedExProvider) {
+            if ($provider instanceof USPSProvider || $provider instanceof UPSProvider || $provider instanceof FedExProvider) {
                 $services = $provider->getServices($order);
             } else {
                 $services = $provider->getServices();
@@ -87,7 +88,7 @@ class PostieService extends BaseApplicationComponent
                     $rate = $provider->getShippingRate($handle, $order);
 
                     // Get USPS/FedEx service name from previous api call
-                    if ($provider instanceof USPSProvider || $provider instanceof FedExProvider) {
+                    if ($provider instanceof USPSProvider || $provider instanceof UPSProvider || $provider instanceof FedExProvider) {
                         $name = $provider->getServiceName($handle);
                     }
                 }
@@ -108,6 +109,7 @@ class PostieService extends BaseApplicationComponent
             new AustraliaPostProvider(),
             new FedExProvider(),
             new USPSProvider(),
+            new UPSProvider(),
         ];
     }
 }
