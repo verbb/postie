@@ -169,13 +169,31 @@ class UPSProvider extends BaseProvider
 
                 // From address
                 $originAddress = $this->_originAddress;
+
+                // Fix a few cases for state-matching
+                $state = '';
+
+                if ($order->shippingAddress->state) {
+                    $state = $order->shippingAddress->state->abbreviation;
+                } else {
+                    if (is_numeric($order->shippingAddress->stateText)) {
+                        // If stored as an ID, fetch it
+                        $stateModel = craft()->commerce_states->getStateById($order->shippingAddress->stateText);
+
+                        if ($stateModel) {
+                            $state = $stateModel->abbreviation;
+                        }
+                    } else {
+                        $state = $order->shippingAddress->stateText;
+                    }
+                }
                 
                 $destinationAddress = [
                     'name' => $order->shippingAddress->getFullName(),
                     'street1' => $order->shippingAddress->address1,
                     'street2' => $order->shippingAddress->address2,
                     'city' => $order->shippingAddress->city,
-                    'state' => $order->shippingAddress->getState() ? $order->shippingAddress->getState()->abbreviation : $order->shippingAddress->getStateText(),
+                    'state' => $state,
                     'zip' => $order->shippingAddress->zipCode,
                     'country' => $order->shippingAddress->getCountry()->iso,
                     'phone' => $order->shippingAddress->phone,
