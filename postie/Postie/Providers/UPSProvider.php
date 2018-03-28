@@ -158,17 +158,14 @@ class UPSProvider extends BaseProvider
 
                 $commerceSettings = craft()->commerce_settings->getSettings();
 
-
                 $shipment = new Shipment();
 
-                $shipperAddress = $shipment->getShipper()->getAddress();
-                $shipperAddress->setPostalCode($this->_originAddress['postalCode']);
-
-                $address = new Address();
-                $address->setPostalCode($this->_originAddress['postalCode']);
+                $shipFromAddress = new Address();
+                $shipFromAddress->setPostalCode($this->_originAddress['postalCode']);
+                $shipFromAddress->setStateProvinceCode($this->_originAddress['state']);
 
                 $shipFrom = new ShipFrom();
-                $shipFrom->setAddress($address);
+                $shipFrom->setAddress($shipFromAddress);
 
                 $shipment->setShipFrom($shipFrom);
 
@@ -197,7 +194,7 @@ class UPSProvider extends BaseProvider
 
                 $shipment->addPackage($package);
 
-                // $shipment->showNegotiatedRates();
+                $shipment->showNegotiatedRates();
             }
 
             // Perform the request
