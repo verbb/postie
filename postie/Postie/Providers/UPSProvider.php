@@ -12,6 +12,8 @@ use Craft\StringHelper;
 
 use Ups\Rate;
 use Ups\Entity\Shipper;
+use Ups\Entity\Address;
+use Ups\Entity\ShipFrom;
 use Ups\Entity\Shipment;
 use Ups\Entity\Package;
 use Ups\Entity\PackagingType;
@@ -154,85 +156,38 @@ class UPSProvider extends BaseProvider
                 // Logging
                 PostiePlugin::log('UPS API domestic rate service call', LogLevel::Info);
 
-                // Specify our Account Number
-                if (isset($settings['settings']['username'])) {
-                    $userId = $settings['settings']['username'];
-                } else {
-                    return;
-                }
+                $commerceSettings = craft()->commerce_settings->getSettings();
 
-                $shipper = new Shipper();
-                $shipper->setShipperNumber($userId);
 
                 $shipment = new Shipment();
-                $shipment->setShipper($shipper);
-
-                // From address
-                $originAddress = $this->_originAddress;
-
-                // Fix a few cases for state-matching
-                $state = '';
-
-                if ($order->shippingAddress->state) {
-                    $state = $order->shippingAddress->state->abbreviation;
-                } else {
-                    if (is_numeric($order->shippingAddress->stateText)) {
-                        // If stored as an ID, fetch it
-                        $stateModel = craft()->commerce_states->getStateById($order->shippingAddress->stateText);
-
-                        if ($stateModel) {
-                            $state = $stateModel->abbreviation;
-                        }
-                    } else {
-                        $state = $order->shippingAddress->stateText;
-                    }
-                }
-                
-                $destinationAddress = [
-                    'name' => $order->shippingAddress->getFullName(),
-                    'street1' => $order->shippingAddress->address1,
-                    'street2' => $order->shippingAddress->address2,
-                    'city' => $order->shippingAddress->city,
-                    'state' => $state,
-                    'zip' => $order->shippingAddress->zipCode,
-                    'country' => $order->shippingAddress->getCountry()->iso,
-                    'phone' => $order->shippingAddress->phone,
-                    'company' => $order->shippingAddress->businessName,
-                    'email' => $order->email,
-                    'federal_tax_id' => $order->shippingAddress->businessTaxId
-                ];
 
                 $shipperAddress = $shipment->getShipper()->getAddress();
+                $shipperAddress->setPostalCode($this->_originAddress['postalCode']);
 
-                $shipperAddress->setAddressLine1($originAddress['streetAddressLine1']);
-                $shipperAddress->setAddressLine2($originAddress['streetAddressLine2']);
-                $shipperAddress->setCity($originAddress['city']);
-                $shipperAddress->setStateProvinceCode($originAddress['state']);
-                $shipperAddress->setPostalCode($originAddress['postalCode']);
+                $address = new Address();
+                $address->setPostalCode($this->_originAddress['postalCode']);
 
-                // Destination Address
+                $shipFrom = new ShipFrom();
+                $shipFrom->setAddress($address);
+
+                $shipment->setShipFrom($shipFrom);
+
                 $shipTo = $shipment->getShipTo();
-
                 $shipToAddress = $shipTo->getAddress();
-                $shipToAddress->setAddressLine1($destinationAddress['street1']);
-                $shipToAddress->setAddressLine2($destinationAddress['street2']);
-                $shipToAddress->setCity($destinationAddress['city']);
-                $shipToAddress->setStateProvinceCode($destinationAddress['state']);
-                $shipToAddress->setPostalCode($destinationAddress['zip']);
-                $shipToAddress->setCountryCode($destinationAddress['country']);
-
-                if ($dimensions['weight'] == 0) {
-                    return false;
-                }
+                $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
 
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
                 $package->getPackageWeight()->setWeight($dimensions['weight']);
+                
+                $weightUnit = new UnitOfMeasurement;
+                $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+                $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight($dimensions['length']);
+                $packageDimensions->setHeight($dimensions['height']);
                 $packageDimensions->setWidth($dimensions['width']);
-                $packageDimensions->setLength($dimensions['height']);
+                $packageDimensions->setLength($dimensions['length']);
 
                 $unit = new UnitOfMeasurement;
                 $unit->setCode(UnitOfMeasurement::UOM_IN);
@@ -242,7 +197,7 @@ class UPSProvider extends BaseProvider
 
                 $shipment->addPackage($package);
 
-                $shipment->setNumOfPiecesInShipment(1);
+                // $shipment->showNegotiatedRates();
             }
 
             // Perform the request
