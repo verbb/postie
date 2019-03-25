@@ -1,0 +1,125 @@
+{% import '_includes/forms' as forms %}
+{% import 'postie/_macros' as macros %}
+
+{{ forms.textField({
+    label: 'Name' | t('postie'),
+    name: 'name',
+    value: provider.name,
+    required: true,
+    errors: provider.getErrors('name'),
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.name', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Enabled' | t('postie'),
+    name: 'enabled',
+    on: provider.enabled,
+    errors: provider.getErrors('enabled'),
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.enabled', 'postie'),
+}) }}
+
+<hr>
+
+<h2>{{ 'API Settings' | t('postie') }}</h2>
+
+{% namespace 'settings' %}
+
+{{ provider.getSettingsHtml() | raw }}
+
+{% endnamespace %}
+
+<hr>
+
+<table id="fields" class="data fullwidth collapsible">
+    <tr>
+        <td>
+            {{ forms.textField({
+                label: 'Markup Rate' | t('postie'),
+                instructions: 'Shipping costs added to the order as a whole. Leave it blank to disable this rate.' | t('postie'),
+                id: 'markUpRate',
+                name: 'markUpRate',
+                value: provider.markUpRate,
+                warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpRate', 'postie'),
+            }) }}
+        </td>
+
+        <td>
+            {{ forms.selectField({
+                label: 'Markup Base' | t('postie'),
+                instructions: 'Add percentage between 1 and 100 or pure value. Can be ignored when rate is empty.' | t('postie'),
+                id: 'markUpBase',
+                name: 'markUpBase',
+                options: provider.getMarkUpBaseOptions(),
+                value: provider.markUpBase,
+                warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpBase', 'postie'),
+            }) }}
+        </td>
+    </tr>
+</table>
+
+{% if provider.getServiceList() | length %}
+    <hr>
+
+    <h2>{{ "Shipping Methods" | t('postie') }}</h2>
+
+    <table id="fields" class="data fullwidth collapsible">
+        <thead>
+            <tr>
+                <th colspan="2">&nbsp;</th>
+                <th class="provider-shipping-methods-all-switch">
+                    {{ forms.lightswitchField({
+                        id: 'allShippingMethods',
+                    }) }}
+                </th>
+            </tr>
+
+            <tr>
+                <th scope="col">{{ "Name" | t('postie') }}</th>
+                <th scope="col">{{ "Handle" | t('postie') }}</th>
+                <th scope="col">{{ "Enabled" | t('postie') }}</th>
+            </tr>
+        </thead>
+
+        <tbody class="provider-shipping-methods" id="shippingMethods">
+            {% for handle, name in provider.getServiceList() %}
+                {% namespace 'services' %}
+                    {% set warning = macros.configWarning('providers.' ~ provider.handle ~ '.services.' ~ handle, 'postie') %}
+
+                    {% set enabled = false %}
+                    {% if provider.services[handle] is defined and provider.services[handle] %}
+                        {% set enabled = true %}
+                    {% endif %}
+
+                    <tr>
+                        <td width="45%">
+                            <div class="field">
+                                {%- spaceless %}
+                                    <a href="{{ provider.getHandle() }}/shipping-method/{{ handle }}">
+                                        <span class="status {% if enabled %}green{% endif %}"></span>
+                                        <strong>{{ name }}</strong>
+                                    </a>
+                                {% endspaceless -%}
+                            </div>
+                        </td>
+
+                        <td width="45%">
+                            {% if warning %}
+                                <span class="warning" data-icon="alert"></span>
+                            {% endif %}
+
+                            <code>{{ handle }}</code>
+                        </td>
+
+                        <td class="nowrap" width="10%">
+                            {{ forms.lightswitchField({
+                                name: handle,
+                                value: name,
+                                on: enabled,
+                            }) }}
+                        </td>
+                    </tr>
+                {% endnamespace  %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

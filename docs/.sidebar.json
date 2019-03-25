@@ -1,0 +1,48 @@
+[
+    {
+        "title": "Get Started",
+        "collapsable": false,
+        "children": [
+            "get-started/installation-setup",
+            "get-started/requirements",
+            "get-started/configuration"
+        ]
+    },
+    {
+        "title": "Setup & Configuration",
+        "collapsable": false,
+        "children": [
+            "setup-configuration/origin-address",
+            "setup-configuration/products",
+            "setup-configuration/providers",
+            "setup-configuration/shipping-methods"
+        ]
+    },
+    {
+        "title": "Shipping Providers",
+        "collapsable": false,
+        "children": [
+            "shipping-providers/australia-post",
+            "shipping-providers/fedex",
+            "shipping-providers/usps",
+            "shipping-providers/ups"
+        ]
+    },
+    {
+        "title": "Developers",
+        "collapsable": false,
+        "children": [
+            "developers/hooks-and-events",
+            "developers/shipping-provider"
+        ]
+    },
+    {
+        "title": "Support",
+        "collapsable": false,
+        "children": [
+            "support/troubleshooting",
+            "support/faqs",
+            "support/get-support"
+        ]
+    }
+]

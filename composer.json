@@ -1,27 +1,47 @@
 {
-	"name": "verbb/postie",
-	"description": "Plugin for Craft Commerce providing shipping methods as Australian Post, UPS, DHL and many more. It is easy extendable to implement your own shipping method.",
-	"type": "craft-plugin",
-	"authors": [
-		{
-			"name": "Verbb",
-			"homepage": "http://verbb.io/"
-		}
-	],
-	"require": {
-		"composer/installers": "~1.0",
-		"fontis/auspost-api-php": "*",
-		"jeremy-dunn/php-fedex-api-wrapper": "*",
-		"vinceg/usps-php-api": "*",
-		"gabrielbull/ups-api": "^0.8.0",
-		"php-units-of-measure/php-units-of-measure": "^2.1"
-	},
-	"config": {
-		"vendor-dir": "postie/vendor"
-	},
-	"autoload": {
-		"psr-4": {
-			"Postie\\": "postie/Postie"
-		}
-	}
+    "name": "verbb/postie",
+    "description": "Plugin for Craft Commerce providing shipping methods as Australian Post, UPS, DHL and many more. It is easy extendable to implement your own shipping method.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "postie"
+    ],
+    "support": {
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/postie/issues?state=open",
+        "source": "https://github.com/verbb/postie",
+        "docs": "https://github.com/verbb/postie",
+        "rss": "https://github.com/verbb/postie/commits/v2.atom"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "https://verbb.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.1.0",
+        "craftcms/commerce": "^2.1.0",
+        "fontis/auspost-api-php": "^1.0.0",
+        "jeremy-dunn/php-fedex-api-wrapper": "^3.0",
+        "vinceg/usps-php-api": "^1.0.0",
+        "gabrielbull/ups-api": "^0.8.0",
+        "php-units-of-measure/php-units-of-measure": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+          "verbb\\postie\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Postie",
+        "handle": "postie",
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/postie/craft-3/CHANGELOG.md",
+        "class": "verbb\\postie\\Postie"
+    }
 }

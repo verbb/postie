@@ -1,0 +1,2 @@
+void 0===Craft.Postie&&(Craft.Postie={}),$(function(){$(document).on("change",".provider-shipping-methods-all-switch .lightswitch",function(){var t=$(".provider-shipping-methods").find(".lightswitch");$(this).hasClass("on")?t.each(function(){$(this).data("lightswitch").turnOn()}):t.each(function(){$(this).data("lightswitch").turnOff()})})});
+//# sourceMappingURL=postie.js.map

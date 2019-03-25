@@ -1,0 +1,89 @@
+{% extends 'postie/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Settings' | t('postie'), url: url('postie/settings') },
+] %}
+
+{% set fullPageForm = true %}
+{% set selectedTab = 'settings' %}
+{% set selectedSubnavItem = 'settings' %}
+
+{% set navItems = {
+    'general': { title: 'General' | t('postie') },
+    'products': { title: 'Products' | t('postie'), badge: variants | length },
+    'providers-heading': { heading: 'Providers' | t('postie') },
+} %}
+
+{% if not storeLocation.address1 %}
+    {% set navItems = navItems | merge({ 'general': { title: 'General' | t('postie'), badge: 1 } }) %}
+{% endif %}
+
+{% set selectedItem = 'general' %}
+
+{% block sidebar %}
+    <nav class="postie-settings-tabs" id="tabs">
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li>
+                        <a id="tab-{{ loop.index }}" href="#tab-{{ id }}" class="tab {% if id == selectedItem %}sel{% endif %}">
+                            <span class="label">{{ item.title }}</span>
+
+                            {% if item.badge is defined %}
+                                <span class="badge">{{ item.badge }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% for provider in providers %}
+                <li>
+                    <a id="tab-{{ loop.index }}" href="#tab-{{ provider.handle }}" class="tab {% if provider.handle == selectedItem %}sel{% endif %}">
+                        <img class="postie-provider-icon" src="{{ provider.iconUrl }}">
+                        <span class="label">{{ provider.name }}</span>
+
+                        {% if provider.enabled %}
+                            <span class="status green"></span>
+                        {% else %}
+                            <span class="status"></span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="plugins/save-plugin-settings">
+<input type="hidden" name="pluginHandle" value="postie">
+
+{% for id, item in navItems %}
+    {% if item.title is defined %}
+        <div id="tab-{{ id }}" {% if not loop.first %}class="hidden"{% endif %}>
+            <h1>{{ item.title }}</h1>
+
+            {% namespace 'settings' %}
+                {% include 'postie/settings/_panes/' ~ id ignore missing %}
+            {% endnamespace %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+{% for provider in providers %}
+    <div id="tab-{{ provider.handle }}" class="hidden">
+        <h1>{{ provider.name }}</h1>
+
+        {% namespace 'settings[providers][' ~ provider.handle ~ ']' %}
+            {% include 'postie/settings/_panes/provider' %}
+        {% endnamespace %}
+    </div>
+{% endfor %}
+
+{% endblock %}

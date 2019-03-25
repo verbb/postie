@@ -1,0 +1,28 @@
+// ==========================================================================
+
+// Postie for Craft CMS
+// Author: Verbb - https://verbb.io/
+
+// ==========================================================================
+
+@import "base";
+
+
+// ==========================================================================
+// Postie Settings
+// ==========================================================================
+
+.postie-settings-tabs li {
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.postie-settings-tabs .postie-provider-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.postie-settings-tabs .status {
+    margin-right: 0 !important;
+}

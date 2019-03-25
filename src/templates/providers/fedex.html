@@ -1,0 +1,56 @@
+{% import '_includes/forms' as forms %}
+{% import 'postie/_macros' as macros %}
+
+<p>{{ "To use Fedex API, you'll need to:" | t('postie') }}
+
+<ol class="postie-list">
+    <li>{{ "Create a profile at the {url}" | t('postie', { url: '<a href="https://www.fedex.com/login/web/jsp/contactInfo1.jsp" target="_blank">FedEx website</a>' }) | raw }}</li>
+    <li>{{ "Register a {url}" | t('postie', { url: '<a href="https://www.fedex.com/wpor/web/jsp/commonTC.jsp" target="_blank">FedEx Web Services Production Access</a>' }) | raw }}</li>
+</ol>
+
+<p>{{ "After this, you should receive an email with the below information." | t('postie') }}</p>
+
+{{ forms.textField({
+    label: 'Account Number' | t('postie'),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    value: provider.settings.accountNumber ?? '',
+    required: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.accountNumber', 'postie'),
+}) }}
+
+{{ forms.textField({
+    label: 'Meter Number' | t('postie'),
+    id: 'meterNumber',
+    name: 'meterNumber',
+    value: provider.settings.meterNumber ?? '',
+    required: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.meterNumber', 'postie'),
+}) }}
+
+{{ forms.textField({
+    label: 'Key' | t('postie'),
+    id: 'key',
+    name: 'key',
+    value: provider.settings.key ?? '',
+    required: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.key', 'postie'),
+}) }}
+
+{{ forms.textField({
+    label: 'Password' | t('postie'),
+    id: 'password',
+    name: 'password',
+    value: provider.settings.password ?? '',
+    required: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Use Test Endpoint' | t('postie'),
+    id: 'useTestEndpoint',
+    name: 'useTestEndpoint',
+    on: provider.settings.useTestEndpoint ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
+}) }}
+

@@ -1,0 +1,10 @@
+{% macro configWarning(setting, file) -%}
+    {%- set configArray = craft.app.config.getConfigFromFile(file) -%}
+    {%- set lastItem = setting | split('.') | last -%}
+
+    {%- if get(configArray, setting) -%}
+        {{- "This is being overridden by the `#{lastItem}` setting in the `config/#{file}.php` file." | raw }}
+    {%- else -%}
+        {{ false }}
+    {%- endif -%}
+{%- endmacro %}
