@@ -1,18 +1,23 @@
 # Installation & Setup
+You can install Postie via the plugin store, or through Composer.
 
-Installing Postie is as simple as any other Craft plugin - just drop the `postie` folder in your `craft/plugins` directory and install.
+### Craft Plugin Store
+To install **Postie**, navigate to the _Plugin Store_ section of your Craft control panel, search for `Postie`, and click the _Try_ button.
 
-## Installation
+### Composer
+You can also add the package to your project using Composer.
 
-1.  [Download the latest version](/craft-plugins/postie/pricing) of Postie and unzip.
-2.  Copy the `postie/` directory into your `craft/plugins/` directory.
-3.  Inside the Craft control panel, navigate to _Settings → Plugins_.
-4.  Locate the row showing the Postie plugin and click _Install_.
+1. Open your terminal and go to your Craft project:
+```
+cd /path/to/project
+```
+2. Then tell Composer to load the plugin:
+```
+composer require verbb/postie
+```
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Postie.
 
-## Settings/License
+## Licensing
+You can try Postie in a development environment for as long as you like. Once your site goes live, you are required to purchase a license for the plugin.
 
-With Postie installed, you will be able to access the plugin settings. Here you can control the settings for each provider, and add your license key for Postie when you're ready to go live.
-
-## Setup
-
-The first step to getting started with Postie is to setup your [Origin Address](docs:setup-configuration/origin-address).
+For more information, see [Craft's Commercial Plugin Licensing](https://docs.craftcms.com/v3/plugins.html#commercial-plugin-licensing).
