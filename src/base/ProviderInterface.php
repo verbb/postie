@@ -8,6 +8,6 @@ interface ProviderInterface extends SavableComponentInterface
     // Public Methods
     // =========================================================================
 
-    // public function getServiceList(): array;
-    // public function fetchShippingRates($handle, $order): float;
+    public function getServiceList(): array;
+    public function fetchShippingRates($order);
 }
