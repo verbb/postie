@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 - 2019-03-27
+
+### Fixed
+- Fix some error messages themselves throwing errors.
+
 ## 2.0.0 - 2019-03-26
 
 ### Added
