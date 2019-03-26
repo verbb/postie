@@ -177,19 +177,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $settings = Postie::$plugin->getSettings();
 
         if (!$order) {
-            Provider::error('Missing required order variable.');
+            Provider::error($this, 'Missing required order variable.');
 
             return;
         }
 
         if (!$order->getLineItems()) {
-            Provider::error('No line items for order.');
+            Provider::error($this, 'No line items for order.');
 
             return;
         }
 
         if (!$order->shippingAddress) {
-            Provider::error('No shipping address for order.');
+            Provider::error($this, 'No shipping address for order.');
 
             return;
         }
