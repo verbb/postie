@@ -1,6 +1,6 @@
 {
     "name": "verbb/postie",
-    "description": "Plugin for Craft Commerce providing shipping methods as Australia Post, UPS, Fedex, and many more. It is easy extendable to implement your own shipping method.",
+    "description": "Provide live shipping rates during checkout from Australia Post, UPS, Fedex, and more.",
     "type": "craft-plugin",
     "version": "2.0.0",
     "keywords": [
