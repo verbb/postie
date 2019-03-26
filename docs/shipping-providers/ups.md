@@ -1,6 +1,6 @@
 # UPS
 
-In order to use UPS, you'll need to ensure you are using a valid United States address as your origin. You'll also need to ensure your Craft Commerce default currency is set to USD.
+In order to use UPS, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
 
 ### How to get API access
 
@@ -25,26 +25,20 @@ The below service are available with UPS for domestic and international customer
 - `S_SAVER`
 - `S_ACCESS_POINT`
 
-### Control Panel
-
-![UPS Provider](/docs/screenshots/ups-provider.png)
-
-### Configuration File
+### Configuration
 
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php
 'providers' => [
-    'USPS' => [
+    'ups' => [
         'name' => 'USPS',
-        'markUpRate' => '<yourMarkUpRate>',
-        'markUpBase' => '<value>',
 
         'settings' => [
-            'apiKey' => '<apiKey>',
-            'testApiKey' => '<testApiKey>',
-            'username' => '<username>',
-            'password' => '<password>',
+            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxx',
+            'testApiKey' => 'xxxxxxxxxxxxxxxxxxxxx',
+            'username' => 'xxxxxxxxxxxxx',
+            'password' => 'xxxxxxxxxxxxx$',
         ],
 
         'services' => [

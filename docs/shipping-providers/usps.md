@@ -1,6 +1,6 @@
 # USPS
 
-In order to use USPS, you'll need to ensure you are using a valid United States address as your origin. You'll also need to ensure your Craft Commerce default currency is set to USD.
+In order to use USPS, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
 
 ### How to get API access
 
@@ -51,6 +51,7 @@ The below service are available with USPS for domestic and international custome
     - `FIRST_CLASS_PACKAGE_SERVICE_RETAIL`
     - `MEDIA_MAIL_PARCEL`
     - `LIBRARY_MAIL_PARCEL`
+
 - International
     
     - `USPS_GXG_ENVELOPES`
@@ -61,23 +62,17 @@ The below service are available with USPS for domestic and international custome
     - `FIRST_CLASS_MAIL_INTERNATIONAL`
     - `FIRST_CLASS_PACKAGE_INTERNATIONAL_SERVICE`
 
-### Control Panel
-
-![USPS Provider](/docs/screenshots/usps-provider.png)
-
-### Configuration File
+### Configuration
 
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php
 'providers' => [
-    'USPS' => [
+    'usps' => [
         'name' => 'USPS',
-        'markUpRate' => '<yourMarkUpRate>',
-        'markUpBase' => '<value>',
 
         'settings' => [
-            'username' => '<yourUsername>',
+            'username' => 'xxxxxxxxxxxxx',
         ],
 
         'services' => [
@@ -85,7 +80,6 @@ Add the following code to your configuration file under the `providers` array, a
             'PRIORITY_MAIL_1_DAY' => 'Priority Mail',
             'FIRST_CLASS_MAIL' => 'First-Class Mail',
             'PRIORITY_MAIL_INTERNATIONAL' => 'Priority Mail International',
-            'FIRST_CLASS_MAIL_INTERNATIONAL' => 'First-Class Mail International',
         ],
     ],
 ]

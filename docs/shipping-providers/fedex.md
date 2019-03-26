@@ -1,6 +1,6 @@
 # FedEx
 
-In order to use FedEx, you'll need to ensure you are using a valid United States address as your origin. You'll also need to ensure your Craft Commerce default currency is set to USD.
+In order to use FedEx, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
 
 ### How to get API access
 
@@ -37,6 +37,7 @@ The below service are available with FedEx for domestic and international custom
     - `STANDARD_OVERNIGHT`
     - `GROUND_HOME_DELIVERY`
     - `SMART_POST`
+
 - International
     
     - `INTERNATIONAL_ECONOMY`
@@ -46,11 +47,7 @@ The below service are available with FedEx for domestic and international custom
     - `INTERNATIONAL_PRIORITY_FREIGHT`
     - `EUROPE_FIRST_INTERNATIONAL_PRIORITY`
 
-### Control Panel
-
-![FedEx Provider](/docs/screenshots/fedex-provider.png)
-
-### Configuration File
+### Configuration
 
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
@@ -58,17 +55,13 @@ Add the following code to your configuration file under the `providers` array, a
 'providers' => [
     'fedEx' => [
         'name' => 'FedEx',
-        'markUpRate' => '<yourMarkUpRate>',
-        'markUpBase' => '<value>',
 
         'settings' => [
-            'accountNumber' => '<yourAccountNumber>',
-            'meterNumber' => '<yourMeterNumber>',
-            'key' => '<yourKey>',
-            'password' => '<yourPassword>',
-
-            // Whether to use the test API endpoint (optional)
-            'useTestEndpoint' => false,
+            'accountNumber' => 'xxxxxxxxxxxxx',
+            'meterNumber' => 'xxxxxxxxxxxxx',
+            'key' => 'xxxxxxxxxxxxxxxxxxxxx',
+            'password' => 'xxxxxxxxxxxxxxxxxxxxx',
+            'useTestEndpoint' => true,
         ],
 
         'services' => [
@@ -76,8 +69,6 @@ Add the following code to your configuration file under the `providers` array, a
             'FEDEX_GROUND' => 'Ground',
             'INTERNATIONAL_ECONOMY' => 'International Economy',
             'INTERNATIONAL_PRIORITY' => 'International Priority',
-            'PRIORITY_OVERNIGHT' => 'Priority Overnight',
-            'STANDARD_OVERNIGHT' => 'Standard Overnight',
         ],
     ],
 ]

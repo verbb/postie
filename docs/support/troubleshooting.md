@@ -2,7 +2,7 @@
 
 #### Postage options aren't up to date
 
-Because Postie uses caching for data from providers, this data can potentially cause issues by referring to old, outdated data. In this case, clear Craft's caches by going to \_Settings → Clear Caches.
+Because Postie uses caching for data from providers, this data can potentially cause issues by referring to old, outdated data. In this case, clear Craft's caches by going to _Settings → Clear Caches_.
 
 #### Postage options aren't showing despite having everything setup
 
@@ -12,7 +12,7 @@ Also check you are using the right **Weight Unit** and **Dimension Unit** in _Co
 
 #### The shipping page of checkout is very slow, or throws a 500 error
 
-This can happen when trying to request too many provider services in one go, often on a server with limited hardware resources. We'd recommend to ensure PHP 7 is installed, the server as adequate resources and memory limits. Decreasing the number of providers to fetch will also speed this process up, so ensure you enable only the services you require.
+This can happen when trying to request too many provider services in one go, often on a server with limited hardware resources. We'd recommend the server has adequate resources and memory limits. Decreasing the number of providers to fetch will also speed this process up, so ensure you enable only the services you require.
 
 #### There's some other error going on, or its not working
 

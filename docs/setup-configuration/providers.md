@@ -3,7 +3,10 @@
 A **Provider** is a shipping provider used for shipping your packages. Depending on your shipping needs will determine which service you'd like to use, and currently Postie supports the following providers:
 
 - [Australia Post →](docs:shipping-providers/australia-post)
+- [Canada Post →](docs:shipping-providers/canada-post)
+- [Fastway →](docs:shipping-providers/fastway)
 - [FedEx →](docs:shipping-providers/fedex)
+- [UPS →](docs:shipping-providers/ups)
 - [USPS →](docs:shipping-providers/usps)
 
 :::tip

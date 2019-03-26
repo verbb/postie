@@ -1,6 +1,6 @@
 # Australia Post
 
-In order to use Australia Post, you'll need to ensure you are using a valid Australian address as your origin. You'll also need to ensure your Craft Commerce default currency is set to AUD.
+In order to use Australia Post, you'll need to ensure you are using a valid Australian address as your store location. You'll also need to ensure your Craft Commerce default currency is set to AUD.
 
 ### How to get API access
 
@@ -26,11 +26,8 @@ The below service are available with Australia Post for domestic and internation
     - `INT_PARCEL_AIR_OWN_PACKAGING`
     - `INT_PARCEL_SEA_OWN_PACKAGING`
 
-### Control Panel
 
-![AusPost Provider](/docs/screenshots/auspost-provider.png)
-
-### Configuration File
+### Configuration
 
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
@@ -38,11 +35,9 @@ Add the following code to your configuration file under the `providers` array, a
 'providers' => [
     'australiaPost' => [
         'name' => 'Australia Post',
-        'markUpRate' => '<yourMarkUpRate>',
-        'markUpBase' => '<value>',
 
         'settings' => [
-            'apiKey' => '<yourApiKey>',
+            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
         ],
 
         'services'   => [
