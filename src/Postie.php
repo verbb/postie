@@ -8,20 +8,14 @@ use verbb\postie\twigextensions\Extension;
 
 use Craft;
 use craft\base\Plugin;
-use craft\elements\Entry;
-use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
-use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
-use craft\services\Elements;
-use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
 use craft\commerce\services\ShippingMethods;
 
 use yii\base\Event;
-use yii\web\User;
 
 class Postie extends Plugin
 {
@@ -97,6 +91,7 @@ class Postie extends Plugin
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
+                'postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:{handle}>' => 'postie/shipping-methods/edit',
                 'postie/settings' => 'postie/plugin/settings',
             ]);
         });

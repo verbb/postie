@@ -81,20 +81,20 @@
         </thead>
 
         <tbody class="provider-shipping-methods" id="shippingMethods">
-            {% for handle, name in provider.getServiceList() %}
-                {% namespace 'services' %}
+            {% for handle, serviceName in provider.getServiceList() %}
+                {% namespace 'services[' ~ handle ~ ']' %}
                     {% set warning = macros.configWarning('providers.' ~ provider.handle ~ '.services.' ~ handle, 'postie') %}
 
-                    {% set enabled = false %}
-                    {% if provider.services[handle] is defined and provider.services[handle] %}
-                        {% set enabled = true %}
-                    {% endif %}
+                    {% set service = provider.services[handle] ?? [] %}
+                    {% set enabled = service.enabled ?? false %}
+                    {% set name = service.name ?? serviceName ?? '' %}
+                    {% set cpEditUrl = service.cpEditUrl ?? '' %}
 
                     <tr>
                         <td width="45%">
                             <div class="field">
                                 {%- spaceless %}
-                                    <a href="{{ provider.getHandle() }}/shipping-method/{{ handle }}">
+                                    <a href="{{ cpEditUrl }}">
                                         <span class="status {% if enabled %}green{% endif %}"></span>
                                         <strong>{{ name }}</strong>
                                     </a>
@@ -107,13 +107,16 @@
                                 <span class="warning" data-icon="alert"></span>
                             {% endif %}
 
+                            <input type="hidden" name="name" value="{{ name }}">
+                            <input type="hidden" name="enabled" value="0">
+
                             <code>{{ handle }}</code>
                         </td>
 
                         <td class="nowrap" width="10%">
                             {{ forms.lightswitchField({
-                                name: handle,
-                                value: name,
+                                name: 'enabled',
+                                value: 1,
                                 on: enabled,
                             }) }}
                         </td>

@@ -15,6 +15,7 @@ class ShippingRule extends BaseShippingRule
     // =========================================================================
 
     public $provider;
+    public $shippingMethod;
 
 
     // Public Methods
@@ -33,5 +34,10 @@ class ShippingRule extends BaseShippingRule
         }
 
         return (float)$this->baseRate;
+    }
+
+    public function getShippingRuleCategories(): array
+    {
+        return $this->shippingMethod->shippingMethodCategories ?? [];
     }
 }

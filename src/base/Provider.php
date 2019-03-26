@@ -11,6 +11,7 @@ use craft\helpers\StringHelper;
 use craft\web\Response;
 
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\records\ShippingRuleCategory;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
@@ -109,6 +110,39 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $configSettings
         );
 
+        // Special-case for services - these should be converted form key-value into ShippingMethods
+        // Also helps with backwards compatibility and how services are stored in config files
+        if (isset($settings['services'])) {
+            foreach ($settings['services'] as $handle => $info) {
+                $shippingMethod = new ShippingMethod();
+                $shippingMethod->handle = $handle;
+                $shippingMethod->provider = $this;
+
+                // Stored in plugin settings as an array, config file as just the name
+                if (is_array($info)) {
+                    $shippingMethod->name = $info['name'];
+                    $shippingMethod->enabled = $info['enabled'];
+
+                    // Also sort out saved shipping categories
+                    if (isset($info['shippingCategories'])) {
+                        $ruleCategories = [];
+
+                        foreach ($info['shippingCategories'] as $key => $ruleCategory) {
+                            $ruleCategories[$key] = new ShippingRuleCategory($ruleCategory);
+                            $ruleCategories[$key]->shippingCategoryId = $key;
+                        }
+
+                        $shippingMethod->shippingMethodCategories = $ruleCategories;
+                    }
+                } else {
+                    $shippingMethod->name = $info;
+                    $shippingMethod->enabled = true;
+                }
+
+                $settings['services'][$handle] = $shippingMethod;
+            }
+        }
+
         return $settings;
     }
 
@@ -124,21 +158,18 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $shippingMethods = [];
 
-        foreach ($this->services as $handle => $name) {
-            $enabled = (bool)$name;
-
-            if ($enabled) {
-                $shippingMethod = new ShippingMethod();
-                $shippingMethod->name = $name;
-                $shippingMethod->handle = $handle;
-                $shippingMethod->enabled = $enabled;
-                $shippingMethod->provider = $this;
-
+        foreach ($this->services as $handle => $shippingMethod) {
+            if ($shippingMethod->enabled) {
                 $shippingMethods[$handle] = $shippingMethod;
             }
         }
 
         return $shippingMethods;
+    }
+
+    public function getShippingMethodByHandle($handle)
+    {
+        return $this->services[$handle] ?? [];
     }
 
     public function getShippingRates($order)

@@ -14,6 +14,7 @@ class ShippingMethod extends BaseShippingMethod
 
     public $provider;
     public $rate;
+    public $shippingMethodCategories;
 
 
     // Public Methods
@@ -44,6 +45,7 @@ class ShippingMethod extends BaseShippingMethod
         $shippingRule = new ShippingRule();
         $shippingRule->baseRate = $this->rate;
         $shippingRule->provider = $this->provider;
+        $shippingRule->shippingMethod = $this;
 
         return [$shippingRule];
     }
@@ -55,6 +57,6 @@ class ShippingMethod extends BaseShippingMethod
 
     public function getCpEditUrl(): string
     {
-        return UrlHelper::cpUrl('postie/providers/' . $this->provider->getHandle() . '/shippingmethods/' . $this->getHandle());
+        return UrlHelper::cpUrl('postie/settings/shipping-methods/' . $this->provider->getHandle() . '/' . $this->getHandle());
     }
 }

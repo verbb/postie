@@ -45,7 +45,7 @@ class Providers extends Component
         return $providers;
     }
 
-    public function getProvider($handle)
+    public function getProviderByHandle($handle)
     {
         $providers = $this->getAllProviders();
 
