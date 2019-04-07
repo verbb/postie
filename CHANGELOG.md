@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2 - 2019-04-07
+
+### Fixed
+- Swap XML parser for Canada Post.
+- Fix missing shipping description.
+
 ## 2.0.1 - 2019-03-27
 
 ### Fixed
