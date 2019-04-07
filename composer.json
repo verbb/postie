@@ -32,6 +32,8 @@
     "require": {
         "craftcms/cms": "^3.1.0",
         "craftcms/commerce": "^2.1.0",
+        "cakephp/core": "^3.5",
+        "cakephp/utility": "^3.3.12",
         "jeremy-dunn/php-fedex-api-wrapper": "^3.0",
         "vinceg/usps-php-api": "^1.0.0",
         "gabrielbull/ups-api": "^0.8.0",

@@ -9,7 +9,7 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
-use Vyuldashev\XmlToArray\XmlToArray;
+use Cake\Utility\Xml as XmlParser;
 
 class CanadaPost extends Provider
 {
@@ -134,9 +134,20 @@ XML;
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
-        $xml = simplexml_load_string((string)$response->getBody());
+        try {
+            // Allow parsing errors to be caught
+            libxml_use_internal_errors(true);
 
-        return XmlToArray::convert($xml->asXml());
+            $xml = simplexml_load_string((string)$response->getBody());
+
+            return XmlParser::toArray($xml);
+        } catch (\Throwable $e) {
+            if ($parseErrors = libxml_get_errors()) {
+                Provider::error($this, 'Invalid XML: ' . $parseErrors[0]->message . ': Line #' . $parseErrors[0]->line . '.');
+            } else {
+                Provider::error($this, 'Request error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            }
+        }
     }
 
     private function _getServiceHandle($value)
