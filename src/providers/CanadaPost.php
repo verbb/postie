@@ -66,12 +66,16 @@ class CanadaPost extends Provider
         //
         // TESTING
         //
-        // $storeLocation->zipCode = 'H2B1A0'; 
-        // $order->shippingAddress->zipCode = 'K1K4T3';
+        // $storeLocation->zipCode = 'K1H 7S5'; 
+        // $order->shippingAddress->zipCode = 'K1H 7S5';
         // $dimensions['weight'] = 1;
         //
         //
         //
+
+        // Remove spaces in zip code
+        $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
+        $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
         try {
             $xmlRequest = <<<XML
@@ -81,10 +85,10 @@ class CanadaPost extends Provider
     <parcel-characteristics>
         <weight>{$dimensions['weight']}</weight>
     </parcel-characteristics>
-    <origin-postal-code>{$storeLocation->zipCode}</origin-postal-code>
+    <origin-postal-code>{$originZipCode}</origin-postal-code>
     <destination>
         <domestic>
-            <postal-code>{$order->shippingAddress->zipCode}</postal-code>
+            <postal-code>{$orderZipCode}</postal-code>
         </domestic>
     </destination>
 </mailing-scenario>
