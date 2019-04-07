@@ -43,6 +43,7 @@ class ShippingMethod extends BaseShippingMethod
     public function getShippingRules(): array
     {
         $shippingRule = new ShippingRule();
+        $shippingRule->description = $this->name;
         $shippingRule->baseRate = $this->rate;
         $shippingRule->provider = $this->provider;
         $shippingRule->shippingMethod = $this;
