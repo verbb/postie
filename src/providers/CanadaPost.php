@@ -66,9 +66,9 @@ class CanadaPost extends Provider
         //
         // TESTING
         //
-        // $storeLocation->zipCode = 'K1H 7S5'; 
-        // $order->shippingAddress->zipCode = 'K1H 7S5';
-        // $dimensions['weight'] = 1;
+        $storeLocation->zipCode = 'K1H 7S5'; 
+        $order->shippingAddress->zipCode = 'K1H 7S5';
+        $dimensions['weight'] = 0.45359237;
         //
         //
         //
@@ -76,6 +76,9 @@ class CanadaPost extends Provider
         // Remove spaces in zip code
         $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
+
+        // API is very particular on format - float up to 3 decimal places
+        $dimensions['weight'] = number_format($dimensions['weight'], 3);
 
         try {
             $xmlRequest = <<<XML
