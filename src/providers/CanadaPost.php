@@ -106,7 +106,17 @@ XML;
                 Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
             }
         } catch (\Throwable $e) {
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            if ($e->hasResponse()) {
+                $data = $this->_parseResponse($e->getResponse());
+
+                if (isset($data['messages']['message']['description'])) {
+                    Provider::error($this, 'API error: `' . $data['messages']['message']['description'] . '`.');
+                } else {
+                    Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+                }
+            } else {
+                Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            }
         }
 
         return $this->_rates;
@@ -138,6 +148,11 @@ XML;
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
+        return $this->_parseResponse($response);
+    }
+
+    private function _parseResponse($response)
+    {
         try {
             // Allow parsing errors to be caught
             libxml_use_internal_errors(true);
