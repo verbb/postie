@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.3 - 2019-04-10
+
+### Fixed
+- Fix return type incompatibility causing errors.
+- Fix dimensions API issue with Canada Post.
+- Improve response error handling for Canada Post.
+- Fix lack of formatting handling for Canada Post zip codes.
+
 ## 2.0.2 - 2019-04-07
 
 ### Fixed
