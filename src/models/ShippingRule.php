@@ -21,7 +21,7 @@ class ShippingRule extends BaseShippingRule
     // Public Methods
     // =========================================================================
 
-    public function getOptions()
+    public function getOptions(): array
     {
         return [];
     }
