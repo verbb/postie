@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.3.1 - 2019-04-10
+
+### Fixed
+- Remove leftover debugging.
+
 ## 2.0.3 - 2019-04-10
 
 ### Fixed

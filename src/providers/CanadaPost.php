@@ -66,9 +66,9 @@ class CanadaPost extends Provider
         //
         // TESTING
         //
-        $storeLocation->zipCode = 'K1H 7S5'; 
-        $order->shippingAddress->zipCode = 'K1H 7S5';
-        $dimensions['weight'] = 0.45359237;
+        // $storeLocation->zipCode = 'K1H 7S5'; 
+        // $order->shippingAddress->zipCode = 'K1H 7S5';
+        // $dimensions['weight'] = 0.45359237;
         //
         //
         //
