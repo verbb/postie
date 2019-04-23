@@ -177,19 +177,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $settings = Postie::$plugin->getSettings();
 
         if (!$order) {
-            Provider::error($this, 'Missing required order variable.');
+            Provider::log($this, 'Missing required order variable.');
 
             return;
         }
 
         if (!$order->getLineItems()) {
-            Provider::error($this, 'No line items for order.');
+            Provider::log($this, 'No line items for order.');
 
             return;
         }
 
         if (!$order->shippingAddress) {
-            Provider::error($this, 'No shipping address for order.');
+            Provider::log($this, 'No shipping address for order.');
 
             return;
         }
@@ -204,7 +204,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
             // If is it not in the cache get rate via API
             if ($shippingRates === false) {
-                $shippingRates = $this->fetchShippingRates($order);
+                $shippingRates = $this->prepareFetchShippingRates($order);
 
                 // Set this in our cache for the next request to be much quicker
                 if ($shippingRates) {
@@ -212,10 +212,29 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 }
             }
         } else {
-            $shippingRates = $this->fetchShippingRates($order);
+            $shippingRates = $this->prepareFetchShippingRates($order);
         }
 
         return $shippingRates;
+    }
+
+    public function prepareFetchShippingRates($order)
+    {
+        $settings = Postie::$plugin->getSettings();
+        $request = Craft::$app->getRequest();
+
+        // Allow opt-out of fetching rates immediately - namely when adding to the cart
+        // or updating. Instead, opting for a manual trigger through a post variable
+        // in the request. Only then will it fetch rates. Otherwise, fetch rates immediately.
+        if ($settings->delayFetchRates && $settings->fetchRatesPostValue) {
+            if ($request->getParam($settings->fetchRatesPostValue)) {
+                return $this->fetchShippingRates($order);
+            }
+        } else {
+            return $this->fetchShippingRates($order);
+        }
+
+        return [];
     }
 
 
