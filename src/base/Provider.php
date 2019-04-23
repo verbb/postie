@@ -37,7 +37,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected $_client;
     protected $_rates;
-    protected static $_cachedRates = [];
+    protected static $_cachedRates;
 
 
     // Public Methods
@@ -117,7 +117,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             foreach ($settings['services'] as $handle => $info) {
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
-                $shippingMethod->provider = $this;
+                $shippingMethod->provider = clone $this;
 
                 // Stored in plugin settings as an array, config file as just the name
                 if (is_array($info)) {
@@ -223,7 +223,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function prepareFetchShippingRates($order)
     {
-        if (!self::$_cachedRates) {
+        if (self::$_cachedRates === null) {
             self::$_cachedRates = $this->fetchShippingRates($order);
         }
 
