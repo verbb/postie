@@ -13,7 +13,7 @@ class Settings extends Model
     public $enableCaching = true;
     public $displayDebug = false;
     public $displayErrors = false;
-    public $delayFetchRates = false;
+    public $manualFetchRates = false;
     public $fetchRatesPostValue = 'postie-fetch-rates';
     public $providers = [];
 

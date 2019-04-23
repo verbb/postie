@@ -226,7 +226,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Allow opt-out of fetching rates immediately - namely when adding to the cart
         // or updating. Instead, opting for a manual trigger through a post variable
         // in the request. Only then will it fetch rates. Otherwise, fetch rates immediately.
-        if ($settings->delayFetchRates && $settings->fetchRatesPostValue) {
+        if ($settings->manualFetchRates && $settings->fetchRatesPostValue) {
             if ($request->getParam($settings->fetchRatesPostValue)) {
                 return $this->fetchShippingRates($order);
             }
