@@ -37,6 +37,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected $_client;
     protected $_rates;
+    protected static $_cachedRates = [];
 
 
     // Public Methods
@@ -194,6 +195,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return;
         }
 
+        $shippingRates = [];
+
         if ($settings->enableCaching) {        
             // Setup some caching mechanism to save API requests
             $signature = $this->getSignature($this->handle, $order);
@@ -220,21 +223,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function prepareFetchShippingRates($order)
     {
-        $settings = Postie::$plugin->getSettings();
-        $request = Craft::$app->getRequest();
-
-        // Allow opt-out of fetching rates immediately - namely when adding to the cart
-        // or updating. Instead, opting for a manual trigger through a post variable
-        // in the request. Only then will it fetch rates. Otherwise, fetch rates immediately.
-        if ($settings->manualFetchRates && $settings->fetchRatesPostValue) {
-            if ($request->getParam($settings->fetchRatesPostValue)) {
-                return $this->fetchShippingRates($order);
-            }
-        } else {
-            return $this->fetchShippingRates($order);
+        if (!self::$_cachedRates) {
+            self::$_cachedRates = $this->fetchShippingRates($order);
         }
 
-        return [];
+        return self::$_cachedRates;
     }
 
 
