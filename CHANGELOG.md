@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.4 - 2019-06-01
+
+### Added
+- Add `delayFetchRates`, `manualFetchRates` and `fetchRatesPostValue`.
+
+### Changed
+- Improve in-memory caching.
+
+### Fixed
+- Fix memory issues in certain cases when fetching rates.
+- Tweak state handling for Fedex.
+
 ## 2.0.3.1 - 2019-04-10
 
 ### Fixed
