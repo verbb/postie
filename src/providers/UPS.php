@@ -105,7 +105,9 @@ class UPS extends Provider
 
             // UPS can't handle 3-character states. Ignoring it is valid for international order
             if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
-                $shipFromAddress->setStateProvinceCode($storeLocation->state->abbreviation);
+                $state = $storeLocation->state->abbreviation ?? '';
+                
+                $shipFromAddress->setStateProvinceCode($state);
             }
 
             $shipFrom = new ShipFrom();
