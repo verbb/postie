@@ -18,6 +18,7 @@ use Ups\Entity\Package;
 use Ups\Entity\PackagingType;
 use Ups\Entity\Dimensions;
 use Ups\Entity\UnitOfMeasurement;
+use Ups\Entity\RateInformation;
 
 class UPS extends Provider
 {
@@ -140,7 +141,12 @@ class UPS extends Provider
 
             $shipment->addPackage($package);
 
-            // $shipment->showNegotiatedRates();
+            // Check for negotiated rates
+            if ($this->settings['negotiatedRates']) {
+                $rateInformation = new RateInformation;
+                $rateInformation->setNegotiatedRatesIndicator(1);
+                $shipment->setRateInformation($rateInformation);
+            }
         
             // Perform the request
             $rates = $this->_client->shopRates($shipment);

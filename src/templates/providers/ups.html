@@ -37,3 +37,11 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Use Negotiated Rates' | t('postie'),
+    id: 'negotiatedRates',
+    name: 'negotiatedRates',
+    on: provider.settings.negotiatedRates ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.negotiatedRates', 'postie'),
+}) }}
+
