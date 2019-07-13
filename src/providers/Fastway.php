@@ -3,6 +3,7 @@ namespace verbb\postie\providers;
 
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
+use verbb\postie\events\ModifyRatesEvent;
 
 use Craft;
 use craft\helpers\Json;
@@ -113,6 +114,19 @@ class Fastway extends Provider
             } else {
                 Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
             }
+
+            // Allow rate modification via events
+            $modifyRatesEvent = new ModifyRatesEvent([
+                'rates' => $this->_rates,
+                'response' => $response,
+            ]);
+
+            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
+                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
+            }
+
+            $this->_rates = $modifyRatesEvent->rates;
+            
         } catch (\Throwable $e) {
             Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
         }

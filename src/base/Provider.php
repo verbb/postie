@@ -24,6 +24,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     const PERCENTAGE = 'percentage';
     const VALUE = 'value';
 
+    const EVENT_MODIFY_RATES = 'modifyRates';
+
 
     // Properties
     // =========================================================================

@@ -3,6 +3,7 @@ namespace verbb\postie\providers;
 
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
+use verbb\postie\events\ModifyRatesEvent;
 
 use Craft;
 use craft\helpers\Json;
@@ -212,6 +213,18 @@ class FedEx extends Provider
             } else {
                 Provider::error($this, 'Unable to fetch rates: `' . json_encode($rateReply) . '`.');
             }
+
+            // Allow rate modification via events
+            $modifyRatesEvent = new ModifyRatesEvent([
+                'rates' => $this->_rates,
+                'response' => $rateReply,
+            ]);
+
+            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
+                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
+            }
+
+            $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
             // Craft::dump($e->getMessage());
