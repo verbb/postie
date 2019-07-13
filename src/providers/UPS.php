@@ -166,7 +166,9 @@ class UPS extends Provider
                     $amount = $rate->TotalCharges->MonetaryValue ?? '';
 
                     // If we're using negotiated rates, return that, not the normal values
-                    if (property_exists($rate, 'NegotiatedRates')) {
+                    $negotiatedRates = $rate->NegotiatedRates ?? '';
+
+                    if ($negotiatedRates) {
                         $amount = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
                     }
 
