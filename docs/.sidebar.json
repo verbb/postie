@@ -14,7 +14,8 @@
         "children": [
             "setup-configuration/products",
             "setup-configuration/providers",
-            "setup-configuration/shipping-methods"
+            "setup-configuration/shipping-methods",
+            "setup-configuration/displaying-rates"
         ]
     },
     {
@@ -33,7 +34,8 @@
         "title": "Developers",
         "collapsable": false,
         "children": [
-            "developers/provider"
+            "developers/provider",
+            "developers/events"
         ]
     },
     {
