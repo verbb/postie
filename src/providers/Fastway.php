@@ -55,6 +55,28 @@ class Fastway extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
         $dimensions = $this->getDimensions($order, 'kg', 'cm');
 
+        //
+        // TESTING
+        //
+        // $country = Commerce::getInstance()->countries->getCountryByIso('AU');
+        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'Vic');
+
+        // $storeLocation = new craft\commerce\models\Address();
+        // $storeLocation->address1 = '83 Langridge Street';
+        // $storeLocation->city = 'Collingwood';
+        // $storeLocation->zipCode = '3066';
+        // $storeLocation->stateId = $state->id;
+        // $storeLocation->countryId = $country->id;
+
+        // $order->shippingAddress->address1 = '85 Lime Ave';
+        // $order->shippingAddress->city = 'Mildura';
+        // $order->shippingAddress->zipCode = '3500';
+        // $order->shippingAddress->stateId = $state->id;
+        // $order->shippingAddress->countryId = $country->id;
+        //
+        // 
+        //
+
         try {
             $countryCode = $this->_getCountryCode($order->shippingAddress->country);
 
@@ -83,7 +105,10 @@ class Fastway extends Provider
                 foreach ($response['result']['services'] as $service) {
                     $serviceHandle = $this->_getServiceHandle($service['labelcolour']);
 
-                    $this->_rates[$serviceHandle] = (float)$service['totalprice_normal'];
+                    $this->_rates[$serviceHandle] = [
+                        'amount' => (float)$service['totalprice_normal'] ?? '',
+                        'options' => $response['result'],
+                    ];
                 }
             } else {
                 Provider::error($this, 'Response error: `' . json_encode($response) . '`.');

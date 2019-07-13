@@ -163,16 +163,25 @@ class UPS extends Provider
                 foreach ($rates->RatedShipment as $rate) {
                     $serviceHandle = $this->_getServiceHandle($rate->Service->getCode());
 
-                    $amount = $rate->TotalCharges->MonetaryValue ?? '';
+                    $rateInfo = [
+                        'amount' => $rate->TotalCharges->MonetaryValue ?? '',
+                        'options' => [
+                            'guaranteedDaysToDelivery' => $rate->GuaranteedDaysToDelivery ?? '',
+                            'scheduledDeliveryTime' => $rate->ScheduledDeliveryTime ?? '',
+                            'rateShipmentWarning' => $rate->RateShipmentWarning ?? '',
+                            'surCharges' => $rate->SurCharges ?? '',
+                            'timeInTransit' => $rate->TimeInTransit ?? '',
+                        ],
+                    ];
 
                     // If we're using negotiated rates, return that, not the normal values
                     $negotiatedRates = $rate->NegotiatedRates ?? '';
 
                     if ($negotiatedRates) {
-                        $amount = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
+                        $rateInfo['amount'] = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
                     }
 
-                    $this->_rates[$serviceHandle] = $amount;
+                    $this->_rates[$serviceHandle] = $rateInfo;
                 }
             }
         } catch (\Throwable $e) {

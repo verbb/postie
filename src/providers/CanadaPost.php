@@ -103,7 +103,10 @@ XML;
                 foreach ($response['price-quotes']['price-quote'] as $service) {
                     $serviceHandle = $this->_getServiceHandle($service['service-code']);
 
-                    $this->_rates[$serviceHandle] = (float)$service['price-details']['due'];
+                    $this->_rates[$serviceHandle] = [
+                        'amount' => (float)$service['price-details']['due'] ?? '',
+                        'options' => $service,
+                    ];
                 }
             } else {
                 Provider::error($this, 'Response error: `' . json_encode($response) . '`.');

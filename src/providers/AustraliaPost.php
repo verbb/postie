@@ -74,7 +74,7 @@ class AustraliaPost extends Provider
         // $order->shippingAddress->stateId = $state->id;
         // $order->shippingAddress->countryId = $country->id;
         //
-        //
+        // 
         //
 
         try {
@@ -113,7 +113,10 @@ class AustraliaPost extends Provider
 
             if (isset($response['services']['service'])) {
                 foreach ($response['services']['service'] as $service) {
-                    $this->_rates[$service['code']] = (float)$service['price'];
+                    $this->_rates[$service['code']] = [
+                        'amount' => (float)$service['price'] ?? '',
+                        'options' => $service,
+                    ];
                 }
             } else {
                 Provider::error($this, 'Response error: `' . json_encode($response) . '`.');

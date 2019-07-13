@@ -14,6 +14,7 @@ class ShippingMethod extends BaseShippingMethod
 
     public $provider;
     public $rate;
+    public $rateOptions;
     public $shippingMethodCategories;
 
 
@@ -47,6 +48,7 @@ class ShippingMethod extends BaseShippingMethod
         $shippingRule->baseRate = $this->rate;
         $shippingRule->provider = $this->provider;
         $shippingRule->shippingMethod = $this;
+        $shippingRule->options = $this->rateOptions;
 
         return [$shippingRule];
     }

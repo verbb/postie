@@ -126,6 +126,18 @@ class USPS extends Provider
         // $order->shippingAddress->zipCode = '94043';
         // $order->shippingAddress->stateId = $state->id;
         // $order->shippingAddress->countryId = $country->id;
+
+        // // International
+        // // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
+        // // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'ON');
+
+        // // $order->shippingAddress->address1 = '80 Spadina Ave';
+        // // $order->shippingAddress->city = 'Toronto';
+        // // $order->shippingAddress->zipCode = 'M5V 2J4';
+        // // $order->shippingAddress->stateId = $state->id;
+        // // $order->shippingAddress->countryId = $country->id;
+
+        // // $dimensions['height'] = 1;
         //
         //
         //
@@ -204,14 +216,29 @@ class USPS extends Provider
                 foreach ($response['RateV4Response']['Package']['Postage'] as $service) {
                     $serviceHandle = $this->_getServiceHandle($service['MailService']);
 
-                    $this->_rates[$serviceHandle] = $service['Rate'];
+                    $this->_rates[$serviceHandle] = [
+                        'amount' => $service['Rate'],
+                        'options' => [
+                            'mailService' => $service['MailService'],
+                            'zipOrigination' => $response['RateV4Response']['Package']['ZipOrigination'] ?? '',
+                            'zipDestination' => $response['RateV4Response']['Package']['ZipDestination'] ?? '',
+                            'pounds' => $response['RateV4Response']['Package']['Pounds'] ?? '',
+                            'ounces' => $response['RateV4Response']['Package']['Ounces'] ?? '',
+                            'size' => $response['RateV4Response']['Package']['Size'] ?? '',
+                            'machinable' => $response['RateV4Response']['Package']['Machinable'] ?? '',
+                            'zone' => $response['RateV4Response']['Package']['Zone'] ?? '',
+                        ],
+                    ];
                 }
             } else {
                 if (isset($response['IntlRateV2Response']['Package']['Service'])) {
                     foreach ($response['IntlRateV2Response']['Package']['Service'] as $service) {
                         $serviceHandle = $this->_getServiceHandle($service['SvcDescription']);
 
-                        $this->_rates[$serviceHandle] = $service['Postage'];
+                        $this->_rates[$serviceHandle] = [
+                            'amount' => $service['Postage'],
+                            'options' => $service,
+                        ];
                     }
                 } else if (isset($response['IntlRateV2Response']['Package']['Error'])) {
                     Provider::error($this, json_encode($response['IntlRateV2Response']['Package']['Error']));

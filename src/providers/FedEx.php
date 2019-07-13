@@ -189,7 +189,21 @@ class FedEx extends Provider
                         continue;
                     }
 
-                    $this->_rates[$rateReplyDetails->ServiceType] = $rate;
+                    $this->_rates[$rateReplyDetails->ServiceType] = [
+                        'amount' => $rate,
+                        'options' => [
+                            'ServiceType' => $rateReplyDetails->ServiceType ?? '',
+                            'ServiceDescription' => $rateReplyDetails->ServiceDescription->Description ?? '',
+                            'packagingType' => $rateReplyDetails->PackagingType ?? '',
+                            'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
+                            'deliveryDayOfWeek' => $rateReplyDetails->DeliveryDayOfWeek ?? '',
+                            'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
+                            'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
+                            'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? '',
+                            'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
+                            'destinationServiceArea' => $rateReplyDetails->DestinationServiceArea ?? '',
+                        ],
+                    ];
                 }
             } elseif (isset($rateReply->Notifications)) {
                 foreach ($rateReply->Notifications as $message) {

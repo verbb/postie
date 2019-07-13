@@ -16,6 +16,7 @@ class ShippingRule extends BaseShippingRule
 
     public $provider;
     public $shippingMethod;
+    public $options = [];
 
 
     // Public Methods
@@ -23,7 +24,7 @@ class ShippingRule extends BaseShippingRule
 
     public function getOptions(): array
     {
-        return [];
+        return $this->options;
     }
 
     public function getBaseRate(): float
