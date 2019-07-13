@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.5 - 2019-07-13
+
+### Added
+- Add `modifyRates` providing access to the raw response from a provider and the extracted shipping rates. See [docs](https://verbb.io/craft-plugins/postie/docs/developers/events#the-modifyRates-event).
+- All shipping rates now have additional options available on the shipping rule. See [docs](https://verbb.io/craft-plugins/postie/docs/setup-configuration/displaying-rates#rate-options).
+- Add negotiated rate support for UPS.
+
+### Fixed
+- Fix error with store location state for UPS.
+
 ## 2.0.4 - 2019-06-01
 
 ### Added
