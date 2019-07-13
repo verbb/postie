@@ -37,6 +37,14 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
+{{ forms.textField({
+    label: 'Account Number' | t('postie'),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    value: provider.settings.accountNumber ?? '',
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.accountNumber', 'postie'),
+}) }}
+
 {{ forms.lightswitchField({
     label: 'Use Negotiated Rates' | t('postie'),
     id: 'negotiatedRates',

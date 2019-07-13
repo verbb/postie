@@ -19,6 +19,7 @@ use Ups\Entity\PackagingType;
 use Ups\Entity\Dimensions;
 use Ups\Entity\UnitOfMeasurement;
 use Ups\Entity\RateInformation;
+use Ups\Entity\PaymentInformation;
 
 class UPS extends Provider
 {
@@ -141,11 +142,18 @@ class UPS extends Provider
 
             $shipment->addPackage($package);
 
+            $negotiatedRates = $this->settings['negotiatedRates'] ?? '';
+            $accountNumber = $this->settings['accountNumber'] ?? '';
+
             // Check for negotiated rates
-            if ($this->settings['negotiatedRates']) {
+            if ($negotiatedRates && $accountNumber) {
                 $rateInformation = new RateInformation;
                 $rateInformation->setNegotiatedRatesIndicator(1);
                 $shipment->setRateInformation($rateInformation);
+
+                $shipper = $shipment->getShipper();
+                $shipper->setShipperNumber($accountNumber);
+                $shipment->setPaymentInformation(new PaymentInformation('prepaid', (object)['AccountNumber' => $accountNumber]));
             }
         
             // Perform the request
@@ -155,7 +163,14 @@ class UPS extends Provider
                 foreach ($rates->RatedShipment as $rate) {
                     $serviceHandle = $this->_getServiceHandle($rate->Service->getCode());
 
-                    $this->_rates[$serviceHandle] = $rate->TotalCharges->MonetaryValue;
+                    $amount = $rate->TotalCharges->MonetaryValue ?? '';
+
+                    // If we're using negotiated rates, return that, not the normal values
+                    if (property_exists($rate, 'NegotiatedRates')) {
+                        $amount = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
+                    }
+
+                    $this->_rates[$serviceHandle] = $amount;
                 }
             }
         } catch (\Throwable $e) {
