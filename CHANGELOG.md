@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6 - 2019-07-16
+
+### Fixed
+- Fix provider settings not being populated on shipping methods and rules. Meant markup rates weren't working correctly.
+
 ## 2.0.5 - 2019-07-13
 
 ### Added
