@@ -117,9 +117,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Also helps with backwards compatibility and how services are stored in config files
         if (isset($settings['services'])) {
             foreach ($settings['services'] as $handle => $info) {
+                // Create a temporary provider instance, just to pass to the shipping method
+                // We need to be careful here so as not to cause an infinite loop.
+                $tempProvider = clone $this;
+
+                // Populate the temp provider with some stuff - just don't include services
+                // that'll cause an infinite loop.
+                $tempProvider->enabled = $settings['enabled'] ?? null;
+                $tempProvider->settings = $settings['settings'] ?? null;
+                $tempProvider->markUpRate = $settings['markUpRate'] ?? null;
+                $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
+
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
-                $shippingMethod->provider = clone $this;
+                $shippingMethod->provider = $tempProvider;
 
                 // Stored in plugin settings as an array, config file as just the name
                 if (is_array($info)) {

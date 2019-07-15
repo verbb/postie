@@ -58,6 +58,25 @@
 		"oO": 0,
 		"oS": 1
 		},
+	"/docs/developers/events.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/developers/events.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
 	"/docs/developers/provider.md": {
 		"cB": 0,
 		"cS": 0,
@@ -196,6 +215,25 @@
 		"opt": 0,
 		"oT": 1,
 		"q": 100
+		},
+	"/docs/setup-configuration/displaying-rates.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/setup-configuration/displaying-rates.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
 		},
 	"/docs/setup-configuration/products.md": {
 		"cB": 0,
@@ -479,6 +517,14 @@
 		"ft": 65536,
 		"oA": 1,
 		"oAP": "/build/src/controllers",
+		"oF": 0
+		},
+	"/src/events/ModifyRatesEvent.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/events/ModifyRatesEvent.php",
 		"oF": 0
 		},
 	"/src/events/RegisterProviderTypesEvent.php": {
