@@ -29,6 +29,37 @@ class UPS extends Provider
 
     public $name = 'UPS';
 
+    private $euCountries = [
+        'AT' => 'Austria',
+        'BE' => 'Belgium',
+        'BG' => 'Bulgaria',
+        'CY' => 'Cyprus',
+        'CZ' => 'Czech Republic',
+        'DE' => 'Germany',
+        'DK' => 'Denmark',
+        'EE' => 'Estonia',
+        'ES' => 'Spain',
+        'FI' => 'Finland',
+        'FR' => 'France',
+        'GB' => 'United Kingdom',
+        'GR' => 'Greece',
+        'HU' => 'Hungary',
+        'HR' => 'Croatia',
+        'IE' => 'Ireland, Republic of (EIRE)',
+        'IT' => 'Italy',
+        'LT' => 'Lithuania',
+        'LU' => 'Luxembourg',
+        'LV' => 'Latvia',
+        'MT' => 'Malta',
+        'NL' => 'Netherlands',
+        'PL' => 'Poland',
+        'PT' => 'Portugal',
+        'RO' => 'Romania',
+        'SE' => 'Sweden',
+        'SI' => 'Slovenia',
+        'SK' => 'Slovakia',
+    ];
+
 
     // Public Methods
     // =========================================================================
@@ -145,6 +176,24 @@ class UPS extends Provider
         // $order->shippingAddress->zipCode = '94043';
         // $order->shippingAddress->stateId = $state->id;
         // $order->shippingAddress->countryId = $country->id;
+
+        // EU Testing
+        // $country = Commerce::getInstance()->countries->getCountryByIso('GB');
+
+        // $storeLocation = new craft\commerce\models\Address();
+        // $storeLocation->address1 = '2 Bedfont Lane';
+        // $storeLocation->city = 'London';
+        // $storeLocation->zipCode = 'CV226PD';
+        // $storeLocation->stateName = 'Warwickshire';
+        // $storeLocation->countryId = $country->id;
+
+        // $country = Commerce::getInstance()->countries->getCountryByIso('GB');
+
+        // $order->shippingAddress->address1 = 'Southam Rd';
+        // $order->shippingAddress->city = 'Dunchurch';
+        // $order->shippingAddress->zipCode = 'CV226PD';
+        // $order->shippingAddress->stateName = 'Warwickshire';
+        // $order->shippingAddress->countryId = $country->id;
         //
         // TESTING
         //
@@ -156,9 +205,11 @@ class UPS extends Provider
             $shipFromAddress->setPostalCode($storeLocation->zipCode);
 
             // UPS can't handle 3-character states. Ignoring it is valid for international order
-            if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
+            $allowedZipCodeCountries = ['US', 'CA'];
+
+            if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
                 $state = $storeLocation->state->abbreviation ?? '';
-                
+
                 $shipFromAddress->setStateProvinceCode($state);
             }
 
@@ -211,7 +262,13 @@ class UPS extends Provider
 
             if (isset($rates->RatedShipment)) {
                 foreach ($rates->RatedShipment as $rate) {
-                    $serviceHandle = $this->_getServiceHandle($rate->Service->getCode());
+                    $serviceHandle = $this->_getServiceHandle($rate->Service->getCode(), $storeLocation, $order->shippingAddress);
+
+                    if (!$serviceHandle) {
+                        Provider::error($this, 'Unable to find matching service handle for: `' . $rate->Service->getName() . ':' . '`.');
+
+                        continue;
+                    }
 
                     $rateInfo = [
                         'amount' => $rate->TotalCharges->MonetaryValue ?? '',
@@ -277,11 +334,99 @@ class UPS extends Provider
         return $this->_client;
     }
 
-    private static function _getServiceHandle($value)
+    private function _inEU($country)
     {
-        $class = new \ReflectionClass('Ups\Entity\Service');
-        $constants = array_flip($class->getConstants());
+        return isset($this->euCountries[$country->iso]) ? true : false;
+    }
 
-        return $constants[$value];
+    private function _getServiceHandle($code, $storeLocation, $shippingAddress)
+    {
+        // We need some smarts here, because UPS has multiple handles for the same service code, depending on the
+        // origin or destination of the parcel. Do a little more work here...
+        $services = [
+            'S_AIR_1DAYEARLYAM' => '14',
+            'S_AIR_1DAY' => '01',
+            'S_AIR_1DAYSAVER' => '13',
+            'S_AIR_2DAYAM' => '59',
+            'S_AIR_2DAY' => '02',
+            'S_3DAYSELECT' => '12',
+            'S_GROUND' => '03',
+            'S_SURE_POST' => '93',
+
+            // Valid international values
+            'S_STANDARD' => '11',
+            'S_WW_EXPRESS' => '07',
+            'S_WW_EXPRESSPLUS' => '54',
+            'S_WW_EXPEDITED' => '08',
+            'S_SAVER' => '65',
+            'S_ACCESS_POINT' => '70',
+
+            // Valid Poland to Poland same day values
+            'S_UPSTODAY_STANDARD' => '82',
+            'S_UPSTODAY_DEDICATEDCOURIER' => '83',
+            'S_UPSTODAY_INTERCITY' => '84',
+            'S_UPSTODAY_EXPRESS' => '85',
+            'S_UPSTODAY_EXPRESSSAVER' => '86',
+            'S_UPSWW_EXPRESSFREIGHT' => '96',
+
+            // Valid Germany to Germany values
+            'S_UPSEXPRESS_1200' => '74',
+
+            // Time in Transit Response Service Codes: United States Domestic Shipments
+            'TT_S_US_AIR_1DAYAM' => '1DM',
+            'TT_S_US_AIR_1DAY' => '1DA',
+            'TT_S_US_AIR_SAVER' => '1DP',
+            'TT_S_US_AIR_2DAYAM' => '2DM',
+            'TT_S_US_AIR_2DAY' => '2DA',
+            'TT_S_US_3DAYSELECT' => '3DS',
+            'TT_S_US_GROUND' => 'GND',
+            'TT_S_US_AIR_1DAYSATAM' => '1DMS',
+            'TT_S_US_AIR_1DAYSAT' => '1DAS',
+            'TT_S_US_AIR_2DAYSAT' => '2DAS',
+        ];
+
+        // Comment these out until we can figure out a better way to test origin EU addresses
+
+        // $services = [
+        //     // Time in Transit Response Service Codes: Other Shipments Originating in US
+        //     'TT_S_US_INTL_EXPRESSPLUS' => '21',
+        //     'TT_S_US_INTL_EXPRESS' => '01',
+        //     'TT_S_US_INTL_SAVER' => '28',
+        //     'TT_S_US_INTL_STANDARD' => '03',
+        //     'TT_S_US_INTL_EXPEDITED' => '05',
+        // ];
+
+        // $services = [
+        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
+        //     // Destination is WITHIN the Origin Country
+        //     'TT_S_EU_EXPRESSPLUS' => '23',
+        //     'TT_S_EU_EXPRESS' => '24',
+        //     'TT_S_EU_SAVER' => '26',
+        //     'TT_S_EU_STANDARD' => '25',
+        // ];
+
+        // $services = [
+        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
+        //     // Destination is Another EU Country
+        //     'TT_S_EU_TO_EU_EXPRESSPLUS' => '22',
+        //     'TT_S_EU_TO_EU_EXPRESS' => '10',
+        //     'TT_S_EU_TO_EU_SAVER' => '18',
+        //     'TT_S_EU_TO_EU_STANDARD' => '08',
+        // ];
+
+        // $services = [
+        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
+        //     // Destination is Outside the EU
+        //     'TT_S_EU_TO_OTHER_EXPRESS_NA1' => '11',
+        //     'TT_S_EU_TO_OTHER_EXPRESSPLUS' => '21',
+        //     'TT_S_EU_TO_OTHER_EXPRESS' => '01',
+        //     'TT_S_EU_TO_OTHER_SAVER' => '28',
+        //     'TT_S_EU_TO_OTHER_EXPEDITED' => '05',
+        //     'TT_S_EU_TO_OTHER_STANDARD' => '68',
+        // ];
+
+        $serviceHandle = array_search($code, $services);
+
+        return $serviceHandle;
     }
 }
