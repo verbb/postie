@@ -249,9 +249,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public static function log($provider, $message)
     {
+        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
 
-        if (Postie::$plugin->getSettings()->displayDebug) {
+        if (Postie::$plugin->getSettings()->displayDebug && $isSiteRequest) {
             Craft::dump($message);
         }
 
@@ -260,9 +261,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public static function error($provider, $message)
     {
+        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
 
-        if (Postie::$plugin->getSettings()->displayErrors) {
+        if (Postie::$plugin->getSettings()->displayErrors && $isSiteRequest) {
             Craft::dump($message);
         }
 
