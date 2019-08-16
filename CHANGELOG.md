@@ -4,7 +4,7 @@
 
 ### Fixed
 - Remove provider settings from shipping method requests, particularly for XHR.
-- Fix debug statements occuring for non-site requests.
+- Fix debug statements occurring for non-site requests.
 
 ## 2.0.7 - 2019-08-16
 
