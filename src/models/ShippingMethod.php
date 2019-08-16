@@ -50,6 +50,11 @@ class ShippingMethod extends BaseShippingMethod
         $shippingRule->shippingMethod = $this;
         $shippingRule->options = $this->rateOptions;
 
+        // Drop any settings for the provider, these are returned with calculation requests
+        if (property_exists($shippingRule->provider, 'settings')) {
+            $shippingRule->provider->settings = [];
+        }
+
         return [$shippingRule];
     }
 
