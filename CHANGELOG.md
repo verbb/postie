@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.8 - 2019-08-17
+
+### Fixed
+- Remove provider settings from shipping method requests, particularly for XHR.
+- Fix debug statements occuring for non-site requests.
+
 ## 2.0.7 - 2019-08-16
 
 ### Added
