@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.7 - 2019-08-16
+
+### Added
+- Add support for Commerce 3.
+- Add more UPS services, and change the way UPS services match.
+
 ## 2.0.6 - 2019-07-16
 
 ### Fixed
