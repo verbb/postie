@@ -41,6 +41,12 @@ class MyProvider extends Provider
         return Craft::$app->getView()->renderTemplate('plugin-path/provider', ['provider' => $this]);
     }
 
+    public function getIconUrl()
+    {   
+        // Replace with your path, or remove entirely for no icon
+        return Craft::$app->assetManager->getPublishedUrl('@namespace/plugin/resources/dist/img/provider-icon.svg', true);
+    }
+
     public function getServiceList(): array
     {
         return [
@@ -73,7 +79,7 @@ class MyProvider extends Provider
             // Return an array of values, keyed by each available service handle
             $this->_rates['SERVICE_HANDLE'] = [
                 'amount' => 10.0
-                ];
+            ];
             // ...
 
         } catch (\Throwable $e) {
