@@ -60,7 +60,7 @@ class ShippingMethod extends BaseShippingMethod
 
     public function getIsEnabled(): bool
     {
-        return (bool)$this->enabled && (bool)$this->rate;
+        return (bool)$this->enabled && isset($this->rate);
     }
 
     public function getCpEditUrl(): string
