@@ -71,7 +71,9 @@ class MyProvider extends Provider
             //
 
             // Return an array of values, keyed by each available service handle
-            $this->_rates['SERVICE_HANDLE'] = 10.0;
+            $this->_rates['SERVICE_HANDLE'] = [
+                'amount' => 10.0
+                ];
             // ...
 
         } catch (\Throwable $e) {
