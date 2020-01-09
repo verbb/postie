@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.1.0 - 2020-01-09
+
+### Added
+- Add TNT Australia provider.
+- Add 2- and 3-day Priority options to USPS. (thanks @AugustMiller).
+- Add `Order` object to `ModifyRatesEvent`. (thanks @AugustMiller).
+- Add `beforeFetchRates` event.
+
+### Changed
+- Update FedEx for Ground Transit Time. FedEx handles the delivery date for Ground different than Express. For Ground, they use `TransitTime`. (thanks @keyurshah).
+
+### Fixed
+- Fix provider icon error for custom provider.
+- Fix USPS/UPS handles, incorrectly being set as `uSPS` and `uPS`.
+- Fix incorrect caching of rates for multiple providers.
+- Fix zero-based rates not being shown to pick during checkout.
+- Fix AusPost and Canada post error handling.
+
 ## 2.0.8 - 2019-08-17
 
 ### Fixed
