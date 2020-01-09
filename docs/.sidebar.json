@@ -26,6 +26,7 @@
             "shipping-providers/canada-post",
             "shipping-providers/fastway",
             "shipping-providers/fedex",
+            "shipping-providers/tnt-australia",
             "shipping-providers/ups",
             "shipping-providers/usps"
         ]

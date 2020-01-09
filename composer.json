@@ -37,7 +37,8 @@
         "jeremy-dunn/php-fedex-api-wrapper": "^3.0",
         "vinceg/usps-php-api": "^1.0.0",
         "gabrielbull/ups-api": "^0.8.0",
-        "php-units-of-measure/php-units-of-measure": "^2.1"
+        "php-units-of-measure/php-units-of-measure": "^2.1",
+        "verdant/xml2array": "dev-master"
     },
     "autoload": {
         "psr-4": {

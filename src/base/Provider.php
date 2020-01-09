@@ -78,6 +78,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return strtolower($class);
         }
 
+        if ($class === 'TNTAustralia') {
+            return 'tntAustralia';
+        }
+
         return StringHelper::toCamelCase($class);
     }
 
