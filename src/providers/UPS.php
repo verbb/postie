@@ -158,6 +158,9 @@ class UPS extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
         $dimensions = $this->getDimensions($order, 'lb', 'in');
 
+        // Allow location and dimensions modification via events
+        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+
         //
         // TESTING
         //

@@ -45,6 +45,9 @@ class TNT extends Provider
         $volume = $dimensions['width'] * $dimensions['height'] * $dimensions['length'];
         $nextDate = $this->_numberOfWorkingDates(date('Y-m-d'), 1);
 
+        // Allow location and dimensions modification via events
+        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+
         try {
             $xmlRequest = '<?xml version="1.0" encoding="UTF-8"?>
                 <priceRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

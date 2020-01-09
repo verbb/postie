@@ -56,6 +56,9 @@ class AustraliaPost extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
         $dimensions = $this->getDimensions($order, 'kg', 'cm');
 
+        // Allow location and dimensions modification via events
+        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+
         //
         // TESTING
         //
