@@ -39,7 +39,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected $_client;
     protected $_rates;
-    protected static $_cachedRates;
+    protected $_cachedRates;
 
 
     // Public Methods
@@ -245,11 +245,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function prepareFetchShippingRates($order)
     {
-        if (self::$_cachedRates === null) {
-            self::$_cachedRates = $this->fetchShippingRates($order);
+        $cachedRates = $this->_cachedRates[$this->handle] ?? [];
+
+        if (!$cachedRates) {
+            $cachedRates = $this->_cachedRates[$this->handle] = $this->fetchShippingRates($order);
         }
 
-        return self::$_cachedRates;
+        return $cachedRates;
     }
 
 
