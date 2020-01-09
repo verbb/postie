@@ -274,6 +274,7 @@ class USPS extends Provider
             $modifyRatesEvent = new ModifyRatesEvent([
                 'rates' => $this->_rates,
                 'response' => $response,
+                'order' => $order,
             ]);
 
             if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
