@@ -202,6 +202,7 @@ class FedEx extends Provider
                             'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
                             'deliveryDayOfWeek' => $rateReplyDetails->DeliveryDayOfWeek ?? '',
                             'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
+                            'transitTime' => $rateReplyDetails->TransitTime ?? '',
                             'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
                             'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? '',
                             'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
