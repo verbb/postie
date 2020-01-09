@@ -76,9 +76,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getIconUrl()
     {
-        $handle = strtolower($this->displayName());
+        try {
+            $handle = strtolower($this->displayName());
 
-        return Craft::$app->assetManager->getPublishedUrl('@verbb/postie/resources/dist/img/' . $handle . '.svg', true);
+            return Craft::$app->assetManager->getPublishedUrl('@verbb/postie/resources/dist/img/' . $handle . '.svg', true);
+        } catch (\Throwable $e) {
+            return '';
+        }
     }
 
     public function isConfigured(): bool
