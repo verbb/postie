@@ -130,7 +130,7 @@ XML;
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            if ($e->hasResponse()) {
+            if (method_exists($e, 'hasResponse')) {
                 $data = $this->_parseResponse($e->getResponse());
 
                 if (isset($data['messages']['message']['description'])) {

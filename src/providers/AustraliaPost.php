@@ -140,7 +140,7 @@ class AustraliaPost extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            if ($e->hasResponse()) {
+            if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
 
                 if (isset($data['error']['errorMessage'])) {
