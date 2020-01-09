@@ -40,7 +40,7 @@ class Providers extends Component
             $providers[$provider->getHandle()] = $provider;
         }
 
-        ksort($providers);
+        ksort($providers, SORT_STRING | SORT_FLAG_CASE);
 
         return $providers;
     }

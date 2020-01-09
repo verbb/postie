@@ -71,6 +71,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $class = $this->displayName();
 
+        // Some special cases here, which is a bit annoying...
+        if ($class === 'USPS' || $class === 'UPS') {
+            return strtolower($class);
+        }
+
         return StringHelper::toCamelCase($class);
     }
 
