@@ -10,7 +10,7 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
-use Verdant\XML2Array;
+use Cake\Utility\Xml;
 
 class TNTAustralia extends Provider
 {
@@ -167,7 +167,7 @@ class TNTAustralia extends Provider
         $string = (string)$response->getBody();
         $xml = simplexml_load_string($string);
 
-        return XML2Array::createArray($xml->asXml());
+        return Xml::build($xml->asXml());
     }
 
     private function _numberOfWorkingDates($from, $days) {

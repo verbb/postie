@@ -6,24 +6,23 @@
     { label: 'Settings' | t('postie'), url: url('postie/settings') },
 ] %}
 
-{% set fullPageForm = true %}
-{% set selectedTab = 'settings' %}
-{% set selectedSubnavItem = 'settings' %}
-
 {% set navItems = {
     'general': { title: 'General' | t('postie') },
     'products': { title: 'Products' | t('postie'), badge: variants | length },
     'providers-heading': { heading: 'Providers' | t('postie') },
 } %}
 
+{% set selectedTab = 'settings' %}
+{% set selectedItem = 'general' %}
+{% set selectedSubnavItem = 'settings' %}
+{% set fullPageForm = true %}
+
 {% if not storeLocation.address1 %}
     {% set navItems = navItems | merge({ 'general': { title: 'General' | t('postie'), badge: 1 } }) %}
 {% endif %}
 
-{% set selectedItem = 'general' %}
-
 {% block sidebar %}
-    <nav class="postie-settings-tabs" id="tabs">
+    <nav class="postie-settings-tabs" data-vui-tabs>
         <ul>
             {% for id, item in navItems %}
                 {% if item.heading is defined %}

@@ -9,7 +9,7 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
-use Vyuldashev\XmlToArray\XmlToArray;
+use Cake\Utility\Xml;
 
 class TNT extends Provider
 {
@@ -128,9 +128,10 @@ class TNT extends Provider
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
-        $xml = simplexml_load_string((string)$response->getBody());
+        $string = (string)$response->getBody();
+        $xml = simplexml_load_string($string);
 
-        return XmlToArray::convert($xml->asXml());
+        return Xml::build($xml->asXml());
     }
 
     private function _numberOfWorkingDates($from, $days) {
