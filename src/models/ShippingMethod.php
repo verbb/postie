@@ -1,6 +1,8 @@
 <?php
 namespace verbb\postie\models;
 
+use verbb\postie\events\ModifyShippingRuleEvent;
+
 use Craft;
 use craft\base\Model;
 use craft\helpers\UrlHelper;
@@ -9,6 +11,12 @@ use craft\commerce\base\ShippingMethod as BaseShippingMethod;
 
 class ShippingMethod extends BaseShippingMethod
 {
+    // Constants
+    // =========================================================================
+
+    const EVENT_MODIFY_SHIPPING_RULE = 'modifyShippingRule';
+
+
     // Properties
     // =========================================================================
 
@@ -55,7 +63,18 @@ class ShippingMethod extends BaseShippingMethod
             $shippingRule->provider->settings = [];
         }
 
-        return [$shippingRule];
+        // Allow plugins to modify the rule
+        $modifyRuleEvent = new ModifyShippingRuleEvent([
+            'provider' => $this->provider,
+            'shippingMethod' => $this,
+            'shippingRule' => $shippingRule,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_SHIPPING_RULE)) {
+            $this->trigger(self::EVENT_MODIFY_SHIPPING_RULE, $modifyRuleEvent);
+        }
+
+        return [$modifyRuleEvent->shippingRule];
     }
 
     public function getIsEnabled(): bool

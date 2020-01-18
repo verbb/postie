@@ -38,3 +38,17 @@ Event::on(USPS::class, Provider::EVENT_MODIFY_RATES, function(ModifyRatesEvent $
 
 });
 ```
+
+### The `modifyShippingRule` event
+
+Plugins can modify anything about a shipping rule for a shipping method. This includes the description, price and more.
+
+```php
+use verbb\postie\events\ModifyShippingRuleEvent;
+use verbb\postie\models\ShippingMethod;
+use yii\base\Event;
+
+Event::on(ShippingMethod::class, ShippingMethod::EVENT_MODIFY_SHIPPING_RULE, function(ModifyShippingRuleEvent $event) {
+    // To modify the rule, directly modify the variable via `$event->shippingRule = ...`
+});
+```
