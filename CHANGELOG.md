@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1 - 2020-01-18
+
+### Added
+- Add `ShippingMethod::EVENT_MODIFY_SHIPPING_RULE`. See [docs](https://verbb.io/craft-plugins/postie/docs/developers/events).
+
 ## 2.1.0 - 2020-01-09
 
 ### Added
