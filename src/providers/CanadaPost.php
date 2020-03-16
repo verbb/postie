@@ -152,9 +152,17 @@ XML;
 
     private function _getClient()
     {
+        $useTestEndpoint = $this->settings['useTestEndpoint'] ?? false;
+
+        if ($useTestEndpoint) {
+            $baseUri = 'https://ct.soa-gw.canadapost.ca';
+        } else {
+            $baseUri = 'https://soa-gw.canadapost.ca';
+        }
+
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
-                'base_uri' => 'https://ct.soa-gw.canadapost.ca',
+                'base_uri' => $baseUri,
                 'auth' => [
                     $this->settings['username'], $this->settings['password']
                 ],

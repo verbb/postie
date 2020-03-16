@@ -554,6 +554,14 @@
 		"oAP": "/src/events/ModifyRatesEvent.php",
 		"oF": 0
 		},
+	"/src/events/ModifyShippingRuleEvent.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/events/ModifyShippingRuleEvent.php",
+		"oF": 0
+		},
 	"/src/events/RegisterProviderTypesEvent.php": {
 		"cB": 0,
 		"ft": 8192,
