@@ -30,32 +30,30 @@
 
 <hr>
 
-<table id="fields" class="data fullwidth collapsible">
-    <tr>
-        <td>
-            {{ forms.textField({
-                label: 'Markup Rate' | t('postie'),
-                instructions: 'Shipping costs added to the order as a whole. Leave it blank to disable this rate.' | t('postie'),
-                id: 'markUpRate',
-                name: 'markUpRate',
-                value: provider.markUpRate,
-                warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpRate', 'postie'),
-            }) }}
-        </td>
-
-        <td>
-            {{ forms.selectField({
-                label: 'Markup Base' | t('postie'),
-                instructions: 'Add percentage between 1 and 100 or pure value. Can be ignored when rate is empty.' | t('postie'),
-                id: 'markUpBase',
-                name: 'markUpBase',
-                options: provider.getMarkUpBaseOptions(),
-                value: provider.markUpBase,
-                warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpBase', 'postie'),
-            }) }}
-        </td>
-    </tr>
-</table>
+<div class="vui-row">
+    <div class="vui-col vui-col-6">
+        {{ forms.textField({
+            label: 'Markup Rate' | t('postie'),
+            instructions: 'Shipping costs added to the order as a whole. Leave it blank to disable this rate.' | t('postie'),
+            id: 'markUpRate',
+            name: 'markUpRate',
+            value: provider.markUpRate,
+            warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpRate', 'postie'),
+        }) }}
+    </div>
+        
+    <div class="vui-col vui-col-6">
+        {{ forms.selectField({
+            label: 'Markup Base' | t('postie'),
+            instructions: 'Add percentage between 1 and 100 or pure value. Can be ignored when rate is empty.' | t('postie'),
+            id: 'markUpBase',
+            name: 'markUpBase',
+            options: provider.getMarkUpBaseOptions(),
+            value: provider.markUpBase,
+            warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpBase', 'postie'),
+        }) }}
+    </div>
+</div>
 
 {% if provider.getServiceList() | length %}
     <hr>
