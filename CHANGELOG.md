@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.2 - 2020-03-17
+
+### Fixed
+- Canada Post - Fix incorrect URL for live requests.
+- Fix styling issues for provider markup settings.
+
 ## 2.1.1 - 2020-01-18
 
 ### Added
