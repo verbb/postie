@@ -11,16 +11,18 @@ use craft\helpers\Json;
 use craft\commerce\Plugin as Commerce;
 
 use Ups\Rate;
-use Ups\Entity\Shipper;
 use Ups\Entity\Address;
+use Ups\Entity\Dimensions;
+use Ups\Entity\RateInformation;
+use Ups\Entity\RateResponse;
+use Ups\Entity\Service;
 use Ups\Entity\ShipFrom;
 use Ups\Entity\Shipment;
+use Ups\Entity\Shipper;
 use Ups\Entity\Package;
 use Ups\Entity\PackagingType;
-use Ups\Entity\Dimensions;
-use Ups\Entity\UnitOfMeasurement;
-use Ups\Entity\RateInformation;
 use Ups\Entity\PaymentInformation;
+use Ups\Entity\UnitOfMeasurement;
 
 class UPS extends Provider
 {
@@ -259,40 +261,59 @@ class UPS extends Provider
                 $shipper->setShipperNumber($accountNumber);
                 $shipment->setPaymentInformation(new PaymentInformation('prepaid', (object)['AccountNumber' => $accountNumber]));
             }
+
+            $rates = new RateResponse();
         
             // Perform the request
             $rates = $this->_client->shopRates($shipment);
 
-            if (isset($rates->RatedShipment)) {
-                foreach ($rates->RatedShipment as $rate) {
-                    $serviceHandle = $this->_getServiceHandle($rate->Service->getCode(), $storeLocation, $order->shippingAddress);
+            // Check for Sure Post rates - must be a separate request
+            if ($this->services['S_SURE_POST']->enabled) {
+                $service = new Service;
+                $service->setCode(Service::S_SURE_POST);
+                $service->setDescription($service->getName());
+                $shipment->setService($service);
 
-                    if (!$serviceHandle) {
-                        Provider::error($this, 'Unable to find matching service handle for: `' . $rate->Service->getName() . ':' . '`.');
+                $surePostRate = $this->_client->getRate($shipment);
 
-                        continue;
+                // Attach Sure Post rates into any other rates
+                if ($surePostRate) {
+                    if (!isset($rates->RatedShipment) || !is_array($rates->RatedShipment)) {
+                        $rates->RatedShipment = [];
                     }
 
-                    $rateInfo = [
-                        'amount' => $rate->TotalCharges->MonetaryValue ?? '',
-                        'options' => [
-                            'guaranteedDaysToDelivery' => $rate->GuaranteedDaysToDelivery ?? '',
-                            'scheduledDeliveryTime' => $rate->ScheduledDeliveryTime ?? '',
-                            'rateShipmentWarning' => $rate->RateShipmentWarning ?? '',
-                            'surCharges' => $rate->SurCharges ?? '',
-                            'timeInTransit' => $rate->TimeInTransit ?? '',
-                        ],
-                    ];
-
-                    // If we're using negotiated rates, return that, not the normal values
-                    $negotiatedRates = $rate->NegotiatedRates ?? '';
-
-                    if ($negotiatedRates) {
-                        $rateInfo['amount'] = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
-                    }
-
-                    $this->_rates[$serviceHandle] = $rateInfo;
+                    $rates->RatedShipment = array_merge($rates->RatedShipment, $surePostRate->RatedShipment);
                 }
+            }
+
+            foreach ($rates->RatedShipment as $rate) {
+                $serviceHandle = $this->_getServiceHandle($rate->Service->getCode(), $storeLocation, $order->shippingAddress);
+
+                if (!$serviceHandle) {
+                    Provider::error($this, 'Unable to find matching service handle for: `' . $rate->Service->getName() . ':' . '`.');
+
+                    continue;
+                }
+
+                $rateInfo = [
+                    'amount' => $rate->TotalCharges->MonetaryValue ?? '',
+                    'options' => [
+                        'guaranteedDaysToDelivery' => $rate->GuaranteedDaysToDelivery ?? '',
+                        'scheduledDeliveryTime' => $rate->ScheduledDeliveryTime ?? '',
+                        'rateShipmentWarning' => $rate->RateShipmentWarning ?? '',
+                        'surCharges' => $rate->SurCharges ?? '',
+                        'timeInTransit' => $rate->TimeInTransit ?? '',
+                    ],
+                ];
+
+                // If we're using negotiated rates, return that, not the normal values
+                $negotiatedRates = $rate->NegotiatedRates ?? '';
+
+                if ($negotiatedRates) {
+                    $rateInfo['amount'] = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
+                }
+
+                $this->_rates[$serviceHandle] = $rateInfo;
             }
 
             // Allow rate modification via events
