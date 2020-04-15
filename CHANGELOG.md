@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.3 - 2020-04-15
+
+### Added
+- Add support for UPS “Sure Post”.
+
+### Changed
+- File logging now checks if the overall Craft app uses file logging.
+- Log files now only include `GET` and `POST` additional variables.
+
 ## 2.1.2 - 2020-03-17
 
 ### Fixed
