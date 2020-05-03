@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
+use craft\services\Elements;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -46,6 +47,7 @@ class Postie extends Plugin
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
+        $this->_registerEventHandlers();
         $this->_registerCommerceEventListeners();
         
         $this->hasCpSection = $this->getSettings()->hasCpSection;
@@ -102,6 +104,14 @@ class Postie extends Plugin
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('postie', PostieVariable::class);
         });
+    }
+
+    private function _registerEventHandlers()
+    {
+        // Whenever we update the cart, we need to check if manual fetching of rates is set. If it is, we need to check for the
+        // correct POST param, then set a session variable to save it. This is because the fetching of shipping rates isn't done
+        // in the same request as the POST sent to the server. We need to temporarily store a flag is session with the okay to fetch.
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveOrder']);
     }
 
     private function _registerCommerceEventListeners()

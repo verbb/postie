@@ -5,9 +5,11 @@ use verbb\postie\Postie;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
+use craft\commerce\elements\Order;
 use craft\commerce\events\RegisterAvailableShippingMethodsEvent;
 
 use yii\base\Component;
+use yii\base\Event;
 
 class Service extends Component
 {
@@ -19,6 +21,26 @@ class Service extends Component
 
     // Public Methods
     // =========================================================================
+
+    public function onAfterSaveOrder(Event $event)
+    {
+        if (!is_a($event->element, Order::class)) {
+            return;
+        }
+
+        $settings = Postie::$plugin->getSettings();
+        $request = Craft::$app->getRequest();
+
+        // Only care about this being enabled
+        if (!$settings->manualFetchRates) {
+            return;
+        }
+
+        // Check it matches the config variable
+        if ($request->getParam('fetchRatesPostValue') == $settings->fetchRatesPostValue) {
+            Craft::$app->getSession()->set('postieManualFetchRates', true);
+        }
+    }
 
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
     {

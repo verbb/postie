@@ -223,6 +223,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return;
         }
 
+        // Check if we're manually fetching rates, only proceed if we are
+        if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
+            Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
+
+            return;
+        }
+
         $shippingRates = [];
 
         if ($settings->enableCaching) {        
@@ -245,6 +252,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         } else {
             $shippingRates = $this->prepareFetchShippingRates($order);
         }
+
+        // Remove our session variable for fetching live rates manually (even if we're not opting to use it)
+        Craft::$app->getSession()->remove('postieManualFetchRates');
 
         return $shippingRates;
     }
