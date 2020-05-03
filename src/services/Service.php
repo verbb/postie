@@ -11,6 +11,12 @@ use yii\base\Component;
 
 class Service extends Component
 {
+    // Properties
+    // =========================================================================
+
+    private $_cachedShippingMethods;
+
+
     // Public Methods
     // =========================================================================
 
@@ -22,6 +28,16 @@ class Service extends Component
 
         // Fetch all providers (enabled or otherwise)
         $providers = Postie::$plugin->getProviders()->getAllProviders();
+
+        // Provide some class-based local cache, becaues this function is called multiple times
+        // throughout an order-update lifecycle. Do this, even if caching is disabled
+        if ($this->_cachedShippingMethods) {
+            foreach ($this->_cachedShippingMethods as $shippingMethod) {
+                $event->shippingMethods[] = $shippingMethod;
+            }
+
+            return;
+        }
 
         foreach ($providers as $provider) {
             if (!$provider->enabled) {
@@ -40,6 +56,9 @@ class Service extends Component
                     $shippingMethod->rateOptions = $rate['options'] ?? [];
 
                     $event->shippingMethods[] = $shippingMethod;
+
+                    // Save it to a local class cache
+                    $this->_cachedShippingMethods[] = $shippingMethod;
                 }
             }
         }
