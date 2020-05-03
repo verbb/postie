@@ -15,7 +15,8 @@
             "setup-configuration/products",
             "setup-configuration/providers",
             "setup-configuration/shipping-methods",
-            "setup-configuration/displaying-rates"
+            "setup-configuration/displaying-rates",
+            "setup-configuration/manual-fetch"
         ]
     },
     {
