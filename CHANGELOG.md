@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0 - 2020-05-03
+
+### Added
+- Added `manualFetchRates` config option, to allow you to manage manually fetching rates on-demand. Read the [docs](https://verbb.io/craft-plugins/postie/docs/setup-configuration/manually-fetching-rates) for more info.
+
+### Changed
+- Greatly improve caching mechanism for initial requests to providers. This should result in faster rates-fetching.
+
 ## 2.1.4 - 2020-04-16
 
 ### Fixed
