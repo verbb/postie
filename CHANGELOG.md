@@ -7,6 +7,7 @@
 
 ### Changed
 - Greatly improve caching mechanism for initial requests to providers. This should result in faster rates-fetching.
+- Provider function `getSignature` is now public.
 
 ## 2.1.4 - 2020-04-16
 
