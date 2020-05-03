@@ -270,6 +270,31 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $cachedRates;
     }
 
+    public function getSignature($handle, $order)
+    {
+        $totalLength = 0;
+        $totalWidth = 0;
+        $totalHeight = 0;
+
+        foreach ($order->lineItems as $key => $lineItem) {
+            $totalLength += ($lineItem->qty * $lineItem->length);
+            $totalWidth += ($lineItem->qty * $lineItem->width);
+            $totalHeight += ($lineItem->qty * $lineItem->height);
+        }
+
+        $signature = implode('.', [
+            $handle,
+            $order->getTotalQty(),
+            $order->getTotalWeight(),
+            $totalWidth,
+            $totalHeight,
+            $totalLength,
+            implode('.', $order->shippingAddress->toArray()),
+        ]);
+
+        return md5($signature);
+    }
+
 
     // Static Methods
     // =========================================================================
@@ -301,31 +326,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     // Protected Methods
     // =========================================================================
-
-    protected function getSignature($handle, $order)
-    {
-        $totalLength = 0;
-        $totalWidth = 0;
-        $totalHeight = 0;
-
-        foreach ($order->lineItems as $key => $lineItem) {
-            $totalLength += ($lineItem->qty * $lineItem->length);
-            $totalWidth += ($lineItem->qty * $lineItem->width);
-            $totalHeight += ($lineItem->qty * $lineItem->height);
-        }
-
-        $signature = implode('.', [
-            $handle,
-            $order->getTotalQty(),
-            $order->getTotalWeight(),
-            $totalWidth,
-            $totalHeight,
-            $totalLength,
-            implode('.', $order->shippingAddress->toArray()),
-        ]);
-
-        return md5($signature);
-    }
 
     protected function getPackageDimensions($order)
     {
