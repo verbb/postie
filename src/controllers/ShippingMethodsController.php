@@ -41,22 +41,39 @@ class ShippingMethodsController extends Controller
         $this->requirePostRequest();
         $request = Craft::$app->getRequest();
 
+        $pluginHandle = 'postie';
+        $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
+
         $providerHandle = $request->getBodyParam('providerHandle');
         $name = $request->getBodyParam('name');
         $handle = $request->getBodyParam('handle');
         $enabled = $request->getBodyParam('enabled');
         $shippingCategories = $request->getBodyParam('shippingCategories');
 
-        $projectConfig = Craft::$app->getProjectConfig();
+        $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
+        $providerSettings = $pluginInfo['settings']['providers'][$providerHandle]['services'][$handle] ?? [];
 
-        $data = [
+        $newSettings = array_merge($providerSettings, [
             'name' => $name,
             'handle' => $handle,
             'enabled' => $enabled,
             'shippingCategories' => $shippingCategories,
-        ];
+        ]);
 
-        $projectConfig->set('plugins.postie.settings.providers.' . $providerHandle . '.services.' . $handle, $data);
+        $pluginInfo['settings']['providers'][$providerHandle]['services'][$handle] = $newSettings;
+
+        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginInfo['settings'])) {
+            Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));
+
+            // Send the plugin back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'plugin' => $plugin
+            ]);
+
+            return null;
+        }
+
+        Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
 
         return $this->redirectToPostedUrl();
     }
