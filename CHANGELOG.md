@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.1 - 2020-05-10
+
+### Fixed
+- Ensure we check for cached rates when manualFetchRates is turned on. Otherwise, the shipping method won't save on cart, or persist on page load.
+- Remove duplicate cakephp/utility composer package. (thanks @codebycliff).
+- Fix saving shipping method settings not working.
+
 ## 2.2.0 - 2020-05-03
 
 ### Added
