@@ -223,13 +223,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return;
         }
 
-        // Check if we're manually fetching rates, only proceed if we are
-        if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
-            Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
-
-            return;
-        }
-
         $shippingRates = [];
 
         if ($settings->enableCaching) {        
@@ -261,9 +254,17 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function prepareFetchShippingRates($order)
     {
+        $settings = Postie::$plugin->getSettings();
         $cachedRates = $this->_cachedRates[$this->handle] ?? [];
 
         if (!$cachedRates) {
+            // Check if we're manually fetching rates, only proceed if we are
+            if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
+                Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
+
+                return $cachedRates;
+            }
+
             $cachedRates = $this->_cachedRates[$this->handle] = $this->fetchShippingRates($order);
         }
 
