@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2 - 2020-05-15
+
+### Added
+- Provide local cache for Australia Post countries API call (when the resource is offline).
+
 ## 2.2.1 - 2020-05-10
 
 ### Fixed
