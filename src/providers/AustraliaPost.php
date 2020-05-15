@@ -183,10 +183,17 @@ class AustraliaPost extends Provider
 
     private function _getCountryCode($country)
     {
-        if (!$this->_countryList) {
-            $this->_countryList = $this->_request('GET', 'postage/country.json');
-        }
+        // Try to fetch live country codes, otherwise, fall back to our local cache
+        try {
+            if (!$this->_countryList) {
+                $this->_countryList = $this->_request('GET', 'postage/country.json');
+            }
+        } catch (\Throwable $e) {
+            $cachePath = Craft::getAlias('@vendor/verbb/postie/src/inc/australia-post/countries.json');
 
+            $this->_countryList = Json::decode(file_get_contents($cachePath));
+        }
+            
         foreach ($this->_countryList['countries']['country'] as $countryListItem) {
             if (strtoupper($country) == $countryListItem['name']) {
                 return $countryListItem['code'];
