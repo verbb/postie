@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.3 - 2020-05-26
+
+### Fixed
+- Add special-case for completed orders, and fetching non-live-rate shipping methods. This allows the correct use of `order.shippingMethod.name`. Please note that calling this for completed orders will report all Postie-provided shipping method costs as 0. As such, use the shipping costs recorded on the order (`order.totalShippingCost()`).
+- Fix errors for console or queue requests.
+
 ## 2.2.2 - 2020-05-15
 
 ### Added
