@@ -36,6 +36,10 @@ class Service extends Component
             return;
         }
 
+        if ($request->getIsConsoleRequest()) {
+            return;
+        }
+
         // Check it matches the config variable
         if ($request->getParam('fetchRatesPostValue') == $settings->fetchRatesPostValue) {
             Craft::$app->getSession()->set('postieManualFetchRates', true);

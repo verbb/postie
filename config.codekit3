@@ -615,6 +615,14 @@
 		"plM": 3758088159,
 		"prP": 0
 		},
+	"/src/inc/australia-post/countries.json": {
+		"ft": 524288,
+		"oA": 1,
+		"oAP": "/src/inc/australia-post/countries-min.json",
+		"oF": 0,
+		"oO": 0,
+		"oS": 1
+		},
 	"/src/migrations": {
 		"ft": 65536,
 		"oA": 1,
