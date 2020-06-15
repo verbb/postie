@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.4 - 2020-06-16
+
+#### Fixed
+- Fix UPS SurePost exception preventing additional rates from being fetched. (thanks @Mosnar).
+
 ## 2.2.3 - 2020-05-26
 
 ### Fixed
