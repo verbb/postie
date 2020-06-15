@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\providers;
 
+use Ups\Exception\InvalidResponseException;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
@@ -230,7 +231,7 @@ class UPS extends Provider
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
             $package->getPackageWeight()->setWeight($dimensions['weight']);
-            
+
             $weightUnit = new UnitOfMeasurement;
             $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
@@ -263,7 +264,7 @@ class UPS extends Provider
             }
 
             $rates = new RateResponse();
-        
+
             // Perform the request
             $rates = $this->_client->shopRates($shipment);
 
@@ -274,7 +275,14 @@ class UPS extends Provider
                 $service->setDescription($service->getName());
                 $shipment->setService($service);
 
-                $surePostRate = $this->_client->getRate($shipment);
+                // If SurePost shipping dimensions are exceeded, an exception is thrown. We'll catch it, log it,
+                // and make sure SurePost is not a valid shipping method in this situation.
+                $surePostRate = null;
+                try {
+                    $surePostRate = $this->_client->getRate($shipment);
+                } catch (InvalidResponseException $e) {
+                    Provider::error($this, 'SurePost API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+                }
 
                 // Attach Sure Post rates into any other rates
                 if ($surePostRate) {
@@ -352,7 +360,7 @@ class UPS extends Provider
 
             $userId = $this->settings['username'];
             $password = $this->settings['password'];
-            
+
             $this->_client = new Rate($accessKey, $userId, $password);
         }
 
