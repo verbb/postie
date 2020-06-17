@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.5 - 2020-06-17
+
+#### Fixed
+- Fix error in UPS provider related to SurePost.
+
 ## 2.2.4 - 2020-06-16
 
 #### Fixed

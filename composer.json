@@ -2,7 +2,7 @@
     "name": "verbb/postie",
     "description": "Provide live shipping rates during checkout from Australia Post, UPS, Fedex, and more.",
     "type": "craft-plugin",
-    "version": "2.2.4",
+    "version": "2.2.5",
     "keywords": [
         "craft",
         "cms",
