@@ -11,13 +11,13 @@ Note that shipping methods will not appear in your control panel under Commerce 
 You might have something similar to the below in your templates. The below is take from the default Commerce templates:
 
 ```twig
-{% if cart.availableShippingMethods | length %}
+{% if cart.availableShippingMethodOptions | length %}
     <form method="POST">
         <input type="hidden" name="action" value="commerce/cart/update-cart">
         {{ redirectInput('shop/checkout/payment') }}
         {{ csrfInput() }}
 
-        {% for handle, method in cart.availableShippingMethods %}
+        {% for handle, method in cart.availableShippingMethodOptions %}
             <div class="shipping-select">
                 <label>
 
@@ -25,7 +25,7 @@ You might have something similar to the below in your templates. The below is ta
                     <strong>{{ method.name }}</strong>
 
                     <span class="price">
-                        {{ method.priceForOrder(cart) | commerceCurrency(cart.currency) }}
+                        {{ method.getPrice() | commerceCurrency(cart.currency) }}
                     </span>
                 </label>
             </div>
@@ -49,10 +49,9 @@ Can't see your rates during checkout? Be sure to check the [Troubleshooting guid
 When fetching rates from providers, Postie not only returns the price amount, but a few other handy options related to the rate. These can be accessed via the shipping method rate. This may be useful to find information about how long a chosen rate may take to ship, etc.
 
 ```twig
-{% for handle, method in cart.availableShippingMethods %}
+{% for handle, method in cart.availableShippingMethodOptions %}
     <div class="shipping-select">
         <label>
-
             <input type="radio" name="shippingMethodHandle" value="{{ handle }}" {% if handle == cart.shippingMethodHandle %}checked{% endif %} />
             <strong>{{ method.name }}</strong>
 
@@ -64,7 +63,7 @@ When fetching rates from providers, Postie not only returns the price amount, bu
             {% endif %}
 
             <span class="price">
-                {{ method.priceForOrder(cart)|commerceCurrency(cart.currency) }}
+                {{ method.getPrice() | commerceCurrency(cart.currency) }}
             </span>
         </label>
     </div>
