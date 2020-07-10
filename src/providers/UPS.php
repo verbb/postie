@@ -177,6 +177,12 @@ class UPS extends Provider
         // $storeLocation->stateId = $state->id;
         // $storeLocation->countryId = $country->id;
 
+        // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
+        // $order->shippingAddress->address1 = '290 Bremner Blvd';
+        // $order->shippingAddress->city = 'Toronto';
+        // $order->shippingAddress->zipCode = 'ON M5V 3L9';
+        // $order->shippingAddress->countryId = $country->id;
+
         // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
         // $order->shippingAddress->city = 'Mountain View';
         // $order->shippingAddress->zipCode = '94043';
@@ -227,6 +233,7 @@ class UPS extends Provider
             $shipTo = $shipment->getShipTo();
             $shipToAddress = $shipTo->getAddress();
             $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
+            $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
 
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
