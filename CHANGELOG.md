@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.6 - 2020-07-10
+
+### Fixed
+- Fix UPS throwing an error when the recipient address is from non-US countries.
+
 ## 2.2.5 - 2020-06-17
 
 #### Fixed
