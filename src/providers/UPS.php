@@ -219,10 +219,12 @@ class UPS extends Provider
             // UPS can't handle 3-character states. Ignoring it is valid for international order
             $allowedZipCodeCountries = ['US', 'CA'];
 
-            if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
-                $state = $storeLocation->state->abbreviation ?? '';
+            if ($storeLocation->country) {
+                if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
+                    $state = $storeLocation->state->abbreviation ?? '';
 
-                $shipFromAddress->setStateProvinceCode($state);
+                    $shipFromAddress->setStateProvinceCode($state);
+                }
             }
 
             $shipFrom = new ShipFrom();
@@ -233,7 +235,10 @@ class UPS extends Provider
             $shipTo = $shipment->getShipTo();
             $shipToAddress = $shipTo->getAddress();
             $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
-            $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
+
+            if ($order->shippingAddress->country) {
+                $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
+            }
 
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
