@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.7 - 2020-07-14
+
+### Fixed
+- Fix UPS error for carts that have no shipping country selected.
+
 ## 2.2.6 - 2020-07-10
 
 ### Fixed
