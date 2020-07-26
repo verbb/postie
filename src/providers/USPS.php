@@ -226,8 +226,11 @@ class USPS extends Provider
 
                 $package->setField('OriginZip', $storeLocation->zipCode);
                 $package->setField('CommercialFlag', 'N');
-                $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
-                $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
+
+                if ($order->shippingAddress->zipCode) {
+                    $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
+                    $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
+                }
 
                 // add the package to the client stack
                 $client->addPackage($package);
