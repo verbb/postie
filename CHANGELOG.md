@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.8 - 2020-07-26
+
+### Fixed
+- Fix USPS error when a postcode isn’t set on the shipping address.
+
 ## 2.2.7 - 2020-07-14
 
 ### Fixed
