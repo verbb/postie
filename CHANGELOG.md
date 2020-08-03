@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.9 - 2020-08-04
+
+### Changed
+- Ensure the lowest amount is always used for Fedex amounts.
+
 ## 2.2.8 - 2020-07-26
 
 ### Fixed
