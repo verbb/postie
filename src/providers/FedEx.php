@@ -178,7 +178,16 @@ class FedEx extends Provider
             if (isset($rateReply->RateReplyDetails)) {
                 foreach ($rateReply->RateReplyDetails as $rateReplyDetails) {
                     if (is_array($rateReplyDetails->RatedShipmentDetails)) {
-                        $rate = $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
+                        // Find the lowest rate (for negotiated rates)
+                        $ratedShipmentDetailRates = [];
+
+                        foreach ($rateReplyDetails->RatedShipmentDetails as $key => $RatedShipmentDetail) {
+                            $key = $RatedShipmentDetail->ShipmentRateDetail->RateType;
+
+                            $ratedShipmentDetailRates[$key] = $RatedShipmentDetail->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
+                        }
+
+                        $rate = min($ratedShipmentDetailRates);
                     } else {
                         $rate = $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
                     }
