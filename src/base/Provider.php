@@ -292,7 +292,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $totalWidth,
             $totalHeight,
             $totalLength,
-            implode('.', $order->shippingAddress->toArray()),
+            implode('.', $order->shippingAddress->addressLines),
         ]);
 
         return md5($signature);
