@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.0 - 2020-08-09
+
+### Changed
+- Now requires Commerce 3.2+ and Craft 3.5+.
+
+### Fixed
+- Fixed error with Commerce 3.2.
+
 ## 2.2.9 - 2020-08-04
 
 ### Changed
