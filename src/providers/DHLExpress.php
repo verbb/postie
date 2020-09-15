@@ -39,7 +39,9 @@ class DHLExpress extends Provider
         // Get the dynamically generated service codes from the actual rate request
         $shippingMethods = [];
 
-        foreach (array_keys($this->getShippingRates($order)) as $key => $handle) {
+        $shippingRates = $this->getShippingRates($order) ?? [];
+
+        foreach (array_keys($shippingRates) as $key => $handle) {
             $shippingMethod = new ShippingMethod();
             $shippingMethod->handle = $handle;
             $shippingMethod->provider = $this;
