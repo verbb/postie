@@ -25,6 +25,7 @@
         "children": [
             "shipping-providers/australia-post",
             "shipping-providers/canada-post",
+            "shipping-providers/dhl-express",
             "shipping-providers/fastway",
             "shipping-providers/fedex",
             "shipping-providers/tnt-australia",
