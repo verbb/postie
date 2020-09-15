@@ -182,6 +182,9 @@ class DHLExpress extends Provider
 
             $this->_rates = $modifyRatesEvent->rates;
 
+            if (!$this->_rates) {
+                Provider::error($this, 'No available rates: `' . json_encode($response) . '`.');
+            }
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
