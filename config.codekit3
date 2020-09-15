@@ -50,6 +50,14 @@
 		"oO": 0,
 		"oS": 1
 		},
+	"/composer.lock": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/composer.lock",
+		"oF": 0
+		},
 	"/docs/.sidebar.json": {
 		"ft": 524288,
 		"oA": 1,
@@ -659,6 +667,14 @@
 		"oAP": "/src/providers/CanadaPost.php",
 		"oF": 0
 		},
+	"/src/providers/DHLExpress.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/providers/DHLExpress.php",
+		"oF": 0
+		},
 	"/src/providers/Fastway.php": {
 		"cB": 0,
 		"ft": 8192,
@@ -770,6 +786,14 @@
 		"oA": 1,
 		"oAP": "/build/src/variables",
 		"oF": 0
+		},
+	"/vendor/composer/installed.json": {
+		"ft": 524288,
+		"oA": 1,
+		"oAP": "/vendor/composer/installed-min.json",
+		"oF": 0,
+		"oO": 0,
+		"oS": 1
 		}
 	},
 "hooks": [
@@ -780,7 +804,7 @@
 	"creationDate": 528723773,
 	"displayValue": "postie",
 	"displayValueWasSetByUser": 0,
-	"iconImageName": "meme-ariel",
+	"iconImageName": "brackets-forest",
 	"iconImageWasSetByUser": 0
 	},
 "projectSettings": {

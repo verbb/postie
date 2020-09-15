@@ -74,12 +74,17 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $class = $this->displayName();
 
         // Some special cases here, which is a bit annoying...
+        // Refactor this as it's gross as...
         if ($class === 'USPS' || $class === 'UPS') {
             return strtolower($class);
         }
 
         if ($class === 'TNTAustralia') {
             return 'tntAustralia';
+        }
+
+        if ($class === 'DHLExpress') {
+            return 'dhlExpress';
         }
 
         return StringHelper::toCamelCase($class);
@@ -183,7 +188,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function getShippingMethods()
+    public function getShippingMethods($order)
     {
         $shippingMethods = [];
 

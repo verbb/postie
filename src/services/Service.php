@@ -87,7 +87,7 @@ class Service extends Component
             $rates = $provider->getShippingRates($event->order);
 
             // Only return shipping rates for methods we've enabled
-            foreach ($provider->getShippingMethods() as $shippingMethod) {
+            foreach ($provider->getShippingMethods($event->order) as $shippingMethod) {
                 $rate = $rates[$shippingMethod->handle] ?? [];
 
                 if ($rate) {

@@ -7,6 +7,7 @@ use verbb\postie\base\ProviderInterface;
 use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\providers\AustraliaPost;
 use verbb\postie\providers\CanadaPost;
+use verbb\postie\providers\DHLExpress;
 use verbb\postie\providers\Fastway;
 use verbb\postie\providers\FedEx;
 use verbb\postie\providers\TNT;
@@ -66,6 +67,7 @@ class Providers extends Component
         $providerTypes = [
             AustraliaPost::class,
             CanadaPost::class,
+            DHLExpress::class,
             Fastway::class,
             FedEx::class,
             // TNT::class,
