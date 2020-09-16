@@ -159,7 +159,7 @@ class DHLExpress extends Provider
 
             foreach ($services as $service) {
                 $name = $service['Charges']['Charge'][0]['ChargeType'] ?? 'GENERAL';
-                $amount = (float)$service['TotalNet']['Amount'] ?? 0;
+                $amount = (float)($service['TotalNet']['Amount'] ?? 0);
 
                 if ($amount) {
                     $this->_rates[$name] = [
