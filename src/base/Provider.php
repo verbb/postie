@@ -383,6 +383,21 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
+    protected function getSplitBoxWeights($value, $max)
+    {
+        $items = [];
+
+        for ($i = $max; $i < $value; $i += $max) {
+            $items[] = $max;
+        }
+
+        if ($i > $value) {
+            $items[] = $i - $value;
+        }
+
+        return $items;
+    }
+
     protected function beforeFetchRates(&$storeLocation, &$dimensions, $order)
     {
         $fetchRatesEvent = new FetchRatesEvent([

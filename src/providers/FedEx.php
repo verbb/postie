@@ -254,23 +254,31 @@ class FedEx extends Provider
 
     private function _createPackageLineItem($order)
     {
+        $packages = [];
         $dimensions = $this->getDimensions($order, 'kg', 'cm');
 
-        // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
-        $packageLineItem = new RequestedPackageLineItem();
+        // Handle a maxiumum weight for packages
+        $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 150);
 
-        // Weight
-        $packageLineItem->Weight->Units = WeightUnits::_KG;
-        $packageLineItem->Weight->Value = $dimensions['weight'];
+        foreach ($totalPackages as $weight) {
+            // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
+            $packageLineItem = new RequestedPackageLineItem();
 
-        // Dimensions
-        $packageLineItem->Dimensions->Units = LinearUnits::_CM;
-        $packageLineItem->Dimensions->Length = $dimensions['length'];
-        $packageLineItem->Dimensions->Width = $dimensions['width'];
-        $packageLineItem->Dimensions->Height = $dimensions['height'];
+            // Weight
+            $packageLineItem->Weight->Units = WeightUnits::_KG;
+            $packageLineItem->Weight->Value = $weight;
 
-        $packageLineItem->GroupPackageCount = 1;
+            // Dimensions
+            $packageLineItem->Dimensions->Units = LinearUnits::_CM;
+            $packageLineItem->Dimensions->Length = $dimensions['length'];
+            $packageLineItem->Dimensions->Width = $dimensions['width'];
+            $packageLineItem->Dimensions->Height = $dimensions['height'];
 
-        return [$packageLineItem];
+            $packageLineItem->GroupPackageCount = 1;
+
+            $packages[] = $packageLineItem;
+        }
+
+        return $packages;
     }
 }

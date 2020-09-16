@@ -172,26 +172,31 @@ class USPS extends Provider
             if ($order->shippingAddress->country->iso == 'US') {
                 Provider::log($this, 'Domestic rate service call');
 
-                // Create new package object and assign the properties
-                // apparently the order you assign them is important so make sure
-                // to set them as the example below
-                // set the RatePackage for more info about the constants
-                $package = new RatePackage();
+                // Handle a maxiumum weight for packages
+                $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 70);
 
-                // Set service
-                $package->setService(RatePackage::SERVICE_ALL);
-                $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
+                foreach ($totalPackages as $weight) {
+                    // Create new package object and assign the properties
+                    // apparently the order you assign them is important so make sure
+                    // to set them as the example below
+                    // set the RatePackage for more info about the constants
+                    $package = new RatePackage();
 
-                $package->setZipOrigination($storeLocation->zipCode);
-                $package->setZipDestination($order->shippingAddress->zipCode);
-                $package->setPounds($dimensions['weight']);
-                $package->setOunces(0);
-                $package->setContainer('');
-                $package->setSize(RatePackage::SIZE_REGULAR);
-                $package->setField('Machinable', true);
+                    // Set service
+                    $package->setService(RatePackage::SERVICE_ALL);
+                    $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
 
-                // add the package to the client stack
-                $client->addPackage($package);
+                    $package->setZipOrigination($storeLocation->zipCode);
+                    $package->setZipDestination($order->shippingAddress->zipCode);
+                    $package->setPounds($weight);
+                    $package->setOunces(0);
+                    $package->setContainer('');
+                    $package->setSize(RatePackage::SIZE_REGULAR);
+                    $package->setField('Machinable', true);
+
+                    // add the package to the client stack
+                    $client->addPackage($package);
+                }
             } else {
                 Provider::log($this, 'International rate service call');
 
@@ -199,41 +204,46 @@ class USPS extends Provider
                 $client->setInternationalCall(true);
                 $client->addExtraOption('Revision', 2);
 
-                $package = new RatePackage();
-                $package->setPounds($dimensions['weight']);
-                $package->setOunces(0);
-                $package->setField('Machinable', 'True');
-                $package->setField('MailType', 'Package');
+                // Handle a maxiumum weight for packages
+                $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 70);
 
-                // value of content necessary for export
-                $package->setField('ValueOfContents', $order->getTotalSaleAmount());
-                $package->setField('Country', $order->shippingAddress->country->name);
+                foreach ($totalPackages as $weight) {
+                    $package = new RatePackage();
+                    $package->setPounds($weight);
+                    $package->setOunces(0);
+                    $package->setField('Machinable', 'True');
+                    $package->setField('MailType', 'Package');
 
-                // Check if dimensions greater then 12 inches then set LARGE package
-                if ($dimensions['width'] > 12 || $dimensions['height'] > 12 || $dimensions['length'] > 12) {
-                    $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                    $package->setField('Size', 'LARGE');
-                } else {
-                    $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                    $package->setField('Size', 'REGULAR');
+                    // value of content necessary for export
+                    $package->setField('ValueOfContents', $order->getTotalSaleAmount());
+                    $package->setField('Country', $order->shippingAddress->country->name);
+
+                    // Check if dimensions greater then 12 inches then set LARGE package
+                    if ($dimensions['width'] > 12 || $dimensions['height'] > 12 || $dimensions['length'] > 12) {
+                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
+                        $package->setField('Size', 'LARGE');
+                    } else {
+                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
+                        $package->setField('Size', 'REGULAR');
+                    }
+
+                    $package->setField('Width', $dimensions['width']);
+                    $package->setField('Length', $dimensions['height']);
+                    $package->setField('Height', $dimensions['length']);
+                    // Girth are relevant when CONTAINER_NONRECTANGULAR
+                    $package->setField('Girth', $dimensions['width'] * 2 + $dimensions['length'] * 2);
+
+                    $package->setField('OriginZip', $storeLocation->zipCode);
+                    $package->setField('CommercialFlag', 'N');
+
+                    if ($order->shippingAddress->zipCode) {
+                        $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
+                        $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
+                    }
+
+                    // add the package to the client stack
+                    $client->addPackage($package);
                 }
-
-                $package->setField('Width', $dimensions['width']);
-                $package->setField('Length', $dimensions['height']);
-                $package->setField('Height', $dimensions['length']);
-                // Girth are relevant when CONTAINER_NONRECTANGULAR
-                $package->setField('Girth', $dimensions['width'] * 2 + $dimensions['length'] * 2);
-
-                $package->setField('OriginZip', $storeLocation->zipCode);
-                $package->setField('CommercialFlag', 'N');
-
-                if ($order->shippingAddress->zipCode) {
-                    $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
-                    $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
-                }
-
-                // add the package to the client stack
-                $client->addPackage($package);
             }
 
             // Perform the request

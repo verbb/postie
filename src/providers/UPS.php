@@ -240,26 +240,31 @@ class UPS extends Provider
                 $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
             }
 
-            $package = new Package();
-            $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-            $package->getPackageWeight()->setWeight($dimensions['weight']);
+            // Handle a maxiumum weight for packages
+            $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 150);
 
-            $weightUnit = new UnitOfMeasurement;
-            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
-            $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
+            foreach ($totalPackages as $weight) {
+                $package = new Package();
+                $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
+                $package->getPackageWeight()->setWeight($weight);
 
-            $packageDimensions = new Dimensions();
-            $packageDimensions->setHeight($dimensions['height']);
-            $packageDimensions->setWidth($dimensions['width']);
-            $packageDimensions->setLength($dimensions['length']);
+                $weightUnit = new UnitOfMeasurement;
+                $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+                $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
-            $unit = new UnitOfMeasurement;
-            $unit->setCode(UnitOfMeasurement::UOM_IN);
+                $packageDimensions = new Dimensions();
+                $packageDimensions->setHeight($dimensions['height']);
+                $packageDimensions->setWidth($dimensions['width']);
+                $packageDimensions->setLength($dimensions['length']);
 
-            $packageDimensions->setUnitOfMeasurement($unit);
-            $package->setDimensions($packageDimensions);
+                $unit = new UnitOfMeasurement;
+                $unit->setCode(UnitOfMeasurement::UOM_IN);
 
-            $shipment->addPackage($package);
+                $packageDimensions->setUnitOfMeasurement($unit);
+                $package->setDimensions($packageDimensions);
+
+                $shipment->addPackage($package);
+            }
 
             $negotiatedRates = $this->settings['negotiatedRates'] ?? '';
             $accountNumber = $this->settings['accountNumber'] ?? '';
