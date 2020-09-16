@@ -209,6 +209,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function getShippingRates($order)
     {
         $settings = Postie::$plugin->getSettings();
+        $request = Craft::$app->getRequest();
 
         if (!$order) {
             Provider::log($this, 'Missing required order variable.');
@@ -252,8 +253,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         // Remove our session variable for fetching live rates manually (even if we're not opting to use it)
-        if (Craft::$app->getSession()->get('postieManualFetchRates')) {
-            Craft::$app->getSession()->remove('postieManualFetchRates');
+        if (!$request->getIsConsoleRequest()) {
+            if (Craft::$app->getSession()->get('postieManualFetchRates')) {
+                Craft::$app->getSession()->remove('postieManualFetchRates');
+            }
         }
 
         return $shippingRates;
