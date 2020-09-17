@@ -331,6 +331,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             Craft::dump($message);
         }
 
+        if (Postie::$plugin->getSettings()->displayFlashErrors && $isSiteRequest) {
+            Craft::$app->getSession()->setError($message);
+        }
+
         Postie::error($message);
     }
 
