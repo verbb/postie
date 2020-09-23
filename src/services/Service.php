@@ -73,7 +73,7 @@ class Service extends Component
             // If this is a completed order, fetch the shipping methods, but DO NOT fetch live rates.
             // This is so we can still have registered shipping methods for `order.shippingMethod.name`
             if ($event->order->isCompleted) {
-                foreach ($provider->getShippingMethods() as $shippingMethod) {
+                foreach ($provider->getShippingMethods($event->order) as $shippingMethod) {
                     $shippingMethod->rate = 0;
                     $shippingMethod->rateOptions = [];
 
