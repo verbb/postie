@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.1 - 2020-09-24
+
+### Added
+- Add DHL Express.
+- Add handling for Fedex/UPS/USPS for maxiumum package weights, splitting into multiple packages.
+- Add `displayFlashErrors` config setting. Allows errors from the provider APIs to be shown in checkout templates.
+- Allow orders created in the control panel to bypass the `manualFetchRates` config setting, so they can pick a shipping method.
+
+### Fixed
+- Fixed an error when viewing an order in the control panel, that used Postie-provided shipping method. (thanks @keyurshah).
+
 ## 2.3.0 - 2020-08-09
 
 ### Changed
