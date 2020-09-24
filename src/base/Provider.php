@@ -266,13 +266,17 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $settings = Postie::$plugin->getSettings();
         $cachedRates = $this->_cachedRates[$this->handle] ?? [];
+        $request = Craft::$app->getRequest();
 
         if (!$cachedRates) {
             // Check if we're manually fetching rates, only proceed if we are
             if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
-                Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
+                // For CP requests, don't rely on the POST param and continue as normal
+                if ($request->getIsSiteRequest()) {
+                    Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
 
-                return $cachedRates;
+                    return $cachedRates;
+                }
             }
 
             $cachedRates = $this->_cachedRates[$this->handle] = $this->fetchShippingRates($order);
