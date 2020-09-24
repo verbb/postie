@@ -2,6 +2,7 @@
 namespace verbb\postie\controllers;
 
 use verbb\postie\Postie;
+use verbb\postie\events\ModifyShippableVariantsEvent;
 
 use Craft;
 use craft\web\Controller;
@@ -11,6 +12,12 @@ use craft\commerce\elements\Variant;
 
 class PluginController extends Controller
 {
+    // Constants
+    // =========================================================================
+
+    const EVENT_MODIFY_VARIANT_QUERY = 'modifyVariantQuery';
+
+
     // Public Methods
     // =========================================================================
 
@@ -20,7 +27,18 @@ class PluginController extends Controller
 
         $variants = [];
 
-        foreach (Variant::find()->all() as $variant) {
+        $query = Variant::find();
+
+        // Allow plugins to modify the variant query
+        $event = new ModifyShippableVariantsEvent([
+            'query' => $query,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
+            $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
+        }
+
+        foreach ($event->query->all() as $variant) {
             if ($variant->width == 0 || $variant->height == 0 || $variant->length == 0 || $variant->weight == 0) {
                 $variants[] = $variant;
             }

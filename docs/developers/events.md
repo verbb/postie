@@ -52,3 +52,17 @@ Event::on(ShippingMethod::class, ShippingMethod::EVENT_MODIFY_SHIPPING_RULE, fun
     // To modify the rule, directly modify the variable via `$event->shippingRule = ...`
 });
 ```
+
+### The `modifyVariantQuery` event
+
+Plugins can modify the Variant query for Postie's settings. Postie will by default look at all variants across your site and report on whether weight and dimension values are set. You can modify this query to suit your needs.
+
+```php
+use verbb\postie\controllers\PluginController;
+use verbb\postie\events\ModifyShippableVariantsEvent;
+use yii\base\Event;
+
+Event::on(PluginController::class, PluginController::EVENT_MODIFY_VARIANT_QUERY, function(ModifyShippableVariantsEvent $event) {
+    // To modify the query, directly modify the variable via `$event->query = ...`
+});
+```
