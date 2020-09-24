@@ -4,7 +4,7 @@
 
 ### Added
 - Add DHL Express.
-- Add handling for Fedex/UPS/USPS for maxiumum package weights, splitting into multiple packages.
+- Add handling for Fedex/UPS/USPS for maximum package weights, splitting into multiple packages.
 - Add `displayFlashErrors` config setting. Allows errors from the provider APIs to be shown in checkout templates.
 - Allow orders created in the control panel to bypass the `manualFetchRates` config setting, so they can pick a shipping method.
 - Add `EVENT_MODIFY_VARIANT_QUERY` to modify the variants used to check weight and dimensions for in Postie's settings.
