@@ -87,7 +87,7 @@ class FedEx extends Provider
         $useTestEndpoint = $this->settings['useTestEndpoint'] ?? false;
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+        $dimensions = $this->getDimensions($order, 'lb', 'in');
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $dimensions, $order);
@@ -255,7 +255,7 @@ class FedEx extends Provider
     private function _createPackageLineItem($order)
     {
         $packages = [];
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+        $dimensions = $this->getDimensions($order, 'lb', 'in');
 
         // Handle a maxiumum weight for packages
         $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 150);
@@ -265,11 +265,11 @@ class FedEx extends Provider
             $packageLineItem = new RequestedPackageLineItem();
 
             // Weight
-            $packageLineItem->Weight->Units = WeightUnits::_KG;
+            $packageLineItem->Weight->Units = WeightUnits::_LB;
             $packageLineItem->Weight->Value = $weight;
 
             // Dimensions
-            $packageLineItem->Dimensions->Units = LinearUnits::_CM;
+            $packageLineItem->Dimensions->Units = LinearUnits::_IN;
             $packageLineItem->Dimensions->Length = $dimensions['length'];
             $packageLineItem->Dimensions->Width = $dimensions['width'];
             $packageLineItem->Dimensions->Height = $dimensions['height'];
