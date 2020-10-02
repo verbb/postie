@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.2 - 2020-10-02
+
+### Changed
+- Change Fedex package units to imperial (lb/in) to ensure proper rates are fetched.
+
+### Fixed
+- Fix Fedex/UPS/USPS maximum package weights calculating incorrectly.
+
 ## 2.3.1 - 2020-09-24
 
 ### Added
