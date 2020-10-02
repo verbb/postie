@@ -398,12 +398,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $items = [];
 
-        for ($i = $max; $i < $value; $i += $max) {
+        // Determine how many full-weight boxes we need
+        for ($i = 1; $i <= ($value / $max); $i++) {
             $items[] = $max;
         }
 
-        if ($i > $value) {
-            $items[] = $i - $value;
+        // Add in the remainder - if any
+        if (fmod($value, $max)) {
+            $items[] = fmod($value, $max);
         }
 
         return $items;
