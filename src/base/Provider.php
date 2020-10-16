@@ -133,6 +133,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $configSettings
         );
 
+        // Ensure settings (settings) can be mixed in config and CP. This isn't automatically done becuase
+        // they're nested array in the provider, so do them separately.
+        $providerSettingsSettings = $providerSettings['settings'] ?? [];
+        $configSettingsSettings = $configSettings['settings'] ?? [];
+
+        $settings['settings'] = array_merge($providerSettingsSettings, $configSettingsSettings);
+
         // Special-case for services - these should be converted form key-value into ShippingMethods
         // Also helps with backwards compatibility and how services are stored in config files
         if (isset($settings['services'])) {
