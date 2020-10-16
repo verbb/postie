@@ -13,6 +13,7 @@ use craft\commerce\Plugin as Commerce;
 
 use Ups\Rate;
 use Ups\Entity\Address;
+use Ups\Entity\DeliveryConfirmation;
 use Ups\Entity\Dimensions;
 use Ups\Entity\RateInformation;
 use Ups\Entity\RateResponse;
@@ -247,6 +248,20 @@ class UPS extends Provider
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
                 $package->getPackageWeight()->setWeight($weight);
+
+                $requireSignature = $this->settings['requireSignature'] ?? '';
+
+                if ($requireSignature) {
+                    $deliveryConfirmation = new DeliveryConfirmation();
+
+                    if ($requireSignature === 'required') {
+                        $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_SIGNATURE_REQUIRED);
+                    } else if ($requireSignature === 'adult') {
+                        $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_ADULT_SIGNATURE_REQUIRED);
+                    }
+
+                    $package->getPackageServiceOptions()->setDeliveryConfirmation($deliveryConfirmation);
+                }
 
                 $weightUnit = new UnitOfMeasurement;
                 $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);

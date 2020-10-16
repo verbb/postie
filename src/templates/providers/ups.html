@@ -58,3 +58,17 @@
     on: provider.settings.negotiatedRates ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.negotiatedRates', 'postie'),
 }) }}
+
+{{ forms.selectField({
+    label: 'Require Signature' | t('postie'),
+    instructions: 'Whether parcels require a signature from the receiver. This will effect rates.' | t('postie'),
+    id: 'requireSignature',
+    name: 'requireSignature',
+    value: provider.settings.requireSignature ?? '',
+    options: [
+        { label: 'None' | t('postie'), value: '' },
+        { label: 'Required' | t('postie'), value: 'required' },
+        { label: 'Adult Required' | t('postie'), value: 'adult' },
+    ],
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.requireSignature', 'postie'),
+}) }}
