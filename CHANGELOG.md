@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.3 - 2020-10-16
+
+### Added
+- Add option to UPS to configure whether signatures are required.
+
+### Fixed
+- Fix defining provider settings in both the control panel and config files.
+
 ## 2.3.2 - 2020-10-02
 
 ### Changed
