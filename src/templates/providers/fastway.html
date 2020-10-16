@@ -3,6 +3,7 @@
 
 {{ forms.textField({
     label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.name }),
     id: 'apiKey',
     name: 'apiKey',
     value: provider.settings.apiKey ?? '',

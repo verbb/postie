@@ -5,6 +5,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',

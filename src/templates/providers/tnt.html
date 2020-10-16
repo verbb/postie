@@ -3,6 +3,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',
@@ -12,6 +13,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -21,6 +23,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',

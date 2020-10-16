@@ -12,6 +12,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',
@@ -21,6 +22,7 @@
 
 {{ forms.textField({
     label: 'Meter Number' | t('postie'),
+    instructions: 'Enter your {name} Meter Number here.' | t('postie', { name: provider.name }),
     id: 'meterNumber',
     name: 'meterNumber',
     value: provider.settings.meterNumber ?? '',
@@ -30,6 +32,7 @@
 
 {{ forms.textField({
     label: 'Key' | t('postie'),
+    instructions: 'Enter your {name} Key here.' | t('postie', { name: provider.name }),
     id: 'key',
     name: 'key',
     value: provider.settings.key ?? '',
@@ -39,6 +42,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -48,6 +52,7 @@
 
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.name }),
     id: 'useTestEndpoint',
     name: 'useTestEndpoint',
     on: provider.settings.useTestEndpoint ?? false,

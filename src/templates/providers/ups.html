@@ -3,6 +3,7 @@
 
 {{ forms.textField({
     label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.name }),
     id: 'apiKey',
     name: 'apiKey',
     value: provider.settings.apiKey ?? '',
@@ -12,6 +13,7 @@
 
 {{ forms.textField({
     label: 'Test API Key' | t('postie'),
+    instructions: 'Enter your {name} Test API Key here.' | t('postie', { name: provider.name }),
     id: 'testApiKey',
     name: 'testApiKey',
     value: provider.settings.testApiKey ?? '',
@@ -21,6 +23,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -30,6 +33,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -39,6 +43,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',
@@ -47,9 +52,9 @@
 
 {{ forms.lightswitchField({
     label: 'Use Negotiated Rates' | t('postie'),
+    instructions: 'Whether to use UPS Negotiated Rates. This must be enabled on your UPS account.' | t('postie'),
     id: 'negotiatedRates',
     name: 'negotiatedRates',
     on: provider.settings.negotiatedRates ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.negotiatedRates', 'postie'),
 }) }}
-

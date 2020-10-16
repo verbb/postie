@@ -5,6 +5,7 @@
 
 {{ forms.textField({
     label: 'API Username (Site ID)' | t('postie'),
+    instructions: 'Enter your {name} API Username here.' | t('postie', { name: provider.name }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -14,6 +15,7 @@
 
 {{ forms.textField({
     label: 'API Password' | t('postie'),
+    instructions: 'Enter your {name} API Password here.' | t('postie', { name: provider.name }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -23,6 +25,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
     id: 'account',
     name: 'account',
     value: provider.settings.account ?? '',
@@ -32,6 +35,7 @@
 
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.name }),
     id: 'useTestEndpoint',
     name: 'useTestEndpoint',
     on: provider.settings.useTestEndpoint ?? false,
