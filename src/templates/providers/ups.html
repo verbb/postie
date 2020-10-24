@@ -72,3 +72,13 @@
     ],
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.requireSignature', 'postie'),
 }) }}
+
+{{ forms.selectField({
+    label: 'Pickup Type' | t('postie'),
+    instructions: 'Select what type of pickup to use. This will effect rates.' | t('postie'),
+    id: 'pickupType',
+    name: 'pickupType',
+    value: provider.settings.pickupType ?? '',
+    options: provider.getPickupTypeOptions(),
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.pickupType', 'postie'),
+}) }}

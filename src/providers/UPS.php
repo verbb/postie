@@ -15,15 +15,17 @@ use Ups\Rate;
 use Ups\Entity\Address;
 use Ups\Entity\DeliveryConfirmation;
 use Ups\Entity\Dimensions;
+use Ups\Entity\Package;
+use Ups\Entity\PackagingType;
+use Ups\Entity\PaymentInformation;
+use Ups\Entity\PickupType;
 use Ups\Entity\RateInformation;
+use Ups\Entity\RateRequest;
 use Ups\Entity\RateResponse;
 use Ups\Entity\Service;
 use Ups\Entity\ShipFrom;
 use Ups\Entity\Shipment;
 use Ups\Entity\Shipper;
-use Ups\Entity\Package;
-use Ups\Entity\PackagingType;
-use Ups\Entity\PaymentInformation;
 use Ups\Entity\UnitOfMeasurement;
 
 class UPS extends Provider
@@ -32,6 +34,15 @@ class UPS extends Provider
     // =========================================================================
 
     public $name = 'UPS';
+
+    private $pickupCode = [
+        '01' => 'Daily Pickup',
+        '03' => 'Customer Counter',
+        '06' => 'One Time Pickup',
+        '07' => 'On Call Air',
+        '19' => 'Letter Center',
+        '20' => 'Air Service Center',
+    ];
 
     private $euCountries = [
         'AT' => 'Austria',
@@ -71,6 +82,17 @@ class UPS extends Provider
     public function getSettingsHtml()
     {
         return Craft::$app->getView()->renderTemplate('postie/providers/ups', ['provider' => $this]);
+    }
+
+    public function getPickupTypeOptions()
+    {
+        $options = [];
+
+        foreach ($this->pickupCode as $key => $value) {
+            $options[] = ['label' => $value, 'value' => $key];
+        }
+
+        return $options;
     }
 
     public function getServiceList(): array
