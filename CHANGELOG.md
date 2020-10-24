@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.4 - 2020-10-24
+
+### Added
+- Add missing Fedex UK Domestic services.
+- Add Pickup Type option for UPS. You may want to change this to “Customer Counter” for more accurate UPS results, but do test this for your own needs. The default is left as-is (“Daily Pickup”) so as not to be a breaking change.
+
 ## 2.3.3 - 2020-10-16
 
 ### Added
