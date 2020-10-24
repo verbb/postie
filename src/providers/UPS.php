@@ -319,8 +319,17 @@ class UPS extends Provider
 
             $rates = new RateResponse();
 
+            $rateRequest = new RateRequest();
+            $rateRequest->setShipment($shipment);
+
+            $pickupCode = $this->settings['pickupType'] ?? '01';
+
+            $pickupType = new PickupType();
+            $pickupType->setCode($pickupCode);
+            $rateRequest->setPickupType($pickupType);
+
             // Perform the request
-            $rates = $this->_client->shopRates($shipment);
+            $rates = $this->_client->shopRates($rateRequest);
 
             // Check for Sure Post rates - must be a separate request
             $surePost = $this->services['S_SURE_POST']->enabled ?? false;
