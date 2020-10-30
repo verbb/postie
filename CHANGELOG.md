@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.5 - 2020-10-30
+
+### Added
+- Add `shipDate` and `shipTime` for DHL Express.
+- Add `modifyPayload` event to allow modifying the payload before it’s sent to providers to fetch rates.
+
 ## 2.3.4 - 2020-10-24
 
 ### Added
