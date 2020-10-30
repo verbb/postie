@@ -42,3 +42,25 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
 }) }}
 
+{{ forms.selectField({
+    label: 'Ship Date' | t('postie'),
+    instructions: 'Select what date the shipment should be lodged.' | t('postie'),
+    id: 'shipDate',
+    name: 'shipDate',
+    value: provider.settings.shipDate ?? '',
+    options: [
+        { label: 'Same Day' | t('postie'), value: '' },
+        { label: 'Next Day' | t('postie'), value: 'nextDay' },
+        { label: 'Next Business Day' | t('postie'), value: 'nextBusinessDay' },
+    ],
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.shipDate', 'postie'),
+}) }}
+
+{{ forms.timeField({
+    label: 'Ship Time' | t('postie'),
+    instructions: 'Select what time the shipment should be lodged.' | t('postie'),
+    id: 'shipTime',
+    name: 'shipTime',
+    value: provider.settings.shipTime.time ?? '',
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.shipTime', 'postie'),
+}) }}

@@ -12,6 +12,8 @@ use craft\helpers\StringHelper;
 
 use craft\commerce\Plugin as Commerce;
 
+use DateTime;
+
 class DHLExpress extends Provider
 {
     // Properties
@@ -104,12 +106,26 @@ class DHLExpress extends Provider
         try {
             $response = [];
 
+            // Set the ship date/time
+            $shipDate = $this->settings['shipDate'] ?? '';
+            $shipTime = $this->settings['shipTime']['time'] ?? '';
+
+            if ($shipDate === 'nextDay') {
+                $shipDate = (new DateTime())->modify('+1 day')->format('Y-m-d');
+            }
+
+            if ($shipDate === 'nextBusinessDay') {
+                $shipDate = (new DateTime())->modify('+1 weekday')->format('Y-m-d');
+            }
+
+            $shipTimestamp = (new DateTime($shipDate . ' ' . $shipTime))->format('Y-m-d\TH:i:s \G\M\TP');
+
             $payload = [
                 'RateRequest' => [
                     'ClientDetails' => '',
                     'RequestedShipment' => [
                         'DropOffType' => 'REGULAR_PICKUP',
-                        'ShipTimestamp' => (new \DateTime)->format('Y-m-d\TH:i:s \G\M\TP'),
+                        'ShipTimestamp' => $shipTimestamp,
                         'UnitOfMeasurement' => 'SI',
                         'Content' => 'NON_DOCUMENTS',
                         'DeclaredValue' => $order->totalPrice,
