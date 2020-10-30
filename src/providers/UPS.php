@@ -328,6 +328,8 @@ class UPS extends Provider
             $pickupType->setCode($pickupCode);
             $rateRequest->setPickupType($pickupType);
 
+            $this->beforeSendPayload($this, $rateRequest, $order);
+
             // Perform the request
             $rates = $this->_client->shopRates($rateRequest);
 

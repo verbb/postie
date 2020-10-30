@@ -85,7 +85,7 @@ class CanadaPost extends Provider
         $dimensions['weight'] = number_format($dimensions['weight'], 3);
 
         try {
-            $xmlRequest = <<<XML
+            $payload = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
     <customer-number>{$this->settings['customerNumber']}</customer-number>
@@ -101,7 +101,9 @@ class CanadaPost extends Provider
 </mailing-scenario>
 XML;
 
-            $response = $this->_request('POST', 'rs/ship/price', ['body' => $xmlRequest]);
+            $this->beforeSendPayload($this, $payload, $order);
+
+            $response = $this->_request('POST', 'rs/ship/price', ['body' => $payload]);
 
             if (isset($response['price-quotes']['price-quote'])) {
                 foreach ($response['price-quotes']['price-quote'] as $service) {

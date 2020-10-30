@@ -3,6 +3,7 @@ namespace verbb\postie\base;
 
 use verbb\postie\Postie;
 use verbb\postie\events\FetchRatesEvent;
+use verbb\postie\events\ModifyPayloadEvent;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
@@ -26,6 +27,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     const VALUE = 'value';
 
     const EVENT_MODIFY_RATES = 'modifyRates';
+    const EVENT_MODIFY_PAYLOAD = 'modifyPayload';
     const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
 
 
@@ -416,6 +418,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         return $items;
+    }
+
+    protected function beforeSendPayload($provider, &$payload, $order)
+    {
+        $event = new ModifyPayloadEvent([
+            'provider' => $provider,
+            'payload' => $payload,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_PAYLOAD)) {
+            $this->trigger(self::EVENT_MODIFY_PAYLOAD, $event);
+        }
+
+        self::log($this, 'Sending payload: `' . json_encode($payload) . '`.');
     }
 
     protected function beforeFetchRates(&$storeLocation, &$dimensions, $order)

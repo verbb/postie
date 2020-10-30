@@ -6,7 +6,7 @@ Events can be used to extend the functionality of Postie.
 
 ### The `beforeFetchRates` event
 
-Plugins can get notified before rates are fetched from a provider. 
+The event raised before the rates are fetched. Primarily used to modify the package dimensions, or store information.
 
 ```php
 use verbb\postie\base\Provider;
@@ -15,8 +15,27 @@ use verbb\postie\providers\USPS;
 use yii\base\Event;
 
 Event::on(USPS::class, Provider::EVENT_BEFORE_FETCH_RATES, function(FetchRatesEvent $event) {
-    $event->storeLocation = [];
-    $event->dimensions = [];
+    $storeLocation = $event->storeLocation;
+    $dimensions = $event->dimensions;
+});
+```
+
+### The `modifyPayload` event
+
+The event raised before the payload is sent to a provider. You can modify the payload to suit your needs before being sent.
+
+```php
+use verbb\postie\base\Provider;
+use verbb\postie\events\ModifyPayloadEvent;
+use verbb\postie\providers\USPS;
+use yii\base\Event;
+
+Event::on(USPS::class, Provider::EVENT_MODIFY_PAYLOAD, function(ModifyPayloadEvent $event) {
+    $provider = $event->provider;
+    $payload = $event->payload;
+    $order = $event->order;
+
+    // To modify the payload, directly modify the variable via `$event->payload = ...`
 });
 ```
 

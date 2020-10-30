@@ -246,6 +246,8 @@ class USPS extends Provider
                 }
             }
 
+            $this->beforeSendPayload($this, $client, $order);
+
             // Perform the request
             $client->getRate();
 

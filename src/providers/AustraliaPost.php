@@ -87,15 +87,19 @@ class AustraliaPost extends Provider
             if ($order->shippingAddress->country->iso == 'AU') {
                 Provider::log($this, 'Domestic API call');
 
+                $payload = [
+                    'from_postcode' => $storeLocation->zipCode,
+                    'to_postcode' => $order->shippingAddress->zipCode,
+                    'length' => $dimensions['length'],
+                    'width' => $dimensions['width'],
+                    'height' => $dimensions['height'],
+                    'weight' => $dimensions['weight'],
+                ];
+
+                $this->beforeSendPayload($this, $payload, $order);
+
                 $response = $this->_request('GET', 'postage/parcel/domestic/service.json', [
-                    'query' => [
-                        'from_postcode' => $storeLocation->zipCode,
-                        'to_postcode' => $order->shippingAddress->zipCode,
-                        'length' => $dimensions['length'],
-                        'width' => $dimensions['width'],
-                        'height' => $dimensions['height'],
-                        'weight' => $dimensions['weight'],
-                    ]
+                    'query' => $payload,
                 ]);
             } else {
                 Provider::log($this, 'International API call');
@@ -107,11 +111,15 @@ class AustraliaPost extends Provider
                     return false;
                 }
 
+                $payload = [
+                    'country_code' => $countryCode,
+                    'weight' => $dimensions['weight'],
+                ];
+
+                $this->beforeSendPayload($this, $payload, $order);
+
                 $response = $this->_request('GET', 'postage/parcel/international/service.json', [
-                    'query' => [
-                        'country_code' => $countryCode,
-                        'weight' => $dimensions['weight'],
-                    ]
+                    'query' => $payload,
                 ]);
             }
 

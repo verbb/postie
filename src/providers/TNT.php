@@ -49,7 +49,7 @@ class TNT extends Provider
         $this->beforeFetchRates($storeLocation, $dimensions, $order);
 
         try {
-            $xmlRequest = '<?xml version="1.0" encoding="UTF-8"?>
+            $payload = '<?xml version="1.0" encoding="UTF-8"?>
                 <priceRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                     <appId>PC</appId>
                     <appVersion>3.0</appVersion>
@@ -94,7 +94,9 @@ class TNT extends Provider
                     </priceCheck>
                 </priceRequest>';
 
-            $response = $this->_request('POST', 'expressconnect/pricing/getprice', ['body' => $xmlRequest]);
+            $this->beforeSendPayload($this, $payload, $order);
+
+            $response = $this->_request('POST', 'expressconnect/pricing/getprice', ['body' => $payload]);
 
         } catch (\Throwable $e) {
             Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');

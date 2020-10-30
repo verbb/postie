@@ -182,6 +182,8 @@ class FedEx extends Provider
                 $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
             }
 
+            $this->beforeSendPayload($this, $rateRequest, $order);
+
             // FedEx API rate service call
             $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
 

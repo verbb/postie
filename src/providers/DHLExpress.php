@@ -162,7 +162,7 @@ class DHLExpress extends Provider
                 ],
             ];
 
-            Provider::log($this, 'Sending payload: `' . json_encode($payload) . '`.');
+            $this->beforeSendPayload($this, $payload, $order);
 
             $response = $this->_request('POST', 'RateRequest', [
                 'json' => $payload,

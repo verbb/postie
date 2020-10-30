@@ -100,13 +100,15 @@ class TNTAustralia extends Provider
                     </ratedTransitTimeEnquiry>
                 </enquiry>';
 
-            $params = [
+            $payload = [
                 'Username' => $this->settings['username'],
                 'Password' => $this->settings['password'],
                 'XMLRequest' => $xmlRequest,
             ];
 
-            $response = $this->_request('POST', 'Rtt/inputRequest.asp', ['form_params' => $params]);
+            $this->beforeSendPayload($this, $payload, $order);
+
+            $response = $this->_request('POST', 'Rtt/inputRequest.asp', ['form_params' => $payload]);
 
             if (isset($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'])) {
                 foreach ($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'] as $service) {
