@@ -74,12 +74,16 @@ class FedEx extends Provider
             'FEDEX_NEXT_DAY_END_OF_DAY'     => 'FedEx Next Day End of Day',
             'FEDEX_NEXT_DAY_FREIGHT'        => 'FedEx Next Day Freight',
 
-            'INTERNATIONAL_ECONOMY'               => 'FedEx International Economy',
-            'INTERNATIONAL_ECONOMY_FREIGHT'       => 'FedEx International Economy Freight',
-            'INTERNATIONAL_FIRST'                 => 'FedEx International First',
-            'INTERNATIONAL_PRIORITY'              => 'FedEx International Priority',
-            'INTERNATIONAL_PRIORITY_FREIGHT'      => 'FedEx International Priority Freight',
-            'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'FedEx Europe First International Priority',
+            'INTERNATIONAL_ECONOMY'                     => 'FedEx International Economy',
+            'INTERNATIONAL_ECONOMY_FREIGHT'             => 'FedEx International Economy Freight',
+            'INTERNATIONAL_ECONOMY_DISTRIBUTION'        => 'FedEx International Economy Distribution',
+            'INTERNATIONAL_FIRST'                       => 'FedEx International First',
+            'INTERNATIONAL_PRIORITY'                    => 'FedEx International Priority',
+            'INTERNATIONAL_PRIORITY_FREIGHT'            => 'FedEx International Priority Freight',
+            'INTERNATIONAL_PRIORITY_DISTRIBUTION'       => 'FedEx International Priority Distribution',
+            'INTERNATIONAL_PRIORITY_EXPRESS'            => 'FedEx International Priority Express',
+            'EUROPE_FIRST_INTERNATIONAL_PRIORITY'       => 'FedEx Europe First International Priority',
+            'INTERNATIONAL_DISTRIBUTION_FREIGHT'        => 'FedEx International Distribution',
         ];
     }
 
@@ -123,6 +127,24 @@ class FedEx extends Provider
             // $order->shippingAddress->zipCode = '94043';
             // $order->shippingAddress->stateId = $state->id;
             // $order->shippingAddress->countryId = $country->id;
+
+            // Canada Testing
+            // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
+            // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'ON');
+
+            // $storeLocation = new craft\commerce\models\Address();
+            // $storeLocation->address1 = '220 Yonge St';
+            // $storeLocation->city = 'Toronto';
+            // $storeLocation->zipCode = 'M5B 2H1';
+            // $storeLocation->stateId = $state->id;
+            // $storeLocation->countryId = $country->id;
+
+            // $order->shippingAddress->address1 = '290 Bremner Blvd';
+            // $order->shippingAddress->city = 'Toronto';
+            // $order->shippingAddress->zipCode = 'M5V 3L9';
+            // $order->shippingAddress->stateId = $state->id;
+            // $order->shippingAddress->countryId = $country->id;
+
             //
             //
             //
@@ -146,18 +168,28 @@ class FedEx extends Provider
             $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->address1];
             $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->city;
             $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->zipCode;
-            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;
 
             // Recipient
             $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->address1];
             $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
             $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
-            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $order->shippingAddress->country->iso;
 
             // Fedex can't handle 3-character states. Ignoring it is valid for international order
-            if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
-                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
-                $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
+            if ($storeLocation->country) {
+                $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;
+
+                if ($storeLocation->country->iso == 'US' || $storeLocation->country->iso == 'CA') {
+                    $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
+                }
+            }
+
+            // Fedex can't handle 3-character states. Ignoring it is valid for international order
+            if ($order->shippingAddress->country) {
+                $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $order->shippingAddress->country->iso;
+                
+                if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
+                    $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
+                }
             }
 
             // Shipping charges payment
