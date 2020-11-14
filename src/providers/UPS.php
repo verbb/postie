@@ -200,15 +200,26 @@ class UPS extends Provider
         // $storeLocation->stateId = $state->id;
         // $storeLocation->countryId = $country->id;
 
-        // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
-        // $order->shippingAddress->address1 = '290 Bremner Blvd';
-        // $order->shippingAddress->city = 'Toronto';
-        // $order->shippingAddress->zipCode = 'ON M5V 3L9';
-        // $order->shippingAddress->countryId = $country->id;
-
         // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
         // $order->shippingAddress->city = 'Mountain View';
         // $order->shippingAddress->zipCode = '94043';
+        // $order->shippingAddress->stateId = $state->id;
+        // $order->shippingAddress->countryId = $country->id;
+
+        // Canada Testing
+        // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
+        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'ON');
+
+        // $storeLocation = new craft\commerce\models\Address();
+        // $storeLocation->address1 = '220 Yonge St';
+        // $storeLocation->city = 'Toronto';
+        // $storeLocation->zipCode = 'M5B 2H1';
+        // $storeLocation->stateId = $state->id;
+        // $storeLocation->countryId = $country->id;
+
+        // $order->shippingAddress->address1 = '290 Bremner Blvd';
+        // $order->shippingAddress->city = 'Toronto';
+        // $order->shippingAddress->zipCode = 'M5V 3L9';
         // $order->shippingAddress->stateId = $state->id;
         // $order->shippingAddress->countryId = $country->id;
 
@@ -240,9 +251,12 @@ class UPS extends Provider
             $shipFromAddress->setPostalCode($storeLocation->zipCode);
 
             // UPS can't handle 3-character states. Ignoring it is valid for international order
+            // But states are also required for US and Canada
             $allowedZipCodeCountries = ['US', 'CA'];
 
             if ($storeLocation->country) {
+                $shipFromAddress->setCountryCode($storeLocation->country->iso);
+                
                 if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
@@ -261,6 +275,12 @@ class UPS extends Provider
 
             if ($order->shippingAddress->country) {
                 $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
+
+                if (in_array($order->shippingAddress->country->iso, $allowedZipCodeCountries)) {
+                    $state = $order->shippingAddress->state->abbreviation ?? '';
+
+                    $shipToAddress->setStateProvinceCode($state);
+                }
             }
 
             // Handle a maxiumum weight for packages
