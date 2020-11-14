@@ -1,7 +1,5 @@
 # FedEx
 
-In order to use FedEx, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
-
 ### How to get API access
 
 To use Fedex API, you'll need to:

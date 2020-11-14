@@ -1,7 +1,5 @@
 # UPS
 
-In order to use UPS, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
-
 ### How to get API access
 
 Register for an access key via the [UPS Developer Kit](https://www.ups.com/upsdeveloperkit?loc=en_US) form. Add this access key in the provider information either through the control panel, or in the configuration file (as the API Key).

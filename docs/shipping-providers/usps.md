@@ -1,7 +1,5 @@
 # USPS
 
-In order to use USPS, you'll need to ensure you are using a valid United States address as your store location. You'll also need to ensure your Craft Commerce default currency is set to USD.
-
 ### How to get API access
 
 Register for an API username via the [Registration for USPS Web Tools](https://registration.shippingapis.com/) form. Add this username in the provider information either through the control panel, or in the configuration file.
