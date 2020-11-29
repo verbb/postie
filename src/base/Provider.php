@@ -450,4 +450,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $storeLocation = $fetchRatesEvent->storeLocation;
         $dimensions = $fetchRatesEvent->dimensions;
     }
+
+    protected function getSetting($property)
+    {
+        return $this->settings[$property] ?? null;
+    }
 }
