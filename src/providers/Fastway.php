@@ -12,18 +12,12 @@ use craft\commerce\Plugin as Commerce;
 
 class Fastway extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public $name = 'Fastway';
-
-
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/fastway', ['provider' => $this]);
+        return Craft::t('postie', 'Fastway');
     }
 
     public function getServiceList(): array
@@ -115,7 +109,9 @@ class Fastway extends Provider
                     ];
                 }
             } else {
-                Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
 
             // Allow rate modification via events
@@ -132,7 +128,11 @@ class Fastway extends Provider
             $this->_rates = $modifyRatesEvent->rates;
             
         } catch (\Throwable $e) {
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

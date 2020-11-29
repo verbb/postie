@@ -22,15 +22,8 @@ use FedEx\RateService\SimpleType\WeightUnits;
 
 class FedEx extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public $name = 'FedEx';
-
-
     // Public Methods
     // =========================================================================
-
 
     public function __construct()
     {
@@ -40,14 +33,15 @@ class FedEx extends Provider
         ini_set("soap.wsdl_cache_enabled", "0");
     }
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/fedex', ['provider' => $this]);
+        return Craft::t('postie', 'FedEx');
     }
 
     public function getServiceList(): array
     {
         return [
+            // Domestic
             'FEDEX_1_DAY_FREIGHT'       => 'FedEx 1 Day Freight',
             'FEDEX_2_DAY'               => 'FedEx 2 Day',
             'FEDEX_2_DAY_AM'            => 'FedEx 2 Day AM',
@@ -74,6 +68,7 @@ class FedEx extends Provider
             'FEDEX_NEXT_DAY_END_OF_DAY'     => 'FedEx Next Day End of Day',
             'FEDEX_NEXT_DAY_FREIGHT'        => 'FedEx Next Day Freight',
 
+            // International
             'INTERNATIONAL_ECONOMY'                     => 'FedEx International Economy',
             'INTERNATIONAL_ECONOMY_FREIGHT'             => 'FedEx International Economy Freight',
             'INTERNATIONAL_ECONOMY_DISTRIBUTION'        => 'FedEx International Economy Distribution',
@@ -268,7 +263,9 @@ class FedEx extends Provider
                     Provider::error($this, 'Rate Error: ' . $message->Message);
                 }
             } else {
-                Provider::error($this, 'Unable to fetch rates: `' . json_encode($rateReply) . '`.');
+                Provider::error($this, Craft::t('postie', 'Unable to fetch rates: `{json}`.', [
+                    'json' => Json::encode($rateReply),
+                ]));
             }
 
             // Allow rate modification via events
@@ -285,8 +282,11 @@ class FedEx extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            // Craft::dump($e->getMessage());
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

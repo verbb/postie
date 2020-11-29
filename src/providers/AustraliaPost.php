@@ -15,22 +15,21 @@ class AustraliaPost extends Provider
     // Properties
     // =========================================================================
 
-    public $name = 'Australia Post';
-
     private $_countryList = [];
 
 
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/australia-post', ['provider' => $this]);
+        return Craft::t('postie', 'Australia Post');
     }
 
     public function getServiceList(): array
     {
         return [
+            // Domestic
             'AUS_PARCEL_COURIER'                => 'AusPost Domestic Courier Post',
             'AUS_PARCEL_COURIER_SATCHEL_MEDIUM' => 'AusPost Domestic Courier Post Assessed Medium Satchel',
             'AUS_PARCEL_EXPRESS'                => 'AusPost Domestic Express Post',
@@ -38,6 +37,7 @@ class AustraliaPost extends Provider
             'AUS_PARCEL_REGULAR'                => 'AusPost Domestic Parcel Post',
             'AUS_PARCEL_REGULAR_SATCHEL_500G'   => 'AusPost Domestic Parcel Post Small Satchel',
 
+            // International
             'INT_PARCEL_COR_OWN_PACKAGING' => 'AusPost International Courier',
             'INT_PARCEL_EXP_OWN_PACKAGING' => 'AusPost International Express',
             'INT_PARCEL_STD_OWN_PACKAGING' => 'AusPost International Standard',
@@ -131,7 +131,9 @@ class AustraliaPost extends Provider
                     ];
                 }
             } else {
-                Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
 
             // Allow rate modification via events
@@ -150,14 +152,19 @@ class AustraliaPost extends Provider
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
+                $message = $data['error']['errorMessage'] ?? $e->getMessage();
 
-                if (isset($data['error']['errorMessage'])) {
-                    Provider::error($this, 'API error: `' . $data['error']['errorMessage'] . '`.');
-                } else {
-                    Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
-                }
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $message,
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             } else {
-                Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             }
         }
 

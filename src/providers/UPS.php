@@ -33,7 +33,7 @@ class UPS extends Provider
     // Properties
     // =========================================================================
 
-    public $name = 'UPS';
+    public $handle = 'ups';
 
     private $pickupCode = [
         '01' => 'Daily Pickup',
@@ -79,9 +79,9 @@ class UPS extends Provider
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/ups', ['provider' => $this]);
+        return Craft::t('postie', 'UPS');
     }
 
     public function getPickupTypeOptions()
@@ -425,8 +425,11 @@ class UPS extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            // Craft::dump($e->getMessage());
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

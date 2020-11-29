@@ -17,15 +17,15 @@ class TNTAustralia extends Provider
     // Properties
     // =========================================================================
 
-    public $name = 'TNT Australia';
+    public $handle = 'tntAustralia';
 
 
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/tnt-au', ['provider' => $this]);
+        return Craft::t('postie', 'TNT Australia');
     }
 
     public function getServiceList(): array
@@ -118,7 +118,9 @@ class TNTAustralia extends Provider
                     ];
                 }
             } else {
-                Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
 
             // Allow rate modification via events
@@ -135,7 +137,11 @@ class TNTAustralia extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

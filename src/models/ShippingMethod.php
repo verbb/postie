@@ -31,7 +31,7 @@ class ShippingMethod extends BaseShippingMethod
 
     public function getType(): string
     {
-        return $this->provider->getName();
+        return $this->provider->name;
     }
 
     public function getId()
@@ -84,6 +84,6 @@ class ShippingMethod extends BaseShippingMethod
 
     public function getCpEditUrl(): string
     {
-        return UrlHelper::cpUrl('postie/settings/shipping-methods/' . $this->provider->getHandle() . '/' . $this->getHandle());
+        return UrlHelper::cpUrl('postie/settings/shipping-methods/' . $this->provider->handle . '/' . $this->getHandle());
     }
 }

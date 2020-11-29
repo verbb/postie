@@ -20,15 +20,15 @@ class USPS extends Provider
     // Properties
     // =========================================================================
 
-    public $name = 'USPS';
+    public $handle = 'usps';
 
 
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/usps', ['provider' => $this]);
+        return Craft::t('postie', 'USPS');
     }
 
     public function getServiceList(): array
@@ -282,7 +282,9 @@ class USPS extends Provider
                         ];
                     }
                 } else if (isset($response['IntlRateV2Response']['Package']['Error'])) {
-                    Provider::error($this, json_encode($response['IntlRateV2Response']['Package']['Error']));
+                    Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                        'json' => Json::encode($response['IntlRateV2Response']['Package']['Error']),
+                    ]));
                 } else {
                     Provider::error($this, 'No Services found.');
                 }
@@ -302,8 +304,11 @@ class USPS extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
         } catch (\Throwable $e) {
-            // Craft::dump($e->getMessage());
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

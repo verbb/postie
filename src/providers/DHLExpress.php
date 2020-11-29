@@ -19,15 +19,15 @@ class DHLExpress extends Provider
     // Properties
     // =========================================================================
 
-    public $name = 'DHL Express';
+    public $handle = 'dhlExpress';
 
 
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/dhl-express', ['provider' => $this]);
+        return Craft::t('postie', 'DHL Express');
     }
 
     public function getServiceList(): array
@@ -201,19 +201,26 @@ class DHLExpress extends Provider
             $this->_rates = $modifyRatesEvent->rates;
 
             if (!$this->_rates) {
-                Provider::error($this, 'No available rates: `' . json_encode($response) . '`.');
+                Provider::error($this, Craft::t('postie', 'No available rates: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
+                $message = $data['error']['errorMessage'] ?? $e->getMessage();
 
-                if (isset($data['error']['errorMessage'])) {
-                    Provider::error($this, 'API error: `' . $data['error']['errorMessage'] . '`.');
-                } else {
-                    Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
-                }
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $message,
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             } else {
-                Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             }
         }
 

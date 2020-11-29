@@ -14,43 +14,47 @@ use Cake\Utility\Xml as XmlParser;
 
 class CanadaPost extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public $name = 'Canada Post';
-
-
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/canada-post', ['provider' => $this]);
+        return Craft::t('postie', 'Canada Post');
     }
 
     public function getServiceList(): array
     {
         return [
-            'DOM_EP' => 'Expedited Parcel',
+            // Domestic
             'DOM_RP' => 'Regular Parcel',
-            'DOM_PC' => 'Priority',
+            'DOM_EP' => 'Expedited Parcel',
             'DOM_XP' => 'Xpresspost',
-            'INT_PW_ENV' => 'Priority Worldwide envelope INTL',
-            'USA_PW_ENV' => 'Priority Worldwide envelope USA',
-            'USA_PW_PAK' => 'Priority Worldwide pak USA',
-            'INT_PW_PAK' => 'Priority Worldwide pak INTL',
-            'INT_PW_PARCEL' => 'Priority Worldwide parcel INTL',
-            'USA_PW_PARCEL' => 'Priority Worldwide parcel USA',
-            'INT_XP' => 'Xpresspost International',
-            'INT_IP_AIR' => 'International Parcel Air',
-            'INT_IP_SURF' => 'International Parcel Surface',
-            'INT_TP' => 'Tracked Packet - International',
-            'INT_SP_SURF' => 'Small Packet International Surface',
-            'INT_SP_AIR' => 'Small Packet International Air',
-            'USA_XP' => 'Xpresspost USA',
+            'DOM_PC' => 'Priority',
+            'DOM_LIB' => 'Library Books',
+
+            // USA
             'USA_EP' => 'Expedited Parcel USA',
             'USA_TP' => 'Tracked Packet - USA',
+
+            'USA_TP_LVM' => 'Tracked Packet USA (LVM)',
+            'USA_PW_ENV' => 'Priority Worldwide Envelope USA',
+            'USA_PW_PAK' => 'Priority Worldwide pak USA',
+
+            'USA_PW_PARCEL' => 'Priority Worldwide parcel USA',
             'USA_SP_AIR' => 'Small Packet USA Air',
+            'USA_SP_AIR_LVM' => 'Tracked Packet USA (LVM)',
+            'USA_XP' => 'Xpresspost USA',
+
+            // International
+            'INT_XP' => 'Xpresspost International',
+            'INT_TP' => 'Tracked Packet - International',
+            'INT_IP_AIR' => 'International Parcel Air',
+            'INT_IP_SURF' => 'International Parcel Surface',
+            'INT_PW_ENV' => 'Priority Worldwide envelope INTL',
+            'INT_PW_PAK' => 'Priority Worldwide pak INTL',
+            'INT_PW_PARCEL' => 'Priority Worldwide parcel INTL',
+            'INT_SP_AIR' => 'Small Packet International Air',
+            'INT_SP_SURF' => 'Small Packet International Surface',
         ];
     }
 
@@ -115,7 +119,9 @@ XML;
                     ];
                 }
             } else {
-                Provider::error($this, 'Response error: `' . json_encode($response) . '`.');
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
 
             // Allow rate modification via events
@@ -134,14 +140,19 @@ XML;
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = $this->_parseResponse($e->getResponse());
+                $message = $data['messages']['message']['description'] ?? $e->getMessage();
 
-                if (isset($data['messages']['message']['description'])) {
-                    Provider::error($this, 'API error: `' . $data['messages']['message']['description'] . '`.');
-                } else {
-                    Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
-                }
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $message,
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             } else {
-                Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             }
         }
 

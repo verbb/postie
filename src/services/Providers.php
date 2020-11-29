@@ -39,7 +39,7 @@ class Providers extends Component
         foreach ($providerTypes as $providerType) {
             $provider = $this->_createProvider($providerType);
 
-            $providers[$provider->getHandle()] = $provider;
+            $providers[$provider->handle] = $provider;
         }
 
         ksort($providers, SORT_STRING | SORT_FLAG_CASE);
@@ -52,7 +52,7 @@ class Providers extends Component
         $providers = $this->getAllProviders();
 
         foreach ($providers as $provider) {
-            if ($provider->getHandle() == $handle) {
+            if ($provider->handle == $handle) {
                 return $provider;
             }
         }

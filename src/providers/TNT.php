@@ -13,18 +13,12 @@ use Cake\Utility\Xml;
 
 class TNT extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public $name = 'TNT';
-
-
     // Public Methods
     // =========================================================================
 
-    public function getSettingsHtml()
+    public static function displayName(): string
     {
-        return Craft::$app->getView()->renderTemplate('postie/providers/tnt', ['provider' => $this]);
+        return Craft::t('postie', 'TNT');
     }
 
     public function getServiceList(): array
@@ -99,7 +93,11 @@ class TNT extends Provider
             $response = $this->_request('POST', 'expressconnect/pricing/getprice', ['body' => $payload]);
 
         } catch (\Throwable $e) {
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;

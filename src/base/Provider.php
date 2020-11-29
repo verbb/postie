@@ -35,6 +35,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // =========================================================================
 
     public $name;
+    public $handle;
     public $enabled;
     public $settings = [];
     public $markUpRate;
@@ -51,6 +52,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function __construct()
     {
+        // Setup default name + handle
+        $this->name = $this->name ?? $this->displayName();
+        $this->handle = $this->handle ?? StringHelper::toCamelCase($this->displayName());
+
         // Populate and override provider settings from the plugin settings and config file
         foreach ($this->getSettings() as $key => $value) {
             if (property_exists($this, $key)) {
@@ -61,7 +66,17 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
+    }
+
+    public function getName(): string
+    {
+        return (string)$this->name;
+    }
+
+    public function getHandle(): string
+    {
+        return (string)$this->handle;
     }
 
     public function getClass(): string
@@ -71,33 +86,12 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return substr($nsClass, strrpos($nsClass, "\\") + 1);
     }
 
-    public function getHandle(): string
-    {
-        $class = $this->displayName();
-
-        // Some special cases here, which is a bit annoying...
-        // Refactor this as it's gross as...
-        if ($class === 'USPS' || $class === 'UPS') {
-            return strtolower($class);
-        }
-
-        if ($class === 'TNTAustralia') {
-            return 'tntAustralia';
-        }
-
-        if ($class === 'DHLExpress') {
-            return 'dhlExpress';
-        }
-
-        return StringHelper::toCamelCase($class);
-    }
-
-    public function getIconUrl()
+    public function getIconUrl(): string
     {
         try {
-            $handle = strtolower($this->displayName());
+            $handle = StringHelper::toKebabCase($this->displayName());
 
-            return Craft::$app->assetManager->getPublishedUrl('@verbb/postie/resources/dist/img/' . $handle . '.svg', true);
+            return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
         } catch (\Throwable $e) {
             return '';
         }
@@ -114,9 +108,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return false;
     }
 
-    public function getSettingsHtml()
+    public function getSettingsHtml(): string
     {
-        return null;
+        $handle = StringHelper::toKebabCase($this->displayName());
+
+        return Craft::$app->getView()->renderTemplate("postie/providers/$handle", [
+            'provider' => $this,
+        ]);
     }
 
     public function getSettings(): array
@@ -126,8 +124,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $config = Craft::$app->config->getConfigFromFile('postie');
         $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
 
-        $providerSettings = $pluginInfo['settings']['providers'][$this->getHandle()] ?? [];
-        $configSettings = $config['providers'][$this->getHandle()] ?? [];
+        $providerSettings = $pluginInfo['settings']['providers'][$this->handle] ?? [];
+        $configSettings = $config['providers'][$this->handle] ?? [];
 
         $settings = array_merge(
             $settings,
@@ -431,7 +429,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $this->trigger(self::EVENT_MODIFY_PAYLOAD, $event);
         }
 
-        self::log($this, 'Sending payload: `' . json_encode($payload) . '`.');
+        self::log($this, Craft::t('postie', 'Sending payload: `{json}`.', [
+            'json' => Json::encode($payload),
+        ]));
     }
 
     protected function beforeFetchRates(&$storeLocation, &$dimensions, $order)

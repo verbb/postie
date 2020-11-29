@@ -34,7 +34,10 @@ use craft\commerce\Plugin as Commerce;
 
 class MyProvider extends Provider
 {
-    public $name = 'My Provider';
+    public static function displayName(): string
+    {
+        return Craft::t('postie', 'My Provider');
+    }
 
     public function getSettingsHtml()
     {
@@ -70,6 +73,9 @@ class MyProvider extends Provider
         // smart enough to know what your Commerce settings are, and converts them for you.
         $dimensions = $this->getDimensions($order, 'kg', 'cm');
 
+        // Allow location and dimensions modification via events
+        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+
         try {
 
             //
@@ -83,7 +89,11 @@ class MyProvider extends Provider
             // ...
 
         } catch (\Throwable $e) {
-            Provider::error($this, 'API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
 
         return $this->_rates;
@@ -93,7 +103,7 @@ class MyProvider extends Provider
 
 ## Properties and Methods
 
-### public $name
+### public static function displayName()
 
 This defines the the name of your shipping provider.
 
