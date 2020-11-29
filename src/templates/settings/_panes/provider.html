@@ -63,18 +63,17 @@
     <table id="fields" class="data fullwidth collapsible">
         <thead>
             <tr>
-                <th colspan="2">&nbsp;</th>
-                <th class="provider-shipping-methods-all-switch">
-                    {{ forms.lightswitchField({
-                        id: 'allShippingMethods',
-                    }) }}
-                </th>
-            </tr>
-
-            <tr>
                 <th scope="col">{{ "Name" | t('postie') }}</th>
                 <th scope="col">{{ "Handle" | t('postie') }}</th>
-                <th scope="col">{{ "Enabled" | t('postie') }}</th>
+                <th scope="col">
+                    {{ "Enabled" | t('postie') }}
+                    <div class="provider-shipping-methods-all-switch">
+                        {{ forms.lightswitchField({
+                            id: 'allShippingMethods',
+                            small: true,
+                        }) }}
+                    </div>
+                </th>
             </tr>
         </thead>
 
@@ -116,6 +115,7 @@
                                 name: 'enabled',
                                 value: 1,
                                 on: enabled,
+                                small: true,
                             }) }}
                         </td>
                     </tr>
