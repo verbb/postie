@@ -67,7 +67,7 @@ class NewZealandPost extends Provider
         // 
         //
 
-        // try {
+        try {
             $response = [];
 
             if ($order->shippingAddress->country->iso == 'NZ') {
