@@ -108,6 +108,16 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return false;
     }
 
+    public function supportsDynamicServices(): bool
+    {
+        return false;
+    }
+
+    public function getServiceList(): array
+    {
+        return [];
+    }
+
     public function getSettingsHtml(): string
     {
         $handle = StringHelper::toKebabCase($this->displayName());
@@ -199,9 +209,23 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $shippingMethods = [];
 
-        foreach ($this->services as $handle => $shippingMethod) {
-            if ($shippingMethod->enabled) {
+        if ($this->supportsDynamicServices()) {
+            $shippingRates = $this->getShippingRates($order) ?? [];
+
+            foreach (array_keys($shippingRates) as $key => $handle) {
+                $shippingMethod = new ShippingMethod();
+                $shippingMethod->handle = $handle;
+                $shippingMethod->provider = $this;
+                $shippingMethod->name = StringHelper::toTitleCase($handle);
+                $shippingMethod->enabled = true;
+
                 $shippingMethods[$handle] = $shippingMethod;
+            }
+        } else {
+            foreach ($this->services as $handle => $shippingMethod) {
+                if ($shippingMethod->enabled) {
+                    $shippingMethods[$handle] = $shippingMethod;
+                }
             }
         }
 

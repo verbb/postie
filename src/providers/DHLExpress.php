@@ -4,11 +4,9 @@ namespace verbb\postie\providers;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\helpers\Json;
-use craft\helpers\StringHelper;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -30,30 +28,9 @@ class DHLExpress extends Provider
         return Craft::t('postie', 'DHL Express');
     }
 
-    public function getServiceList(): array
+    public function supportsDynamicServices(): bool
     {
-        // DHL don't really have set service codes, so have them be dynamic
-        return [];
-    }
-
-    public function getShippingMethods($order)
-    {
-        // Get the dynamically generated service codes from the actual rate request
-        $shippingMethods = [];
-
-        $shippingRates = $this->getShippingRates($order) ?? [];
-
-        foreach (array_keys($shippingRates) as $key => $handle) {
-            $shippingMethod = new ShippingMethod();
-            $shippingMethod->handle = $handle;
-            $shippingMethod->provider = $this;
-            $shippingMethod->name = StringHelper::toTitleCase($handle);
-            $shippingMethod->enabled = true;
-
-            $shippingMethods[$handle] = $shippingMethod;
-        }
-
-        return $shippingMethods;
+        return true;
     }
 
     public function fetchShippingRates($order)
