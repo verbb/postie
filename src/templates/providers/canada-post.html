@@ -1,9 +1,21 @@
 {% import '_includes/forms' as forms %}
 {% import 'postie/_macros' as macros %}
 
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/gettingstarted.jsf" target="_blank">{name} Developers Centre</a> and register for API access.
+1. Copy the **Customer Number** from {name} and paste in the **Customer Number** field below.
+1. Copy the **Username** from {name} and paste in the **Username** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+{% endset %}
+
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
+
 {{ forms.textField({
     label: 'Customer Number' | t('postie'),
-    instructions: 'Enter your {name} Customer Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Customer Number here.' | t('postie', { name: provider.displayName() }),
     id: 'customerNumber',
     name: 'customerNumber',
     value: provider.settings.customerNumber ?? '',
@@ -13,7 +25,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
-    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -23,7 +35,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
-    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -33,10 +45,9 @@
 
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
-    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.name }),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
     id: 'useTestEndpoint',
     name: 'useTestEndpoint',
     on: provider.settings.useTestEndpoint ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
 }) }}
-

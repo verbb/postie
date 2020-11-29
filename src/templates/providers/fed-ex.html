@@ -1,18 +1,23 @@
 {% import '_includes/forms' as forms %}
 {% import 'postie/_macros' as macros %}
 
-<p>{{ "To use Fedex API, you'll need to:" | t('postie') }}
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://www.fedex.com/login/web/jsp/contactInfo1.jsp" target="_blank">{name} Developers Centre</a> and register for API access.
+1. Register a <a href="https://www.fedex.com/wpor/web/jsp/commonTC.jsp" target="_blank">FedEx Web Services Production Access</a>.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+1. Copy the **Meter Number** from {name} and paste in the **Meter Number** field below.
+1. Copy the **API Key** from {name} and paste in the **Key** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+{% endset %}
 
-<ol class="postie-list">
-    <li>{{ "Create a profile at the {url}" | t('postie', { url: '<a href="https://www.fedex.com/login/web/jsp/contactInfo1.jsp" target="_blank">FedEx website</a>' }) | raw }}</li>
-    <li>{{ "Register a {url}" | t('postie', { url: '<a href="https://www.fedex.com/wpor/web/jsp/commonTC.jsp" target="_blank">FedEx Web Services Production Access</a>' }) | raw }}</li>
-</ol>
-
-<p>{{ "After this, you should receive an email with the below information." | t('postie') }}</p>
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
-    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',
@@ -22,7 +27,7 @@
 
 {{ forms.textField({
     label: 'Meter Number' | t('postie'),
-    instructions: 'Enter your {name} Meter Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Meter Number here.' | t('postie', { name: provider.displayName() }),
     id: 'meterNumber',
     name: 'meterNumber',
     value: provider.settings.meterNumber ?? '',
@@ -32,7 +37,7 @@
 
 {{ forms.textField({
     label: 'Key' | t('postie'),
-    instructions: 'Enter your {name} Key here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Key here.' | t('postie', { name: provider.displayName() }),
     id: 'key',
     name: 'key',
     value: provider.settings.key ?? '',
@@ -42,7 +47,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
-    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -52,7 +57,7 @@
 
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
-    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.name }),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
     id: 'useTestEndpoint',
     name: 'useTestEndpoint',
     on: provider.settings.useTestEndpoint ?? false,

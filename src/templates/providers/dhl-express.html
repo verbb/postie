@@ -1,11 +1,21 @@
 {% import '_includes/forms' as forms %}
 {% import 'postie/_macros' as macros %}
 
-<p>{{ "Register for API credentials via the {url} website. Use thse API credentials either here or in the configuration file." | t('postie', { url: '<a href="https://xmlportal.dhl.com/login" target="_blank">DHL Express XML Developer Portal</a>' }) | raw }}</p>
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://xmlportal.dhl.com/login" target="_blank">{name} XML Developer Portal</a> and register for API access.
+1. Copy the **API Username** from {name} and paste in the **API Username** field below.
+1. Copy the **API Password** from {name} and paste in the **API Password** field below.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+{% endset %}
+
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
 
 {{ forms.textField({
     label: 'API Username (Site ID)' | t('postie'),
-    instructions: 'Enter your {name} API Username here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} API Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -15,7 +25,7 @@
 
 {{ forms.textField({
     label: 'API Password' | t('postie'),
-    instructions: 'Enter your {name} API Password here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} API Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -25,7 +35,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
-    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'account',
     name: 'account',
     value: provider.settings.account ?? '',
@@ -35,7 +45,7 @@
 
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
-    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.name }),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
     id: 'useTestEndpoint',
     name: 'useTestEndpoint',
     on: provider.settings.useTestEndpoint ?? false,

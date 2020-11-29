@@ -1,9 +1,23 @@
 {% import '_includes/forms' as forms %}
 {% import 'postie/_macros' as macros %}
 
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">{name} Developer Kit</a> and register for API access.
+1. Copy the **API Key** from {name} and paste in the **API Key** field below.
+1. Copy the **Test API Key** from {name} and paste in the **Test API Key** field below.
+1. Copy the **Username** from {name} and paste in the **Username** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+{% endset %}
+
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
+
 {{ forms.textField({
     label: 'API Key' | t('postie'),
-    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'apiKey',
     name: 'apiKey',
     value: provider.settings.apiKey ?? '',
@@ -13,7 +27,7 @@
 
 {{ forms.textField({
     label: 'Test API Key' | t('postie'),
-    instructions: 'Enter your {name} Test API Key here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Test API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'testApiKey',
     name: 'testApiKey',
     value: provider.settings.testApiKey ?? '',
@@ -23,7 +37,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
-    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -33,7 +47,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
-    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
@@ -43,7 +57,7 @@
 
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
-    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',

@@ -1,9 +1,21 @@
 {% import '_includes/forms' as forms %}
 {% import 'postie/_macros' as macros %}
 
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://www.tnt.com/express/en_au/site/shipping-tools.html" target="_blank">{name} Shipping Tools</a> and register for API access.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+1. Copy the **Username** from {name} and paste in the **Username** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+{% endset %}
+
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
+
 {{ forms.textField({
     label: 'Account Number' | t('postie'),
-    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'accountNumber',
     name: 'accountNumber',
     value: provider.settings.accountNumber ?? '',
@@ -13,7 +25,7 @@
 
 {{ forms.textField({
     label: 'Username' | t('postie'),
-    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
@@ -23,7 +35,7 @@
 
 {{ forms.textField({
     label: 'Password' | t('postie'),
-    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.name }),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
