@@ -3,6 +3,7 @@
 
 {{ forms.textField({
     label: 'Name' | t('postie'),
+    instructions: 'The name for this shipping provider.' | t('postie'),
     name: 'name',
     value: provider.name,
     required: true,
@@ -12,6 +13,7 @@
 
 {{ forms.lightswitchField({
     label: 'Enabled' | t('postie'),
+    instructions: 'Whether this shipping provider should be enabled.' | t('postie'),
     name: 'enabled',
     on: provider.enabled,
     errors: provider.getErrors('enabled'),
