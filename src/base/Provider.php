@@ -41,6 +41,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public $markUpRate;
     public $markUpBase;
     public $services = [];
+    public $restrictServices = true;
 
     protected $_client;
     protected $_rates;
@@ -110,7 +111,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function supportsDynamicServices(): bool
     {
-        return false;
+        return !$this->restrictServices;
     }
 
     public function getServiceList(): array
@@ -164,6 +165,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 $tempProvider->settings = $settings['settings'] ?? null;
                 $tempProvider->markUpRate = $settings['markUpRate'] ?? null;
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
+                $tempProvider->restrictServices = $settings['restrictServices'] ?? null;
 
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;

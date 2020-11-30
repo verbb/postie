@@ -62,6 +62,16 @@
 
     <h2>{{ "Shipping Methods" | t('postie') }}</h2>
 
+    {{ forms.lightswitchField({
+        label: 'Restrict Shipping Methods' | t('postie'),
+        instructions: 'Whether to restrict the services returned from the provider, or allow all.' | t('postie'),
+        id: 'restrictServices',
+        name: 'restrictServices',
+        on: provider.restrictServices,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.restrictServices', 'postie'),
+        toggle: 'fields',
+    }) }}
+
     <table id="fields" class="data fullwidth collapsible">
         <thead>
             <tr>
