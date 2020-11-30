@@ -12,6 +12,13 @@ use craft\commerce\Plugin as Commerce;
 
 class NewZealandPost extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
+
+    
     // Public Methods
     // =========================================================================
 

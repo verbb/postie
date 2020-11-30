@@ -15,6 +15,9 @@ class AustraliaPost extends Provider
     // Properties
     // =========================================================================
 
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
+
     private $_countryList = [];
 
 

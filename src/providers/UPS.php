@@ -34,6 +34,8 @@ class UPS extends Provider
     // =========================================================================
 
     public $handle = 'ups';
+    public $weightUnit = 'lb';
+    public $dimensionUnit = 'in';
 
     private $pickupCode = [
         '01' => 'Daily Pickup',

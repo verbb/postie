@@ -14,6 +14,13 @@ use Cake\Utility\Xml as XmlParser;
 
 class CanadaPost extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
+
+    
     // Public Methods
     // =========================================================================
 

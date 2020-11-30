@@ -18,6 +18,8 @@ class TNTAustralia extends Provider
     // =========================================================================
 
     public $handle = 'tntAustralia';
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
 
 
     // Public Methods

@@ -13,6 +13,13 @@ use Cake\Utility\Xml;
 
 class TNT extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
+
+    
     // Public Methods
     // =========================================================================
 

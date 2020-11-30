@@ -21,8 +21,10 @@ class USPS extends Provider
     // =========================================================================
 
     public $handle = 'usps';
+    public $weightUnit = 'lb';
+    public $dimensionUnit = 'in';
 
-
+    
     // Public Methods
     // =========================================================================
 

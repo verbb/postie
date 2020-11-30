@@ -12,6 +12,13 @@ use craft\commerce\Plugin as Commerce;
 
 class Interparcel extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
+
+    
     // Public Methods
     // =========================================================================
 

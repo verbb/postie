@@ -22,6 +22,13 @@ use FedEx\RateService\SimpleType\WeightUnits;
 
 class FedEx extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'lb';
+    public $dimensionUnit = 'in';
+
+    
     // Public Methods
     // =========================================================================
 

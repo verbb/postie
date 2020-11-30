@@ -16,6 +16,12 @@ use function GuzzleHttp\Psr7\build_query;
 
 class Bring extends Provider
 {
+    // Properties
+    // =========================================================================
+
+    public $weightUnit = 'g';
+    public $dimensionUnit = 'cm';
+
 
     // Public Methods
     // =========================================================================

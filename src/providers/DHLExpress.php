@@ -18,6 +18,8 @@ class DHLExpress extends Provider
     // =========================================================================
 
     public $handle = 'dhlExpress';
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
 
 
     // Public Methods
