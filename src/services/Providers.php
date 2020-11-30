@@ -8,7 +8,6 @@ use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\providers\AustraliaPost;
 use verbb\postie\providers\Bring;
 use verbb\postie\providers\CanadaPost;
-use verbb\postie\providers\Colissimo;
 use verbb\postie\providers\DHLExpress;
 use verbb\postie\providers\Fastway;
 use verbb\postie\providers\FedEx;
@@ -75,7 +74,6 @@ class Providers extends Component
             AustraliaPost::class,
             Bring::class,
             CanadaPost::class,
-            Colissimo::class,
             DHLExpress::class,
             Fastway::class,
             FedEx::class,
