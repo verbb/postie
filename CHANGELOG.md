@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.3.6 - 2020-12-02
+
+### Added
+- Add some additional Fedex rates for international distribution.
+
+### Changed
+- Update `jeremy-dunn/php-fedex-api-wrapper` to 4.0.
+
+### Fixed
+- Fix UPS using Canadian origin address not working correctly.
+- Fix package dimensions not calculating correctly in some instances.
+
 ## 2.3.5 - 2020-10-30
 
 ### Added
