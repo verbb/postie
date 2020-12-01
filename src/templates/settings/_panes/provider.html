@@ -40,6 +40,7 @@
             id: 'markUpRate',
             name: 'markUpRate',
             value: provider.markUpRate,
+            errors: provider.getErrors('markUpRate'),
             warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpRate', 'postie'),
         }) }}
     </div>
@@ -52,9 +53,42 @@
             name: 'markUpBase',
             options: provider.getMarkUpBaseOptions(),
             value: provider.markUpBase,
+            errors: provider.getErrors('markUpBase'),
             warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpBase', 'postie'),
         }) }}
     </div>
+</div>
+
+{% set packingMethod = provider.packingMethod ?? 'perItem' %}
+
+{{ forms.selectField({
+    label: 'Packing Method' | t('postie'),
+    instructions: 'Select how order items should be packed into boxes.' | t('postie'),
+    id: 'packingMethod',
+    name: 'packingMethod',
+    options: [
+        { label: 'Pack items individually' | t('formie'), value: 'perItem' },
+        { label: 'Pack items into boxes' | t('formie'), value: 'boxPacking' },
+        { label: 'Pack items into a single box' | t('formie'), value: 'singleBox' },
+    ],
+    value: packingMethod,
+    toggle: true,
+    targetPrefix: 'packing-',
+    errors: provider.getErrors('packingMethod'),
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.packingMethod', 'postie'),
+}) }}
+
+<div id="packing-boxPacking" class="{{ packingMethod != 'boxPacking' ? 'hidden' }}">
+    {{ macros.editableTableField({
+        label: 'Box Sizes' | t('postie'),
+        instructions: 'Items will be packed into these boxes based on item dimensions and volume. Dimensions will be passed to {name}, and used for packing. Items not fitting into boxes will be packed individually.' | t('postie', { name: provider.displayName() }),
+        id: 'boxSizes',
+        name: 'boxSizes',
+        cols: provider.getBoxSizesSettings(),
+        rows: provider.getBoxSizesRows(),
+        errors: provider.getErrors('boxSizes'),
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.boxSizes', 'postie'),
+    }) }}
 </div>
 
 {% if provider.getServiceList() | length %}
@@ -68,6 +102,7 @@
         id: 'restrictServices',
         name: 'restrictServices',
         on: provider.restrictServices,
+        errors: provider.getErrors('restrictServices'),
         warning: macros.configWarning('providers.' ~ provider.handle ~ '.restrictServices', 'postie'),
         toggle: 'fields',
     }) }}

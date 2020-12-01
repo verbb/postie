@@ -20,6 +20,8 @@ class CanadaPost extends Provider
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
 
+    private $maxWeight = 30000; // 30kg
+
     
     // Public Methods
     // =========================================================================
@@ -65,6 +67,11 @@ class CanadaPost extends Provider
         ];
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        return $this->maxWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -73,10 +80,12 @@ class CanadaPost extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -93,7 +102,7 @@ class CanadaPost extends Provider
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
         // API is very particular on format - float up to 3 decimal places
-        $dimensions['weight'] = number_format($dimensions['weight'], 3);
+        $weight = number_format($packedBoxes->getTotalWeight(), 3);
 
         try {
             $payload = <<<XML
@@ -101,7 +110,7 @@ class CanadaPost extends Provider
 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
     <customer-number>{$this->settings['customerNumber']}</customer-number>
     <parcel-characteristics>
-        <weight>{$dimensions['weight']}</weight>
+        <weight>{$weight}</weight>
     </parcel-characteristics>
     <origin-postal-code>{$originZipCode}</origin-postal-code>
     <destination>

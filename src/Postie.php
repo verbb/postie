@@ -23,7 +23,7 @@ class Postie extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '2.0.0';
+    public $schemaVersion = '2.1.0';
     public $hasCpSettings = true;
 
 

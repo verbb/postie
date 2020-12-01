@@ -24,6 +24,9 @@ class USPS extends Provider
     public $weightUnit = 'lb';
     public $dimensionUnit = 'in';
 
+    private $maxDomesticWeight = 31751.5; // 70lbs
+    private $maxInternationalWeight = 9071.85; // 20lbs
+
     
     // Public Methods
     // =========================================================================
@@ -116,6 +119,15 @@ class USPS extends Provider
         ];
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        if ($this->getIsInternational($order)) {
+            return $this->maxInternationalWeight;
+        }
+
+        return $this->maxDomesticWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -131,10 +143,12 @@ class USPS extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'lb', 'in');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -164,8 +178,6 @@ class USPS extends Provider
         // // $order->shippingAddress->zipCode = 'M5V 2J4';
         // // $order->shippingAddress->stateId = $state->id;
         // // $order->shippingAddress->countryId = $country->id;
-
-        // // $dimensions['height'] = 1;
         //
         //
         //
@@ -174,10 +186,7 @@ class USPS extends Provider
             if ($order->shippingAddress->country->iso == 'US') {
                 Provider::log($this, 'Domestic rate service call');
 
-                // Handle a maxiumum weight for packages
-                $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 70);
-
-                foreach ($totalPackages as $weight) {
+                foreach ($packedBoxes as $packedBox) {
                     // Create new package object and assign the properties
                     // apparently the order you assign them is important so make sure
                     // to set them as the example below
@@ -190,7 +199,7 @@ class USPS extends Provider
 
                     $package->setZipOrigination($storeLocation->zipCode);
                     $package->setZipDestination($order->shippingAddress->zipCode);
-                    $package->setPounds($weight);
+                    $package->setPounds($packedBox['weight']);
                     $package->setOunces(0);
                     $package->setContainer('');
                     $package->setSize(RatePackage::SIZE_REGULAR);
@@ -206,12 +215,9 @@ class USPS extends Provider
                 $client->setInternationalCall(true);
                 $client->addExtraOption('Revision', 2);
 
-                // Handle a maxiumum weight for packages
-                $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 70);
-
-                foreach ($totalPackages as $weight) {
+                foreach ($packedBoxes as $packedBox) {
                     $package = new RatePackage();
-                    $package->setPounds($weight);
+                    $package->setPounds($packedBox['weight']);
                     $package->setOunces(0);
                     $package->setField('Machinable', 'True');
                     $package->setField('MailType', 'Package');
@@ -221,7 +227,7 @@ class USPS extends Provider
                     $package->setField('Country', $order->shippingAddress->country->name);
 
                     // Check if dimensions greater then 12 inches then set LARGE package
-                    if ($dimensions['width'] > 12 || $dimensions['height'] > 12 || $dimensions['length'] > 12) {
+                    if ($packedBox['width'] > 12 || $packedBox['height'] > 12 || $packedBox['length'] > 12) {
                         $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
                         $package->setField('Size', 'LARGE');
                     } else {
@@ -229,11 +235,11 @@ class USPS extends Provider
                         $package->setField('Size', 'REGULAR');
                     }
 
-                    $package->setField('Width', $dimensions['width']);
-                    $package->setField('Length', $dimensions['height']);
-                    $package->setField('Height', $dimensions['length']);
+                    $package->setField('Width', $packedBox['width']);
+                    $package->setField('Length', $packedBox['height']);
+                    $package->setField('Height', $packedBox['length']);
                     // Girth are relevant when CONTAINER_NONRECTANGULAR
-                    $package->setField('Girth', $dimensions['width'] * 2 + $dimensions['length'] * 2);
+                    $package->setField('Girth', $packedBox['width'] * 2 + $packedBox['length'] * 2);
 
                     $package->setField('OriginZip', $storeLocation->zipCode);
                     $package->setField('CommercialFlag', 'N');

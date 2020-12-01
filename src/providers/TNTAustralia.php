@@ -21,6 +21,9 @@ class TNTAustralia extends Provider
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
 
+    private $maxDomesticWeight = 70000; // 70kg
+    private $maxInternationalWeight = 500000; // 500kg
+
 
     // Public Methods
     // =========================================================================
@@ -46,6 +49,15 @@ class TNTAustralia extends Provider
         ];
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        if ($this->getIsInternational($order)) {
+            return $this->maxInternationalWeight;
+        }
+
+        return $this->maxDomesticWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -54,14 +66,35 @@ class TNTAustralia extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
-        $volume = $dimensions['width'] * $dimensions['height'] * $dimensions['length'];
-        $nextDate = $this->_numberOfWorkingDates(date('Y-m-d'), 1);
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+
+        // Allow location and dimensions modification via events
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $dimensions, $order);
 
+        $nextDate = $this->_numberOfWorkingDates(date('Y-m-d'), 1);
+
         try {
+            $packagesXml = '';
+
+            foreach ($packedBoxes as $packedBox) {
+                $packagesXml .= '<packageLine>
+                    <numberOfPackages>1</numberOfPackages>
+                    <dimensions unit="cm">
+                        <length>' . $packedBox['length'] . '</length>
+                        <width>' . $packedBox['width'] . '</width>
+                        <height>' . $packedBox['height'] . '</height>
+                    </dimensions>
+                    <weight unit="kg">
+                        <weight>' . $packedBox['weight'] .'</weight>
+                    </weight>
+                </packageLine>';
+            }
+
             $xmlRequest = '<?xml version="1.0"?>
                 <enquiry xmlns="http://www.tntexpress.com.au">
                     <ratedTransitTimeEnquiry>
@@ -81,19 +114,7 @@ class TNTAustralia extends Provider
                             <dangerousGoods>
                                 <dangerous>false</dangerous>
                             </dangerousGoods>
-                            <packageLines packageType="N">
-                                <packageLine>
-                                    <numberOfPackages>1</numberOfPackages>
-                                    <dimensions unit="cm">
-                                        <length>' . $dimensions['length'] . '</length>
-                                        <width>' . $dimensions['width'] . '</width>
-                                        <height>' . $dimensions['height'] . '</height>
-                                    </dimensions>
-                                    <weight unit="kg">
-                                        <weight>' . $dimensions['weight'] .'</weight>
-                                    </weight>
-                                </packageLine>
-                            </packageLines>
+                            <packageLines packageType="N">' . $packagesXml . '</packageLines>
                         </cutOffTimeEnquiry>
                         <termsOfPayment>
                             <senderAccount>' . $this->settings['accountNumber'] . '</senderAccount>

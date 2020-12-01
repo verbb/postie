@@ -37,6 +37,8 @@ class UPS extends Provider
     public $weightUnit = 'lb';
     public $dimensionUnit = 'in';
 
+    private $maxWeight = 68038.9; // 150lbs
+
     private $pickupCode = [
         '01' => 'Daily Pickup',
         '03' => 'Customer Counter',
@@ -169,6 +171,11 @@ class UPS extends Provider
         ];
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        return $this->maxWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -184,10 +191,12 @@ class UPS extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'lb', 'in');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -285,13 +294,10 @@ class UPS extends Provider
                 }
             }
 
-            // Handle a maxiumum weight for packages
-            $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 150);
-
-            foreach ($totalPackages as $weight) {
+            foreach ($packedBoxes as $packedBox) {
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                $package->getPackageWeight()->setWeight($weight);
+                $package->getPackageWeight()->setWeight($packedBox['weight']);
 
                 $requireSignature = $this->settings['requireSignature'] ?? '';
 
@@ -312,9 +318,9 @@ class UPS extends Provider
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight($dimensions['height']);
-                $packageDimensions->setWidth($dimensions['width']);
-                $packageDimensions->setLength($dimensions['length']);
+                $packageDimensions->setHeight($packedBox['height']);
+                $packageDimensions->setWidth($packedBox['width']);
+                $packageDimensions->setLength($packedBox['length']);
 
                 $unit = new UnitOfMeasurement;
                 $unit->setCode(UnitOfMeasurement::UOM_IN);

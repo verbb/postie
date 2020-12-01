@@ -18,6 +18,8 @@ class Fastway extends Provider
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
 
+    private $maxWeight = 5000; // 5kg
+
     
     // Public Methods
     // =========================================================================
@@ -47,6 +49,11 @@ class Fastway extends Provider
         ];
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        return $this->maxWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -55,10 +62,12 @@ class Fastway extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -101,7 +110,7 @@ class Fastway extends Provider
                 $franchiseCode,
                 $order->shippingAddress->city,
                 $order->shippingAddress->zipCode,
-                $dimensions['weight'],
+                $packedBoxes->getTotalWeight(),
             ];
 
             $response = $this->_request('GET', implode('/', $url));

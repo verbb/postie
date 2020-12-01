@@ -4,19 +4,34 @@ namespace verbb\postie\base;
 use verbb\postie\Postie;
 use verbb\postie\events\FetchRatesEvent;
 use verbb\postie\events\ModifyPayloadEvent;
+use verbb\postie\events\PackOrderEvent;
+use verbb\postie\models\Box;
+use verbb\postie\models\Item;
+use verbb\postie\models\PackedBoxes;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\base\SavableComponent;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Response;
 
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Order;
 use craft\commerce\records\ShippingRuleCategory;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
+
+use DVDoug\BoxPacker\InfalliblePacker;
+use DVDoug\BoxPacker\ItemTooLargeException;
+use DVDoug\BoxPacker\PackedBox;
+use DVDoug\BoxPacker\PackedBoxList;
+use DVDoug\BoxPacker\PackedItem;
+use DVDoug\BoxPacker\PackedItemList;
+
+use Cake\Utility\Hash;
 
 abstract class Provider extends SavableComponent implements ProviderInterface
 {
@@ -26,9 +41,15 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     const PERCENTAGE = 'percentage';
     const VALUE = 'value';
 
+    const PACKING_PER_ITEM = 'perItem';
+    const PACKING_BOX = 'boxPacking';
+    const PACKING_SINGLE_BOX = 'singleBox';
+
     const EVENT_MODIFY_RATES = 'modifyRates';
     const EVENT_MODIFY_PAYLOAD = 'modifyPayload';
     const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
+    const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
+    const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
 
 
     // Properties
@@ -42,10 +63,51 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public $markUpBase;
     public $services = [];
     public $restrictServices = true;
+    public $packingMethod = self::PACKING_SINGLE_BOX;
+    public $boxSizes = [];
+    public $weightUnit = 'kg';
+    public $dimensionUnit = 'cm';
 
     protected $_client;
     protected $_rates;
     protected $_cachedRates;
+
+
+    // Static Methods
+    // =========================================================================
+
+    public static function log($provider, $message)
+    {
+        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
+        $message = $provider->name . ': ' . $message;
+
+        if (Postie::$plugin->getSettings()->displayDebug && $isSiteRequest) {
+            Craft::dump($message);
+        }
+
+        Postie::log($message);
+    }
+
+    public static function error($provider, $message)
+    {
+        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
+        $message = $provider->name . ': ' . $message;
+
+        if (Postie::$plugin->getSettings()->displayErrors && $isSiteRequest) {
+            Craft::dump($message);
+        }
+
+        if (Postie::$plugin->getSettings()->displayFlashErrors && $isSiteRequest) {
+            Craft::$app->getSession()->setError($message);
+        }
+
+        Postie::error($message);
+    }
+
+    public static function defineDefaultBoxes()
+    {
+        return [];
+    }
 
 
     // Public Methods
@@ -166,6 +228,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 $tempProvider->markUpRate = $settings['markUpRate'] ?? null;
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
                 $tempProvider->restrictServices = $settings['restrictServices'] ?? null;
+                $tempProvider->packingMethod = $settings['packingMethod'] ?? null;
+                $tempProvider->boxSizes = $settings['boxSizes'] ?? null;
 
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
@@ -193,6 +257,22 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 }
 
                 $settings['services'][$handle] = $shippingMethod;
+            }
+        }
+
+        // Add in any validation errors on the settings model, add them in
+        if ($errors = Postie::$plugin->getSettings()->getErrors()) {
+            $providerErrors = ArrayHelper::getValue(Hash::expand($errors), "providers.{$this->handle}.settings");
+
+            if ($providerErrors) {
+                $this->addErrors($providerErrors);
+
+                // Ensure we return the in-memory version to retain the values we've entered
+                $providerData = Postie::$plugin->getSettings()->providers[$this->handle] ?? [];
+
+                // This is a bit horrendous. Refactor at a later stage to proper models.
+                // Basically just add back in whatever we're validation (not much).
+                $settings['boxSizes'] = $providerData['boxSizes'] ?? [];
             }
         }
 
@@ -343,106 +423,115 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return md5($signature);
     }
 
-
-    // Static Methods
-    // =========================================================================
-
-    public static function log($provider, $message)
+    public function getMaxPackageWeight($order)
     {
-        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
-        $message = $provider->name . ': ' . $message;
-
-        if (Postie::$plugin->getSettings()->displayDebug && $isSiteRequest) {
-            Craft::dump($message);
-        }
-
-        Postie::log($message);
+        return null;
     }
 
-    public static function error($provider, $message)
+    public function getIsInternational($order): bool
     {
-        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
-        $message = $provider->name . ': ' . $message;
+        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
-        if (Postie::$plugin->getSettings()->displayErrors && $isSiteRequest) {
-            Craft::dump($message);
+        $sourceCountry = $storeLocation->country->iso ?? '';
+        $destinationCountry = $order->shippingAddress->country->iso ?? '';
+
+        if ($storeLocation !== $destinationCountry) {
+            return true;
         }
 
-        if (Postie::$plugin->getSettings()->displayFlashErrors && $isSiteRequest) {
-            Craft::$app->getSession()->setError($message);
+        return false;
+    }
+
+    public function getBoxSizesSettings()
+    {
+        return [
+            'name' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Name'),
+            ],
+            'boxLength' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Box Length'),
+                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'thin' => true,
+            ],
+            'boxWidth' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Box Width'),
+                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'thin' => true,
+            ],
+            'boxHeight' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Box Height'),
+                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'thin' => true,
+            ],
+            'boxWeight' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Box Weight'),
+                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->weightUnit ]),
+                'thin' => true,
+            ],
+            'maxWeight' => [
+                'type' => 'singleline',
+                'heading' => Craft::t('postie', 'Max Weight'),
+                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->weightUnit ]),
+                'thin' => true,
+            ],
+            'enabled' => [
+                'type' => 'lightswitch',
+                'heading' => Craft::t('postie', 'Enabled'),
+                'thin' => true,
+                'small' => true,
+            ],
+            'default' => [
+                'type' => 'hidden',
+                'class' => 'hidden',
+            ],
+            'id' => [
+                'type' => 'hidden',
+                'class' => 'hidden',
+            ],
+        ];
+    }
+
+    public function getBoxSizesRows()
+    {
+        $boxSizes = [];
+
+        if (!is_array($this->boxSizes)) {
+            $this->boxSizes = [];
         }
 
-        Postie::error($message);
+        $defaultBoxes = static::defineDefaultBoxes();
+
+        foreach ($defaultBoxes as $key => &$defaultBox) {
+            $defaultBox['default'] = true;
+
+            // Is this box already saved and has settings? We need to merge
+            $savedData = ArrayHelper::firstWhere($this->boxSizes, 'id', $defaultBox['id']);
+
+            if ($savedData) {
+                $index = array_search($savedData, $this->boxSizes);
+
+                // Directly update the default box data with the saved data.
+                // This ensures the order defined in the provider is retained.
+                $defaultBox = array_merge($defaultBox, $savedData);
+
+                // Remove this from our saved data
+                unset($this->boxSizes[$index]);
+            }
+        }
+
+        $boxSizes = array_merge($defaultBoxes, $this->boxSizes);
+
+        return $boxSizes;
     }
 
 
     // Protected Methods
     // =========================================================================
-
-    protected function getPackageDimensions($order)
-    {
-        $maxWidth = 0;
-        $maxLength = 0;
-        $totalHeight = 0;
-
-        foreach ($order->lineItems as $key => $lineItem) {
-            $maxLength = $maxLength < $lineItem->length ? $maxLength = $lineItem->length : $maxLength;
-            $maxWidth = $maxWidth < $lineItem->width ? $maxWidth = $lineItem->width : $maxWidth;
-            $totalHeight += ($lineItem->qty * $lineItem->height);
-        }
-
-        return [
-            'length' => (int)$maxWidth,
-            'width'  => (int)$maxLength,
-            'height' => (int)$totalHeight,
-        ];
-    }
-
-    protected function getDimensions($order, $weightUnit, $dimensionUnit)
-    {
-        // Get Craft Commerce settings
-        $settings = Commerce::getInstance()->getSettings();
-
-        // Check for Craft Commerce weight settings
-        $orderWeight = new Mass($order->getTotalWeight(), $settings->weightUnits);
-        $weight = $orderWeight->toUnit($weightUnit);
-
-        // Get box package dimensions based on order line items
-        $packageDimensions = $this->getPackageDimensions($order);
-
-        // Convert dimensions into unit we require
-        $orderLength = new Length($packageDimensions['length'], $settings->dimensionUnits);
-        $orderWidth = new Length($packageDimensions['width'], $settings->dimensionUnits);
-        $orderHeight = new Length($packageDimensions['height'], $settings->dimensionUnits);
-        
-        $length = $orderLength->toUnit($dimensionUnit);
-        $width = $orderWidth->toUnit($dimensionUnit);
-        $height = $orderHeight->toUnit($dimensionUnit);
-
-        return [
-            'length' => (int)$length,
-            'width'  => (int)$width,
-            'height' => (int)$height,
-            'weight' => (float)$weight,
-        ];
-    }
-
-    protected function getSplitBoxWeights($value, $max)
-    {
-        $items = [];
-
-        // Determine how many full-weight boxes we need
-        for ($i = 1; $i <= ($value / $max); $i++) {
-            $items[] = $max;
-        }
-
-        // Add in the remainder - if any
-        if (fmod($value, $max)) {
-            $items[] = fmod($value, $max);
-        }
-
-        return $items;
-    }
 
     protected function beforeSendPayload($provider, &$payload, $order)
     {
@@ -480,5 +569,257 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     protected function getSetting($property)
     {
         return $this->settings[$property] ?? null;
+    }
+
+    protected function getLineItemDimensions($lineItem)
+    {
+        $settings = Commerce::getInstance()->getSettings();
+
+        // We always deal with g/mm for box-packing, which is suitable for int's
+        $weight = (new Mass($lineItem->weight, $settings->weightUnits))->toUnit('g');
+        $length = (new Length($lineItem->length, $settings->dimensionUnits))->toUnit('mm');
+        $width = (new Length($lineItem->width, $settings->dimensionUnits))->toUnit('mm');
+        $height = (new Length($lineItem->height, $settings->dimensionUnits))->toUnit('mm');
+        
+        return [
+            'length' => $length,
+            'width'  => $width,
+            'height' => $height,
+            'weight' => $weight,
+        ];
+    }
+
+    protected function getOrderDimensions($order, $weightUnit, $dimensionUnit)
+    {
+        $settings = Commerce::getInstance()->getSettings();
+
+        $maxWidth = 0;
+        $maxLength = 0;
+        $totalHeight = 0;
+
+        // Get box package dimensions based on order line items
+        foreach ($order->lineItems as $key => $lineItem) {
+            $maxLength = $maxLength < $lineItem->length ? $maxLength = $lineItem->length : $maxLength;
+            $maxWidth = $maxWidth < $lineItem->width ? $maxWidth = $lineItem->width : $maxWidth;
+            $totalHeight += ($lineItem->qty * $lineItem->height);
+        }
+
+        // We always deal with g/mm for box-packing, which is suitable for int's
+        $weight = (new Mass($order->getTotalWeight(), $settings->weightUnits))->toUnit('g');
+        $length = (new Length($maxLength, $settings->dimensionUnits))->toUnit('mm');
+        $width = (new Length($maxWidth, $settings->dimensionUnits))->toUnit('mm');
+        $height = (new Length($totalHeight, $settings->dimensionUnits))->toUnit('mm');
+
+        return [
+            'length' => $length,
+            'width'  => $width,
+            'height' => $height,
+            'weight' => $weight,
+        ];
+    }
+
+    protected function getBoxItemFromLineItem($lineItem)
+    {
+        $product = $lineItem->getPurchasable();
+
+        if (!$product) {
+            return false;
+        }
+
+        $dimensions = $this->getLineItemDimensions($lineItem);
+
+        return new Item([
+            'description' => "Item {$lineItem->id}",
+            'width' => $dimensions['width'],
+            'length' => $dimensions['length'],
+            'depth' => $dimensions['height'],
+            'weight' => $dimensions['weight'],
+            'keepFlat' => false,
+        ]);
+    }
+
+    protected function getBoxFromLineItem($lineItem)
+    {
+        $product = $lineItem->getPurchasable();
+
+        if (!$product) {
+            return false;
+        }
+
+        $dimensions = $this->getLineItemDimensions($lineItem);
+
+        return new Box([
+            'reference' => "Box {$lineItem->id}",
+            'outerWidth' => $dimensions['width'],
+            'outerLength' => $dimensions['length'],
+            'outerDepth' => $dimensions['height'],
+            'emptyWeight' => 0,
+            'innerWidth' => $dimensions['width'],
+            'innerLength' => $dimensions['length'],
+            'innerDepth' => $dimensions['height'],
+            'maxWeight' => $dimensions['weight'],
+        ]);
+    }
+
+    protected function getBoxSizes()
+    {
+        $boxes = [];
+
+        // Because our box-packer only deals with integers, we should convert whatever unit this provider is using
+        // (which is the same as what unit boxes are created in) and convert to g/mm to resolve as int's effectively.
+        foreach ($this->getBoxSizesRows() as $i => $boxInfo) {
+            if (!(bool)$boxInfo['enabled']) {
+                continue;
+            }
+
+            $boxInfo['maxWeight'] = (new Mass($boxInfo['maxWeight'], $this->weightUnit))->toUnit('g');
+            $boxInfo['boxWeight'] = (new Mass($boxInfo['boxWeight'], $this->weightUnit))->toUnit('g');
+            $boxInfo['boxLength'] = (new Length($boxInfo['boxLength'], $this->dimensionUnit))->toUnit('mm');
+            $boxInfo['boxWidth'] = (new Length($boxInfo['boxWidth'], $this->dimensionUnit))->toUnit('mm');
+            $boxInfo['boxHeight'] = (new Length($boxInfo['boxHeight'], $this->dimensionUnit))->toUnit('mm');
+
+            $boxes[] = $boxInfo;
+        }
+
+        return $boxes;
+    }
+
+    protected function packOrder(Order $order)
+    {
+        $packer = new InfalliblePacker();
+
+        $packOrderEvent = new PackOrderEvent([
+            'packer' => $packer,
+            'order' => $order,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_PACK_ORDER)) {
+            $this->trigger(self::EVENT_BEFORE_PACK_ORDER, $packOrderEvent);
+        }
+
+        if ($this->packingMethod === self::PACKING_SINGLE_BOX) {
+            $dimensions = $this->getOrderDimensions($order, $this->weightUnit, $this->dimensionUnit);
+
+            // Let providers define the max weight for boxes
+            $maxWeight = $this->getMaxPackageWeight($order) ?? $dimensions['weight'];
+
+            $packer->addBox(new Box([
+                'reference' => "Single Box",
+                'outerWidth' => $dimensions['width'],
+                'outerLength' => $dimensions['length'],
+                'outerDepth' => $dimensions['height'],
+                'emptyWeight' => 0,
+                'innerWidth' => $dimensions['width'],
+                'innerLength' => $dimensions['length'],
+                'innerDepth' => $dimensions['height'],
+                'maxWeight' => $maxWeight,
+            ]));
+
+            foreach ($order->getLineItems() as $lineItem) {
+                $boxItem = $this->getBoxItemFromLineItem($lineItem);
+
+                if ($boxItem) {
+                    $packer->addItem($boxItem, $lineItem->qty);
+                }
+            }
+        }
+
+        // If packing boxes individually, create boxes exactly the same size as each item
+        if ($this->packingMethod === self::PACKING_PER_ITEM) {
+            foreach ($order->getLineItems() as $lineItem) {
+                // Don't forget to factor in quantities
+                for ($i = 0; $i < $lineItem->qty; $i++) { 
+                    // Generate a box for each item. It'll be exactly fitted to the item
+                    if ($box = $this->getBoxFromLineItem($lineItem)) {
+                        $packer->addBox($box);
+                    }
+
+                    // Add the single item to the single box
+                    if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
+                        $packer->addItem($boxItem, 1);
+                    }
+                }
+            }
+        }
+
+        // Run 4D bin-packing to the best of our ability
+        if ($this->packingMethod === self::PACKING_BOX) {
+            // For all boxes we've defined, add them.
+            foreach ($this->getBoxSizes() as $boxInfo) {
+                $packer->addBox(new Box([
+                    'reference' => $boxInfo['name'],
+                    'outerWidth' => $boxInfo['boxWidth'],
+                    'outerLength' => $boxInfo['boxLength'],
+                    'outerDepth' => $boxInfo['boxHeight'],
+                    'emptyWeight' => $boxInfo['boxWeight'],
+                    'innerWidth' => $boxInfo['boxWidth'],
+                    'innerLength' => $boxInfo['boxLength'],
+                    'innerDepth' => $boxInfo['boxHeight'],
+                    'maxWeight' => $boxInfo['maxWeight'],
+
+                    // Optional - for some providers
+                    'type' => $boxInfo['boxType'] ?? '',
+                ]));
+            }
+
+            // For each item in the cart, add them to the packer to figure out the best fit
+            foreach ($order->getLineItems() as $lineItem) {
+                if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
+                    $packer->addItem($boxItem, $lineItem->qty);
+                }
+            }
+        }
+
+        // Get a collection of packed boxes
+        $packedBoxes = $packer->pack();
+
+        // Any unpacked items need to be re-packed with their own individual boxes. This is to ensure that no
+        // large items get left behind in shipping calculations.
+        if ($unpackedItems = $packer->getUnpackedItems()) {
+            foreach ($unpackedItems as $i => $unpackedItem) {
+                // Create a single box, and create a packed item manually
+                $box = new Box([
+                    'reference' => "Extra Box {$i}",
+                    'outerWidth' => $unpackedItem->getWidth(),
+                    'outerLength' => $unpackedItem->getLength(),
+                    'outerDepth' => $unpackedItem->getDepth(),
+                    'emptyWeight' => 0,
+                    'innerWidth' => $unpackedItem->getWidth(),
+                    'innerLength' => $unpackedItem->getLength(),
+                    'innerDepth' => $unpackedItem->getDepth(),
+                    'maxWeight' => $unpackedItem->getWeight(),
+                ]);
+
+                $packedItem = new PackedItem($unpackedItem, 0, 0, 0, $unpackedItem->getWidth(), $unpackedItem->getLength(), $unpackedItem->getDepth());
+                
+                // Create a packed list
+                $packedItemList = new PackedItemList();
+                $packedItemList->insert($packedItem);
+
+                // Add the list items to the box
+                $packedBox = new PackedBox($box, $packedItemList);
+
+                // Add the packed box to any other boxes, natively packed.
+                $packedBoxes->insert($packedBox);
+            }
+        }
+
+        if (!$packedBoxes) {
+            self::error(Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
+        }
+
+        $packedBoxes = new PackedBoxes($packedBoxes, $this->weightUnit, $this->dimensionUnit);
+
+        $packOrderEvent = new PackOrderEvent([
+            'packer' => $packer,
+            'order' => $order,
+            'packedBoxes' => $packedBoxes,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_AFTER_PACK_ORDER)) {
+            $this->trigger(self::EVENT_AFTER_PACK_ORDER, $packOrderEvent);
+        }
+
+        return $packOrderEvent->packedBoxes;
     }
 }

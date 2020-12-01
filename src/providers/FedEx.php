@@ -28,6 +28,8 @@ class FedEx extends Provider
     public $weightUnit = 'lb';
     public $dimensionUnit = 'in';
 
+    private $maxWeight = 68038.9; // 150lbs
+
     
     // Public Methods
     // =========================================================================
@@ -89,6 +91,147 @@ class FedEx extends Provider
         ];
     }
 
+    public static function defineDefaultBoxes()
+    {
+        return [
+            [
+                'id' => 'fedex-1',
+                'name' => 'FedEx® Small Box',
+                'boxLength' => 12.375,
+                'boxWidth' => 10.875,
+                'boxHeight' => 1.5,
+                'boxWeight' => 0.28125,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-2',
+                'name' => 'FedEx® Small Box',
+                'boxLength' => 11.25,
+                'boxWidth' => 8.75,
+                'boxHeight' => 2.625,
+                'boxWeight' => 0.28125,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-3',
+                'name' => 'FedEx® Medium Box',
+                'boxLength' => 13.25,
+                'boxWidth' => 11.5,
+                'boxHeight' => 2.375,
+                'boxWeight' => 0.40625,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-4',
+                'name' => 'FedEx® Medium Box',
+                'boxLength' => 11.25,
+                'boxWidth' => 8.75,
+                'boxHeight' => 4.375,
+                'boxWeight' => 0.40625,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-5',
+                'name' => 'FedEx® Large Box',
+                'boxLength' => 17.5,
+                'boxWidth' => 12.365,
+                'boxHeight' => 3,
+                'boxWeight' => 0.90625,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-6',
+                'name' => 'FedEx® Large Box',
+                'boxLength' => 11.25,
+                'boxWidth' => 8.75,
+                'boxHeight' => 7.75,
+                'boxWeight' => 0.5875,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-7',
+                'name' => 'FedEx® Extra Large Box',
+                'boxLength' => 11.875,
+                'boxWidth' => 11,
+                'boxHeight' => 10.75,
+                'boxWeight' => 1.25,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-8',
+                'name' => 'FedEx® Extra Large Box',
+                'boxLength' => 15.75,
+                'boxWidth' => 14.125,
+                'boxHeight' => 6,
+                'boxWeight' => 1.875,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-9',
+                'name' => 'FedEx® Pak',
+                'boxLength' => 15.5,
+                'boxWidth' => 12,
+                'boxHeight' => 1.5,
+                'boxWeight' => 0.0625,
+                'maxWeight' => 5.5,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-10',
+                'name' => 'FedEx® Envelope',
+                'boxLength' => 12.5,
+                'boxWidth' => 9.5,
+                'boxHeight' => 0.25,
+                'boxWeight' => 0,
+                'maxWeight' => 0.5,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-11',
+                'name' => 'FedEx® 10kg Box',
+                'boxLength' => 15.81,
+                'boxWidth' => 12.94,
+                'boxHeight' => 10.19,
+                'boxWeight' => 1.9375,
+                'maxWeight' => 22,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-12',
+                'name' => 'FedEx® 25kg Box',
+                'boxLength' => 21.56,
+                'boxWidth' => 16.56,
+                'boxHeight' => 13.19,
+                'boxWeight' => 3.5625,
+                'maxWeight' => 55,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'fedex-13',
+                'name' => 'FedEx® Tube',
+                'boxLength' => 38,
+                'boxWidth' => 6,
+                'boxHeight' => 6,
+                'boxWeight' => 1,
+                'maxWeight' => 20,
+                'enabled' => true,
+            ],
+        ];
+    }
+
+    public function getMaxPackageWeight($order)
+    {
+        return $this->maxWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -103,10 +246,12 @@ class FedEx extends Provider
         $useTestEndpoint = $this->settings['useTestEndpoint'] ?? false;
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'lb', 'in');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         try {
             $rateRequest = new RateRequest();
@@ -203,7 +348,7 @@ class FedEx extends Provider
             $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
 
             // Create package line items
-            $packageLineItems = $this->_createPackageLineItem($order);
+            $packageLineItems = $this->_createPackageLineItem($order, $packedBoxes);
             $rateRequest->RequestedShipment->PackageCount = count($packageLineItems);
             $rateRequest->RequestedShipment->RequestedPackageLineItems = $packageLineItems;
 
@@ -303,27 +448,23 @@ class FedEx extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _createPackageLineItem($order)
+    private function _createPackageLineItem($order, $packedBoxes)
     {
         $packages = [];
-        $dimensions = $this->getDimensions($order, 'lb', 'in');
 
-        // Handle a maxiumum weight for packages
-        $totalPackages = $this->getSplitBoxWeights($dimensions['weight'], 150);
-
-        foreach ($totalPackages as $weight) {
+        foreach ($packedBoxes as $packedBox) {
             // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
             $packageLineItem = new RequestedPackageLineItem();
 
             // Weight
             $packageLineItem->Weight->Units = WeightUnits::_LB;
-            $packageLineItem->Weight->Value = $weight;
+            $packageLineItem->Weight->Value = $packedBox['weight'];
 
             // Dimensions
             $packageLineItem->Dimensions->Units = LinearUnits::_IN;
-            $packageLineItem->Dimensions->Length = $dimensions['length'];
-            $packageLineItem->Dimensions->Width = $dimensions['width'];
-            $packageLineItem->Dimensions->Height = $dimensions['height'];
+            $packageLineItem->Dimensions->Length = $packedBox['length'];
+            $packageLineItem->Dimensions->Width = $packedBox['width'];
+            $packageLineItem->Dimensions->Height = $packedBox['height'];
 
             $packageLineItem->GroupPackageCount = 1;
 

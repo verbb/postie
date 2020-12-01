@@ -2,6 +2,7 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\Postie;
+use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 
@@ -10,13 +11,16 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
-class Sendle extends Provider
+class Sendle extends SinglePackageProvider
 {
     // Properties
     // =========================================================================
 
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
+
+    private $maxDomesticWeight = 25000; // 25kg
+    private $maxInternationalWeight = 31751.5; // 70lbs
 
     
     // Public Methods
@@ -32,19 +36,21 @@ class Sendle extends Provider
         return true;
     }
 
-    public function fetchShippingRates($order)
+    public function getMaxPackageWeight($order)
     {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
+        if ($this->getIsInternational($order)) {
+            return $this->maxInternationalWeight;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+        return $this->maxDomesticWeight;
+    }
 
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
 
+    // Protected Methods
+    // =========================================================================
+
+    protected function fetchShippingRate($order, $packedBox)
+    {
         //
         // TESTING
         //
@@ -80,8 +86,8 @@ class Sendle extends Provider
                 'delivery_suburb' => $order->shippingAddress->city,
                 'delivery_postcode' => $order->shippingAddress->zipCode,
                 'delivery_country' => $order->shippingAddress->country->iso,
-                'weight_value' => $dimensions['weight'],
-                'weight_units' => 'kg',
+                'weight_value' => $packedBox['weight'],
+                'weight_units' => $this->weightUnit,
             ];
 
             $this->beforeSendPayload($this, $payload, $order);
@@ -90,25 +96,22 @@ class Sendle extends Provider
                 'query' => $payload,
             ]);
 
-            foreach ($response as $service) {
-                $this->_rates[$service['plan_name']] = [
-                    'amount' => (float)$service['quote']['gross']['amount'] ?? '',
-                    'options' => $service,
-                ];
+            if ($response) {
+                foreach ($response as $service) {
+                    // Update our overall rates, set the cache, etc
+                    $this->setRate($packedBox, [
+                        'key' => $service['plan_name'],
+                        'value' => [
+                            'amount' => (float)$service['quote']['gross']['amount'] ?? '',
+                            'options' => $service,
+                        ],
+                    ]);
+                }
+            } else {
+                Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
+                    'json' => Json::encode($response),
+                ]));
             }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $response,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
@@ -128,7 +131,7 @@ class Sendle extends Provider
             }
         }
 
-        return $this->_rates;
+        return $response;
     }
 
 

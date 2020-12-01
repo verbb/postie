@@ -40,10 +40,12 @@ class Interparcel extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -86,15 +88,17 @@ class Interparcel extends Provider
                     'state' => $order->shippingAddress->state->abbreviation,
                     'country' => $order->shippingAddress->country->iso,
                 ],
-                'parcels' => [
-                    [
-                        'weight' => $dimensions['weight'],
-                        'length' => $dimensions['length'],
-                        'width' => $dimensions['width'],
-                        'height' => $dimensions['height'],
-                    ],
-                ],
+                'parcels' => [],
             ];
+
+            foreach ($packedBoxes as $packedBox) {
+                $payload['parcels'][] = [
+                    'weight' => $packedBox['weight'],
+                    'length' => $packedBox['length'],
+                    'width' => $packedBox['width'],
+                    'height' => $packedBox['height'],
+                ];
+            }
 
             $carriers = $this->getSetting('carriers');
             $serviceLevels = $this->getSetting('serviceLevels');

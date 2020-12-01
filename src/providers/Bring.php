@@ -70,10 +70,12 @@ class Bring extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'g', 'cm');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -100,7 +102,7 @@ class Bring extends Provider
                 'topostalcode' => $order->shippingAddress->zipCode,
                 'tocountry' => $order->shippingAddress->country->iso,
                 'postingatpostoffice' => 'false',
-                'weight' => $dimensions['weight'],
+                'weight' => $packedBoxes->getTotalWeight(),
 
                 // Tells whether the parcel is delivered at a post office when it is shipped.
                 // A surcharge will be applied for SERVICEPAKKE and BPAKKE_DOR-DOR

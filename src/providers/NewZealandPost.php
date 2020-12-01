@@ -2,6 +2,7 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\Postie;
+use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 
@@ -10,13 +11,16 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
-class NewZealandPost extends Provider
+class NewZealandPost extends SinglePackageProvider
 {
     // Properties
     // =========================================================================
 
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
+
+    private $maxDomesticWeight = 25000; // 25kg
+    private $maxInternationalWeight = 30000; // 30kg
 
     
     // Public Methods
@@ -32,19 +36,21 @@ class NewZealandPost extends Provider
         return true;
     }
 
-    public function fetchShippingRates($order)
+    public function getMaxPackageWeight($order)
     {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
+        if ($this->getIsInternational($order)) {
+            return $this->maxInternationalWeight;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+        return $this->maxDomesticWeight;
+    }
 
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
 
+    // Protected Methods
+    // =========================================================================
+
+    protected function fetchShippingRate($order, $packedBox)
+    {
         //
         // TESTING
         //
@@ -88,10 +94,10 @@ class NewZealandPost extends Provider
                     'delivery_postcode' => $order->shippingAddress->zipCode,
                     'delivery_country' => $order->shippingAddress->country->iso,
                     'envelope_size' => 'ALL',
-                    'weight' => $dimensions['weight'],
-                    'length' => $dimensions['length'],
-                    'width' => $dimensions['width'],
-                    'height' => $dimensions['height'],
+                    'weight' => $packedBox['weight'],
+                    'length' => $packedBox['length'],
+                    'width' => $packedBox['width'],
+                    'height' => $packedBox['height'],
                 ];
 
                 $this->beforeSendPayload($this, $payload, $order);
@@ -104,10 +110,14 @@ class NewZealandPost extends Provider
 
                 if ($services) {
                     foreach ($services as $service) {
-                        $this->_rates[$service['description']] = [
-                            'amount' => (float)$service['price_including_surcharge_and_gst'] ?? '',
-                            'options' => $service,
-                        ];
+                        // Update our overall rates, set the cache, etc
+                        $this->setRate($packedBox, [
+                            'key' => $service['description'],
+                            'value' => [
+                                'amount' => (float)$service['price_including_surcharge_and_gst'] ?? '',
+                                'options' => $service,
+                            ],
+                        ]);
                     }
                 } else {
                     Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
@@ -120,10 +130,10 @@ class NewZealandPost extends Provider
                 $payload = [
                     'country_code' => $order->shippingAddress->country->iso,
                     'value' => (float)$order->total,
-                    'weight' => $dimensions['weight'],
-                    'length' => $dimensions['length'],
-                    'width' => $dimensions['width'],
-                    'height' => $dimensions['height'],
+                    'weight' => $packedBox['weight'],
+                    'length' => $packedBox['length'],
+                    'width' => $packedBox['width'],
+                    'height' => $packedBox['height'],
                     'format' => 'json',
                     'documents' => '',
                     'account_number' => $this->getSetting('accountNumber'),
@@ -139,10 +149,14 @@ class NewZealandPost extends Provider
 
                 if ($services) {
                     foreach ($services as $service) {
-                        $this->_rates[$service['description']] = [
-                            'amount' => (float)$service['price_including_gst'] ?? '',
-                            'options' => $service,
-                        ];
+                        // Update our overall rates, set the cache, etc
+                        $this->setRate($packedBox, [
+                            'key' => $service['description'],
+                            'value' => [
+                                'amount' => (float)$service['price_including_gst'] ?? '',
+                                'options' => $service,
+                            ],
+                        ]);
                     }
                 } else {
                     Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
@@ -150,19 +164,6 @@ class NewZealandPost extends Provider
                     ]));
                 }
             }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $response,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
@@ -182,7 +183,7 @@ class NewZealandPost extends Provider
             }
         }
 
-        return $this->_rates;
+        return $response;
     }
 
 

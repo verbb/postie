@@ -21,6 +21,8 @@ class DHLExpress extends Provider
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
 
+    private $maxWeight = 70000; // 70kg
+
 
     // Public Methods
     // =========================================================================
@@ -35,6 +37,11 @@ class DHLExpress extends Provider
         return true;
     }
 
+    public function getMaxPackageWeight($order)
+    {
+        return $this->maxWeight;
+    }
+
     public function fetchShippingRates($order)
     {
         // If we've locally cached the results, return that
@@ -43,10 +50,12 @@ class DHLExpress extends Provider
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
-        $dimensions = $this->getDimensions($order, 'kg', 'cm');
+
+        // Pack the content of the order into boxes
+        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
 
         // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $dimensions, $order);
+        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         //
         // TESTING
@@ -124,22 +133,24 @@ class DHLExpress extends Provider
                                 'CountryCode' => $order->shippingAddress->country->iso ?? '',
                             ],
                         ],
-                        'Packages' => [
-                            'RequestedPackages' => [
-                                '@number' => 1,
-                                'Weight' => [
-                                    'Value' => $dimensions['weight'],
-                                ],
-                                'Dimensions' => [
-                                    'Length' => $dimensions['length'],
-                                    'Width' => $dimensions['width'],
-                                    'Height' => $dimensions['height'],
-                                ],
-                            ],
-                        ],
+                        'Packages' => [],
                     ],
                 ],
             ];
+
+            foreach ($packedBoxes as $i => $packedBox) {
+                $payload['RateRequest']['RequestedShipment']['Packages']['RequestedPackages'][] = [
+                    '@number' => ($i + 1),
+                    'Weight' => [
+                        'Value' => $packedBox['weight'],
+                    ],
+                    'Dimensions' => [
+                        'Length' => $packedBox['length'],
+                        'Width' => $packedBox['width'],
+                        'Height' => $packedBox['height'],
+                    ],
+                ];
+            }
 
             $this->beforeSendPayload($this, $payload, $order);
 
@@ -212,22 +223,22 @@ class DHLExpress extends Provider
 
     private function _getClient()
     {
-        if (!$this->_client) {
-            $url = 'https://wsbexpress.dhl.com/rest/gbl/';
-
-            if ($this->settings['useTestEndpoint']) {
-                $url = 'https://wsbexpress.dhl.com/rest/sndpt/';
-            }
-
-            $this->_client = Craft::createGuzzleClient([
-                'base_uri' => $url,
-                'auth' => [
-                    $this->settings['username'], $this->settings['password'],
-                ],
-            ]);
+        if ($this->_client) {
+            return $this->_client;
         }
 
-        return $this->_client;
+        $url = 'https://wsbexpress.dhl.com/rest/gbl/';
+
+        if ($this->settings['useTestEndpoint']) {
+            $url = 'https://wsbexpress.dhl.com/rest/sndpt/';
+        }
+
+        return $this->_client = Craft::createGuzzleClient([
+            'base_uri' => $url,
+            'auth' => [
+                $this->settings['username'], $this->settings['password'],
+            ],
+        ]);
     }
 
     private function _request(string $method, string $uri, array $options = [])
