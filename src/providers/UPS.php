@@ -284,6 +284,12 @@ class UPS extends Provider
             $shipToAddress = $shipTo->getAddress();
             $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
 
+            $residentialAddress = $this->settings['residentialAddress'] ?? false;
+
+            if ($residentialAddress) {
+                $shipToAddress->setResidentialAddressIndicator(true);
+            }
+
             if ($order->shippingAddress->country) {
                 $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
 

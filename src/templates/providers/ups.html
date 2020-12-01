@@ -96,3 +96,12 @@
     options: provider.getPickupTypeOptions(),
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.pickupType', 'postie'),
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Residential Address' | t('postie'),
+    instructions: 'Enable this to indicate to UPS that the customer‘s address is a residential address.' | t('postie'),
+    id: 'residentialAddress',
+    name: 'residentialAddress',
+    on: provider.settings.residentialAddress ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.residentialAddress', 'postie'),
+}) }}
