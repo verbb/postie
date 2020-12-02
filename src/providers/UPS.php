@@ -15,8 +15,10 @@ use Ups\Rate;
 use Ups\Entity\Address;
 use Ups\Entity\DeliveryConfirmation;
 use Ups\Entity\Dimensions;
+use Ups\Entity\InsuredValue;
 use Ups\Entity\Package;
 use Ups\Entity\PackagingType;
+use Ups\Entity\PackageServiceOptions;
 use Ups\Entity\PaymentInformation;
 use Ups\Entity\PickupType;
 use Ups\Entity\RateInformation;
@@ -409,6 +411,19 @@ class UPS extends Provider
 
                 $packageDimensions->setUnitOfMeasurement($unit);
                 $package->setDimensions($packageDimensions);
+
+                $includeInsurance = $this->settings['includeInsurance'] ?? false;
+
+                if ($includeInsurance) {
+                    $insuredValue = new InsuredValue();
+                    $insuredValue->setMonetaryValue((float)$order->total);
+                    $insuredValue->setCurrencyCode($order->paymentCurrency);
+
+                    $packageServiceOptions = new PackageServiceOptions();
+                    $packageServiceOptions->setInsuredValue($insuredValue);
+
+                    $package->setPackageServiceOptions($packageServiceOptions);
+                }
 
                 $shipment->addPackage($package);
             }
