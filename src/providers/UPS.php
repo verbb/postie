@@ -171,6 +171,82 @@ class UPS extends Provider
         ];
     }
 
+    public static function defineDefaultBoxes()
+    {
+        return [
+            [
+                'id' => 'ups-1',
+                'name' => 'UPS Letter',
+                'boxLength' => 12.5,
+                'boxWidth' => 9.5,
+                'boxHeight' => 0.25,
+                'boxWeight' => 0,
+                'maxWeight' => 0.5,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-2',
+                'name' => 'Tube',
+                'boxLength' => 38,
+                'boxWidth' => 6,
+                'boxHeight' => 6,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-3',
+                'name' => '10KG Box',
+                'boxLength' => 16.5,
+                'boxWidth' => 13.25,
+                'boxHeight' => 10.75,
+                'boxWeight' => 0,
+                'maxWeight' => 22,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-4',
+                'name' => '25KG Box',
+                'boxLength' => 19.75,
+                'boxWidth' => 17.75,
+                'boxHeight' => 13.2,
+                'boxWeight' => 0,
+                'maxWeight' => 55,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-5',
+                'name' => 'Small Express Box',
+                'boxLength' => 13,
+                'boxWidth' => 11,
+                'boxHeight' => 2,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-6',
+                'name' => 'Medium Express Box',
+                'boxLength' => 16,
+                'boxWidth' => 11,
+                'boxHeight' => 3,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-7',
+                'name' => 'Large Express Box',
+                'boxLength' => 18,
+                'boxWidth' => 13,
+                'boxHeight' => 3,
+                'boxWeight' => 0,
+                'maxWeight' => 30,
+                'enabled' => true,
+            ],
+        ];
+    }
+
     public function getMaxPackageWeight($order)
     {
         return $this->maxWeight;
