@@ -749,9 +749,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             ]));
 
             foreach ($order->getLineItems() as $lineItem) {
-                $boxItem = $this->getBoxItemFromLineItem($lineItem);
-
-                if ($boxItem) {
+                if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }
             }

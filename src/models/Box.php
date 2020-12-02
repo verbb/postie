@@ -21,6 +21,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
     private $innerDepth;
     private $maxWeight;
     private $type = '';
+    private $price = null;
 
 
     // Public Methods
@@ -137,5 +138,15 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
     public function setType($value)
     {
         $this->type = $value;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function setPrice($value)
+    {
+        $this->price = $value;
     }
 }

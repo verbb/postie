@@ -99,6 +99,18 @@ class TestingHelper
             'zipCode' => '5011',
             'country' => 'NO',
         ],
+        [
+            'address1' => 'Place de l\'Hôtel de Ville',
+            'city' => 'Paris',
+            'zipCode' => '75004',
+            'country' => 'FR',
+        ],
+        [
+            'address1' => '5 Rue de l\'Hôtel de ville',
+            'city' => 'Nice',
+            'zipCode' => '06000',
+            'country' => 'FR',
+        ],
     ];
 
 

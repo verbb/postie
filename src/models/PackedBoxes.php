@@ -44,13 +44,23 @@ class PackedBoxes extends Model
             $length = (new Length($packedBox->getBox()->getOuterLength(), 'mm'))->toUnit($this->dimensionUnit);
             $height = (new Length($packedBox->getBox()->getOuterDepth(), 'mm'))->toUnit($this->dimensionUnit);
 
-            $list[] = [
+            $listItem = [
+                'name' => $packedBox->getBox()->getReference(),
                 'weight' => $weight,
                 'width' => $width,
                 'length' => $length,
                 'height' => $height,
-                'type' => $packedBox->getBox()->getType(),
             ];
+
+            if ($type = $packedBox->getBox()->getType()) {
+                $listItem['type'] = $type;
+            }
+
+            if ($price = $packedBox->getBox()->getPrice()) {
+                $listItem['price'] = $price;
+            }
+
+            $list[] = $listItem;
         }
 
         return $list;
