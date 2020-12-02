@@ -4,6 +4,7 @@ namespace verbb\postie\providers;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\ArrayHelper;
@@ -178,6 +179,45 @@ class Bring extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('NO', ['city' => 'Oslo']);
+            $recipient = TestingHelper::getTestAddress('NO', ['city' => 'Bergen']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $payload = [
+                'frompostalcode' => $sender->zipCode,
+                'fromcountry' => $sender->country->iso,
+                'topostalcode' => $recipient->zipCode,
+                'tocountry' => $recipient->country->iso,
+                'postingatpostoffice' => 'false',
+                'weight' => $packedBox['weight'],
+                'postingatpostoffice' => 'false',
+                'product' => ['PA_DOREN'],
+            ];
+
+            $response = $this->_request('GET', 'products', [
+                'query' => build_query($payload),
+            ]);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

@@ -5,6 +5,7 @@ use verbb\postie\Postie;
 use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
@@ -419,6 +420,43 @@ class AustraliaPost extends SinglePackageProvider
         }
 
         return $response;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $payload = [
+                'from_postcode' => $sender->zipCode,
+                'to_postcode' => $recipient->zipCode,
+                'length' => $packedBox['length'],
+                'width' => $packedBox['width'],
+                'height' => $packedBox['height'],
+                'weight' => $packedBox['weight'],
+            ];
+
+            $response = $this->_request('GET', 'postage/parcel/domestic/service.json', [
+                'query' => $payload,
+            ]);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

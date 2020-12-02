@@ -19,6 +19,16 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
     // Public Methods
     // =========================================================================
 
+    public function setDimensions($description, $width, $length, $depth, $weight)
+    {
+        $this->description = $description;
+        $this->width = $width;
+        $this->length = $length;
+        $this->depth = $depth;
+        $this->weight = $weight;
+        $this->keepFlat = false;
+    }
+
     public function getDescription(): string
     {
         return (string)$this->description;

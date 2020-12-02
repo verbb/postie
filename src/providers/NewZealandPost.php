@@ -5,6 +5,7 @@ use verbb\postie\Postie;
 use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
@@ -184,6 +185,48 @@ class NewZealandPost extends SinglePackageProvider
         }
 
         return $response;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('NZ', ['city' => 'Wellington']);
+            $recipient = TestingHelper::getTestAddress('NZ', ['city' => 'Christchurch']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $payload = [
+                'pickup_city' => $sender->city,
+                'pickup_postcode' => $sender->zipCode,
+                'pickup_country' => $sender->country->iso,
+                'delivery_city' => $recipient->city,
+                'delivery_postcode' => $recipient->zipCode,
+                'delivery_country' => $recipient->country->iso,
+                'envelope_size' => 'ALL',
+                'weight' => $packedBox['weight'],
+                'length' => $packedBox['length'],
+                'width' => $packedBox['width'],
+                'height' => $packedBox['height'],
+            ];
+
+            $response = $this->_request('GET', 'domestic', [
+                'query' => $payload,
+            ]);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

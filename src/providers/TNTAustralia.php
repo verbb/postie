@@ -4,6 +4,7 @@ namespace verbb\postie\providers;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
@@ -171,6 +172,76 @@ class TNTAustralia extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $xmlRequest = '<?xml version="1.0"?>
+                <enquiry xmlns="http://www.tntexpress.com.au">
+                    <ratedTransitTimeEnquiry>
+                        <cutOffTimeEnquiry>
+                            <collectionAddress>
+                                <suburb>' . $sender->city . '</suburb>
+                                <postCode>' . $sender->zipCode . '</postCode>
+                                <state>' . $sender->state . '</state>
+                            </collectionAddress>
+                            <deliveryAddress>
+                                <suburb>' . $recipient->city .'</suburb>
+                                <postCode>' . $recipient->zipCode .'</postCode>
+                                <state>' . $recipient->state .'</state>
+                            </deliveryAddress>
+                            <dangerousGoods>
+                                <dangerous>false</dangerous>
+                            </dangerousGoods>
+                            <packageLines packageType="N">
+                                <packageLine>
+                                    <numberOfPackages>1</numberOfPackages>
+                                    <dimensions unit="cm">
+                                        <length>' . $packedBox['length'] . '</length>
+                                        <width>' . $packedBox['width'] . '</width>
+                                        <height>' . $packedBox['height'] . '</height>
+                                    </dimensions>
+                                    <weight unit="kg">
+                                        <weight>' . $packedBox['weight'] .'</weight>
+                                    </weight>
+                                </packageLine>
+                            </packageLines>
+                        </cutOffTimeEnquiry>
+                        <termsOfPayment>
+                            <senderAccount>' . $this->getSetting('accountNumber') . '</senderAccount>
+                            <payer>S</payer>
+                        </termsOfPayment>
+                    </ratedTransitTimeEnquiry>
+                </enquiry>';
+
+            $payload = [
+                'Username' => $this->getSetting('username'),
+                'Password' => $this->getSetting('password'),
+                'XMLRequest' => $xmlRequest,
+            ];
+
+            $response = $this->_request('POST', 'Rtt/inputRequest.asp', ['form_params' => $payload]);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

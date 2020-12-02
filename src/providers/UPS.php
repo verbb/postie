@@ -1,10 +1,10 @@
 <?php
 namespace verbb\postie\providers;
 
-use Ups\Exception\InvalidResponseException;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
@@ -29,6 +29,7 @@ use Ups\Entity\ShipFrom;
 use Ups\Entity\Shipment;
 use Ups\Entity\Shipper;
 use Ups\Entity\UnitOfMeasurement;
+use Ups\Exception\InvalidResponseException;
 
 class UPS extends Provider
 {
@@ -377,9 +378,15 @@ class UPS extends Provider
             }
 
             foreach ($packedBoxes as $packedBox) {
+                // Ensure they're formatted correctly, the API will error for too many decimals
+                $weight = number_format($packedBox['weight'], 3);
+                $height = number_format($packedBox['height'], 3);
+                $width = number_format($packedBox['width'], 3);
+                $length = number_format($packedBox['length'], 3);
+
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                $package->getPackageWeight()->setWeight($packedBox['weight']);
+                $package->getPackageWeight()->setWeight($weight);
 
                 if ($this->getSetting('requireSignature')) {
                     $deliveryConfirmation = new DeliveryConfirmation();
@@ -398,9 +405,9 @@ class UPS extends Provider
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight($packedBox['height']);
-                $packageDimensions->setWidth($packedBox['width']);
-                $packageDimensions->setLength($packedBox['length']);
+                $packageDimensions->setHeight($height);
+                $packageDimensions->setWidth($width);
+                $packageDimensions->setLength($length);
 
                 $unit = new UnitOfMeasurement;
                 $unit->setCode(UnitOfMeasurement::UOM_IN);
@@ -529,6 +536,71 @@ class UPS extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $shipment = new Shipment();
+            $shipFromAddress = new Address();
+            $shipFromAddress->setPostalCode($sender->zipCode);
+
+            $shipFrom = new ShipFrom();
+            $shipFrom->setAddress($shipFromAddress);
+            $shipment->setShipFrom($shipFrom);
+
+            $shipTo = $shipment->getShipTo();
+            $shipToAddress = $shipTo->getAddress();
+            $shipToAddress->setPostalCode($recipient->zipCode);
+
+            // Ensure they're formatted correctly, the API will error for too many decimals
+            $weight = number_format($packedBox['weight'], 3);
+            $height = number_format($packedBox['height'], 3);
+            $width = number_format($packedBox['width'], 3);
+            $length = number_format($packedBox['length'], 3);
+
+            $package = new Package();
+            $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
+            $package->getPackageWeight()->setWeight($weight);
+            $weightUnit = new UnitOfMeasurement;
+            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+            $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
+
+            $packageDimensions = new Dimensions();
+            $packageDimensions->setHeight($height);
+            $packageDimensions->setWidth($width);
+            $packageDimensions->setLength($length);
+
+            $unit = new UnitOfMeasurement;
+            $unit->setCode(UnitOfMeasurement::UOM_IN);
+
+            $packageDimensions->setUnitOfMeasurement($unit);
+            $package->setDimensions($packageDimensions);
+            $shipment->addPackage($package);
+
+            $rateRequest = new RateRequest();
+            $rateRequest->setShipment($shipment);
+            $rates = $this->_getClient()->shopRates($rateRequest);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

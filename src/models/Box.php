@@ -26,6 +26,19 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
     // Public Methods
     // =========================================================================
 
+    public function setDimensions($reference, $width, $length, $depth, $weight)
+    {
+        $this->reference = $reference;
+        $this->outerWidth = $width;
+        $this->outerLength = $length;
+        $this->outerDepth = $depth;
+        $this->emptyWeight = 0;
+        $this->innerWidth = $width;
+        $this->innerLength = $length;
+        $this->innerDepth = $depth;
+        $this->maxWeight = $weight;
+    }
+
     public function getReference(): string
     {
         return (string)$this->reference;

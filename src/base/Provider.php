@@ -33,6 +33,8 @@ use DVDoug\BoxPacker\PackedItemList;
 
 use Cake\Utility\Hash;
 
+use Exception;
+
 abstract class Provider extends SavableComponent implements ProviderInterface
 {
     // Constants
@@ -76,7 +78,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Static Methods
     // =========================================================================
 
-    public static function log($provider, $message)
+    public static function log($provider, $message, $throwError = false)
     {
         $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
@@ -85,10 +87,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             Craft::dump($message);
         }
 
+        if ($throwError) {
+            throw new Exception($message);
+        }
+
         Postie::log($message);
     }
 
-    public static function error($provider, $message)
+    public static function error($provider, $message, $throwError = false)
     {
         $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
@@ -99,6 +105,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if (Postie::$plugin->getSettings()->displayFlashErrors && $isSiteRequest) {
             Craft::$app->getSession()->setError($message);
+        }
+
+        if ($throwError) {
+            throw new Exception($message);
         }
 
         Postie::error($message);
@@ -174,6 +184,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function supportsDynamicServices(): bool
     {
         return !$this->restrictServices;
+    }
+
+    public static function supportsConnection(): bool
+    {
+        return true;
     }
 
     public function getServiceList(): array
@@ -527,6 +542,18 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $boxSizes = array_merge($defaultBoxes, $this->boxSizes);
 
         return $boxSizes;
+    }
+
+    public function checkConnection($useCache = true): bool
+    {
+        return $this->fetchConnection();
+    }
+
+    public function getIsConnected(): bool
+    {
+        $isConnected = $_COOKIE["postie-{$this->handle}-connect"] ?? null;
+
+        return (bool)$isConnected;
     }
 
 

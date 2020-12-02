@@ -22,7 +22,28 @@
 
 <hr>
 
-<h2>{{ 'API Settings' | t('postie') }}</h2>
+<div id="js-postie-connection" class="flex flex-nowrap postie-provider-connect">
+    <h2>{{ 'API Settings' | t('postie') }}</h2>
+
+    {% if provider.supportsConnection() %}
+        <div class="field lightswitch-field">
+            {% set connected = provider.getIsConnected() %}
+
+            <div class="heading">
+                <span class="status {{ connected ? 'on' }} js-status"></span>
+                <span class="js-status-text">{{ (connected ? 'Connected' : 'Not connected') | t('postie') }}</span>
+            </div>
+
+            <div class="input ltr">
+                <button class="btn small js-btn-refresh">{{ 'Refresh' | t('postie') }}</button>
+            </div>
+        </div>
+
+        {% js %}
+            new Craft.Postie.ProviderConnection('{{ provider.handle }}');
+        {% endjs %}
+    {% endif %}
+</div>
 
 {% namespace 'settings' %}
 

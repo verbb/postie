@@ -4,6 +4,7 @@ namespace verbb\postie\providers;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\DateTimeHelper;
@@ -320,6 +321,46 @@ class USPS extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $client = $this->_getClient();
+
+            $package = new RatePackage();
+            $package->setService(RatePackage::SERVICE_ALL);
+            $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
+            $package->setZipOrigination($sender->zipCode);
+            $package->setZipDestination($recipient->zipCode);
+            $package->setPounds($packedBox['weight']);
+            $package->setOunces(0);
+            $package->setContainer('');
+            $package->setSize(RatePackage::SIZE_REGULAR);
+            $package->setField('Machinable', true);
+            $client->addPackage($package);
+
+            $client->getRate();
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 

@@ -4,6 +4,7 @@ namespace verbb\postie\providers;
 use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
@@ -193,6 +194,53 @@ class CanadaPost extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
+            $recipient = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Remove spaces in zip code
+            $originZipCode = str_replace(' ', '', $sender->zipCode); 
+            $orderZipCode = str_replace(' ', '', $recipient->zipCode);
+
+            // API is very particular on format - float up to 3 decimal places
+            $weight = number_format($packedBox['weight'], 3);
+
+            // Create a test payload
+            $payload = '<?xml version="1.0" encoding="UTF-8"?>
+                <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
+                    <customer-number>' . $this->getSetting('customerNumber') . '</customer-number>
+                    <parcel-characteristics>
+                        <weight>' . $weight . '</weight>
+                    </parcel-characteristics>
+                    <origin-postal-code>' . $originZipCode . '</origin-postal-code>
+                    <destination>
+                        <domestic>
+                            <postal-code>' . $orderZipCode . '</postal-code>
+                        </domestic>
+                    </destination>
+                </mailing-scenario>';
+
+            $response = $this->_request('POST', 'rs/ship/price', ['body' => $payload]);
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 
