@@ -568,7 +568,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected function getSetting($key)
     {
-        return ArrayHelper::getValue($this->settings, $key) ?? null;
+        $value = ArrayHelper::getValue($this->settings, $key) ?? null;
+
+        if (!is_array($value)) {
+            return Craft::parseEnv($value);
+        }
+
+        return $value;
     }
 
     protected function getLineItemDimensions($lineItem)

@@ -15,51 +15,56 @@
     {{ instructions | t('postie', { name: provider.displayName() }) | md }}
 </div>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'API Key' | t('postie'),
     instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'apiKey',
     name: 'apiKey',
     value: provider.settings.apiKey ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.apiKey', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Test API Key' | t('postie'),
     instructions: 'Enter your {name} Test API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'testApiKey',
     name: 'testApiKey',
     value: provider.settings.testApiKey ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.testApiKey', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Username' | t('postie'),
     instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.username', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Password' | t('postie'),
     instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Account Number' | t('postie'),
     instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'accountNumber',
     name: 'accountNumber',
+    suggestEnvVars: true,
     value: provider.settings.accountNumber ?? '',
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.accountNumber', 'postie'),
 }) }}

@@ -14,23 +14,25 @@
     {{ instructions | t('postie', { name: provider.displayName() }) | md }}
 </div>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Sendle ID' | t('postie'),
     instructions: 'Enter your {name} Sendle ID here.' | t('postie', { name: provider.displayName() }),
     id: 'sendleId',
     name: 'sendleId',
     value: provider.settings.sendleId ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.sendleId', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'API Key' | t('postie'),
     instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'apiKey',
     name: 'apiKey',
     value: provider.settings.apiKey ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.apiKey', 'postie'),
 }) }}
 

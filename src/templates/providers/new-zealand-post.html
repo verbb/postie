@@ -18,37 +18,40 @@
     {{ instructions | t('postie', { name: provider.displayName() }) | md }}
 </div>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Client ID' | t('postie'),
     instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
     id: 'clientId',
     name: 'clientId',
     value: provider.settings.clientId ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.clientId', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Client Secret' | t('postie'),
     instructions: 'Enter your {name} Client Secret here.' | t('postie', { name: provider.displayName() }),
     id: 'clientSecret',
     name: 'clientSecret',
     value: provider.settings.clientSecret ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.clientSecret', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Site Code' | t('postie'),
     instructions: 'Enter your {name} Site Code here.' | t('postie', { name: provider.displayName() }),
     id: 'siteCode',
     name: 'siteCode',
     value: provider.settings.siteCode ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.siteCode', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Account Number' | t('postie'),
     instructions: 'Enter your {name} Billing Account Number here for tailored rates.' | t('postie', { name: provider.displayName() }),
     id: 'accountNumber',

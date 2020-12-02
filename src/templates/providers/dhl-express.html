@@ -13,33 +13,36 @@
     {{ instructions | t('postie', { name: provider.displayName() }) | md }}
 </div>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'API Username (Site ID)' | t('postie'),
     instructions: 'Enter your {name} API Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.username', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'API Password' | t('postie'),
     instructions: 'Enter your {name} API Password here.' | t('postie', { name: provider.displayName() }),
     id: 'password',
     name: 'password',
     value: provider.settings.password ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Account Number' | t('postie'),
     instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
     id: 'account',
     name: 'account',
     value: provider.settings.account ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.account', 'postie'),
 }) }}
 

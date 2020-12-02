@@ -11,13 +11,14 @@
     {{ instructions | t('postie', { name: provider.displayName() }) | md }}
 </div>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: 'Username' | t('postie'),
     instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
     id: 'username',
     name: 'username',
     value: provider.settings.username ?? '',
     required: true,
+    suggestEnvVars: true,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.username', 'postie'),
 }) }}
 
