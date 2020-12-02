@@ -51,3 +51,19 @@
     on: provider.settings.useTestEndpoint ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
 }) }}
+
+{{ forms.checkboxSelectField({
+    label: 'Additional Options' | t('postie'),
+    instructions: 'Select any additional options for rate requests.' | t('postie'),
+    id: 'additionalOptions',
+    name: 'additionalOptions',
+    values: provider.settings.additionalOptions ?? '',
+    options: [
+        { label: 'Coverage' | t('postie'), value: 'COV' },
+        { label: 'Proof of Age Required' | t('postie'), value: 'PA18' },
+        { label: 'Signature' | t('postie'), value: 'SO' },
+        { label: 'Mailing Tube' | t('postie'), value: 'CYL' },
+    ],
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.carriers', 'postie'),
+}) }}
+

@@ -105,21 +105,44 @@ class CanadaPost extends Provider
         $weight = number_format($packedBoxes->getTotalWeight(), 3);
 
         try {
-            $payload = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
-    <customer-number>{$this->settings['customerNumber']}</customer-number>
-    <parcel-characteristics>
-        <weight>{$weight}</weight>
-    </parcel-characteristics>
-    <origin-postal-code>{$originZipCode}</origin-postal-code>
-    <destination>
-        <domestic>
-            <postal-code>{$orderZipCode}</postal-code>
-        </domestic>
-    </destination>
-</mailing-scenario>
-XML;
+            $optionsXml = '';
+
+            $additionalOptions = $this->settings['additionalOptions'] ?? [];
+
+            if ($additionalOptions) {
+                foreach ($additionalOptions as $option) {
+                    $optionsXml .= '<option>';
+                    $optionsXml .= '<option-code>' . $option . '</option-code>';
+
+                    if ($option === 'COV') {
+                        $optionsXml .= '<option-amount>' . $order->total . '</option-amount>';
+                    }
+
+                    $optionsXml .= '</option>';
+                }
+
+                if ($optionsXml) {
+                    $optionsXml = '<options>' . $optionsXml . '</options>';
+                }
+            }
+
+            $payload = '<?xml version="1.0" encoding="UTF-8"?>
+                <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
+                    <customer-number>' . $this->settings['customerNumber'] . '</customer-number>
+                    <parcel-characteristics>
+                        <weight>' . $weight . '</weight>
+                    </parcel-characteristics>
+                    ' . $optionsXml . '
+                    <origin-postal-code>' . $originZipCode . '</origin-postal-code>
+                    <destination>
+                        <domestic>
+                            <postal-code>' . $orderZipCode . '</postal-code>
+                        </domestic>
+                    </destination>
+                </mailing-scenario>';
+
+            // Pretty the output just so its easier to debug
+            $payload = $this->_formatXml($payload);
 
             $this->beforeSendPayload($this, $payload, $order);
 
@@ -152,7 +175,6 @@ XML;
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-
         } catch (\Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = $this->_parseResponse($e->getResponse());
@@ -233,5 +255,14 @@ XML;
     private function _getServiceHandle($value)
     {
         return str_replace('.', '_', $value);
+    }
+
+    private function _formatXml($payload)
+    {
+        $doc = new \DomDocument('1.0');
+        $doc->preserveWhiteSpace = false;
+        $doc->formatOutput = true;
+        $doc->loadXML(simplexml_load_string($payload)->asXML());
+        return $doc->saveXML();
     }
 }
