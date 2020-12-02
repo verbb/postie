@@ -107,9 +107,7 @@ class CanadaPost extends Provider
         try {
             $optionsXml = '';
 
-            $additionalOptions = $this->settings['additionalOptions'] ?? [];
-
-            if ($additionalOptions) {
+            if ($additionalOptions = $this->getSetting('additionalOptions')) {
                 foreach ($additionalOptions as $option) {
                     $optionsXml .= '<option>';
                     $optionsXml .= '<option-code>' . $option . '</option-code>';
@@ -128,7 +126,7 @@ class CanadaPost extends Provider
 
             $payload = '<?xml version="1.0" encoding="UTF-8"?>
                 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
-                    <customer-number>' . $this->settings['customerNumber'] . '</customer-number>
+                    <customer-number>' . $this->getSetting('customerNumber') . '</customer-number>
                     <parcel-characteristics>
                         <weight>' . $weight . '</weight>
                     </parcel-characteristics>
@@ -203,7 +201,7 @@ class CanadaPost extends Provider
 
     private function _getClient()
     {
-        $useTestEndpoint = $this->settings['useTestEndpoint'] ?? false;
+        $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
 
         if ($useTestEndpoint) {
             $baseUri = 'https://ct.soa-gw.canadapost.ca';
@@ -215,7 +213,7 @@ class CanadaPost extends Provider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => $baseUri,
                 'auth' => [
-                    $this->settings['username'], $this->settings['password']
+                    $this->getSetting('username'), $this->getSetting('password')
                 ],
                 'headers' => [
                     'Content-Type' => 'application/vnd.cpc.ship.rate-v3+xml',

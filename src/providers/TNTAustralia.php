@@ -117,7 +117,7 @@ class TNTAustralia extends Provider
                             <packageLines packageType="N">' . $packagesXml . '</packageLines>
                         </cutOffTimeEnquiry>
                         <termsOfPayment>
-                            <senderAccount>' . $this->settings['accountNumber'] . '</senderAccount>
+                            <senderAccount>' . $this->getSetting('accountNumber') . '</senderAccount>
                             <payer>S</payer>
                         </termsOfPayment>
                     </ratedTransitTimeEnquiry>
@@ -127,8 +127,8 @@ class TNTAustralia extends Provider
             $xmlRequest = $this->_formatXml($xmlRequest);
 
             $payload = [
-                'Username' => $this->settings['username'],
-                'Password' => $this->settings['password'],
+                'Username' => $this->getSetting('username'),
+                'Password' => $this->getSetting('password'),
                 'XMLRequest' => $xmlRequest,
             ];
 
@@ -182,9 +182,6 @@ class TNTAustralia extends Provider
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => 'https://www.tntexpress.com.au',
-                // 'auth' => [
-                //     $this->settings['username'], $this->settings['password']
-                // ],
                 'headers' => [
                     'Content-Type' => 'application/xml',
                 ]

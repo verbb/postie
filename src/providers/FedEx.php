@@ -240,12 +240,6 @@ class FedEx extends Provider
             return $this->_rates;
         }
 
-        $key = $this->settings['key'] ?? '';
-        $password = $this->settings['password'] ?? '';
-        $accountNumber = $this->settings['accountNumber'] ?? '';
-        $meterNumber = $this->settings['meterNumber'] ?? '';
-        $useTestEndpoint = $this->settings['useTestEndpoint'] ?? false;
-
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
@@ -298,10 +292,10 @@ class FedEx extends Provider
             //
 
             // Authentication & client details
-            $rateRequest->WebAuthenticationDetail->UserCredential->Key = $key;
-            $rateRequest->WebAuthenticationDetail->UserCredential->Password = $password;
-            $rateRequest->ClientDetail->AccountNumber = $accountNumber;
-            $rateRequest->ClientDetail->MeterNumber = $meterNumber;
+            $rateRequest->WebAuthenticationDetail->UserCredential->Key = $this->getSetting('key');
+            $rateRequest->WebAuthenticationDetail->UserCredential->Password = $this->getSetting('password');
+            $rateRequest->ClientDetail->AccountNumber = $this->getSetting('accountNumber');
+            $rateRequest->ClientDetail->MeterNumber = $this->getSetting('meterNumber');
 
             // Version
             $rateRequest->Version->ServiceId = 'crs';
@@ -322,9 +316,7 @@ class FedEx extends Provider
             $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
             $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
 
-            $residentialAddress = $this->settings['residentialAddress'] ?? false;
-
-            if ($residentialAddress) {
+            if ($this->getSetting('residentialAddress')) {
                 $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
             }
 
@@ -348,15 +340,13 @@ class FedEx extends Provider
 
             // Shipping charges payment
             $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = PaymentType::_SENDER;
-            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $accountNumber;
+            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $this->getSetting('accountNumber');
             $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->country;
 
             // Rate request types
             $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
 
-            $enableOneRate = $this->settings['enableOneRate'] ?? false;
-
-            if ($enableOneRate) {
+            if ($this->getSetting('enableOneRate')) {
                 $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
             }
 
@@ -368,7 +358,7 @@ class FedEx extends Provider
             $rateServiceRequest = new Request();
 
             // Check for devMode and set test or production endpoint
-            if ($useTestEndpoint) {
+            if ($this->getSetting('useTestEndpoint')) {
                 $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
             } else {
                 $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
@@ -481,9 +471,7 @@ class FedEx extends Provider
 
             $packageLineItem->GroupPackageCount = 1;
 
-            $includeInsurance = $this->settings['includeInsurance'] ?? false;
-
-            if ($includeInsurance) {
+            if ($this->getSetting('includeInsurance')) {
                 $packageLineItem->InsuredValue->Currency = $order->paymentCurrency;
                 $packageLineItem->InsuredValue->Amount = (float)$order->total;
             }

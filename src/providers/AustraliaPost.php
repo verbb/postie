@@ -431,7 +431,7 @@ class AustraliaPost extends SinglePackageProvider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => 'https://digitalapi.auspost.com.au',
                 'headers' => [
-                    'AUTH-KEY' => $this->settings['apiKey'],
+                    'AUTH-KEY' => $this->getSetting('apiKey'),
                 ]
             ]);
         }

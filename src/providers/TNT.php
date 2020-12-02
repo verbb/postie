@@ -72,7 +72,7 @@ class TNT extends Provider
                             <type>N</type>
                         </product>
                         <account>
-                            <accountNumber>' . $this->settings['accountNumber'] .'</accountNumber>
+                            <accountNumber>' . $this->getSetting('accountNumber') .'</accountNumber>
                             <accountCountry>' . $storeLocation->country->name .'</accountCountry>
                         </account>
                         <currency>' . $order->currency .'</currency>
@@ -120,7 +120,7 @@ class TNT extends Provider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => 'https://express.tnt.com',
                 'auth' => [
-                    $this->settings['username'], $this->settings['password']
+                    $this->getSetting('username'), $this->getSetting('password')
                 ],
                 'headers' => [
                     'Content-Type' => 'application/xml',

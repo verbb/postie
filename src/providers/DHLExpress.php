@@ -95,8 +95,8 @@ class DHLExpress extends Provider
             $response = [];
 
             // Set the ship date/time
-            $shipDate = $this->settings['shipDate'] ?? '';
-            $shipTime = $this->settings['shipTime']['time'] ?? '';
+            $shipDate = $this->getSetting('shipDate');
+            $shipTime = $this->getSetting('shipTime.time');
 
             if ($shipDate === 'nextDay') {
                 $shipDate = (new DateTime())->modify('+1 day')->format('Y-m-d');
@@ -119,7 +119,7 @@ class DHLExpress extends Provider
                         'DeclaredValue' => $order->totalPrice,
                         'DeclaredValueCurrecyCode' => $order->currency,
                         'PaymentInfo' => 'DAP',
-                        'Account' => $this->settings['account'],
+                        'Account' => $this->getSetting('account'),
 
                         'Ship' => [
                             'Shipper' => [
@@ -229,14 +229,14 @@ class DHLExpress extends Provider
 
         $url = 'https://wsbexpress.dhl.com/rest/gbl/';
 
-        if ($this->settings['useTestEndpoint']) {
+        if ($this->getSetting('useTestEndpoint')) {
             $url = 'https://wsbexpress.dhl.com/rest/sndpt/';
         }
 
         return $this->_client = Craft::createGuzzleClient([
             'base_uri' => $url,
             'auth' => [
-                $this->settings['username'], $this->settings['password'],
+                $this->getSetting('username'), $this->getSetting('password'),
             ],
         ]);
     }

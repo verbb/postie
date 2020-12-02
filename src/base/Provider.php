@@ -566,9 +566,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $dimensions = $fetchRatesEvent->dimensions;
     }
 
-    protected function getSetting($property)
+    protected function getSetting($key)
     {
-        return $this->settings[$property] ?? null;
+        return ArrayHelper::getValue($this->settings, $key) ?? null;
     }
 
     protected function getLineItemDimensions($lineItem)

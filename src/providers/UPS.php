@@ -362,9 +362,7 @@ class UPS extends Provider
             $shipToAddress = $shipTo->getAddress();
             $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
 
-            $residentialAddress = $this->settings['residentialAddress'] ?? false;
-
-            if ($residentialAddress) {
+            if ($this->getSetting('residentialAddress')) {
                 $shipToAddress->setResidentialAddressIndicator(true);
             }
 
@@ -383,9 +381,7 @@ class UPS extends Provider
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
                 $package->getPackageWeight()->setWeight($packedBox['weight']);
 
-                $requireSignature = $this->settings['requireSignature'] ?? '';
-
-                if ($requireSignature) {
+                if ($this->getSetting('requireSignature')) {
                     $deliveryConfirmation = new DeliveryConfirmation();
 
                     if ($requireSignature === 'required') {
@@ -412,9 +408,7 @@ class UPS extends Provider
                 $packageDimensions->setUnitOfMeasurement($unit);
                 $package->setDimensions($packageDimensions);
 
-                $includeInsurance = $this->settings['includeInsurance'] ?? false;
-
-                if ($includeInsurance) {
+                if ($this->getSetting('includeInsurance')) {
                     $insuredValue = new InsuredValue();
                     $insuredValue->setMonetaryValue((float)$order->total);
                     $insuredValue->setCurrencyCode($order->paymentCurrency);
@@ -428,11 +422,8 @@ class UPS extends Provider
                 $shipment->addPackage($package);
             }
 
-            $negotiatedRates = $this->settings['negotiatedRates'] ?? '';
-            $accountNumber = $this->settings['accountNumber'] ?? '';
-
             // Check for negotiated rates
-            if ($negotiatedRates && $accountNumber) {
+            if ($this->getSetting('negotiatedRates') && $this->getSetting('accountNumber')) {
                 $rateInformation = new RateInformation;
                 $rateInformation->setNegotiatedRatesIndicator(1);
                 $shipment->setRateInformation($rateInformation);
@@ -447,7 +438,7 @@ class UPS extends Provider
             $rateRequest = new RateRequest();
             $rateRequest->setShipment($shipment);
 
-            $pickupCode = $this->settings['pickupType'] ?? '01';
+            $pickupCode = $this->getSetting('pickupType') ?? '01';
 
             $pickupType = new PickupType();
             $pickupType->setCode($pickupCode);
@@ -548,13 +539,13 @@ class UPS extends Provider
     {
         if (!$this->_client) {
             if (Craft::$app->getConfig()->getGeneral()->devMode) {
-                $accessKey = $this->settings['testApiKey'];
+                $accessKey = $this->getSetting('testApiKey');
             } else {
-                $accessKey = $this->settings['apiKey'];
+                $accessKey = $this->getSetting('apiKey');
             }
 
-            $userId = $this->settings['username'];
-            $password = $this->settings['password'];
+            $userId = $this->getSetting('username');
+            $password = $this->getSetting('password');
 
             $this->_client = new Rate($accessKey, $userId, $password);
         }

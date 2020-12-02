@@ -329,7 +329,7 @@ class USPS extends Provider
     private function _getClient()
     {
         if (!$this->_client) {
-            $username = $this->settings['username'];
+            $username = $this->getSetting('username');
             
             $this->_client = new Rate($username);
         }

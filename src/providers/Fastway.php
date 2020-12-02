@@ -171,7 +171,7 @@ class Fastway extends Provider
 
     private function _request(string $method, string $uri, array $options = [])
     {
-        $options = array_merge($options, ['query' => ['api_key' => $this->settings['apiKey']]]);
+        $options = array_merge($options, ['query' => ['api_key' => $this->getSetting('apiKey')]]);
 
         $response = $this->_getClient()->request($method, $uri, $options);
 
