@@ -81,3 +81,12 @@
     on: provider.settings.includeInsurance ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.includeInsurance', 'postie'),
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Enable Fedex One Rate' | t('postie'),
+    instructions: 'Whether to enable [Fedex One Rate](https://www.fedex.com/us/onerate/). The origin and destination for the shipment must be the US.' | t('postie'),
+    id: 'enableOneRate',
+    name: 'enableOneRate',
+    on: provider.settings.enableOneRate ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.enableOneRate', 'postie'),
+}) }}

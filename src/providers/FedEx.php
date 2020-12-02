@@ -18,6 +18,7 @@ use FedEx\RateService\SimpleType;
 use FedEx\RateService\SimpleType\LinearUnits;
 use FedEx\RateService\SimpleType\PaymentType;
 use FedEx\RateService\SimpleType\RateRequestType;
+use FedEx\RateService\SimpleType\ServiceOptionType;
 use FedEx\RateService\SimpleType\WeightUnits;
 
 class FedEx extends Provider
@@ -352,6 +353,12 @@ class FedEx extends Provider
 
             // Rate request types
             $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
+
+            $enableOneRate = $this->settings['enableOneRate'] ?? false;
+
+            if ($enableOneRate) {
+                $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
+            }
 
             // Create package line items
             $packageLineItems = $this->_createPackageLineItem($order, $packedBoxes);
