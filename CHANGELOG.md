@@ -1,5 +1,54 @@
 # Changelog
 
+## 2.4.0 - 2020-12-02
+
+### Added
+- Add Sendle shipping provider.
+- Add Interparcel shipping provider.
+- Add New Zealand Post shipping provider.
+- Add Bring shipping provider.
+- Add new 4D bin-packing algorithm to more accurately pack your boxes.
+- Add ability to define box dimensions and weights for each provider, so you can better split order items into boxes.
+- Add "Packing Method" setting for all providers.
+- Add "Pack items individually" packing method, allowing all line items and quantities to be boxes individually.
+- Add "Pack items into boxes" packing method, allowing provider-supplied boxes, or user-created ones.
+- Add "Pack items into a single box" packing method - a slightly improved version of the box-packing algorithm in pre 2.4.0. This ensures a non-breaking change to box-packing behaviour to date.
+- Add `EVENT_BEFORE_PACK_ORDER` and `EVENT_AFTER_PACK_ORDER` events to all providers, allowing modification of the box-packing logic.
+- Add "Restrict Shipping Methods" setting for all providers. This allows opt-out of restricting to certain shipping services, and always use whatever is returned by the provider. This is particularly benefitial for some providers where services can't always be determined.
+- Add `weightUnit` and `dimensionUnit` to each provider for consistent use with boxes. These should always be provided in grams.
+- Add `supportsDynamicServices()` to providers whose list of services isn’t statically defined.
+- Add `getMaxPackageWeight()` to providers, to define what their maximum package weight is.
+- Add `getIsInternational()` to providers, to return whether an order is considered domestic or international.
+- Add provider setup instructions on connecting to the respective APIs.
+- Add ability for providers to define their own default boxes of dimensions and types that cannot be deleted, but still toggled enabled/disabled.
+- Add letter rates to Australia Post (domestic and international). Now fetches rates for letters, for applicable products, and as defined in the new box definitions.
+- Add some additional missing satchel rates for Australia Post.
+- Add “Residential Address” setting for UPS.
+- Add “Include Insurance” setting for UPS.
+- Add “Residential Address” setting for Fedex.
+- Add “Include Insurance” setting for Fedex.
+- Add “Fedex One Rate” setting for Fedex.
+- Add “Additional Options” to Canada Post.
+- Add `SinglePackageProvider` class for providers to extend from, if the API doesn't support sending multiple packages in one request. This class will fetch the first box, and add each subsequent (cached) response for all other boxes that are identical.
+- Add support for all providers to use env variables in their settings.
+
+### Changed
+- Postie now requires PHP 7.1+.
+- Multiple packages are now possible for Australia Post, DHL Express and TNT Australia. This not only improves a "too large to ship" response, but should provide more accurate pricing overall. Previously, Postie bundled all items in a single package, which would often go over maxiumum dimensions/weights.
+- Existing providers now use the "Pack items into a single box" box packing algorithm. This is essentially the same as previous versions to prevent a breaking change.
+- Tidied up the shipping methods table for providers.
+- Some internal cleanup with providers (may affect custom providers). Refer to the [updated docs](https://verbb.io/craft-plugins/postie/docs/developers/provider).
+- Provide field instructions for a number of provider settings.
+- Visually highlight provider API instructions.
+
+### Fixed
+- Fix settings sidebar overflow in some cases.
+
+### Removed
+- Removed `Provider::getPackageDimensions()`.
+- Removed `Provider::getDimensions()`.
+- Removed `Provider::getSplitBoxWeights()`.
+
 ## 2.3.5 - 2020-10-30
 
 ### Added
