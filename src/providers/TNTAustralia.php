@@ -123,6 +123,9 @@ class TNTAustralia extends Provider
                     </ratedTransitTimeEnquiry>
                 </enquiry>';
 
+            // Pretty the output just so its easier to debug
+            $xmlRequest = $this->_formatXml($xmlRequest);
+
             $payload = [
                 'Username' => $this->settings['username'],
                 'Password' => $this->settings['password'],
@@ -199,6 +202,15 @@ class TNTAustralia extends Provider
         $xml = simplexml_load_string($string);
 
         return Xml::build($xml->asXml());
+    }
+
+    private function _formatXml($payload)
+    {
+        $doc = new \DomDocument('1.0');
+        $doc->preserveWhiteSpace = false;
+        $doc->formatOutput = true;
+        $doc->loadXML(simplexml_load_string($payload)->asXML());
+        return $doc->saveXML();
     }
 
     private function _numberOfWorkingDates($from, $days) {
