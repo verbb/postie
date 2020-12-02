@@ -321,6 +321,12 @@ class FedEx extends Provider
             $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
             $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
 
+            $residentialAddress = $this->settings['residentialAddress'] ?? false;
+
+            if ($residentialAddress) {
+                $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
+            }
+
             // Fedex can't handle 3-character states. Ignoring it is valid for international order
             if ($storeLocation->country) {
                 $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;

@@ -64,3 +64,11 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Residential Address' | t('postie'),
+    instructions: 'Whether to flag customer‘s address is a residential address.' | t('postie'),
+    id: 'residentialAddress',
+    name: 'residentialAddress',
+    on: provider.settings.residentialAddress ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.residentialAddress', 'postie'),
+}) }}
