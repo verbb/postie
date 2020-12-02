@@ -72,3 +72,12 @@
     on: provider.settings.residentialAddress ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.residentialAddress', 'postie'),
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Include Insurance' | t('postie'),
+    instructions: 'Whether to include insurance for rates.' | t('postie'),
+    id: 'includeInsurance',
+    name: 'includeInsurance',
+    on: provider.settings.includeInsurance ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.includeInsurance', 'postie'),
+}) }}
