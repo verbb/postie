@@ -7,6 +7,9 @@
 - Add Interparcel shipping provider.
 - Add New Zealand Post shipping provider.
 - Add Bring shipping provider.
+- Add Royal Mail shipping provider.
+- Add PostNL shipping provider.
+- Add Colissimo shipping provider.
 - Add new 4D bin-packing algorithm to more accurately pack your boxes.
 - Add ability to define box dimensions and weights for each provider, so you can better split order items into boxes.
 - Add "Packing Method" setting for all providers.
@@ -31,6 +34,9 @@
 - Add “Additional Options” to Canada Post.
 - Add `SinglePackageProvider` class for providers to extend from, if the API doesn't support sending multiple packages in one request. This class will fetch the first box, and add each subsequent (cached) response for all other boxes that are identical.
 - Add support for all providers to use env variables in their settings.
+- Add API connection testing for all providers, allowing you to troubleshoot API credentials before getting to shipping.
+- Add `supportsConnection()`, `checkConnection()` and `getIsConnected()` methods to providers.
+- Add testing classes for addresses and packages. Can be freely used to fetch a range of different values for testing responses.
 
 ### Changed
 - Postie now requires PHP 7.1+.

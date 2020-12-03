@@ -674,6 +674,14 @@
 		"oO": 0,
 		"oS": 1
 		},
+	"/src/inc/colissimo/ColissimoRates.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/inc/colissimo/ColissimoRates.php",
+		"oF": 0
+		},
 	"/src/migrations": {
 		"ft": 65536,
 		"oA": 1,
@@ -718,6 +726,14 @@
 		"oAP": "/src/providers/CanadaPost.php",
 		"oF": 0
 		},
+	"/src/providers/Colissimo.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/providers/Colissimo.php",
+		"oF": 0
+		},
 	"/src/providers/DHLExpress.php": {
 		"cB": 0,
 		"ft": 8192,
@@ -756,6 +772,22 @@
 		"hM": 0,
 		"oA": 2,
 		"oAP": "/src/providers/NewZealandPost.php",
+		"oF": 0
+		},
+	"/src/providers/PostNl.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/providers/PostNl.php",
+		"oF": 0
+		},
+	"/src/providers/RoyalMail.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/providers/RoyalMail.php",
 		"oF": 0
 		},
 	"/src/providers/Sendle.php": {
