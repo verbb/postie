@@ -17,7 +17,7 @@
 - Add "Pack items into boxes" packing method, allowing provider-supplied boxes, or user-created ones.
 - Add "Pack items into a single box" packing method - a slightly improved version of the box-packing algorithm in pre 2.4.0. This ensures a non-breaking change to box-packing behaviour to date.
 - Add `EVENT_BEFORE_PACK_ORDER` and `EVENT_AFTER_PACK_ORDER` events to all providers, allowing modification of the box-packing logic.
-- Add "Restrict Shipping Methods" setting for all providers. This allows opt-out of restricting to certain shipping services, and always use whatever is returned by the provider. This is particularly benefitial for some providers where services can't always be determined.
+- Add "Restrict Shipping Methods" setting for all providers. This allows opt-out of restricting to certain shipping services, and always use whatever is returned by the provider. This is particularly beneficial for some providers where services can't always be determined.
 - Add `weightUnit` and `dimensionUnit` to each provider for consistent use with boxes. These should always be provided in grams.
 - Add `supportsDynamicServices()` to providers whose list of services isn’t statically defined.
 - Add `getMaxPackageWeight()` to providers, to define what their maximum package weight is.
@@ -40,7 +40,7 @@
 
 ### Changed
 - Postie now requires PHP 7.1+.
-- Multiple packages are now possible for Australia Post, DHL Express and TNT Australia. This not only improves a "too large to ship" response, but should provide more accurate pricing overall. Previously, Postie bundled all items in a single package, which would often go over maxiumum dimensions/weights.
+- Multiple packages are now possible for Australia Post, DHL Express and TNT Australia. This not only improves a "too large to ship" response, but should provide more accurate pricing overall. Previously, Postie bundled all items in a single package, which would often go over maximum dimensions/weights.
 - Existing providers now use the "Pack items into a single box" box packing algorithm. This is essentially the same as previous versions to prevent a breaking change.
 - Tidied up the shipping methods table for providers.
 - Some internal cleanup with providers (may affect custom providers). Refer to the [updated docs](https://verbb.io/craft-plugins/postie/docs/developers/provider).
