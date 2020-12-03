@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.1 - 2020-12-04
+
+### Fixed
+- Fix potential migration issue if no providers were configured.
+
 ## 2.4.0 - 2020-12-03
 
 ### Added
