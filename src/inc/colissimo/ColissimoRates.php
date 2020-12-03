@@ -84,36 +84,6 @@ class ColissimoRates
         return $rates;
     }
 
-    public static function getZone($country)
-    {
-        if (in_array($country, self::$france)) {
-            return self::ZONE_FR;
-        } else if (in_array($country, self::$DOM)) {
-            return self::ZONE_DOM;
-        } else if (in_array($country, self::$TOM)) {
-            return self::ZONE_TOM;
-        } else if (in_array($country, self::$internationalZoneA)) {
-            return self::ZONE_INTERNATIONAL_A;
-        } else if (in_array($country, self::$internationalZoneB)) {
-            return self::ZONE_INTERNATIONAL_B;
-        }
-
-        return self::ZONE_INTERNATIONAL_C;
-    }
-
-    public static function getPrefix($country)
-    {
-        if (in_array($country, self::$france)) {
-            return 'fr';
-        } else if (in_array($country, self::$DOM)) {
-            return 'dom';
-        } else if (in_array($country, self::$TOM)) {
-            return 'tom';
-        }
-
-        return '';
-    }
-
     public static function getFrFranceRates()
     {
         return [
@@ -736,6 +706,40 @@ class ColissimoRates
                 ]
             ],
         ];
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private static function getZone($country)
+    {
+        if (in_array($country, self::$france)) {
+            return self::ZONE_FR;
+        } else if (in_array($country, self::$DOM)) {
+            return self::ZONE_DOM;
+        } else if (in_array($country, self::$TOM)) {
+            return self::ZONE_TOM;
+        } else if (in_array($country, self::$internationalZoneA)) {
+            return self::ZONE_INTERNATIONAL_A;
+        } else if (in_array($country, self::$internationalZoneB)) {
+            return self::ZONE_INTERNATIONAL_B;
+        }
+
+        return self::ZONE_INTERNATIONAL_C;
+    }
+
+    private static function getPrefix($country)
+    {
+        if (in_array($country, self::$france)) {
+            return 'fr';
+        } else if (in_array($country, self::$DOM)) {
+            return 'dom';
+        } else if (in_array($country, self::$TOM)) {
+            return 'tom';
+        }
+
+        return '';
     }
 
 }

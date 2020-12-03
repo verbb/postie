@@ -14,7 +14,7 @@ use verbb\postie\providers\Fastway;
 use verbb\postie\providers\FedEx;
 use verbb\postie\providers\Interparcel;
 use verbb\postie\providers\NewZealandPost;
-use verbb\postie\providers\Postnord;
+use verbb\postie\providers\PostNL;
 use verbb\postie\providers\RoyalMail;
 use verbb\postie\providers\Sendle;
 use verbb\postie\providers\TNT;
@@ -81,7 +81,7 @@ class Providers extends Component
             FedEx::class,
             Interparcel::class,
             NewZealandPost::class,
-            Postnord::class,
+            PostNL::class,
             RoyalMail::class,
             Sendle::class,
             // TNT::class,

@@ -123,6 +123,18 @@ class TestingHelper
             'zipCode' => '8PVM+H5',
             'country' => 'IR',
         ],
+        [
+            'address1' => 'Coolsingel 40',
+            'city' => 'Rotterdam',
+            'zipCode' => '3011 AD',
+            'country' => 'NL',
+        ],
+        [
+            'address1' => 'Nieuwezijds Voorburgwal 147',
+            'city' => 'Amsterdam',
+            'zipCode' => '81012 RJ',
+            'country' => 'NL',
+        ],
     ];
 
 
