@@ -21,13 +21,16 @@ class m201201_000000_new_settings extends Migration
         }
 
         $providers = $projectConfig->get('plugins.postie.settings.providers');
-        $providers = ProjectConfigHelper::unpackAssociativeArray($providers, true);
 
-        foreach ($providers as $key => $provider) {
-            $provider['settings']['restrictServices'] = true;
-            $provider['settings']['packingMethod'] = 'singleBox';
+        if ($providers) {
+            $providers = ProjectConfigHelper::unpackAssociativeArray($providers, true);
 
-            $projectConfig->set("plugins.postie.settings.providers.{$key}", $provider);
+            foreach ($providers as $key => $provider) {
+                $provider['settings']['restrictServices'] = true;
+                $provider['settings']['packingMethod'] = 'singleBox';
+
+                $projectConfig->set("plugins.postie.settings.providers.{$key}", $provider);
+            }
         }
     }
 
