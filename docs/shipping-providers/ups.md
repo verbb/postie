@@ -1,30 +1,70 @@
 # UPS
 
-### How to get API access
-
-Register for an access key via the [UPS Developer Kit](https://www.ups.com/upsdeveloperkit?loc=en_US) form. Add this access key in the provider information either through the control panel, or in the configuration file (as the API Key).
+### Connect to the {name} API
+1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">{name} Developer Kit</a> and register for API access.
+1. Copy the **API Key** from {name} and paste in the **API Key** field below.
+1. Copy the **Test API Key** from {name} and paste in the **Test API Key** field below.
+1. Copy the **Username** from {name} and paste in the **Username** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
 
 ### Services
-
 The below service are available with UPS for domestic and international customer destination addresses.
 
-- `S_AIR_1DAYEARLYAM`
-- `S_AIR_1DAY`
-- `S_AIR_1DAYSAVER`
-- `S_AIR_2DAYAM`
-- `S_AIR_2DAY`
-- `S_3DAYSELECT`
-- `S_GROUND`
-- `S_SURE_POST`
-- `S_STANDARD`
-- `S_WW_EXPRESS`
-- `S_WW_EXPRESSPLUS`
-- `S_WW_EXPEDITED`
-- `S_SAVER`
-- `S_ACCESS_POINT`
+- Domestic
+    - UPS Next Day Air Early AM
+    - UPS Next Day Air
+    - Next Day Air Saver
+    - UPS Second Day Air AM
+    - UPS Second Day Air
+    - UPS Three-Day Select
+    - UPS Ground
+    - UPS Sure Post
+    - UPS Next Day Air Early
+    - UPS Next Day Air
+    - UPS Next Day Air Saver
+    - UPS Second Day Air A.M.
+    - UPS Second Day Air
+    - UPS Three-Day Select
+    - UPS Ground
+    - UPS Next Day Air Early (Saturday Delivery)
+    - UPS Next Day Air (Saturday Delivery)
+    - UPS Second Day Air (Saturday Delivery)
+- International
+    - UPS Standard
+    - UPS Worldwide Express
+    - UPS Worldwide Express Plus
+    - UPS Worldwide Expedited
+    - UPS Saver
+    - UPS Access Point Economy
+    - UPS Today Standard
+    - UPS Today Dedicated Courier
+    - UPS Today Intercity
+    - UPS Today Express
+    - UPS Today Express Saver
+    - UPS Worldwide Express Freight
+- EU-Based
+    - UPS Worldwide Express Plus
+    - UPS Worldwide Express
+    - UPS Worldwide Express Saver
+    - UPS Standard
+    - UPS Worldwide Expedited
+    - UPS Express Plus
+    - UPS Express
+    - UPS Express Saver
+    - UPS Standard
+    - UPS Express Plus
+    - UPS Express
+    - UPS Express Saver
+    - UPS Standard
+    - UPS Express NA 1
+    - UPS Worldwide Express Plus
+    - UPS Express
+    - UPS Express Saver
+    - UPS Expedited
+    - UPS Standard
 
 ### Configuration
-
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

@@ -13,20 +13,20 @@ Postie is a Craft Commerce plugin to provide your customers with real-time shipp
 
 ## Available Providers
 - Australia Post
+- Bring
 - Canada Post
+- Colissimo
+- DHL Express
 - Fastway
 - FedEx
-- UPS
-- USPS
-- TNT Australia
-- DHL Express
-- Sendle
 - Interparcel
 - New Zealand Post
-- Bring
-- Royal Mail
 - PostNL
-- Colissimo
+- Royal Mail
+- Sendle
+- TNT Australia
+- UPS
+- USPS
 
 <img width="800" src="https://verbb.io/uploads/plugins/postie/postie.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
  

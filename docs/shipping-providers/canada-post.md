@@ -1,43 +1,43 @@
 # Canada Post
-
 In order to use Canada Post, you'll need to ensure you are using a valid Canadian address as your store location. You'll also need to ensure your Craft Commerce default currency is set to CAD.
 
-### How to get API access
-
-Register for API credentials via the [Canada Post Developers Centre](https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/gettingstarted.jsf) form.
+### Connect to the Canada Post API
+1. Go to <a href="https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/gettingstarted.jsf" target="_blank">Canada Post Developers Centre</a> and register for API access.
+1. Copy the **Customer Number** from Canada Post and paste in the **Customer Number** field in Postie.
+1. Copy the **Username** from Canada Post and paste in the **Username** field in Postie.
+1. Copy the **Password** from Canada Post and paste in the **Password** field in Postie.
 
 ### Services
-
 The below service are available with Canada Post for domestic and international customer destination addresses.
 
 - Domestic
-
-    - `DOM_EP`
-    - `DOM_RP`
-    - `DOM_PC`
-
+    - Regular Parcel
+    - Expedited Parcel
+    - Xpresspost
+    - Priority
+    - Library Books
+- USA
+    - Expedited Parcel USA
+    - Tracked Packet - USA
+    - Tracked Packet USA (LVM)
+    - Priority Worldwide Envelope USA
+    - Priority Worldwide pak USA
+    - Priority Worldwide parcel USA
+    - Small Packet USA Air
+    - Tracked Packet USA (LVM)
+    - Xpresspost USA
 - International
-
-    - `DOM_XP`
-    - `INT_PW_ENV`
-    - `USA_PW_ENV`
-    - `USA_PW_PAK`
-    - `INT_PW_PAK`
-    - `INT_PW_PARCEL`
-    - `USA_PW_PARCEL`
-    - `INT_XP`
-    - `INT_IP_AIR`
-    - `INT_IP_SURF`
-    - `INT_TP`
-    - `INT_SP_SURF`
-    - `INT_SP_AIR`
-    - `USA_XP`
-    - `USA_EP`
-    - `USA_TP`
-    - `USA_SP_AIR`
+    - Xpresspost International
+    - Tracked Packet - International
+    - International Parcel Air
+    - International Parcel Surface
+    - Priority Worldwide envelope INTL
+    - Priority Worldwide pak INTL
+    - Priority Worldwide parcel INTL
+    - Small Packet International Air
+    - Small Packet International Surface
 
 ### Configuration
-
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

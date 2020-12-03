@@ -167,17 +167,6 @@
                             </div>
                         </td>
 
-                        <td width="45%">
-                            {% if warning %}
-                                <span class="warning" data-icon="alert"></span>
-                            {% endif %}
-
-                            <input type="hidden" name="name" value="{{ name }}">
-                            <input type="hidden" name="enabled" value="0">
-
-                            <code>{{ handle }}</code>
-                        </td>
-
                         <td class="nowrap" width="10%">
                             {{ forms.lightswitchField({
                                 name: 'enabled',

@@ -1,67 +1,82 @@
 # USPS
 
-### How to get API access
-
-Register for an API username via the [Registration for USPS Web Tools](https://registration.shippingapis.com/) form. Add this username in the provider information either through the control panel, or in the configuration file.
+### Connect to the USPS API
+1. Go to <a href="https://registration.shippingapis.com" target="_blank">USPS Web Tools</a> and register for API access.
+1. Copy the **Username** from USPS and paste in the **Username** field in Postie.
 
 ### Services
-
 The below service are available with USPS for domestic and international customer destination addresses.
 
 - Domestic
-    
-    - `PRIORITY_MAIL_EXPRESS_1_DAY`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_SUNDAY_HOLIDAY_DELIVERY`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP`
-    - `PRIORITY_MAIL_1_DAY`
-    - `PRIORITY_MAIL_1_DAY_LARGE_FLAT_RATE_BOX`
-    - `PRIORITY_MAIL_1_DAY_MEDIUM_FLAT_RATE_BOX`
-    - `PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_BOX`
-    - `PRIORITY_MAIL_1_DAY_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_1_DAY_LEGAL_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_1_DAY_PADDED_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_1_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_ENVELOPE`
-    - `PRIORITY_MAIL_1_DAY_WINDOW_FLAT_RATE_ENVELOPE`
-    - `FIRST_CLASS_MAIL`
-    - `FIRST_CLASS_MAIL_STAMPED_LETTER`
-    - `FIRST_CLASS_MAIL_METERED_LETTER`
-    - `FIRST_CLASS_MAIL_LARGE_ENVELOPE`
-    - `FIRST_CLASS_MAIL_POSTCARDS`
-    - `FIRST_CLASS_MAIL_LARGE_POSTCARDS`
-    - `FIRST_CLASS_PACKAGE_SERVICE_RETAIL`
-    - `MEDIA_MAIL_PARCEL`
-    - `LIBRARY_MAIL_PARCEL`
-
+    - USPS Priority Mail Express 1-Day
+    - USPS Priority Mail Express 1-Day Hold For Pickup
+    - USPS Priority Mail Express 1-Day Sunday/Holiday Delivery
+    - USPS Priority Mail Express 1-Day Flat Rate Envelope
+    - USPS Priority Mail Express 1-Day Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail Express 1-Day Flat Rate Envelope Sunday/Holiday Delivery
+    - USPS Priority Mail Express 1-Day Legal Flat Rate Envelope
+    - USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Sunday/Holiday Delivery
+    - USPS Priority Mail Express 1-Day Padded Flat Rate Envelope
+    - USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Sunday/Holiday Delivery
+    - USPS Priority Mail Express 2-Day
+    - USPS Priority Mail Express 2-Day Hold For Pickup
+    - USPS Priority Mail Express 2-Day Flat Rate Envelope
+    - USPS Priority Mail Express 2-Day Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail Express 2-Day Legal Flat Rate Envelope
+    - USPS Priority Mail Express 2-Day Legal Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail Express 2-Day Padded Flat Rate Envelope
+    - USPS Priority Mail Express 2-Day Padded Flat Rate Envelope Hold For Pickup
+    - USPS Priority Mail 1-Day
+    - USPS Priority Mail 1-Day Large Flat Rate Box
+    - USPS Priority Mail 1-Day Medium Flat Rate Box
+    - USPS Priority Mail 1-Day Small Flat Rate Box
+    - USPS Priority Mail 1-Day Flat Rate Envelope
+    - USPS Priority Mail 1-Day Legal Flat Rate Envelope
+    - USPS Priority Mail 1-Day Padded Flat Rate Envelope
+    - USPS Priority Mail 1-Day Gift Card Flat Rate Envelope
+    - USPS Priority Mail 1-Day Small Flat Rate Envelope
+    - USPS Priority Mail 1-Day Window Flat Rate Envelope
+    - USPS Priority Mail 2-Day
+    - USPS Priority Mail 2-Day Large Flat Rate Box
+    - USPS Priority Mail 2-Day Medium Flat Rate Box
+    - USPS Priority Mail 2-Day Small Flat Rate Box
+    - USPS Priority Mail 2-Day Flat Rate Envelope
+    - USPS Priority Mail 2-Day Legal Flat Rate Envelope
+    - USPS Priority Mail 2-Day Padded Flat Rate Envelope
+    - USPS Priority Mail 2-Day Gift Card Flat Rate Envelope
+    - USPS Priority Mail 2-Day Small Flat Rate Envelope
+    - USPS Priority Mail 2-Day Window Flat Rate Envelope
+    - USPS Priority Mail 3-Day
+    - USPS Priority Mail 3-Day Large Flat Rate Box
+    - USPS Priority Mail 3-Day Medium Flat Rate Box
+    - USPS Priority Mail 3-Day Small Flat Rate Box
+    - USPS Priority Mail 3-Day Flat Rate Envelope
+    - USPS Priority Mail 3-Day Legal Flat Rate Envelope
+    - USPS Priority Mail 3-Day Padded Flat Rate Envelope
+    - USPS Priority Mail 3-Day Gift Card Flat Rate Envelope
+    - USPS Priority Mail 3-Day Small Flat Rate Envelope
+    - USPS Priority Mail 3-Day Window Flat Rate Envelope
+    - USPS First-Class Mail
+    - USPS First-Class Mail Stamped Letter
+    - USPS First-Class Mail Metered Letter
+    - USPS First-Class Mail Large Envelope
+    - USPS First-Class Mail Postcards
+    - USPS First-Class Mail Large Postcards
+    - USPS First-Class Package Service - Retail
+    - USPS Media Mail Parcel
+    - USPS Library Mail Parcel
 - International
-    
-    - `USPS_GXG_ENVELOPES`
-    - `PRIORITY_MAIL_EXPRESS_INTERNATIONAL`
-    - `PRIORITY_MAIL_INTERNATIONAL`
-    - `PRIORITY_MAIL_INTERNATIONAL_LARGE_FLAT_RATE_BOX`
-    - `PRIORITY_MAIL_INTERNATIONAL_MEDIUM_FLAT_RATE_BOX`
-    - `FIRST_CLASS_MAIL_INTERNATIONAL`
-    - `FIRST_CLASS_PACKAGE_INTERNATIONAL_SERVICE`
+    - USPS Global Express Guaranteed Envelopes
+    - USPS Priority Mail Express International
+    - USPS Priority Mail International
+    - USPS Priority Mail International Large Flat Rate Box
+    - USPS Priority Mail International Medium Flat Rate Box
+    - USPS First-Class Mail International
+    - USPS First-Class Package International Service
 
 ### Configuration
-
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

@@ -16,7 +16,8 @@
             "setup-configuration/providers",
             "setup-configuration/shipping-methods",
             "setup-configuration/displaying-rates",
-            "setup-configuration/manual-fetch"
+            "setup-configuration/manual-fetch",
+            "setup-configuration/box-packing"
         ]
     },
     {
@@ -24,10 +25,17 @@
         "collapsable": false,
         "children": [
             "shipping-providers/australia-post",
+            "shipping-providers/bring",
             "shipping-providers/canada-post",
+            "shipping-providers/colissimo",
             "shipping-providers/dhl-express",
             "shipping-providers/fastway",
             "shipping-providers/fedex",
+            "shipping-providers/interparcel",
+            "shipping-providers/new-zealand-post",
+            "shipping-providers/post-nl",
+            "shipping-providers/royal-mail",
+            "shipping-providers/sendle",
             "shipping-providers/tnt-australia",
             "shipping-providers/ups",
             "shipping-providers/usps"

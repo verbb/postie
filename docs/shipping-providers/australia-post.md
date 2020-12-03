@@ -8,21 +8,50 @@ In order to use Australia Post, you'll need to ensure you are using a valid Aust
 ### Services
 The below service are available with Australia Post for domestic and international customer destination addresses.
 
-- Domestic
-    - `AUS_PARCEL_COURIER`
-    - `AUS_PARCEL_COURIER_SATCHEL_MEDIUM`
-    - `AUS_PARCEL_EXPRESS`
-    - `AUS_PARCEL_EXPRESS_SATCHEL_500G`
-    - `AUS_PARCEL_REGULAR`
-    - `AUS_PARCEL_REGULAR_SATCHEL_500G`
-
-- International
-    - `INT_PARCEL_COR_OWN_PACKAGING`
-    - `INT_PARCEL_EXP_OWN_PACKAGING`
-    - `INT_PARCEL_STD_OWN_PACKAGING`
-    - `INT_PARCEL_AIR_OWN_PACKAGING`
-    - `INT_PARCEL_SEA_OWN_PACKAGING`
-
+- Domestic (Parcel)
+    - Parcel Post
+    - Parcel Post Small Satchel
+    - Parcel Post Small Satchel
+    - Parcel Post Small Satchel
+    - Express Post
+    - Express Post Small Satchel
+    - Express Post Medium (3Kg) Satchel
+    - Express Post Large (5Kg) Satchel
+    - Courier Post
+    - Courier Post Assessed Medium Satchel
+- Domestic (Letter)
+    - Letter Regular Small
+    - Letter Regular Medium
+    - Letter Regular Large
+    - Letter Regular Large (125g)
+    - Letter Regular Large (250g)
+    - Letter Regular Large (500g)
+    - Letter Express Small
+    - Letter Express Medium
+    - Letter Express Large
+    - Letter Express Large (125g)
+    - Letter Express Large (250g)
+    - Letter Express Large (500g)
+    - Letter Priority Small
+    - Letter Priority Medium
+    - Letter Priority Large
+    - Letter Priority Large (125g)
+    - Letter Priority Large (250g)
+    - Letter Priority Large (500g)
+- International (Parcel)
+    - International Standard
+    - International Express
+    - International Courier
+    - International Economy Air
+    - International Economy Sea
+- International (Letter)
+    - International Letter DL
+    - International Letter B4
+    - International Letter Express
+    - International Letter Courier
+    - International Letter Air Light
+    - International Letter Air Medium
+    - International Letter Air Heavy
 
 ### Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.

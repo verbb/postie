@@ -1,52 +1,54 @@
 # FedEx
 
-### How to get API access
-
-To use Fedex API, you'll need to:
-
-1.  Create a profile at the [FedEx website](https://www.fedex.com/login/web/jsp/contactInfo1.jsp)
-2.  Register for [FedEx Web Services Production Access](https://www.fedex.com/wpor/web/jsp/commonTC.jsp)
-
-After this, you should receive an email with the following information, that is required by Postie:
-
-- `accountNumber`
-- `meterNumber`
-- `key`
-- `password`
+### Connect to the FedEx API
+1. Go to <a href="https://www.fedex.com/login/web/jsp/contactInfo1.jsp" target="_blank">FedEx Developers Centre</a> and register for API access.
+1. Register a <a href="https://www.fedex.com/wpor/web/jsp/commonTC.jsp" target="_blank">FedEx Web Services Production Access</a>.
+1. Copy the **Account Number** from FedEx and paste in the **Account Number** field in Postie.
+1. Copy the **Meter Number** from FedEx and paste in the **Meter Number** field in Postie.
+1. Copy the **API Key** from FedEx and paste in the **Key** field in Postie.
+1. Copy the **Password** from FedEx and paste in the **Password** field in Postie.
 
 ### Services
-
 The below service are available with FedEx for domestic and international customer destination addresses.
 
 - Domestic
-    
-    - `FEDEX_1_DAY_FREIGHT`
-    - `FEDEX_2_DAY`
-    - `FEDEX_2_DAY_AM`
-    - `FEDEX_2_DAY_FREIGHT`
-    - `FEDEX_3_DAY_FREIGHT`
-    - `FEDEX_EXPRESS_SAVER`
-    - `FEDEX_FIRST_FREIGHT`
-    - `FEDEX_FREIGHT_ECONOMY`
-    - `FEDEX_FREIGHT_PRIORITY`
-    - `FEDEX_GROUND`
-    - `FIRST_OVERNIGHT`
-    - `PRIORITY_OVERNIGHT`
-    - `STANDARD_OVERNIGHT`
-    - `GROUND_HOME_DELIVERY`
-    - `SMART_POST`
+    - FedEx 1 Day Freight
+    - FedEx 2 Day
+    - FedEx 2 Day AM
+    - FedEx 2 DAY Freight
+    - FedEx 3 Day Freight
+    - FedEx Express Saver
+    - FedEx First Freight
+    - FedEx Freight Economy
+    - FedEx Freight Priority
+    - FedEx Ground
+    - FedEx First Overnight
+    - FedEx Priority Overnight
+    - FedEx Standard Overnight
+    - FedEx Ground Home Delivery
+    - FedEx Same Day
+    - FedEx Same Day City
+    - FedEx Smart Post
+    - FedEx Distance Deferred
+    - FedEx Next Day Early Morning
+    - FedEx Next Day Mid Morning
+    - FedEx Next Day Afternoon
+    - FedEx Next Day End of Day
+    - FedEx Next Day Freight
 
 - International
-    
-    - `INTERNATIONAL_ECONOMY`
-    - `INTERNATIONAL_ECONOMY_FREIGHT`
-    - `INTERNATIONAL_FIRST`
-    - `INTERNATIONAL_PRIORITY`
-    - `INTERNATIONAL_PRIORITY_FREIGHT`
-    - `EUROPE_FIRST_INTERNATIONAL_PRIORITY`
+    - FedEx International Economy
+    - FedEx International Economy Freight
+    - FedEx International Economy Distribution
+    - FedEx International First
+    - FedEx International Priority
+    - FedEx International Priority Freight
+    - FedEx International Priority Distribution
+    - FedEx International Priority Express
+    - FedEx Europe First International Priority
+    - FedEx International Distribution
 
 ### Configuration
-
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php
