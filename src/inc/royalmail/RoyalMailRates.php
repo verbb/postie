@@ -17,9 +17,9 @@ class RoyalMailRates
 
     private static $worldZone3 = ['US'];
 
-    private static $farEast = array('CN', 'HK', 'MO', 'JP', 'MN', 'KP', 'KR', 'TW', 'BN', 'KH', 'TL', 'ID', 'LA', 'MY', 'MM', 'PH', 'SG', 'TH', 'VN', 'RU');
+    private static $farEast = ['CN', 'HK', 'MO', 'JP', 'MN', 'KP', 'KR', 'TW', 'BN', 'KH', 'TL', 'ID', 'LA', 'MY', 'MM', 'PH', 'SG', 'TH', 'VN', 'RU'];
 
-    private static $australasia = array('AU', 'PF', 'NU', 'TO', 'CX', 'KI', 'PG', 'TV', 'CC', 'NR', 'PN', 'VU', 'CK', 'NC', 'SB', 'WF', 'FJ', 'NZ', 'TK', 'WS');
+    private static $australasia = ['AU', 'PF', 'NU', 'TO', 'CX', 'KI', 'PG', 'TV', 'CC', 'NR', 'PN', 'VU', 'CK', 'NC', 'SB', 'WF', 'FJ', 'NZ', 'TK', 'WS'];
 
     protected static $rateYears = [
         '2019' => '2019-03-25',
@@ -67,76 +67,76 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
+        $bands = [
+            '2020' => [
+                'letter' => [
                     100 => 76,
-                ),
-                'large-letter' => array(
+                ],
+                'large-letter' => [
                     100 => 115,
                     250 => 164,
                     500 => 214,
                     750 => 295,
-                ),
-                'small-parcel-wide' => array(
+                ],
+                'small-parcel-wide' => [
                     1000 => 370,
                     2000 => 557,
-                ),
-                'small-parcel-deep' => array(
+                ],
+                'small-parcel-deep' => [
                     1000 => 370,
                     2000 => 557,
-                ),
-                'small-parcel-bigger' => array(
+                ],
+                'small-parcel-bigger' => [
                     1000 => 370,
                     2000 => 557,
-                ),
-                'medium-parcel' => array(
+                ],
+                'medium-parcel' => [
                     1000 => 590,
                     2000 => 902,
                     5000 => 1585,
                     10000 => 2190,
                     20000 => 3340,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $boxes = [
-            'letter' => array(
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'small-parcel-wide' => array(
+            ],
+            'small-parcel-wide' => [
                 'length' => 450,
                 'width' => 350,
                 'height' => 80,
                 'weight' => 2000,
-            ),
-            'small-parcel-deep' => array(
+            ],
+            'small-parcel-deep' => [
                 'length' => 350,
                 'width' => 250,
                 'height' => 160,
                 'weight' => 2000,
-            ),
-            'small-parcel-bigger' => array(
+            ],
+            'small-parcel-bigger' => [
                 'length' => 450,
                 'width' => 350,
                 'height' => 160,
                 'weight' => 2000,
-            ),
-            'medium-parcel' => array(
+            ],
+            'medium-parcel' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 20000,
-            ),
+            ],
         ];
 
         return self::getBoxPricing($boxes, $bands);
@@ -152,14 +152,14 @@ class RoyalMailRates
 
         $boxPricing = self::getFirstClassRates($country);
 
-        $signedForCost = self::getValueForYear(array(
+        $signedForCost = self::getValueForYear([
             '2019' => 120,
             '2020' => 130,
-        ));
+        ]);
 
-        $signedForPackageCost = self::getValueForYear(array(
+        $signedForPackageCost = self::getValueForYear([
             '2019' => 100,
-        ));
+        ]);
 
         foreach ($boxPricing as $key => &$box) {
             if (strstr($key, 'letter-')) {
@@ -184,77 +184,77 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
+        $bands = [
+            '2020' => [
+                'letter' => [
                     100 => 65,
-                ),
-                'large-letter' => array(
+                ],
+                'large-letter' => [
                     100 => 88,
                     250 => 140,
                     500 => 183,
                     750 => 248,
-                ),
-                'small-parcel-wide' => array(
+                ],
+                'small-parcel-wide' => [
                     1000 => 310,
                     2000 => 310,
-                ),
-                'small-parcel-deep' => array(
+                ],
+                'small-parcel-deep' => [
                     1000 => 310,
                     2000 => 310,
-                ),
-                'small-parcel-bigger' => array(
+                ],
+                'small-parcel-bigger' => [
                     1000 => 310,
                     2000 => 310,
-                ),
-                'medium-parcel' => array(
+                ],
+                'medium-parcel' => [
                     1000 => 520,
                     2000 => 520,
                     5000 => 899,
                     10000 => 2025,
                     20000 => 2855,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'small-parcel-wide' => array(
+            ],
+            'small-parcel-wide' => [
                 'length' => 450,
                 'width' => 350,
                 'height' => 80,
                 'weight' => 2000,
-            ),
-            'small-parcel-deep' => array(
+            ],
+            'small-parcel-deep' => [
                 'length' => 350,
                 'width' => 250,
                 'height' => 160,
                 'weight' => 2000,
-            ),
-            'small-parcel-bigger' => array(
+            ],
+            'small-parcel-bigger' => [
                 'length' => 450,
                 'width' => 350,
                 'height' => 160,
                 'weight' => 2000,
-            ),
-            'medium-parcel' => array(
+            ],
+            'medium-parcel' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 20000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -269,14 +269,14 @@ class RoyalMailRates
 
         $boxPricing = self::getSecondClassRates($country);
 
-        $signedForCost = self::getValueForYear(array(
+        $signedForCost = self::getValueForYear([
             '2019' => 120,
             '2020' => 130,
-        ));
+        ]);
 
-        $signedForPackageCost = self::getValueForYear(array(
+        $signedForPackageCost = self::getValueForYear([
             '2019' => 100,
-        ));
+        ]);
 
         foreach ($boxPricing as $key => &$box) {
             if (strstr($key, 'letter-')) {
@@ -301,59 +301,59 @@ class RoyalMailRates
             return [];
         }
 
-        $excluded = array(
+        $excluded = [
             'GG', // Guernsey
             'IM', // Isle of Man
             'JE', // Jersey
-        );
+        ];
 
         if (in_array($country, $excluded)) {
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'packet-50' => array(
+        $bands = [
+            '2020' => [
+                'packet-50' => [
                     100 => 2024,
                     500 => 2289,
                     1000 => 2481,
                     2000 => 2970,
-                ),
-                'packet-1000' => array(
+                ],
+                'packet-1000' => [
                     100 => 2244,
                     500 => 2509,
                     1000 => 2701,
                     2000 => 3190,
-                ),
-                'packet-more' => array(
+                ],
+                'packet-more' => [
                     100 => 2594,
                     500 => 2859,
                     1000 => 3051,
                     2000 => 3540,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-50' => array(
+        $boxes = [
+            'packet-50' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-            'packet-1000' => array(
+            ],
+            'packet-1000' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-            'packet-more' => array(
+            ],
+            'packet-more' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -366,55 +366,55 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'packet-500' => array(
+        $bands = [
+            '2020' => [
+                'packet-500' => [
                     100 => 670,
                     500 => 750,
                     1000 => 880,
                     2000 => 1100,
                     10000 => 2660,
                     20000 => 4120,
-                ),
-                'packet-1000' => array(
+                ],
+                'packet-1000' => [
                     100 => 770,
                     500 => 850,
                     1000 => 980,
                     2000 => 1200,
                     10000 => 2760,
                     20000 => 4220,
-                ),
-                'packet-more' => array(
+                ],
+                'packet-more' => [
                     100 => 970,
                     500 => 1050,
                     1000 => 1180,
                     2000 => 1400,
                     10000 => 2960,
                     20000 => 4420,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-500' => array(
+        $boxes = [
+            'packet-500' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-            'packet-1000' => array(
+            ],
+            'packet-1000' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-            'packet-more' => array(
+            ],
+            'packet-more' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -427,9 +427,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2018' => array(
-                'packet-200' => array(
+        $bands = [
+            '2018' => [
+                'packet-200' => [
                     2000 => 3990,
                     5000 => 4092,
                     10000 => 4434,
@@ -437,18 +437,18 @@ class RoyalMailRates
                     20000 => 5658,
                     25000 => 6780,
                     30000 => 7200,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-200' => array(
+        $boxes = [
+            'packet-200' => [
                 'length' => 1500,
                 'width' => 750,
                 'height' => 750,
                 'weight' => 30000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -461,9 +461,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2018' => array(
-                'packet-200' => array(
+        $bands = [
+            '2018' => [
+                'packet-200' => [
                     2000 => 2982,
                     5000 => 3084,
                     10000 => 3426,
@@ -471,18 +471,18 @@ class RoyalMailRates
                     20000 => 4644,
                     25000 => 5772,
                     30000 => 6192,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-200' => array(
+        $boxes = [
+            'packet-200' => [
                 'length' => 1500,
                 'width' => 750,
                 'height' => 750,
                 'weight' => 30000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -495,9 +495,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2018' => array(
-                'packet-200' => array(
+        $bands = [
+            '2018' => [
+                'packet-200' => [
                     2000 => 1974,
                     5000 => 2070,
                     10000 => 2418,
@@ -505,18 +505,18 @@ class RoyalMailRates
                     20000 => 3642,
                     25000 => 4764,
                     30000 => 5184,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-200' => array(
+        $boxes = [
+            'packet-200' => [
                 'length' => 1500,
                 'width' => 750,
                 'height' => 750,
                 'weight' => 30000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -529,9 +529,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2018' => array(
-                'packet-100' => array(
+        $bands = [
+            '2018' => [
+                'packet-100' => [
                     2000 => 1668,
                     5000 => 1770,
                     10000 => 2112,
@@ -539,18 +539,18 @@ class RoyalMailRates
                     20000 => 3336,
                     25000 => 4458,
                     30000 => 4878,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-100' => array(
+        $boxes = [
+            'packet-100' => [
                 'length' => 1500,
                 'width' => 750,
                 'height' => 750,
                 'weight' => 30000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -563,9 +563,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2018' => array(
-                'packet-100' => array(
+        $bands = [
+            '2018' => [
+                'packet-100' => [
                     2000 => 1212,
                     5000 => 1314,
                     10000 => 1662,
@@ -573,18 +573,18 @@ class RoyalMailRates
                     20000 => 2880,
                     25000 => 4008,
                     30000 => 4422,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'packet-100' => array(
+        $boxes = [
+            'packet-100' => [
                 'length' => 2500,
                 'width' => 1250,
                 'height' => 1250,
                 'weight' => 30000,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -598,65 +598,65 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
-                    10 => array( 145, 145, 145, 145 ),
-                    20 => array( 145, 170, 170, 170 ),
-                    100 => array( 170, 250, 255, 250 ),
-                ),
-                'large-letter' => array(
-                    100 => array( 300, 375, 425, 380 ),
-                    250 => array( 425, 560, 665, 575 ),
-                    500 => array( 510, 785, 965, 815 ),
-                    750 => array( 610, 1045, 1330, 1090 ),
-                ),
-                'packet' => array(
-                    100 => array( 515, 625, 730, 838 ),
-                    250 => array( 535, 735, 875, 984 ),
-                    500 => array( 725, 1125, 1320, 1518 ),
-                    750 => array( 850, 1400, 1645, 1773 ),
-                    1000 => array( 965, 1680, 1980, 2118 ),
-                    1250 => array( 1055, 1925, 2300, 2433 ),
-                    1500 => array( 1160, 2150, 2610, 2698 ),
-                    1750 => array( 1240, 2250, 2780, 2815 ),
-                    2000 => array( 1285, 2395, 3000, 2971 ),
-                ),
-            ),
-        );
+        $bands = [
+            '2020' => [
+                'letter' => [
+                    10 => [ 145, 145, 145, 145 ],
+                    20 => [ 145, 170, 170, 170 ],
+                    100 => [ 170, 250, 255, 250 ],
+                ],
+                'large-letter' => [
+                    100 => [ 300, 375, 425, 380 ],
+                    250 => [ 425, 560, 665, 575 ],
+                    500 => [ 510, 785, 965, 815 ],
+                    750 => [ 610, 1045, 1330, 1090 ],
+                ],
+                'packet' => [
+                    100 => [ 515, 625, 730, 838 ],
+                    250 => [ 535, 735, 875, 984 ],
+                    500 => [ 725, 1125, 1320, 1518 ],
+                    750 => [ 850, 1400, 1645, 1773 ],
+                    1000 => [ 965, 1680, 1980, 2118 ],
+                    1250 => [ 1055, 1925, 2300, 2433 ],
+                    1500 => [ 1160, 2150, 2610, 2698 ],
+                    1750 => [ 1240, 2250, 2780, 2815 ],
+                    2000 => [ 1285, 2395, 3000, 2971 ],
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'long-parcel' => array(
+            ],
+            'long-parcel' => [
                 'length' => 600,
                 'width' => 150,
                 'height' => 150,
                 'weight' => 2000,
-            ),
-            'square-parcel' => array(
+            ],
+            'square-parcel' => [
                 'length' => 300,
                 'width' => 300,
                 'height' => 300,
                 'weight' => 2000,
-            ),
-            'parcel' => array(
+            ],
+            'parcel' => [
                 'length' => 450,
                 'width' => 225,
                 'height' => 225,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getInternationalBoxPricing($boxes, $bands, $country);
     }
@@ -669,71 +669,71 @@ class RoyalMailRates
             return [];
         }
 
-        $included = array( 'AX', 'AD', 'AR', 'AT', 'BB', 'BY', 'BE', 'BZ', 'BG', 'KH', 'CA', 'KY', 'CK', 'HR', 'CY', 'CZ', 'DK', 'EC', 'FO', 'FI', 'FR', 'GE', 'DE', 'GI', 'GR', 'GL', 'HK', 'HU', 'IS', 'ID', 'IE', 'IT', 'JP', 'LV', 'LB', 'LI', 'LT', 'LU', 'MY', 'MT', 'MD', 'NL', 'NZ', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SG', 'SK', 'SI', 'KR', 'ES', 'SE', 'CH', 'TH', 'TO', 'TT', 'TR', 'UG', 'AE', 'US', 'VA');
+        $included = [ 'AX', 'AD', 'AR', 'AT', 'BB', 'BY', 'BE', 'BZ', 'BG', 'KH', 'CA', 'KY', 'CK', 'HR', 'CY', 'CZ', 'DK', 'EC', 'FO', 'FI', 'FR', 'GE', 'DE', 'GI', 'GR', 'GL', 'HK', 'HU', 'IS', 'ID', 'IE', 'IT', 'JP', 'LV', 'LB', 'LI', 'LT', 'LU', 'MY', 'MT', 'MD', 'NL', 'NZ', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SG', 'SK', 'SI', 'KR', 'ES', 'SE', 'CH', 'TH', 'TO', 'TT', 'TR', 'UG', 'AE', 'US', 'VA'];
 
         if (!in_array($country, $included)) {
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
-                    10 => array( 645, 645, 645, 645 ),
-                    20 => array( 645, 685, 685, 685 ),
-                    100 => array( 690, 775, 780, 775 ),
-                ),
-                'large-letter' => array(
-                    100 => array( 850, 925, 980, 935 ),
-                    250 => array( 895, 1035, 1140, 1055 ),
-                    500 => array( 980, 1215, 1390, 1245 ),
-                    750 => array( 1020, 1395, 1665, 1440 ),
-                ),
-                'packet' => array(
-                    100 => array( 985, 1110, 1200, 1288 ),
-                    250 => array( 990, 1200, 1325, 1434 ),
-                    500 => array( 1155, 1575, 1750, 1868 ),
-                    750 => array( 1260, 1815, 2045, 2123 ),
-                    1000 => array( 1355, 2080, 2370, 2468 ),
-                    1250 => array( 1400, 2290, 2640, 2783 ),
-                    1500 => array( 1475, 2430, 2890, 3048 ),
-                    1750 => array( 1510, 2510, 3050, 3165 ),
-                    2000 => array( 1535, 2600, 3215, 3321 ),
-                ),
-            ),
-        );
+        $bands = [
+            '2020' => [
+                'letter' => [
+                    10 => [ 645, 645, 645, 645 ],
+                    20 => [ 645, 685, 685, 685 ],
+                    100 => [ 690, 775, 780, 775 ],
+                ],
+                'large-letter' => [
+                    100 => [ 850, 925, 980, 935 ],
+                    250 => [ 895, 1035, 1140, 1055 ],
+                    500 => [ 980, 1215, 1390, 1245 ],
+                    750 => [ 1020, 1395, 1665, 1440 ],
+                ],
+                'packet' => [
+                    100 => [ 985, 1110, 1200, 1288 ],
+                    250 => [ 990, 1200, 1325, 1434 ],
+                    500 => [ 1155, 1575, 1750, 1868 ],
+                    750 => [ 1260, 1815, 2045, 2123 ],
+                    1000 => [ 1355, 2080, 2370, 2468 ],
+                    1250 => [ 1400, 2290, 2640, 2783 ],
+                    1500 => [ 1475, 2430, 2890, 3048 ],
+                    1750 => [ 1510, 2510, 3050, 3165 ],
+                    2000 => [ 1535, 2600, 3215, 3321 ],
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'long-parcel' => array(
+            ],
+            'long-parcel' => [
                 'length' => 600,
                 'width' => 150,
                 'height' => 150,
                 'weight' => 2000,
-            ),
-            'square-parcel' => array(
+            ],
+            'square-parcel' => [
                 'length' => 300,
                 'width' => 300,
                 'height' => 300,
                 'weight' => 2000,
-            ),
-            'parcel' => array(
+            ],
+            'parcel' => [
                 'length' => 450,
                 'width' => 225,
                 'height' => 225,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getInternationalBoxPricing($boxes, $bands, $country);
     }
@@ -746,71 +746,71 @@ class RoyalMailRates
             return [];
         }
 
-        $included = array( 'AX', 'AD', 'AU', 'AT', 'BE', 'BR', 'CA', 'HR', 'CY', 'DK', 'EE', 'FO', 'FI', 'FR', 'DE', 'GI', 'GR', 'GL', 'HK', 'HU', 'IS', 'IN', 'IE', 'IL', 'IT', 'LV', 'LB', 'LI', 'LT', 'LU', 'MY', 'MT', 'NL', 'NZ', 'NO', 'PL', 'PT', 'RU', 'SM', 'RS', 'SG', 'SK', 'SI', 'KR', 'ES', 'SE', 'CH', 'TR', 'US', 'VA');
+        $included = [ 'AX', 'AD', 'AU', 'AT', 'BE', 'BR', 'CA', 'HR', 'CY', 'DK', 'EE', 'FO', 'FI', 'FR', 'DE', 'GI', 'GR', 'GL', 'HK', 'HU', 'IS', 'IN', 'IE', 'IL', 'IT', 'LV', 'LB', 'LI', 'LT', 'LU', 'MY', 'MT', 'NL', 'NZ', 'NO', 'PL', 'PT', 'RU', 'SM', 'RS', 'SG', 'SK', 'SI', 'KR', 'ES', 'SE', 'CH', 'TR', 'US', 'VA'];
 
         if (!in_array($country, $included)) {
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
-                    10 => array( 774, 645, 645, 645, 645 ),
-                    20 => array( 774, 645, 685, 685, 685 ),
-                    100 => array( 828, 690, 775, 780, 775 ),
-                ),
-                'large-letter' => array(
-                    100 => array( 1020, 850, 925, 980, 935 ),
-                    250 => array( 1074, 895, 1035, 1140, 1055 ),
-                    500 => array( 1176, 980, 1215, 1390, 1245 ),
-                    750 => array( 1224, 1020, 1395, 1665, 1440 ),
-                ),
-                'packet' => array(
-                    100 => array( 1182, 985, 1110, 1200, 1103 ),
-                    250 => array( 1188, 990, 1200, 1325, 1234 ),
-                    500 => array( 1386, 1155, 1575, 1750, 1668 ),
-                    750 => array( 1512, 1260, 1815, 2045, 1923 ),
-                    1000 => array( 1626, 1355, 2080, 2370, 2268 ),
-                    1250 => array( 1680, 1400, 2290, 2640, 2583 ),
-                    1500 => array( 1770, 1475, 2430, 2890, 2848 ),
-                    1750 => array( 1812, 1510, 2510, 3050, 2965 ),
-                    2000 => array( 1842, 1535, 2600, 3215, 3121 ),
-                ),
-            ),
-        );
+        $bands = [
+            '2020' => [
+                'letter' => [
+                    10 => [ 774, 645, 645, 645, 645 ],
+                    20 => [ 774, 645, 685, 685, 685 ],
+                    100 => [ 828, 690, 775, 780, 775 ],
+                ],
+                'large-letter' => [
+                    100 => [ 1020, 850, 925, 980, 935 ],
+                    250 => [ 1074, 895, 1035, 1140, 1055 ],
+                    500 => [ 1176, 980, 1215, 1390, 1245 ],
+                    750 => [ 1224, 1020, 1395, 1665, 1440 ],
+                ],
+                'packet' => [
+                    100 => [ 1182, 985, 1110, 1200, 1103 ],
+                    250 => [ 1188, 990, 1200, 1325, 1234 ],
+                    500 => [ 1386, 1155, 1575, 1750, 1668 ],
+                    750 => [ 1512, 1260, 1815, 2045, 1923 ],
+                    1000 => [ 1626, 1355, 2080, 2370, 2268 ],
+                    1250 => [ 1680, 1400, 2290, 2640, 2583 ],
+                    1500 => [ 1770, 1475, 2430, 2890, 2848 ],
+                    1750 => [ 1812, 1510, 2510, 3050, 2965 ],
+                    2000 => [ 1842, 1535, 2600, 3215, 3121 ],
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'long-parcel' => array(
+            ],
+            'long-parcel' => [
                 'length' => 600,
                 'width' => 150,
                 'height' => 150,
                 'weight' => 2000,
-            ),
-            'square-parcel' => array(
+            ],
+            'square-parcel' => [
                 'length' => 300,
                 'width' => 300,
                 'height' => 300,
                 'weight' => 2000,
-            ),
-            'parcel' => array(
+            ],
+            'parcel' => [
                 'length' => 450,
                 'width' => 225,
                 'height' => 225,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getInternationalBoxPricing($boxes, $bands, $country);
     }
@@ -823,71 +823,71 @@ class RoyalMailRates
             return [];
         }
 
-        $included = array( 'AF', 'AL', 'DZ', 'AO', 'AI', 'AG', 'AM', 'AW', 'AU', 'AZ', 'BS', 'BH', 'BD', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BR', 'IO', 'VG', 'BN', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'CL', 'CN', 'CX', 'CO', 'KM', 'CG', 'CD', 'CR', 'CU', 'CW', 'DJ', 'DM', 'DO', 'EG', 'SV', 'GQ', 'ER', 'EE', 'ET', 'FK', 'FJ', 'GF', 'PF', 'TF', 'GA', 'GM', 'GH', 'GD', 'GP', 'GT', 'GN', 'GW', 'GY', 'HT', 'HN', 'IN', 'IR', 'IQ', 'IL', 'CI', 'JM', 'JO', 'KZ', 'KE', 'KI', 'KW', 'KG', 'LA', 'LS', 'LR', 'LY', 'MO', 'MK', 'MG', 'YT', 'MW', 'MV', 'ML', 'MQ', 'MR', 'MU', 'MX', 'MN', 'ME', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NC', 'NI', 'NE', 'NG', 'NU', 'KP', 'NO', 'OM', 'PK', 'PW', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PR', 'QA', 'RE', 'RW', 'ST', 'SA', 'SN', 'SC', 'SL', 'SB', 'ZA', 'SS', 'LK', 'BQ', 'SH', 'KN', 'LC', 'MF', 'SX', 'VC', 'SD', 'SR', 'SZ', 'SY', 'TW', 'TJ', 'TZ', 'TL', 'TG', 'TK', 'TN', 'TM', 'TC', 'TV', 'UA', 'UY', 'UZ', 'VU', 'VE', 'VN', 'WF', 'EH', 'WS', 'YE', 'ZM', 'ZW');
+        $included = [ 'AF', 'AL', 'DZ', 'AO', 'AI', 'AG', 'AM', 'AW', 'AU', 'AZ', 'BS', 'BH', 'BD', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BR', 'IO', 'VG', 'BN', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'CL', 'CN', 'CX', 'CO', 'KM', 'CG', 'CD', 'CR', 'CU', 'CW', 'DJ', 'DM', 'DO', 'EG', 'SV', 'GQ', 'ER', 'EE', 'ET', 'FK', 'FJ', 'GF', 'PF', 'TF', 'GA', 'GM', 'GH', 'GD', 'GP', 'GT', 'GN', 'GW', 'GY', 'HT', 'HN', 'IN', 'IR', 'IQ', 'IL', 'CI', 'JM', 'JO', 'KZ', 'KE', 'KI', 'KW', 'KG', 'LA', 'LS', 'LR', 'LY', 'MO', 'MK', 'MG', 'YT', 'MW', 'MV', 'ML', 'MQ', 'MR', 'MU', 'MX', 'MN', 'ME', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NC', 'NI', 'NE', 'NG', 'NU', 'KP', 'NO', 'OM', 'PK', 'PW', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PR', 'QA', 'RE', 'RW', 'ST', 'SA', 'SN', 'SC', 'SL', 'SB', 'ZA', 'SS', 'LK', 'BQ', 'SH', 'KN', 'LC', 'MF', 'SX', 'VC', 'SD', 'SR', 'SZ', 'SY', 'TW', 'TJ', 'TZ', 'TL', 'TG', 'TK', 'TN', 'TM', 'TC', 'TV', 'UA', 'UY', 'UZ', 'VU', 'VE', 'VN', 'WF', 'EH', 'WS', 'YE', 'ZM', 'ZW'];
 
         if (!in_array($country, $included)) {
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
-                    10 => array( 645, 645, 645 ),
-                    20 => array( 645, 685, 685 ),
-                    100 => array( 690, 775, 780 ),
-                ),
-                'large-letter' => array(
-                    100 => array( 850, 925, 980 ),
-                    250 => array( 895, 1035, 1140 ),
-                    500 => array( 980, 1215, 1390 ),
-                    750 => array( 1020, 1395, 1665 ),
-                ),
-                'packet' => array(
-                    100 => array( 985, 1110, 1200 ),
-                    250 => array( 990, 1200, 1325 ),
-                    500 => array( 1155, 1575, 1750 ),
-                    750 => array( 1260, 1815, 2045 ),
-                    1000 => array( 1355, 2080, 2370 ),
-                    1250 => array( 1400, 2290, 2640 ),
-                    1500 => array( 1475, 2430, 2890 ),
-                    1750 => array( 1510, 2510, 3050 ),
-                    2000 => array( 1535, 2600, 3215 ),
-                ),
-            ),
-        );
+        $bands = [
+            '2020' => [
+                'letter' => [
+                    10 => [ 645, 645, 645 ],
+                    20 => [ 645, 685, 685 ],
+                    100 => [ 690, 775, 780 ],
+                ],
+                'large-letter' => [
+                    100 => [ 850, 925, 980 ],
+                    250 => [ 895, 1035, 1140 ],
+                    500 => [ 980, 1215, 1390 ],
+                    750 => [ 1020, 1395, 1665 ],
+                ],
+                'packet' => [
+                    100 => [ 985, 1110, 1200 ],
+                    250 => [ 990, 1200, 1325 ],
+                    500 => [ 1155, 1575, 1750 ],
+                    750 => [ 1260, 1815, 2045 ],
+                    1000 => [ 1355, 2080, 2370 ],
+                    1250 => [ 1400, 2290, 2640 ],
+                    1500 => [ 1475, 2430, 2890 ],
+                    1750 => [ 1510, 2510, 3050 ],
+                    2000 => [ 1535, 2600, 3215 ],
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'long-parcel' => array(
+            ],
+            'long-parcel' => [
                 'length' => 600,
                 'width' => 150,
                 'height' => 150,
                 'weight' => 2000,
-            ),
-            'square-parcel' => array(
+            ],
+            'square-parcel' => [
                 'length' => 300,
                 'width' => 300,
                 'height' => 300,
                 'weight' => 2000,
-            ),
-            'parcel' => array(
+            ],
+            'parcel' => [
                 'length' => 450,
                 'width' => 225,
                 'height' => 225,
                 'weight' => 2000,
-            ),
-        );
+            ],
+        ];
 
         return self::getInternationalBoxPricing($boxes, $bands, $country);
     }
@@ -900,20 +900,20 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2020' => array(
-                'letter' => array(
+        $bands = [
+            '2020' => [
+                'letter' => [
                     10 => 126,
                     20 => 126,
                     100 => 158,
-                ),
-                'large-letter' => array(
+                ],
+                'large-letter' => [
                     100 => 292,
                     250 => 419,
                     500 => 482,
                     750 => 578,
-                ),
-                'packet' => array(
+                ],
+                'packet' => [
                     100 => 500,
                     250 => 520,
                     500 => 710,
@@ -923,42 +923,42 @@ class RoyalMailRates
                     1500 => 1150,
                     1750 => 1230,
                     2000 => 1275,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $boxes = array(
-            'letter' => array(
+        $boxes = [
+            'letter' => [
                 'length' => 240,
                 'width' => 165,
                 'height' => 5,
                 'weight' => 100,
-            ),
-            'large-letter' => array(
+            ],
+            'large-letter' => [
                 'length' => 353,
                 'width' => 250,
                 'height' => 25,
                 'weight' => 750,
-            ),
-            'long-parcel' => array(
+            ],
+            'long-parcel' => [
                 'length' => 600,
                 'width' => 150,
                 'height' => 150,
                 'weight' => 500,
-            ),
-            'square-parcel' => array(
+            ],
+            'square-parcel' => [
                 'length' => 300,
                 'width' => 300,
                 'height' => 300,
                 'weight' => 500,
-            ),
-            'parcel' => array(
+            ],
+            'parcel' => [
                 'length' => 450,
                 'width' => 225,
                 'height' => 225,
                 'weight' => 500,
-            ),
-        );
+            ],
+        ];
 
         return self::getBoxPricing($boxes, $bands);
     }
@@ -971,9 +971,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2019' => array(
-                '5' => array(
+        $bands = [
+            '2019' => [
+                '5' => [
                     500 => 1668,
                     1000 => 1668,
                     1500 => 1668,
@@ -998,9 +998,9 @@ class RoyalMailRates
                     20000 => 3301,
                     25000 => 4414,
                     30000 => 4828,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return self::getParcelforceBoxPricing($bands, $country);
     }
@@ -1013,9 +1013,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2019' => array(
-                '10' => array(
+        $bands = [
+            '2019' => [
+                '10' => [
                     500 => 2470,
                     1000 => 2725,
                     1500 => 2980,
@@ -1040,8 +1040,8 @@ class RoyalMailRates
                     20000 => 15555,
                     25000 => 17905,
                     30000 => 20255,
-                ),
-                '11' => array(
+                ],
+                '11' => [
                     500 => 3185,
                     1000 => 3810,
                     1500 => 4435,
@@ -1066,8 +1066,8 @@ class RoyalMailRates
                     20000 => 19970,
                     25000 => 23320,
                     30000 => 26670,
-                ),
-                '12' => array(
+                ],
+                '12' => [
                     500 => 3335,
                     1000 => 4050,
                     1500 => 4765,
@@ -1092,9 +1092,9 @@ class RoyalMailRates
                     20000 => 25220,
                     25000 => 29720,
                     30000 => 34220,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return self::getParcelforceBoxPricing($bands, $country);
     }
@@ -1107,9 +1107,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2019' => array(
-                '4' => array(
+        $bands = [
+            '2019' => [
+                '4' => [
                     500 => 5250,
                     1000 => 5508,
                     1500 => 5766,
@@ -1134,8 +1134,8 @@ class RoyalMailRates
                     20000 => 14856,
                     25000 => 17196,
                     30000 => 19536,
-                ),
-                '5' => array(
+                ],
+                '5' => [
                     500 => 4794,
                     1000 => 5046,
                     1500 => 5298,
@@ -1160,8 +1160,8 @@ class RoyalMailRates
                     20000 => 13602,
                     25000 => 15342,
                     30000 => 17082,
-                ),
-                '6' => array(
+                ],
+                '6' => [
                     500 => 4350,
                     1000 => 4758,
                     1500 => 5166,
@@ -1186,8 +1186,8 @@ class RoyalMailRates
                     20000 => 13350,
                     25000 => 15090,
                     30000 => 16830,
-                ),
-                '7' => array(
+                ],
+                '7' => [
                     500 => 4476,
                     1000 => 4836,
                     1500 => 5196,
@@ -1212,8 +1212,8 @@ class RoyalMailRates
                     20000 => 15756,
                     25000 => 17796,
                     30000 => 19836,
-                ),
-                '8' => array(
+                ],
+                '8' => [
                     500 => 4806,
                     1000 => 5190,
                     1500 => 5574,
@@ -1238,8 +1238,8 @@ class RoyalMailRates
                     20000 => 16770,
                     25000 => 19530,
                     30000 => 22290,
-                ),
-                '9' => array(
+                ],
+                '9' => [
                     500 => 5250,
                     1000 => 5718,
                     1500 => 6186,
@@ -1264,8 +1264,8 @@ class RoyalMailRates
                     20000 => 23274,
                     25000 => 26994,
                     30000 => 30714,
-                ),
-                '10' => array(
+                ],
+                '10' => [
                     500 => 5255,
                     1000 => 5755,
                     1500 => 6255,
@@ -1290,8 +1290,8 @@ class RoyalMailRates
                     20000 => 19855,
                     25000 => 23055,
                     30000 => 26255,
-                ),
-                '11' => array(
+                ],
+                '11' => [
                     500 => 6370,
                     1000 => 7030,
                     1500 => 7690,
@@ -1316,8 +1316,8 @@ class RoyalMailRates
                     20000 => 26700,
                     25000 => 31750,
                     30000 => 36800,
-                ),
-                '12' => array(
+                ],
+                '12' => [
                     500 => 7270,
                     1000 => 8145,
                     1500 => 9020,
@@ -1342,9 +1342,9 @@ class RoyalMailRates
                     20000 => 34455,
                     25000 => 41205,
                     30000 => 47955,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return self::getParcelforceBoxPricing($bands, $country);
     }
@@ -1357,9 +1357,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2019' => array(
-                '4' => array(
+        $bands = [
+            '2019' => [
+                '4' => [
                     500 => 3000,
                     1000 => 3132,
                     1500 => 3264,
@@ -1384,8 +1384,8 @@ class RoyalMailRates
                     20000 => 5208,
                     25000 => 5508,
                     30000 => 5808,
-                ),
-                '5' => array(
+                ],
+                '5' => [
                     500 => 3420,
                     1000 => 3654,
                     1500 => 3888,
@@ -1410,8 +1410,8 @@ class RoyalMailRates
                     20000 => 8100,
                     25000 => 8880,
                     30000 => 9660,
-                ),
-                '6' => array(
+                ],
+                '6' => [
                     500 => 3078,
                     1000 => 3336,
                     1500 => 3594,
@@ -1436,8 +1436,8 @@ class RoyalMailRates
                     20000 => 8730,
                     25000 => 9450,
                     30000 => 10170,
-                ),
-                '7' => array(
+                ],
+                '7' => [
                     500 => 3582,
                     1000 => 3780,
                     1500 => 3978,
@@ -1462,8 +1462,8 @@ class RoyalMailRates
                     20000 => 9192,
                     25000 => 9852,
                     30000 => 10512,
-                ),
-                '8' => array(
+                ],
+                '8' => [
                     500 => 3894,
                     1000 => 4110,
                     1500 => 4326,
@@ -1488,8 +1488,8 @@ class RoyalMailRates
                     20000 => 10806,
                     25000 => 11526,
                     30000 => 12246,
-                ),
-                '9' => array(
+                ],
+                '9' => [
                     500 => 4218,
                     1000 => 4542,
                     1500 => 4866,
@@ -1514,8 +1514,8 @@ class RoyalMailRates
                     20000 => 11706,
                     25000 => 12966,
                     30000 => 14226,
-                ),
-                '10' => array(
+                ],
+                '10' => [
                     500 => 4480,
                     1000 => 4735,
                     1500 => 4990,
@@ -1540,8 +1540,8 @@ class RoyalMailRates
                     20000 => 17695,
                     25000 => 20095,
                     30000 => 22495,
-                ),
-                '11' => array(
+                ],
+                '11' => [
                     500 => 4750,
                     1000 => 5350,
                     1500 => 5950,
@@ -1566,8 +1566,8 @@ class RoyalMailRates
                     20000 => 21500,
                     25000 => 24850,
                     30000 => 28200,
-                ),
-                '12' => array(
+                ],
+                '12' => [
                     500 => 6015,
                     1000 => 6710,
                     1500 => 7405,
@@ -1592,9 +1592,9 @@ class RoyalMailRates
                     20000 => 27390,
                     25000 => 31890,
                     30000 => 36390,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return self::getParcelforceBoxPricing($bands, $country);
     }
@@ -1607,9 +1607,9 @@ class RoyalMailRates
             return [];
         }
 
-        $bands = array(
-            '2019' => array(
-                '4' => array(
+        $bands = [
+            '2019' => [
+                '4' => [
                     500 => 978,
                     1000 => 1104,
                     1500 => 1230,
@@ -1634,8 +1634,8 @@ class RoyalMailRates
                     20000 => 2952,
                     25000 => 3252,
                     30000 => 3552,
-                ),
-                '5' => array(
+                ],
+                '5' => [
                     500 => 1686,
                     1000 => 1932,
                     1500 => 2178,
@@ -1660,8 +1660,8 @@ class RoyalMailRates
                     20000 => 6420,
                     25000 => 7140,
                     30000 => 7860,
-                ),
-                '6' => array(
+                ],
+                '6' => [
                     500 => 2268,
                     1000 => 2502,
                     1500 => 2736,
@@ -1686,8 +1686,8 @@ class RoyalMailRates
                     20000 => 6762,
                     25000 => 7482,
                     30000 => 8202,
-                ),
-                '7' => array(
+                ],
+                '7' => [
                     500 => 2058,
                     1000 => 2124,
                     1500 => 2190,
@@ -1712,8 +1712,8 @@ class RoyalMailRates
                     20000 => 7104,
                     25000 => 7764,
                     30000 => 8424,
-                ),
-                '8' => array(
+                ],
+                '8' => [
                     500 => 2592,
                     1000 => 2826,
                     1500 => 3060,
@@ -1738,8 +1738,8 @@ class RoyalMailRates
                     20000 => 7578,
                     25000 => 8298,
                     30000 => 9018,
-                ),
-                '9' => array(
+                ],
+                '9' => [
                     500 => 2712,
                     1000 => 3042,
                     1500 => 3372,
@@ -1764,8 +1764,8 @@ class RoyalMailRates
                     20000 => 10122,
                     25000 => 11382,
                     30000 => 12642,
-                ),
-                '10' => array(
+                ],
+                '10' => [
                     500 => 2770,
                     1000 => 3025,
                     1500 => 3280,
@@ -1790,8 +1790,8 @@ class RoyalMailRates
                     20000 => 15855,
                     25000 => 18205,
                     30000 => 20555,
-                ),
-                '11' => array(
+                ],
+                '11' => [
                     500 => 3455,
                     1000 => 4080,
                     1500 => 4705,
@@ -1816,8 +1816,8 @@ class RoyalMailRates
                     20000 => 20240,
                     25000 => 23590,
                     30000 => 26940,
-                ),
-                '12' => array(
+                ],
+                '12' => [
                     500 => 3575,
                     1000 => 4290,
                     1500 => 5005,
@@ -1842,9 +1842,9 @@ class RoyalMailRates
                     20000 => 25460,
                     25000 => 29960,
                     30000 => 34460,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return self::getParcelforceBoxPricing($bands, $country);
     }
@@ -1872,19 +1872,19 @@ class RoyalMailRates
 
     private static function getParcelforceZone($country)
     {
-        if (in_array($country, array('JE', 'GG', 'IM'))) {
+        if (in_array($country, ['JE', 'GG', 'IM'])) {
             return '4';
         } else if ('IR' === $country) {
             return '5';
-        } else if (in_array($country, array('BE', 'NL', 'LU'))) {
+        } else if (in_array($country, ['BE', 'NL', 'LU'])) {
             return '6';
-        } else if (in_array($country, array('FR', 'DE', 'DK'))) {
+        } else if (in_array($country, ['FR', 'DE', 'DK'])) {
             return '7';
-        } else if (in_array($country, array('IT', 'ES', 'PT', 'GR'))) {
+        } else if (in_array($country, ['IT', 'ES', 'PT', 'GR'])) {
             return '8';
         } else if (in_array($country, self::$europe)) {
             return '9';
-        } else if (in_array($country, array('US', 'CA'))) {
+        } else if (in_array($country, ['US', 'CA'])) {
             return '10';
         } else if (in_array($country, self::$farEast)) {
             return '11';
