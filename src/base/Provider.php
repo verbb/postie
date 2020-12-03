@@ -323,6 +323,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 if ($shippingMethod->enabled) {
                     $shippingMethods[$handle] = $shippingMethod;
                 }
+
+                // Force all to be enabled if not restricting
+                if (!$this->restrictServices) {
+                    $shippingMethod->enabled = true;
+
+                    $shippingMethods[$handle] = $shippingMethod;
+                }
             }
         }
 
