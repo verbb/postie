@@ -88,6 +88,12 @@ class TestingHelper
             'country' => 'GB',
         ],
         [
+            'address1' => '139 Main St',
+            'city' => 'Glasgow',
+            'zipCode' => 'G73 2JJ',
+            'country' => 'GB',
+        ],
+        [
             'address1' => 'Rådhusplassen 1',
             'city' => 'Oslo',
             'zipCode' => '0037',
@@ -110,6 +116,12 @@ class TestingHelper
             'city' => 'Nice',
             'zipCode' => '06000',
             'country' => 'FR',
+        ],
+        [
+            'address1' => 'Dame St',
+            'city' => 'Dublin',
+            'zipCode' => '8PVM+H5',
+            'country' => 'IR',
         ],
     ];
 

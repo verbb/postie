@@ -183,7 +183,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function supportsDynamicServices(): bool
     {
-        return !$this->restrictServices;
+        return false;
     }
 
     public static function supportsConnection(): bool

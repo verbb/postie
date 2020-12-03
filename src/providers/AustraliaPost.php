@@ -289,41 +289,11 @@ class AustraliaPost extends SinglePackageProvider
         // TESTING
         //
         // Domestic
-        // $country = Commerce::getInstance()->countries->getCountryByIso('AU');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'VIC');
-
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = '552 Victoria Street';
-        // $storeLocation->city = 'North Melbourne';
-        // $storeLocation->zipCode = '3051';
-        // $storeLocation->stateId = $state->id;
-        // $storeLocation->countryId = $country->id;
-
-        // $country = Commerce::getInstance()->countries->getCountryByIso('AU');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'TAS');
-
-        // $order->shippingAddress->address1 = '10-14 Cameron Street';
-        // $order->shippingAddress->city = 'Launceston';
-        // $order->shippingAddress->zipCode = '7250';
-        // $order->shippingAddress->stateId = $state->id;
-        // $order->shippingAddress->countryId = $country->id;
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
 
         // International
-        // $country = Commerce::getInstance()->countries->getCountryByIso('US');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'CA');
-
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = 'One Infinite Loop';
-        // $storeLocation->city = 'Cupertino';
-        // $storeLocation->zipCode = '95014';
-        // $storeLocation->stateId = $state->id;
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
-        // $order->shippingAddress->city = 'Mountain View';
-        // $order->shippingAddress->zipCode = '94043';
-        // $order->shippingAddress->stateId = $state->id;
-        // $order->shippingAddress->countryId = $country->id;
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
         //
         // 
         //

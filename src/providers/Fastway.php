@@ -73,21 +73,12 @@ class Fastway extends Provider
         //
         // TESTING
         //
-        // $country = Commerce::getInstance()->countries->getCountryByIso('AU');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'Vic');
+        // Domestic
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = '83 Langridge Street';
-        // $storeLocation->city = 'Collingwood';
-        // $storeLocation->zipCode = '3066';
-        // $storeLocation->stateId = $state->id;
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->address1 = '85 Lime Ave';
-        // $order->shippingAddress->city = 'Mildura';
-        // $order->shippingAddress->zipCode = '3500';
-        // $order->shippingAddress->stateId = $state->id;
-        // $order->shippingAddress->countryId = $country->id;
+        // International
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
         //
         // 
         //

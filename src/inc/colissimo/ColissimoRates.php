@@ -71,7 +71,8 @@ class ColissimoRates
                     $price = $rate['price'][$zone] ?? null;
 
                     if ($price) {
-                        $rate['price'] = $price;
+                        // All pricing in cents
+                        $rate['price'] = $price / 100;
                     } else {
                         // Only return a box if it contains a price for zone
                         unset($rates[$key]);
