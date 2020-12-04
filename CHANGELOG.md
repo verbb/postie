@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.2 - 2020-12-04
+
+### Fixed
+- Fix error introduced in 2.4.1 when saving settings form the control panel.
+
 ## 2.4.1 - 2020-12-04
 
 ### Fixed
