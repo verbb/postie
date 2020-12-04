@@ -252,8 +252,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
                 // Stored in plugin settings as an array, config file as just the name
                 if (is_array($info)) {
-                    $shippingMethod->name = $info['name'];
-                    $shippingMethod->enabled = $info['enabled'];
+                    $shippingMethod->name = $info['name'] ?? $this->getServiceList()[$handle] ?? '';
+                    $shippingMethod->enabled = $info['enabled'] ?? '';
 
                     // Also sort out saved shipping categories
                     if (isset($info['shippingCategories'])) {
