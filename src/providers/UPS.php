@@ -430,7 +430,7 @@ class UPS extends Provider
             }
 
             // Check for negotiated rates
-            if ($this->getSetting('negotiatedRates') && $this->getSetting('accountNumber')) {
+            if ($this->getSetting('negotiatedRates') && $accountNumber = $this->getSetting('accountNumber')) {
                 $rateInformation = new RateInformation;
                 $rateInformation->setNegotiatedRatesIndicator(1);
                 $shipment->setRateInformation($rateInformation);
