@@ -88,6 +88,12 @@ class TestingHelper
             'country' => 'GB',
         ],
         [
+            'address1' => 'Southam Rd',
+            'city' => 'Dunchurch',
+            'zipCode' => 'CV226PD',
+            'country' => 'GB',
+        ],
+        [
             'address1' => '139 Main St',
             'city' => 'Glasgow',
             'zipCode' => 'G73 2JJ',

@@ -280,56 +280,17 @@ class UPS extends Provider
         //
         // TESTING
         //
-        // $country = Commerce::getInstance()->countries->getCountryByIso('US');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'CA');
+        // Domestic
+        $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+        $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = 'One Infinite Loop';
-        // $storeLocation->city = 'Cupertino';
-        // $storeLocation->zipCode = '95014';
-        // $storeLocation->stateId = $state->id;
-        // $storeLocation->countryId = $country->id;
+        // Canada
+        // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
 
-        // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
-        // $order->shippingAddress->city = 'Mountain View';
-        // $order->shippingAddress->zipCode = '94043';
-        // $order->shippingAddress->stateId = $state->id;
-        // $order->shippingAddress->countryId = $country->id;
-
-        // Canada Testing
-        // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'ON');
-
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = '220 Yonge St';
-        // $storeLocation->city = 'Toronto';
-        // $storeLocation->zipCode = 'M5B 2H1';
-        // $storeLocation->stateId = $state->id;
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->address1 = '290 Bremner Blvd';
-        // $order->shippingAddress->city = 'Toronto';
-        // $order->shippingAddress->zipCode = 'M5V 3L9';
-        // $order->shippingAddress->stateId = $state->id;
-        // $order->shippingAddress->countryId = $country->id;
-
-        // EU Testing
-        // $country = Commerce::getInstance()->countries->getCountryByIso('GB');
-
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = '2 Bedfont Lane';
-        // $storeLocation->city = 'London';
-        // $storeLocation->zipCode = 'CV226PD';
-        // $storeLocation->stateName = 'Warwickshire';
-        // $storeLocation->countryId = $country->id;
-
-        // $country = Commerce::getInstance()->countries->getCountryByIso('GB');
-
-        // $order->shippingAddress->address1 = 'Southam Rd';
-        // $order->shippingAddress->city = 'Dunchurch';
-        // $order->shippingAddress->zipCode = 'CV226PD';
-        // $order->shippingAddress->stateName = 'Warwickshire';
-        // $order->shippingAddress->countryId = $country->id;
+        // EU
+        // $storeLocation = TestingHelper::getTestAddress('GB', ['city' => 'London']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['city' => 'Dunchurch']);
         //
         // TESTING
         //
@@ -526,7 +487,6 @@ class UPS extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-
         } catch (\Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
