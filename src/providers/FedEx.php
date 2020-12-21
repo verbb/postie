@@ -229,6 +229,22 @@ class FedEx extends Provider
         ];
     }
 
+    public function getWeightUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
+            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+        ];
+    }
+
+    public function getDimensionUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
+            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+        ];
+    }
+
     public function getMaxPackageWeight($order)
     {
         return $this->maxWeight;
@@ -256,8 +272,8 @@ class FedEx extends Provider
             // TESTING
             //
             // Domestic
-            $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+            // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+            // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
 
             // Canada 
             // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
@@ -484,11 +500,11 @@ class FedEx extends Provider
             $packageLineItem = new RequestedPackageLineItem();
 
             // Weight
-            $packageLineItem->Weight->Units = WeightUnits::_LB;
+            $packageLineItem->Weight->Units = $this->_getUnitOfMeasurement('weight');
             $packageLineItem->Weight->Value = $weight;
 
             // Dimensions
-            $packageLineItem->Dimensions->Units = LinearUnits::_IN;
+            $packageLineItem->Dimensions->Units = $this->_getUnitOfMeasurement('dimension');
             $packageLineItem->Dimensions->Length = $length;
             $packageLineItem->Dimensions->Width = $width;
             $packageLineItem->Dimensions->Height = $height;
@@ -504,5 +520,23 @@ class FedEx extends Provider
         }
 
         return $packages;
+    }
+
+    private function _getUnitOfMeasurement($type)
+    {
+        $units = [
+            'lb' => WeightUnits::_LB,
+            'kg' => WeightUnits::_KG,
+            'in' => LinearUnits::_IN,
+            'cm' => LinearUnits::_CM,
+        ];
+
+        if ($type === 'weight') {
+            return $units[$this->weightUnit] ?? WeightUnits::_LB;
+        }
+
+        if ($type === 'dimension') {
+            return $units[$this->dimensionUnit] ?? LinearUnits::_IN;
+        }
     }
 }

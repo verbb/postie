@@ -942,12 +942,12 @@
 		"oAP": "/src/providers/NewZealandPost.php",
 		"oF": 0
 		},
-	"/src/providers/PostNl.php": {
+	"/src/providers/PostNL.php": {
 		"cB": 0,
 		"ft": 8192,
 		"hM": 0,
 		"oA": 2,
-		"oAP": "/src/providers/PostNl.php",
+		"oAP": "/src/providers/PostNL.php",
 		"oF": 0
 		},
 	"/src/providers/RoyalMail.php": {
@@ -1069,7 +1069,7 @@
 	},
 "projectAttributes": {
 	"creationDate": 528723773,
-	"displayValue": "postie-next",
+	"displayValue": "postie",
 	"displayValueWasSetByUser": 0,
 	"iconImageName": "brackets-forest",
 	"iconImageWasSetByUser": 0

@@ -250,6 +250,22 @@ class UPS extends Provider
         ];
     }
 
+    public function getWeightUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
+            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+        ];
+    }
+
+    public function getDimensionUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
+            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+        ];
+    }
+
     public function getMaxPackageWeight($order)
     {
         return $this->maxWeight;
@@ -281,8 +297,8 @@ class UPS extends Provider
         // TESTING
         //
         // Domestic
-        $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-        $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+        // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
 
         // Canada
         // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
@@ -362,7 +378,7 @@ class UPS extends Provider
                 }
 
                 $weightUnit = new UnitOfMeasurement;
-                $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+                $weightUnit->setCode($this->_getUnitOfMeasurement('weight'));
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
@@ -371,7 +387,7 @@ class UPS extends Provider
                 $packageDimensions->setLength($length);
 
                 $unit = new UnitOfMeasurement;
-                $unit->setCode(UnitOfMeasurement::UOM_IN);
+                $unit->setCode($this->_getUnitOfMeasurement('dimension'));
 
                 $packageDimensions->setUnitOfMeasurement($unit);
                 $package->setDimensions($packageDimensions);
@@ -532,7 +548,7 @@ class UPS extends Provider
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
             $package->getPackageWeight()->setWeight($weight);
             $weightUnit = new UnitOfMeasurement;
-            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+            $weightUnit->setCode($this->_getUnitOfMeasurement('weight'));
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
             $packageDimensions = new Dimensions();
@@ -541,7 +557,7 @@ class UPS extends Provider
             $packageDimensions->setLength($length);
 
             $unit = new UnitOfMeasurement;
-            $unit->setCode(UnitOfMeasurement::UOM_IN);
+            $unit->setCode($this->_getUnitOfMeasurement('dimension'));
 
             $packageDimensions->setUnitOfMeasurement($unit);
             $package->setDimensions($packageDimensions);
@@ -679,5 +695,23 @@ class UPS extends Provider
         $serviceHandle = array_search($code, $services);
 
         return $serviceHandle;
+    }
+
+    private function _getUnitOfMeasurement($type)
+    {
+        $units = [
+            'lb' => UnitOfMeasurement::UOM_LBS,
+            'kg' => UnitOfMeasurement::UOM_KGS,
+            'in' => UnitOfMeasurement::UOM_IN,
+            'cm' => UnitOfMeasurement::UOM_CM,
+        ];
+
+        if ($type === 'weight') {
+            return $units[$this->weightUnit] ?? UnitOfMeasurement::UOM_LBS;
+        }
+
+        if ($type === 'dimension') {
+            return $units[$this->dimensionUnit] ?? UnitOfMeasurement::UOM_IN;
+        }
     }
 }
