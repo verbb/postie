@@ -302,6 +302,26 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
+    public function getWeightUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Grams (g)'), 'value' => 'g' ],
+            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
+            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+        ];
+    }
+
+    public function getDimensionUnitOptions()
+    {
+        return [
+            [ 'label' => Craft::t('commerce', 'Millimeters (mm)'), 'value' => 'mm' ],
+            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
+            [ 'label' => Craft::t('commerce', 'Meters (m)'), 'value' => 'm' ],
+            [ 'label' => Craft::t('commerce', 'Feet (ft)'), 'value' => 'ft' ],
+            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+        ];
+    }
+
     public function getShippingMethods($order)
     {
         $shippingMethods = [];

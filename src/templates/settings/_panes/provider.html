@@ -53,7 +53,7 @@
 
 <hr>
 
-<div class="vui-row">
+<div class="vui-row" style="margin-bottom: 24px;">
     <div class="vui-col vui-col-6">
         {{ forms.textField({
             label: 'Markup Rate' | t('postie'),
@@ -76,6 +76,34 @@
             value: provider.markUpBase,
             errors: provider.getErrors('markUpBase'),
             warning: macros.configWarning('providers.' ~ provider.handle ~ '.markUpBase', 'postie'),
+        }) }}
+    </div>
+</div>
+
+<div class="vui-row">
+    <div class="vui-col vui-col-6">
+        {{ forms.selectField({
+            label: 'Weight Unit' | t('postie'),
+            instructions: 'The unit of measurement that the provider uses for box weights.' | t('postie'),
+            id: 'weightUnit',
+            name: 'weightUnit',
+            options: provider.getWeightUnitOptions(),
+            value: provider.weightUnit,
+            errors: provider.getErrors('weightUnit'),
+            warning: macros.configWarning('providers.' ~ provider.handle ~ '.weightUnit', 'postie'),
+        }) }}
+    </div>
+        
+    <div class="vui-col vui-col-6">
+        {{ forms.selectField({
+            label: 'Dimension Unit' | t('postie'),
+            instructions: 'The unit of measurement that the provider uses for box dimensions.' | t('postie'),
+            id: 'dimensionUnit',
+            name: 'dimensionUnit',
+            options: provider.getDimensionUnitOptions(),
+            value: provider.dimensionUnit,
+            errors: provider.getErrors('dimensionUnit'),
+            warning: macros.configWarning('providers.' ~ provider.handle ~ '.dimensionUnit', 'postie'),
         }) }}
     </div>
 </div>
