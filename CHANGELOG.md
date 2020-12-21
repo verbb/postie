@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.4.3 - 2020-12-22
+
+### Added
+- Add weight and dimension unit settings for each provider. Some providers (UPS) rely on units being set for the appropriate account's region.
+
+### Fixed
+- Fix potential error with Australia Post.
+- Fix an error with UPS when using negotiated rates.
+- Ensure FedEx formats dimension and weight units correctly.
+
 ## 2.4.2 - 2020-12-04
 
 ### Fixed
