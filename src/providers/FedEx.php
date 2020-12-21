@@ -474,18 +474,24 @@ class FedEx extends Provider
         $packages = [];
 
         foreach ($packedBoxes as $packedBox) {
+            // Ensure they're formatted correctly, the API will error for too many decimals
+            $weight = number_format($packedBox['weight'], 3);
+            $height = number_format($packedBox['height'], 3);
+            $width = number_format($packedBox['width'], 3);
+            $length = number_format($packedBox['length'], 3);
+
             // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
             $packageLineItem = new RequestedPackageLineItem();
 
             // Weight
             $packageLineItem->Weight->Units = WeightUnits::_LB;
-            $packageLineItem->Weight->Value = $packedBox['weight'];
+            $packageLineItem->Weight->Value = $weight;
 
             // Dimensions
             $packageLineItem->Dimensions->Units = LinearUnits::_IN;
-            $packageLineItem->Dimensions->Length = $packedBox['length'];
-            $packageLineItem->Dimensions->Width = $packedBox['width'];
-            $packageLineItem->Dimensions->Height = $packedBox['height'];
+            $packageLineItem->Dimensions->Length = $length;
+            $packageLineItem->Dimensions->Width = $width;
+            $packageLineItem->Dimensions->Height = $height;
 
             $packageLineItem->GroupPackageCount = 1;
 
