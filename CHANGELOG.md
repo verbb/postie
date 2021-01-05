@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.4 - 2021-01-05
+
+### Fixed
+- Fix error when calculating rates for Australia Post, New Zealand Post and Sendle.
+
 ## 2.4.3 - 2020-12-22
 
 ### Added
