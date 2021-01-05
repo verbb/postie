@@ -46,7 +46,7 @@ class SinglePackageProvider extends Provider
                 continue;
             }
 
-            $response = $this->fetchShippingRate($order, $packedBox);
+            $response = $this->fetchShippingRate($order, $storeLocation, $packedBox);
         }
 
         // Allow rate modification via events

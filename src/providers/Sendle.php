@@ -50,7 +50,7 @@ class Sendle extends SinglePackageProvider
     // Protected Methods
     // =========================================================================
 
-    protected function fetchShippingRate($order, $packedBox)
+    protected function fetchShippingRate($order, $storeLocation, $packedBox)
     {
         //
         // TESTING
