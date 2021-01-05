@@ -301,6 +301,8 @@ class AustraliaPost extends SinglePackageProvider
         try {
             $response = [];
 
+            $type = $packedBox['type'] ?? '';
+
             if ($order->shippingAddress->country->iso === 'AU') {
                 Provider::log($this, 'Domestic API call');
 
@@ -318,8 +320,6 @@ class AustraliaPost extends SinglePackageProvider
                 $endpoint = 'postage/parcel/domestic/service.json';
 
                 // Check if we should fetch letter pricing - depending on if this packed box has fitted into an envelope
-                $type = $packedBox['type'] ?? '';
-                
                 if ($type === self::TYPE_ENVELOPE) {
                     $endpoint = 'postage/letter/domestic/service.json';
                 }
@@ -347,7 +347,7 @@ class AustraliaPost extends SinglePackageProvider
                 $endpoint = 'postage/parcel/international/service.json';
 
                 // Check if we should fetch letter pricing - depending on if this packed box has fitted into an envelope
-                if ($packedBox['type'] === self::TYPE_ENVELOPE) {
+                if ($type === self::TYPE_ENVELOPE) {
                     $endpoint = 'postage/letter/international/service.json';
                 }
 
