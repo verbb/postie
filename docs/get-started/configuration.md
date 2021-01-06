@@ -48,6 +48,13 @@ Supply your client configurations as per the below. Must be keyed with the handl
         'markUpRate' => '10',
         'markUpBase' => 'value',
 
+        // Units
+        'weightUnit' => 'g',
+        'dimensionUnit' => 'cm',
+
+        // Packing method
+        'packingMethod' => 'boxPacking',
+
         // List of provided services
         'services' => [
             'AUS_PARCEL_EXPRESS' => 'Express Post',
@@ -98,4 +105,7 @@ Supply your client configurations as per the below. Must be keyed with the handl
 - `settings` - Depending on the provider, this will be an array of API settings.
 - `markUpRate` - If specifying a markup amount, provide it here.
 - `markUpBase` - What the markup rate should be. Either `percentage` or `value`.
+- `weightUnit` - What weight unit should rate requests be sent to the provider. Each provider varies, but are typically `g`, `lb`, `kg`.
+- `dimensionUnit` - What dimension unit should rate requests be sent to the provider. Each provider varies, but are typically `mm`, `cm`, `m`, `ft`, `in`.
+- `packingMethod` - The packing method for box-packing calculation. Either `perItem`, `boxPacking` or `singleBox`.
 - `services` - A list of all enabled services, keyed by their service handle, and value of what you'd like to call it. Consult each providers `getServiceList()` function for options.
