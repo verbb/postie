@@ -280,6 +280,10 @@ class USPS extends Provider
                         ],
                     ];
                 }
+            } else if (isset($response['RateV4Response']['Package']['Error'])) {
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response['RateV4Response']['Package']['Error']),
+                ]));
             } else {
                 if (isset($response['IntlRateV2Response']['Package']['Service'])) {
                     foreach ($response['IntlRateV2Response']['Package']['Service'] as $service) {
