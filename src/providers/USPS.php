@@ -198,8 +198,8 @@ class USPS extends Provider
                     $package->setService(RatePackage::SERVICE_ALL);
                     $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
 
-                    $package->setZipOrigination($storeLocation->zipCode);
-                    $package->setZipDestination($order->shippingAddress->zipCode);
+                    $package->setZipOrigination($this->_parseZipCode($storeLocation->zipCode));
+                    $package->setZipDestination($this->_parseZipCode($order->shippingAddress->zipCode));
                     $package->setPounds($packedBox['weight']);
                     $package->setOunces(0);
                     $package->setContainer('');
@@ -242,12 +242,12 @@ class USPS extends Provider
                     // Girth are relevant when CONTAINER_NONRECTANGULAR
                     $package->setField('Girth', $packedBox['width'] * 2 + $packedBox['length'] * 2);
 
-                    $package->setField('OriginZip', $storeLocation->zipCode);
+                    $package->setField('OriginZip', $this->_parseZipCode($storeLocation->zipCode));
                     $package->setField('CommercialFlag', 'N');
 
                     if ($order->shippingAddress->zipCode) {
                         $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
-                        $package->setField('DestinationPostalCode', $order->shippingAddress->zipCode);
+                        $package->setField('DestinationPostalCode', $this->_parseZipCode($order->shippingAddress->zipCode));
                     }
 
                     // add the package to the client stack
@@ -394,5 +394,12 @@ class USPS extends Provider
         $string = strtoupper($string);
 
         return $string;
+    }
+
+    private function _parseZipCode($zip)
+    {
+        $zip = explode('-', $zip)[0] ?? $zip;
+
+        return $zip;
     }
 }
