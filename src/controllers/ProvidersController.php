@@ -30,6 +30,9 @@ class ProvidersController extends Controller
             return $this->asErrorJson(Craft::t('postie', '“{handle}” does not support connection.', ['handle' => $providerHandle]));
         }
 
+        // Populate the provider with settings
+        $provider->setAttributes($request->getBodyParam('settings'), false);
+
         try {
             // Check to see if it's valid. Exceptions help to provide errors nicely
             return $this->asJson([

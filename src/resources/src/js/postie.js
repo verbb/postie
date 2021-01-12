@@ -45,8 +45,22 @@ Craft.Postie.ProviderConnection = Garnish.Base.extend({
     onRefresh(e) {
         e.preventDefault();
 
+        var providerSettings = {};
+
+        this.$form = $('#tab-' + this.providerHandle);
+
+        if (this.$form) {
+            var postData = Garnish.getPostData(this.$form);
+            var params = Craft.expandPostArray(postData);
+
+            if (params && params.settings && params.settings.providers && params.settings.providers[this.providerHandle]) {
+                providerSettings = params.settings.providers[this.providerHandle];
+            }
+        }
+
         var data = {
             providerHandle: this.providerHandle,
+            settings: providerSettings,
         };
 
         this.$refreshBtn.addClass('vui-loading vui-loading-tiny');
