@@ -10,6 +10,12 @@ use Exception;
 
 class ProvidersController extends Controller
 {
+    // Properties
+    // =========================================================================
+
+    protected $allowAnonymous = ['check-connection'];
+
+
     // Public Methods
     // =========================================================================
 
