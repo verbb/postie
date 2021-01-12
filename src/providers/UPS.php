@@ -548,7 +548,7 @@ class UPS extends Provider
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
             $package->getPackageWeight()->setWeight($weight);
             $weightUnit = new UnitOfMeasurement;
-            $weightUnit->setCode($this->_getUnitOfMeasurement('weight'));
+            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
             $packageDimensions = new Dimensions();
@@ -557,7 +557,7 @@ class UPS extends Provider
             $packageDimensions->setLength($length);
 
             $unit = new UnitOfMeasurement;
-            $unit->setCode($this->_getUnitOfMeasurement('dimension'));
+            $unit->setCode(UnitOfMeasurement::UOM_IN);
 
             $packageDimensions->setUnitOfMeasurement($unit);
             $package->setDimensions($packageDimensions);
