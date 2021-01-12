@@ -13,6 +13,7 @@ use craft\commerce\Plugin as Commerce;
 
 use FedEx\RateService\Request;
 use FedEx\RateService\ComplexType;
+use FedEx\RateService\ComplexType\ContactAndAddress;
 use FedEx\RateService\ComplexType\RateRequest;
 use FedEx\RateService\ComplexType\RequestedPackageLineItem;
 use FedEx\RateService\SimpleType;
@@ -340,6 +341,33 @@ class FedEx extends Provider
 
             if ($this->getSetting('enableOneRate')) {
                 $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
+            }
+
+            if ($this->getSetting('freightAccountNumber')) {
+                $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
+                $rateRequest->RequestedShipment->FreightShipmentDetail->TotalHandlingUnits = 1;
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
+
+                $freightAddress = new ContactAndAddress();
+                $freightAddress->Address = $rateRequest->RequestedShipment->Shipper->Address;
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress = $freightAddress;
+
+                $totalWeight = 0;
+
+                foreach ($packedBoxes as $packedBox) {
+                    $totalWeight += number_format($packedBox['weight'], 3);
+                }
+
+                $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = [
+                    'FreightClass' => 'CLASS_050',
+                    'Packaging' => 'SKID',
+                    'Description' => 'Heavy Stuff',
+                    'Weight' => [
+                        'Units' => $this->_getUnitOfMeasurement('weight'),
+                        'Value' => $totalWeight,
+                    ],
+                    'Pieces' => 1,
+                ];
             }
 
             // Create package line items

@@ -59,6 +59,16 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
+{{ forms.autosuggestField({
+    label: 'Freight Account Number' | t('postie'),
+    instructions: 'Enter your {name} Freight Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'freightAccountNumber',
+    name: 'freightAccountNumber',
+    value: provider.settings.freightAccountNumber ?? '',
+    suggestEnvVars: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightAccountNumber', 'postie'),
+}) }}
+
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
     instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
