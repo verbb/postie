@@ -24,7 +24,7 @@ class ProvidersController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $providerHandle = $request->getBodyParam('providerHandle');
+        $providerHandle = $request->getParam('providerHandle');
 
         if (!$providerHandle) {
             return $this->asErrorJson(Craft::t('postie', 'Unknown provider: “{handle}”', ['handle' => $providerHandle]));
@@ -37,7 +37,7 @@ class ProvidersController extends Controller
         }
 
         // Populate the provider with settings
-        $provider->setAttributes($request->getBodyParam('settings'), false);
+        $provider->setAttributes($request->getParam('settings'), false);
 
         try {
             // Check to see if it's valid. Exceptions help to provide errors nicely
