@@ -59,16 +59,6 @@
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
 }) }}
 
-{{ forms.autosuggestField({
-    label: 'Freight Account Number' | t('postie'),
-    instructions: 'Enter your {name} Freight Account Number here.' | t('postie', { name: provider.displayName() }),
-    id: 'freightAccountNumber',
-    name: 'freightAccountNumber',
-    value: provider.settings.freightAccountNumber ?? '',
-    suggestEnvVars: true,
-    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightAccountNumber', 'postie'),
-}) }}
-
 {{ forms.lightswitchField({
     label: 'Use Test Endpoint' | t('postie'),
     instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
@@ -104,3 +94,151 @@
     on: provider.settings.enableOneRate ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.enableOneRate', 'postie'),
 }) }}
+
+{% set enableFreight = provider.settings.enableFreight ?? false %}
+
+{{ forms.lightswitchField({
+    label: 'Enable Freight' | t('postie'),
+    instructions: 'Whether to enable FedEx Freight LTL Rates. The origin and destination for the shipment must be the US, along with the store currency set to USD.' | t('postie'),
+    id: 'enableFreight',
+    name: 'enableFreight',
+    on: enableFreight,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.enableFreight', 'postie'),
+    toggle: 'fedex-freight',
+}) }}
+
+<div id="fedex-freight" class="{{ not enableFreight ? 'hidden' }}">
+    {{ forms.autosuggestField({
+        label: 'Freight Account Number' | t('postie'),
+        instructions: 'Enter your {name} Freight Account Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightAccountNumber',
+        name: 'freightAccountNumber',
+        value: provider.settings.freightAccountNumber ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightAccountNumber', 'postie'),
+    }) }}
+
+    <h3>{{ 'Freight Billing Address' | t('formie') }}</h3>
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing Street Address' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing Street Address here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingStreetAddress',
+        name: 'freightBillingStreetAddress',
+        value: provider.settings.freightBillingStreetAddress ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingStreetAddress', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing Street Address 2' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing Street Address 2 here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingStreetAddress2',
+        name: 'freightBillingStreetAddress2',
+        value: provider.settings.freightBillingStreetAddress2 ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingStreetAddress2', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing City' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing City here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingCity',
+        name: 'freightBillingCity',
+        value: provider.settings.freightBillingCity ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingCity', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing Zipcode' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing Zipcode here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingZipcode',
+        name: 'freightBillingZipcode',
+        value: provider.settings.freightBillingZipcode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingZipcode', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing State Code' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing State Code here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingStateCode',
+        name: 'freightBillingStateCode',
+        value: provider.settings.freightBillingStateCode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingStateCode', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Billing Country Code' | t('postie'),
+        instructions: 'Enter your {name} Freight Billing Country Code here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightBillingCountryCode',
+        name: 'freightBillingCountryCode',
+        value: provider.settings.freightBillingCountryCode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightBillingCountryCode', 'postie'),
+    }) }}
+
+    <h3>{{ 'Freight Shipper Address' | t('formie') }}</h3>
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Street Address' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper Street Address here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperStreetAddress',
+        name: 'freightShipperStreetAddress',
+        value: provider.settings.freightShipperStreetAddress ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperStreetAddress', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Street Address 2' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper Street Address 2 here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperStreetAddress2',
+        name: 'freightShipperStreetAddress2',
+        value: provider.settings.freightShipperStreetAddress2 ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperStreetAddress2', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper City' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper City here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperCity',
+        name: 'freightShipperCity',
+        value: provider.settings.freightShipperCity ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperCity', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Zipcode' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper Zipcode here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperZipcode',
+        name: 'freightShipperZipcode',
+        value: provider.settings.freightShipperZipcode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperZipcode', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper State Code' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper State Code here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperStateCode',
+        name: 'freightShipperStateCode',
+        value: provider.settings.freightShipperStateCode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperStateCode', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Country Code' | t('postie'),
+        instructions: 'Enter your {name} Freight Shipper Country Code here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperCountryCode',
+        name: 'freightShipperCountryCode',
+        value: provider.settings.freightShipperCountryCode ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperCountryCode', 'postie'),
+    }) }}
+</div>

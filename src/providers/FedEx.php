@@ -266,194 +266,42 @@ class FedEx extends Provider
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
+        //
+        // TESTING
+        //
+        // Domestic
+        // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+
+        // Canada 
+        // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
+
+        // Freight
+        // $order->currency = 'USD';
+        //
+        //
+        //
+
         try {
-            $rateRequest = new RateRequest();
+            // Fetch rates for 'regular' rates (non-freight)
+            $this->fetchShippingRate($order, $storeLocation, $packedBoxes);
 
-            //
-            // TESTING
-            //
-            // Domestic
-            // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
-
-            // Canada 
-            // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
-            // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
-
-            //
-            //
-            //
-
-            // Authentication & client details
-            $rateRequest->WebAuthenticationDetail->UserCredential->Key = $this->getSetting('key');
-            $rateRequest->WebAuthenticationDetail->UserCredential->Password = $this->getSetting('password');
-            $rateRequest->ClientDetail->AccountNumber = $this->getSetting('accountNumber');
-            $rateRequest->ClientDetail->MeterNumber = $this->getSetting('meterNumber');
-
-            // Version
-            $rateRequest->Version->ServiceId = 'crs';
-            $rateRequest->Version->Major = 24;
-            $rateRequest->Version->Minor = 0;
-            $rateRequest->Version->Intermediate = 0;
-
-            $rateRequest->ReturnTransitAndCommit = true;
-
-            // Shipper
-            $rateRequest->RequestedShipment->PreferredCurrency = $order->currency;
-            $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->address1];
-            $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->city;
-            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->zipCode;
-
-            // Recipient
-            $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->address1];
-            $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
-            $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
-
-            if ($this->getSetting('residentialAddress')) {
-                $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
-            }
-
-            // Fedex can't handle 3-character states. Ignoring it is valid for international order
-            if ($storeLocation->country) {
-                $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;
-
-                if ($storeLocation->country->iso == 'US' || $storeLocation->country->iso == 'CA') {
-                    $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
-                }
-            }
-
-            // Fedex can't handle 3-character states. Ignoring it is valid for international order
-            if ($order->shippingAddress->country) {
-                $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $order->shippingAddress->country->iso;
-                
-                if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
-                    $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
-                }
-            }
-
-            // Shipping charges payment
-            $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = PaymentType::_SENDER;
-            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $this->getSetting('accountNumber');
-            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->country;
-
-            // Rate request types
-            $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
-
-            if ($this->getSetting('enableOneRate')) {
-                $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
-            }
-
-            if ($this->getSetting('freightAccountNumber')) {
-                $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
-                $rateRequest->RequestedShipment->FreightShipmentDetail->TotalHandlingUnits = 1;
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
-
-                $freightAddress = new ContactAndAddress();
-                $freightAddress->Address = $rateRequest->RequestedShipment->Shipper->Address;
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress = $freightAddress;
-
-                $totalWeight = 0;
-
-                foreach ($packedBoxes as $packedBox) {
-                    $totalWeight += number_format($packedBox['weight'], 3);
-                }
-
-                $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = [
-                    'FreightClass' => 'CLASS_050',
-                    'Packaging' => 'SKID',
-                    'Description' => 'Heavy Stuff',
-                    'Weight' => [
-                        'Units' => $this->_getUnitOfMeasurement('weight'),
-                        'Value' => $totalWeight,
-                    ],
-                    'Pieces' => 1,
-                ];
-            }
-
-            // Create package line items
-            $packageLineItems = $this->_createPackageLineItem($order, $packedBoxes);
-            $rateRequest->RequestedShipment->PackageCount = count($packageLineItems);
-            $rateRequest->RequestedShipment->RequestedPackageLineItems = $packageLineItems;
-
-            $rateServiceRequest = new Request();
-
-            // Check for devMode and set test or production endpoint
-            if ($this->getSetting('useTestEndpoint')) {
-                $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
-            } else {
-                $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
-            }
-
-            $this->beforeSendPayload($this, $rateRequest, $order);
-
-            // FedEx API rate service call
-            $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
-
-            if (isset($rateReply->RateReplyDetails)) {
-                foreach ($rateReply->RateReplyDetails as $rateReplyDetails) {
-                    if (is_array($rateReplyDetails->RatedShipmentDetails)) {
-                        // Find the lowest rate (for negotiated rates)
-                        $ratedShipmentDetailRates = [];
-
-                        foreach ($rateReplyDetails->RatedShipmentDetails as $key => $RatedShipmentDetail) {
-                            $key = $RatedShipmentDetail->ShipmentRateDetail->RateType;
-
-                            $ratedShipmentDetailRates[$key] = $RatedShipmentDetail->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
-                        }
-
-                        $rate = min($ratedShipmentDetailRates);
-                    } else {
-                        $rate = $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
-                    }
-
-                    if (!$rateReplyDetails->ServiceType) {
-                        Provider::error($this, 'Service Type is not defined');
-                        continue;
-                    }
-
-                    if (!$rate) {
-                        Provider::error($this, 'No rate for ' . $rateReplyDetails->ServiceType);
-                        continue;
-                    }
-
-                    $this->_rates[$rateReplyDetails->ServiceType] = [
-                        'amount' => $rate,
-                        'options' => [
-                            'ServiceType' => $rateReplyDetails->ServiceType ?? '',
-                            'ServiceDescription' => $rateReplyDetails->ServiceDescription->Description ?? '',
-                            'packagingType' => $rateReplyDetails->PackagingType ?? '',
-                            'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
-                            'deliveryDayOfWeek' => $rateReplyDetails->DeliveryDayOfWeek ?? '',
-                            'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
-                            'transitTime' => $rateReplyDetails->TransitTime ?? '',
-                            'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
-                            'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? '',
-                            'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
-                            'destinationServiceArea' => $rateReplyDetails->DestinationServiceArea ?? '',
-                        ],
-                    ];
-                }
-            } elseif (isset($rateReply->Notifications)) {
-                foreach ($rateReply->Notifications as $message) {
-                    Provider::error($this, 'Rate Error: ' . $message->Message);
-                }
-            } else {
-                Provider::error($this, Craft::t('postie', 'Unable to fetch rates: `{json}`.', [
-                    'json' => Json::encode($rateReply),
-                ]));
+            // If enabled, fetch again for freight rates. Only those are returned, so a separate call is needed
+            if ($this->getSetting('enableFreight')) {
+                $this->fetchShippingRate($order, $storeLocation, $packedBoxes, 'freight');
             }
 
             // Allow rate modification via events
             $modifyRatesEvent = new ModifyRatesEvent([
                 'rates' => $this->_rates,
-                'response' => $rateReply,
                 'order' => $order,
             ]);
 
             if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
                 $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
             }
-
+            
             $this->_rates = $modifyRatesEvent->rates;
         } catch (\Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
@@ -464,6 +312,179 @@ class FedEx extends Provider
         }
 
         return $this->_rates;
+    }
+
+    public function fetchShippingRate($order, $storeLocation, $packedBoxes, $requestType = '')
+    {
+        $rateRequest = new RateRequest();
+
+        $rateRequest->WebAuthenticationDetail->UserCredential->Key = $this->getSetting('key');
+        $rateRequest->WebAuthenticationDetail->UserCredential->Password = $this->getSetting('password');
+        $rateRequest->ClientDetail->AccountNumber = $this->getSetting('accountNumber');
+        $rateRequest->ClientDetail->MeterNumber = $this->getSetting('meterNumber');
+        $rateRequest->Version->ServiceId = 'crs';
+        $rateRequest->Version->Major = 24;
+        $rateRequest->Version->Minor = 0;
+        $rateRequest->Version->Intermediate = 0;
+        $rateRequest->ReturnTransitAndCommit = true;
+
+        // Shipper
+        $rateRequest->RequestedShipment->PreferredCurrency = $order->currency;
+        $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->address1];
+        $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->city;
+        $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->zipCode;
+
+        // Recipient
+        $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->address1];
+        $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
+        $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
+
+        if ($this->getSetting('residentialAddress')) {
+            $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
+        }
+
+        // Fedex can't handle 3-character states. Ignoring it is valid for international order
+        if ($storeLocation->country) {
+            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;
+
+            if ($storeLocation->country->iso == 'US' || $storeLocation->country->iso == 'CA') {
+                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
+            }
+        }
+
+        // Fedex can't handle 3-character states. Ignoring it is valid for international order
+        if ($order->shippingAddress->country) {
+            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $order->shippingAddress->country->iso;
+            
+            if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
+                $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
+            }
+        }
+
+        // Shipping charges payment
+        $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = PaymentType::_SENDER;
+        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $this->getSetting('accountNumber');
+        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->country;
+
+        // Rate request types
+        $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
+
+        if ($this->getSetting('enableOneRate')) {
+            $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
+        }
+
+        // Create package line items
+        $packageLineItems = $this->_createPackageLineItem($order, $packedBoxes);
+        $rateRequest->RequestedShipment->PackageCount = count($packageLineItems);
+        $rateRequest->RequestedShipment->RequestedPackageLineItems = $packageLineItems;
+
+        if ($requestType === 'freight') {
+            $rateRequest->CarrierCodes = ['FXFR'];
+
+            $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$this->getSetting('freightShipperStreetAddress'), $this->getSetting('freightShipperStreetAddress2')];
+            $rateRequest->RequestedShipment->Shipper->Address->City = $this->getSetting('freightShipperCity');
+            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $this->getSetting('freightShipperZipcode');
+            $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $this->getSetting('freightShipperStateCode');
+            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $this->getSetting('freightShipperCountryCode');
+
+            $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = 'SENDER';
+            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->ResponsibleParty->AccountNumber = $this->getSetting('freightAccountNumber');
+
+            $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StreetLines = [$this->getSetting('freightBillingStreetAddress'), $this->getSetting('freightBillingStreetAddress2')];
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');;
+
+            $lineItems = [];
+
+            // Modify each line item to contain extra required info for freight
+            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => &$packageLineItem) {
+                $packageLineItem->SequenceNumber = $key + 1;
+                $packageLineItem->PhysicalPackaging = 'SKID';
+                $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
+
+                // Create line items for freight
+                $lineItems[] = [
+                    'Id' => $key + 1,
+                    'FreightClass' => 'CLASS_050',
+                    'Packaging' => 'SKID',
+                    'Weight' => $packageLineItem->Weight,
+                ];
+            }
+
+            $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = $lineItems;
+        }
+
+        $rateServiceRequest = new Request();
+
+        // Check for devMode and set test or production endpoint
+        if ($this->getSetting('useTestEndpoint')) {
+            $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
+        } else {
+            $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
+        }
+
+        $this->beforeSendPayload($this, $rateRequest, $order);
+
+        // FedEx API rate service call
+        $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
+
+        if (isset($rateReply->RateReplyDetails)) {
+            foreach ($rateReply->RateReplyDetails as $rateReplyDetails) {
+                if (is_array($rateReplyDetails->RatedShipmentDetails)) {
+                    // Find the lowest rate (for negotiated rates)
+                    $ratedShipmentDetailRates = [];
+
+                    foreach ($rateReplyDetails->RatedShipmentDetails as $key => $RatedShipmentDetail) {
+                        $key = $RatedShipmentDetail->ShipmentRateDetail->RateType;
+
+                        $ratedShipmentDetailRates[$key] = $RatedShipmentDetail->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
+                    }
+
+                    $rate = min($ratedShipmentDetailRates);
+                } else {
+                    $rate = $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
+                }
+
+                if (!$rateReplyDetails->ServiceType) {
+                    Provider::error($this, 'Service Type is not defined');
+                    continue;
+                }
+
+                if (!$rate) {
+                    Provider::error($this, 'No rate for ' . $rateReplyDetails->ServiceType);
+                    continue;
+                }
+
+                $this->_rates[$rateReplyDetails->ServiceType] = [
+                    'amount' => $rate,
+                    'options' => [
+                        'ServiceType' => $rateReplyDetails->ServiceType ?? '',
+                        'ServiceDescription' => $rateReplyDetails->ServiceDescription->Description ?? '',
+                        'packagingType' => $rateReplyDetails->PackagingType ?? '',
+                        'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
+                        'deliveryDayOfWeek' => $rateReplyDetails->DeliveryDayOfWeek ?? '',
+                        'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
+                        'transitTime' => $rateReplyDetails->TransitTime ?? '',
+                        'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
+                        'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? '',
+                        'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
+                        'destinationServiceArea' => $rateReplyDetails->DestinationServiceArea ?? '',
+                    ],
+                ];
+            }
+        } elseif (isset($rateReply->Notifications)) {
+            foreach ($rateReply->Notifications as $message) {
+                Provider::error($this, 'Rate Error: ' . $message->Message);
+            }
+        } else {
+            Provider::error($this, Craft::t('postie', 'Unable to fetch rates: `{json}`.', [
+                'json' => Json::encode($rateReply),
+            ]));
+        }
     }
 
     protected function fetchConnection(): bool
