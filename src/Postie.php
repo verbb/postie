@@ -51,6 +51,10 @@ class Postie extends Plugin
         $this->_registerCommerceEventListeners();
         
         $this->hasCpSection = $this->getSettings()->hasCpSection;
+
+        if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $this->hasCpSection = false;
+        }
     }
 
     public function getPluginName()
