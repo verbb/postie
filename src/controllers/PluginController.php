@@ -10,6 +10,8 @@ use craft\web\Controller;
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Variant;
 
+use yii\web\ForbiddenHttpException;
+
 class PluginController extends Controller
 {
     // Constants
@@ -23,6 +25,10 @@ class PluginController extends Controller
 
     public function actionSettings()
     {
+        if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            throw new ForbiddenHttpException('Administrative changes are disallowed in this environment.');
+        }
+
         $settings = Postie::$plugin->getSettings();
 
         $variants = [];
