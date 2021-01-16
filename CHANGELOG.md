@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.4.5 - 2021-01-16
+
+### Added
+- Add support for FedEx Freight.
+- Allow providers connection check to be run from cron, or similar means.
+
+### Fixed
+- Fix potential error with AusPost International.
+- Fix USPS not logging error messages correctly for domestic shipments.
+- Fix USPS rates not reporting back correctly when using potentially invalid postcodes.
+- Fix testing connection only using saved values, not values as you change them.
+- Fix UPS connection testing for some non-US based accounts.
+- Ensure Postie isn’t shown in the CP sidebar menu when `allowAdminChanges = false`.
+
 ## 2.4.4 - 2021-01-05
 
 ### Fixed
