@@ -46,6 +46,27 @@ class Service extends Component
         }
     }
 
+    public function onBeforeSavePluginSettings($event)
+    {
+        $settings = $event->plugin->getSettings();
+
+        // Remove shipping methods of all disabled providers to keep PC under control.
+        $providers = $settings->providers ?? [];
+
+        foreach ($providers as &$provider) {
+            if ($provider['enabled']) {
+                continue;
+            }
+
+            unset($provider['boxSizes']);
+            unset($provider['services']);
+        }
+
+        $settings->providers = $providers;
+
+        $event->plugin->setSettings($settings->toArray());
+    }
+
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
     {
         if (!$event->order) {

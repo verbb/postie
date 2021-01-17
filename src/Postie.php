@@ -8,9 +8,11 @@ use verbb\postie\twigextensions\Extension;
 
 use Craft;
 use craft\base\Plugin;
+use craft\events\PluginEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
+use craft\services\Plugins;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -116,6 +118,14 @@ class Postie extends Plugin
         // correct POST param, then set a session variable to save it. This is because the fetching of shipping rates isn't done
         // in the same request as the POST sent to the server. We need to temporarily store a flag is session with the okay to fetch.
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveOrder']);
+
+        // Prevent saving _all_ provider information to plugin settings, just the enabled ones. Specifically, weed out services
+        // so we retain at least some info for other providers. Helps keep project config under control.
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS, function(PluginEvent $event) {
+            if ($event->plugin === $this) {
+                $this->getService()->onBeforeSavePluginSettings($event);
+            }
+        });
     }
 
     private function _registerCommerceEventListeners()
