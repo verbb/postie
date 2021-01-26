@@ -3,6 +3,7 @@ namespace verbb\postie\base;
 
 use verbb\postie\Postie;
 use verbb\postie\services\Providers;
+use verbb\postie\services\ProviderCache;
 use verbb\postie\services\Service;
 
 use Craft;
@@ -28,6 +29,11 @@ trait PluginTrait
         return $this->get('providers');
     }
 
+    public function getProviderCache()
+    {
+        return $this->get('providerCache');
+    }
+
     public function getService()
     {
         return $this->get('service');
@@ -51,6 +57,7 @@ trait PluginTrait
     {
         $this->setComponents([
             'providers' => Providers::class,
+            'providerCache' => ProviderCache::class,
             'service' => Service::class,
         ]);
 
