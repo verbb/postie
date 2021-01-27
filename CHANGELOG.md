@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.4.6 - 2021-01-28
+
+### Changed
+- All providers now round box dimensions and weights to 2 decimal places.
+- Improve project config storage for settings. Postie will now no longer save (some) settings for disabled providers.
+
+### Fixed
+- Fix DHL Express throwing errors due to invalid weight/dimensions.
+- Fix in-memory caching not working correctly for providers. This meant potentially multiple requests for a single page request were being performed.
+
 ## 2.4.5 - 2021-01-16
 
 ### Added
