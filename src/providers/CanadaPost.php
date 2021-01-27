@@ -102,9 +102,6 @@ class CanadaPost extends Provider
         $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
-        // API is very particular on format - float up to 3 decimal places
-        $weight = number_format($packedBoxes->getTotalWeight(), 3);
-
         try {
             $optionsXml = '';
 
@@ -129,7 +126,7 @@ class CanadaPost extends Provider
                 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
                     <customer-number>' . $this->getSetting('customerNumber') . '</customer-number>
                     <parcel-characteristics>
-                        <weight>' . $weight . '</weight>
+                        <weight>' . $packedBoxes->getTotalWeight() . '</weight>
                     </parcel-characteristics>
                     ' . $optionsXml . '
                     <origin-postal-code>' . $originZipCode . '</origin-postal-code>
@@ -211,15 +208,12 @@ class CanadaPost extends Provider
             $originZipCode = str_replace(' ', '', $sender->zipCode); 
             $orderZipCode = str_replace(' ', '', $recipient->zipCode);
 
-            // API is very particular on format - float up to 3 decimal places
-            $weight = number_format($packedBox['weight'], 3);
-
             // Create a test payload
             $payload = '<?xml version="1.0" encoding="UTF-8"?>
                 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
                     <customer-number>' . $this->getSetting('customerNumber') . '</customer-number>
                     <parcel-characteristics>
-                        <weight>' . $weight . '</weight>
+                        <weight>' . $packedBox['weight'] . '</weight>
                     </parcel-characteristics>
                     <origin-postal-code>' . $originZipCode . '</origin-postal-code>
                     <destination>

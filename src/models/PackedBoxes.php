@@ -44,6 +44,12 @@ class PackedBoxes extends Model
             $length = (new Length($packedBox->getBox()->getOuterLength(), 'mm'))->toUnit($this->dimensionUnit);
             $height = (new Length($packedBox->getBox()->getOuterDepth(), 'mm'))->toUnit($this->dimensionUnit);
 
+            // Pretty much all providers have restrictions on large numbers,
+            $weight = round($weight, 2);
+            $height = round($height, 2);
+            $width = round($width, 2);
+            $length = round($length, 2);
+
             $listItem = [
                 'name' => $packedBox->getBox()->getReference(),
                 'weight' => $weight,
@@ -76,6 +82,7 @@ class PackedBoxes extends Model
 
         // Box weights are always in grams
         $totalBoxWeight = (new Mass($totalBoxWeight, 'g'))->toUnit($this->weightUnit);
+        $totalBoxWeight = round($totalBoxWeight, 2);
 
         return $totalBoxWeight;
     }
@@ -90,6 +97,7 @@ class PackedBoxes extends Model
 
         // Box lengths are always in mm
         $totalBoxLength = (new Length($totalBoxLength, 'mm'))->toUnit($this->dimensionUnit);
+        $totalBoxLength = round($totalBoxLength, 2);
 
         return $totalBoxLength;
     }
@@ -104,6 +112,7 @@ class PackedBoxes extends Model
 
         // Box heights are always in mm
         $totalBoxHeight = (new Length($totalBoxHeight, 'mm'))->toUnit($this->dimensionUnit);
+        $totalBoxHeight = round($totalBoxHeight, 2);
 
         return $totalBoxHeight;
     }
@@ -118,6 +127,7 @@ class PackedBoxes extends Model
 
         // Box widths are always in mm
         $totalBoxWidth = (new Length($totalBoxWidth, 'mm'))->toUnit($this->dimensionUnit);
+        $totalBoxWidth = round($totalBoxWidth, 2);
 
         return $totalBoxWidth;
     }

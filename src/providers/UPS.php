@@ -355,15 +355,9 @@ class UPS extends Provider
             }
 
             foreach ($packedBoxes as $packedBox) {
-                // Ensure they're formatted correctly, the API will error for too many decimals
-                $weight = number_format($packedBox['weight'], 3);
-                $height = number_format($packedBox['height'], 3);
-                $width = number_format($packedBox['width'], 3);
-                $length = number_format($packedBox['length'], 3);
-
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                $package->getPackageWeight()->setWeight($weight);
+                $package->getPackageWeight()->setWeight($packedBox['weight']);
 
                 if ($this->getSetting('requireSignature')) {
                     $deliveryConfirmation = new DeliveryConfirmation();
@@ -382,9 +376,9 @@ class UPS extends Provider
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight($height);
-                $packageDimensions->setWidth($width);
-                $packageDimensions->setLength($length);
+                $packageDimensions->setHeight($packedBox['height']);
+                $packageDimensions->setWidth($packedBox['width']);
+                $packageDimensions->setLength($packedBox['length']);
 
                 $unit = new UnitOfMeasurement;
                 $unit->setCode($this->_getUnitOfMeasurement('dimension'));
@@ -538,23 +532,17 @@ class UPS extends Provider
             $shipToAddress = $shipTo->getAddress();
             $shipToAddress->setPostalCode($recipient->zipCode);
 
-            // Ensure they're formatted correctly, the API will error for too many decimals
-            $weight = number_format($packedBox['weight'], 3);
-            $height = number_format($packedBox['height'], 3);
-            $width = number_format($packedBox['width'], 3);
-            $length = number_format($packedBox['length'], 3);
-
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-            $package->getPackageWeight()->setWeight($weight);
+            $package->getPackageWeight()->setWeight($packedBox['weight']);
             $weightUnit = new UnitOfMeasurement;
             $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
             $packageDimensions = new Dimensions();
-            $packageDimensions->setHeight($height);
-            $packageDimensions->setWidth($width);
-            $packageDimensions->setLength($length);
+            $packageDimensions->setHeight($packedBox['height']);
+            $packageDimensions->setWidth($packedBox['width']);
+            $packageDimensions->setLength($packedBox['length']);
 
             $unit = new UnitOfMeasurement;
             $unit->setCode(UnitOfMeasurement::UOM_IN);
