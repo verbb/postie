@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.7 - 2021-02-20
+
+### Fixed
+- Fix USPS rates not factoring in correct pricing for multiple boxes.
+- Fix when updating services, shipping category conditions would be lost.
+
 ## 2.4.6 - 2021-01-28
 
 ### Changed
