@@ -138,7 +138,7 @@ class TestingHelper
         [
             'address1' => 'Nieuwezijds Voorburgwal 147',
             'city' => 'Amsterdam',
-            'zipCode' => '81012 RJ',
+            'zipCode' => '1012 RJ',
             'country' => 'NL',
         ],
     ];
