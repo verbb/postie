@@ -62,6 +62,30 @@ class Service extends Component
             unset($provider['services']);
         }
 
+        // Patch in any shipping categories defined for each enabled providers' services
+        foreach ($providers as $providerHandle => &$provider) {
+            if ($provider['enabled']) {
+                // Fetch providers from plugin settings
+                $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
+
+                // Get the current services, and merge in the new changes, retaining existing (other) data
+                $currentServices = $pluginInfo['settings']['providers'][$providerHandle]['services'] ?? [];
+                $services = $provider['services'] ?? [];
+                
+                foreach ($services as $serviceHandle => &$service) {
+                    $currentService = $currentServices[$serviceHandle] ?? [];
+
+                    if ($currentService) {
+                        $service = array_merge($currentService, $service);
+                    }                    
+                }
+
+                if ($services) {
+                    $provider['services'] = $services;
+                }
+            }
+        }
+
         $settings->providers = $providers;
 
         $event->plugin->setSettings($settings->toArray());
