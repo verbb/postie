@@ -222,25 +222,16 @@ class USPS extends Provider
                     $package->setOunces(0);
                     $package->setField('Machinable', 'True');
                     $package->setField('MailType', 'Package');
-
-                    // value of content necessary for export
                     $package->setField('ValueOfContents', $order->getTotalSaleAmount());
                     $package->setField('Country', $order->shippingAddress->country->name);
 
-                    // Check if dimensions greater then 12 inches then set LARGE package
-                    if ($packedBox['width'] > 12 || $packedBox['height'] > 12 || $packedBox['length'] > 12) {
-                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                        $package->setField('Size', 'LARGE');
-                    } else {
-                        $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
-                        $package->setField('Size', 'REGULAR');
-                    }
+                    $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
 
-                    $package->setField('Width', $packedBox['width']);
-                    $package->setField('Length', $packedBox['height']);
+                    // Mismatched on purpose!
+                    $package->setField('Width', $packedBox['height']);
+                    $package->setField('Length', $packedBox['width']);
                     $package->setField('Height', $packedBox['length']);
-                    // Girth are relevant when CONTAINER_NONRECTANGULAR
-                    $package->setField('Girth', $packedBox['width'] * 2 + $packedBox['length'] * 2);
+                    $package->setField('Girth', round($packedBox['length'] * 2 + $packedBox['height'] * 2));
 
                     $package->setField('OriginZip', $this->_parseZipCode($storeLocation->zipCode));
                     $package->setField('CommercialFlag', 'N');
@@ -262,44 +253,66 @@ class USPS extends Provider
 
             $response = $client->getArrayResponse();
 
-            if (isset($response['RateV4Response']['Package']['Postage'])) {
-                foreach ($response['RateV4Response']['Package']['Postage'] as $service) {
-                    $serviceHandle = $this->_getServiceHandle($service['MailService']);
+            // Check for general errors
+            if (isset($response['Error'])) {
+                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                    'json' => Json::encode($response['Error']),
+                ]));
+
+                return $this->_rates;
+            }
+
+            // Responses will be different depending on domestic/international
+            if ($order->shippingAddress->country->iso == 'US') {
+                $packages = $response['RateV4Response']['Package'] ?? [];
+            } else {
+                $packages = $response['IntlRateV2Response']['Package'] ?? [];
+            }
+
+            // Normalise against multiple packages. The API returns rates for each package, as opposed to totals
+            if ($packages && !isset($packages[0])) {
+                $packages = [$packages];
+            }
+
+            foreach ($packages as $package) {
+                // Service for international, Postage for domestic. Otherwise, largely the same
+                $services = $package['Service'] ?? $package['Postage'] ?? [];
+
+                // Check for errors
+                if (isset($package['Error'])) {
+                    Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
+                        'json' => Json::encode($package['Error']),
+                    ]));
+
+                    continue;
+                }
+
+                if ($services && !isset($services[0])) {
+                    $services = [$services];
+                }
+
+                foreach ($services as $service) {
+                    // SvcDescription for international, MailService for domestic
+                    $serviceHandleKey = $service['SvcDescription'] ?? $service['MailService'];
+                    $serviceHandle = $this->_getServiceHandle($serviceHandleKey);
+
+                    // The API returns rates for each package in the request, so combine them before reporting back
+                    // Postage for international, Rate for domestic
+                    $amount = $service['Postage'] ?? $service['Rate'] ?? 0;
+
+                    if (isset($this->_rates[$serviceHandle]['amount'])) {
+                        $amount = $this->_rates[$serviceHandle]['amount'] + $amount;
+                    }
+
+                    // Combine the package and service information as options
+                    $optionData = array_merge($package, $service);
+                    unset($optionData['Service']);
+                    unset($optionData['Postage']);
 
                     $this->_rates[$serviceHandle] = [
-                        'amount' => $service['Rate'],
-                        'options' => [
-                            'mailService' => $service['MailService'],
-                            'zipOrigination' => $response['RateV4Response']['Package']['ZipOrigination'] ?? '',
-                            'zipDestination' => $response['RateV4Response']['Package']['ZipDestination'] ?? '',
-                            'pounds' => $response['RateV4Response']['Package']['Pounds'] ?? '',
-                            'ounces' => $response['RateV4Response']['Package']['Ounces'] ?? '',
-                            'size' => $response['RateV4Response']['Package']['Size'] ?? '',
-                            'machinable' => $response['RateV4Response']['Package']['Machinable'] ?? '',
-                            'zone' => $response['RateV4Response']['Package']['Zone'] ?? '',
-                        ],
+                        'amount' => $amount,
+                        'options' => $optionData,
                     ];
-                }
-            } else if (isset($response['RateV4Response']['Package']['Error'])) {
-                Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
-                    'json' => Json::encode($response['RateV4Response']['Package']['Error']),
-                ]));
-            } else {
-                if (isset($response['IntlRateV2Response']['Package']['Service'])) {
-                    foreach ($response['IntlRateV2Response']['Package']['Service'] as $service) {
-                        $serviceHandle = $this->_getServiceHandle($service['SvcDescription']);
-
-                        $this->_rates[$serviceHandle] = [
-                            'amount' => $service['Postage'],
-                            'options' => $service,
-                        ];
-                    }
-                } else if (isset($response['IntlRateV2Response']['Package']['Error'])) {
-                    Provider::error($this, Craft::t('postie', 'Response error: `{json}`.', [
-                        'json' => Json::encode($response['IntlRateV2Response']['Package']['Error']),
-                    ]));
-                } else {
-                    Provider::error($this, 'No Services found.');
                 }
             }
 
@@ -315,7 +328,6 @@ class USPS extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-
         } catch (\Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
