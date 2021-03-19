@@ -58,7 +58,6 @@ class Service extends Component
                 continue;
             }
 
-            unset($provider['boxSizes']);
             unset($provider['services']);
         }
 
