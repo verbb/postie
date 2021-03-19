@@ -38,10 +38,15 @@ class Settings extends Model
     public function validateProviders()
     {
         foreach ($this->providers as $key => $provider) {
+            if (!$provider['enabled']) {
+                continue;
+            }
+
             if ($provider['packingMethod'] === Provider::PACKING_BOX) {
                 if (!$provider['boxSizes'] || !is_array($provider['boxSizes'])) {
                     $this->addError("providers.{$key}.settings.boxSizes", Craft::t('postie', 'You must provide at least one box.'));
                 }
+
                 if (is_array($provider['boxSizes'])) {
                     $enabledBoxes = ArrayHelper::where($provider['boxSizes'], 'enabled');
 
