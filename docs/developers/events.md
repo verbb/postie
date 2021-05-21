@@ -98,6 +98,24 @@ Event::on(ShippingMethod::class, ShippingMethod::EVENT_MODIFY_SHIPPING_RULE, fun
 });
 ```
 
+### The `modifyShippingMethods` event
+Plugins can modify the returned shipping methods, after they have been created from the provider.
+
+```php
+use verbb\postie\base\Provider;
+use verbb\postie\events\ModifyShippingMethodsEvent;
+use verbb\postie\providers\USPS;
+use yii\base\Event;
+
+Event::on(USPS::class, Provider::EVENT_MODIFY_SHIPPING_METHODS, function(ModifyShippingMethodsEvent $event) {
+    $provider = $event->provider;
+    $shippingMethods = $event->shippingMethods;
+    $order = $event->order;
+
+    // To modify the shipping methods, directly modify the variable via `$event->shippingMethods = ...`
+});
+```
+
 ### The `modifyVariantQuery` event
 Plugins can modify the Variant query for Postie's settings. Postie will by default look at all variants across your site and report on whether weight and dimension values are set. You can modify this query to suit your needs.
 

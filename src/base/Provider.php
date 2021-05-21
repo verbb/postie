@@ -4,6 +4,7 @@ namespace verbb\postie\base;
 use verbb\postie\Postie;
 use verbb\postie\events\FetchRatesEvent;
 use verbb\postie\events\ModifyPayloadEvent;
+use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\events\PackOrderEvent;
 use verbb\postie\models\Box;
 use verbb\postie\models\Item;
@@ -52,6 +53,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
     const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
     const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
+    const EVENT_MODIFY_SHIPPING_METHODS = 'modifyShippingMethods';
 
 
     // Properties
@@ -353,7 +355,18 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
         }
 
-        return $shippingMethods;
+        // Allow plugins to modify the shipping methods.
+        $event = new ModifyShippingMethodsEvent([
+            'provider' => $this,
+            'order' => $order,
+            'shippingMethods' => $shippingMethods,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_SHIPPING_METHODS)) {
+            $this->trigger(self::EVENT_MODIFY_SHIPPING_METHODS, $event);
+        }
+
+        return $event->shippingMethods;
     }
 
     public function getShippingMethodByHandle($handle)
