@@ -609,6 +609,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $this->trigger(self::EVENT_MODIFY_PAYLOAD, $event);
         }
 
+        // Apply the amended payload
+        $payload = $event->payload;
+
         self::log($this, Craft::t('postie', 'Sending payload: `{json}`.', [
             'json' => Json::encode($payload),
         ]));
