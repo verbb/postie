@@ -7,7 +7,6 @@ use verbb\postie\services\ProviderCache;
 use verbb\postie\services\Service;
 
 use Craft;
-use craft\log\FileTarget;
 
 use yii\log\Logger;
 
@@ -18,23 +17,26 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
+	/**
+	 * @var Postie
+	 */
     public static $plugin;
 
 
     // Public Methods
     // =========================================================================
 
-    public function getProviders()
+    public function getProviders(): Providers
     {
         return $this->get('providers');
     }
 
-    public function getProviderCache()
+    public function getProviderCache(): ProviderCache
     {
         return $this->get('providerCache');
     }
 
-    public function getService()
+    public function getService(): Service
     {
         return $this->get('service');
     }
