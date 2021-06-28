@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\services;
 
+use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\Postie;
 use verbb\postie\models\ShippingMethod;
 
@@ -17,6 +18,8 @@ class Service extends Component
     // =========================================================================
 
     private $_cachedShippingMethods;
+
+    const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
 
 
     // Public Methods
@@ -90,24 +93,22 @@ class Service extends Component
         $event->plugin->setSettings($settings->toArray());
     }
 
-    public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
+    /**
+     * @return ShippingMethod[]
+     */
+    public function getShippingMethodsForOrder(Order $order): array
     {
-        if (!$event->order) {
-            return;
+
+        // Provide some class-based local cache, because this function is called multiple times
+        // throughout an order-update lifecycle. Do this, even if caching is disabled
+        if ($this->_cachedShippingMethods) {
+            return $this->_cachedShippingMethods;
         }
 
         // Fetch all providers (enabled or otherwise)
-        $providers = Postie::$plugin->getProviders()->getAllProviders();
+        $providers = Postie::getInstance()->getProviders()->getAllProviders();
 
-        // Provide some class-based local cache, becaues this function is called multiple times
-        // throughout an order-update lifecycle. Do this, even if caching is disabled
-        if ($this->_cachedShippingMethods) {
-            foreach ($this->_cachedShippingMethods as $shippingMethod) {
-                $event->shippingMethods[] = $shippingMethod;
-            }
-
-            return;
-        }
+        $shippingMethods = [];
 
         foreach ($providers as $provider) {
             if (!$provider->enabled) {
@@ -116,34 +117,61 @@ class Service extends Component
 
             // If this is a completed order, fetch the shipping methods, but DO NOT fetch live rates.
             // This is so we can still have registered shipping methods for `order.shippingMethod.name`
-            if ($event->order->isCompleted) {
-                foreach ($provider->getShippingMethods($event->order) as $shippingMethod) {
+            if ($order->isCompleted) {
+                foreach ($provider->getShippingMethods($order) as $shippingMethod) {
                     $shippingMethod->rate = 0;
                     $shippingMethod->rateOptions = [];
 
-                    $event->shippingMethods[] = $shippingMethod;
+                    $shippingMethods[] = $shippingMethod;
                 }
 
                 continue;
             }
 
             // Fetch all available shipping rates
-            $rates = $provider->getShippingRates($event->order);
+            $rates = $provider->getShippingRates($order);
 
             // Only return shipping rates for methods we've enabled
-            foreach ($provider->getShippingMethods($event->order) as $shippingMethod) {
+            foreach ($provider->getShippingMethods($order) as $shippingMethod) {
                 $rate = $rates[$shippingMethod->handle] ?? [];
 
                 if ($rate) {
                     $shippingMethod->rate = $rate['amount'] ?? 0;
                     $shippingMethod->rateOptions = $rate['options'] ?? [];
 
-                    $event->shippingMethods[] = $shippingMethod;
+                    $shippingMethods[] = $shippingMethod;
 
                     // Save it to a local class cache
                     $this->_cachedShippingMethods[] = $shippingMethod;
                 }
             }
         }
+
+        return $shippingMethods;
+
+    }
+
+    public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
+    {
+
+        if (!$event->order) {
+            return;
+        }
+
+        $shippingMethods = $this->getShippingMethodsForOrder($event->order);
+
+        $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([
+            'order' => $event->order,
+            'shippingMethods' => $shippingMethods,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_REGISTER_SHIPPING_METHODS)) {
+            $this->trigger(self::EVENT_BEFORE_REGISTER_SHIPPING_METHODS, $modifyShippingMethodsEvent);
+        }
+
+        foreach ($modifyShippingMethodsEvent->shippingMethods as $shippingMethod) {
+            $event->shippingMethods[] = $shippingMethod;
+        }
+
     }
 }
