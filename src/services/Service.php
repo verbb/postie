@@ -1,8 +1,8 @@
 <?php
 namespace verbb\postie\services;
 
-use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\Postie;
+use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
@@ -98,7 +98,6 @@ class Service extends Component
      */
     public function getShippingMethodsForOrder(Order $order): array
     {
-
         // Provide some class-based local cache, because this function is called multiple times
         // throughout an order-update lifecycle. Do this, even if caching is disabled
         if ($this->_cachedShippingMethods) {
@@ -148,12 +147,10 @@ class Service extends Component
         }
 
         return $shippingMethods;
-
     }
 
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
     {
-
         if (!$event->order) {
             return;
         }
@@ -172,6 +169,5 @@ class Service extends Component
         foreach ($modifyShippingMethodsEvent->shippingMethods as $shippingMethod) {
             $event->shippingMethods[] = $shippingMethod;
         }
-
     }
 }
