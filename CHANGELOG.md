@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.4.8 - 2021-06-29
+
+### Added
+- Add `Service::EVENT_BEFORE_REGISTER_SHIPPING_METHODS` for modifying the master list of shipping methods before they get handed off to Commerce. (thanks @michaelrog).
+- Add `Provider::EVENT_MODIFY_SHIPPING_METHODS`.
+
+### Changed
+- Change product summary to limit to 20 variants for performance.
+
+### Fixed
+- Fix `Provider::EVENT_MODIFY_PAYLOAD` not allowing `payload` to be overridden. (thanks @richrawlings).
+- Fix removing box sizes for disabled providers when saving.
+- Fix providers triggering validation when disabled.
+
 ## 2.4.7 - 2021-02-20
 
 ### Fixed
