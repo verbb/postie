@@ -401,8 +401,8 @@ class AustraliaPost extends SinglePackageProvider
             $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
             $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
 
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            // Create a test package - API only accepts cm/kg
+            $packedBoxes = TestingHelper::getTestPackedBoxes('cm', 'kg');
             $packedBox = $packedBoxes[0];
 
             // Create a test payload
