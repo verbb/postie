@@ -16,7 +16,7 @@
             "setup-configuration/providers",
             "setup-configuration/shipping-methods",
             "setup-configuration/displaying-rates",
-            "setup-configuration/manual-fetch",
+            "setup-configuration/manually-fetching-rates",
             "setup-configuration/box-packing"
         ]
     },

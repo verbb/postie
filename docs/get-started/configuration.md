@@ -26,8 +26,8 @@ return [
 - `enableCaching` - Whether to enable intelligent caching when fetching rates.
 - `displayDebug` - Whether to display debugging when fetching rates.
 - `displayErrors` - Whether to display errors when fetching rates.
-- `manualFetchRates` - Whether to fetch rates manually. Refer to [Manually Fetching Rates](docs:setup-configuration/manual-fetch).
-- `fetchRatesPostValue` - Specify a POST param value for manually fetching rates. Refer to [Manually Fetching Rates](docs:setup-configuration/manual-fetch).
+- `manualFetchRates` - Whether to fetch rates manually. Refer to [Manually Fetching Rates](docs:setup-configuration/manually-fetching-rates).
+- `fetchRatesPostValue` - Specify a POST param value for manually fetching rates. Refer to [Manually Fetching Rates](docs:setup-configuration/manually-fetching-rates).
 - `providers` - A collection of options for each provider.
 
 #### Providers
