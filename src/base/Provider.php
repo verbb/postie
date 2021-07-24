@@ -391,7 +391,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return;
         }
 
-        if (!$order->shippingAddress) {
+        if (!$order->shippingAddress && !$order->estimatedShippingAddress) {
             Provider::log($this, 'No shipping address for order.');
 
             return;
