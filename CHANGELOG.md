@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.4.9 - 2021-08-22
+
+### Added
+- Add support for estimated shipping addresses for guests.
+
+### Changed
+- Update `gabrielbull/ups-api` dependancy to `^1.0.0` for Guzzle 7 support.
+
+### Fixed
+- Fix Australia Post when testing connection using non kg/cm units.
+
 ## 2.4.8 - 2021-06-29
 
 ### Added
