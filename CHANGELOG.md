@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.10 - 2021-09-22
+
+### Fixed
+- Ensure packed boxes have a minimum weight, as 0 weighted boxes are issues for most providers.
+
 ## 2.4.9 - 2021-08-22
 
 ### Added
