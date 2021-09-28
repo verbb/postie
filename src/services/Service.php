@@ -118,16 +118,19 @@ class Service extends Component
             // Instead, return a shipping method model pre-populated with the rate already set on the order
             // This is so we can still have registered shipping methods for `order.shippingMethod.name`
             if ($order->isCompleted) {
-                foreach ($provider->getShippingMethods($order) as $shippingMethod) {
-                    if ($shippingMethod->handle === $order->shippingMethodHandle) {
-                        $shippingMethod->rate = $order->storedTotalShippingCost;
-                        $shippingMethod->rateOptions = [];
+                // The only reason we want to return live rates for a completed order is if we are recalculating
+                if ($order->getRecalculationMode() != Order::RECALCULATION_MODE_ALL) {
+                    foreach ($provider->getShippingMethods($order) as $shippingMethod) {
+                        if ($shippingMethod->handle === $order->shippingMethodHandle) {
+                            $shippingMethod->rate = $order->storedTotalShippingCost;
+                            $shippingMethod->rateOptions = [];
 
-                        $shippingMethods[] = $shippingMethod;
+                            $shippingMethods[] = $shippingMethod;
+                        }
                     }
-                }
 
-                continue;
+                    continue;
+                }
             }
 
             // Fetch all available shipping rates
