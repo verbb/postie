@@ -30,7 +30,7 @@
             "shipping-providers/colissimo",
             "shipping-providers/dhl-express",
             "shipping-providers/fastway",
-            "shipping-providers/fedex",
+            "shipping-providers/fed-ex",
             "shipping-providers/interparcel",
             "shipping-providers/new-zealand-post",
             "shipping-providers/post-nl",

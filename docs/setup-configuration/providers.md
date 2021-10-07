@@ -5,7 +5,7 @@ A **Provider** is a shipping provider used for shipping your packages. Depending
 - [Australia Post →](docs:shipping-providers/australia-post)
 - [Canada Post →](docs:shipping-providers/canada-post)
 - [Fastway →](docs:shipping-providers/fastway)
-- [FedEx →](docs:shipping-providers/fedex)
+- [FedEx →](docs:shipping-providers/fed-ex)
 - [UPS →](docs:shipping-providers/ups)
 - [USPS →](docs:shipping-providers/usps)
 
