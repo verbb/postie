@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.11 - 2021-10-28
+
+### Changed
+- Update handling of completed orders to return the correct rate at time of completion. This fixes incorrect costs when recalculating an order total.
+
+### Fixed
+- All available shipping rates are now returned when "Recalculate order" is clicked, when editing an order in the control panel.
+
 ## 2.4.10 - 2021-09-22
 
 ### Fixed
