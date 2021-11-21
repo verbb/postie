@@ -50,6 +50,9 @@ class RoyalMail extends StaticProvider
             'parcelforce-express-24' => 'Parcelforce Worldwide Express 24',
             'parcelforce-express-48' => 'Parcelforce Worldwide Express 48',
 
+            'tracked-24' => 'Royal Mail Tracked 24',
+            'tracked-48' => 'Royal Mail Tracked 48',
+
             // International
             'international-standard' => 'Royal Mail International Standard',
             'international-tracked-signed' => 'Royal Mail International Tracked & Signed',
@@ -57,6 +60,7 @@ class RoyalMail extends StaticProvider
             'international-signed' => 'Royal Mail International Signed',
             'international-economy' => 'Royal Mail International Economy',
 
+            'parcelforce-europriority' => 'Parcelforce Worldwide Euro Priority',
             'parcelforce-irelandexpress' => 'Parcelforce Worldwide Ireland Express',
             'parcelforce-globaleconomy' => 'Parcelforce Worldwide Global Economy',
             'parcelforce-globalexpress' => 'Parcelforce Worldwide Global Express',
