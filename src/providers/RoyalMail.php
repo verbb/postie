@@ -83,11 +83,11 @@ class RoyalMail extends StaticProvider
         // TESTING
         //
         // Domestic
-        $storeLocation = TestingHelper::getTestAddress('GB', ['city' => 'London']);
-        $order->shippingAddress = TestingHelper::getTestAddress('GB', ['city' => 'Glasgow']);
+        // $storeLocation = TestingHelper::getTestAddress('GB', ['city' => 'London']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['city' => 'Glasgow']);
 
-        // International
-        $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+        // // International
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
         // $order->shippingAddress = TestingHelper::getTestAddress('IR');
         //
         //
