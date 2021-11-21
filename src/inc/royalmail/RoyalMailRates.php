@@ -196,19 +196,19 @@ class RoyalMailRates
                     250 => 153,
                     500 => 199,
                     750 => 270,
-                ),
+                ],
                 'small-parcel-wide' => [
                     1000 => 320,
                     2000 => 320,
-                ),
+                ],
                 'small-parcel-deep' => [
                     1000 => 320,
                     2000 => 320,
-                ),
+                ],
                 'small-parcel-bigger' => [
                     1000 => 320,
                     2000 => 320,
-                ),
+                ],
                 'medium-parcel' => [
                     1000 => 530,
                     2000 => 530,
