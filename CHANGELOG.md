@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.12 - 2021-11-21
+
+### Fixed
+- Remove testing shipping rates from RoyalMail.
+
 ## 2.4.11 - 2021-10-28
 
 ### Changed
