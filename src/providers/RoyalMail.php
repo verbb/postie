@@ -22,6 +22,7 @@ class RoyalMail extends StaticProvider
 
     public $weightUnit = 'g';
     public $dimensionUnit = 'mm';
+    public $checkCompensation;
 
 
     // Public Methods
@@ -108,7 +109,7 @@ class RoyalMail extends StaticProvider
 
         foreach ($services as $handle => $label) {
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = RoyalMailRates::getRates($order->shippingAddress->country->iso, $handle);
+            $rateAndBoxes = RoyalMailRates::getRates($order->shippingAddress->country->iso, $handle, $this, $order);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

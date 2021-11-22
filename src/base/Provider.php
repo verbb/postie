@@ -607,6 +607,17 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return (bool)$isConnected;
     }
 
+    public function getSetting($key)
+    {
+        $value = ArrayHelper::getValue($this->settings, $key) ?? null;
+
+        if (!is_array($value)) {
+            return Craft::parseEnv($value);
+        }
+
+        return $value;
+    }
+
 
     // Protected Methods
     // =========================================================================
@@ -645,17 +656,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Update back
         $storeLocation = $fetchRatesEvent->storeLocation;
         $dimensions = $fetchRatesEvent->dimensions;
-    }
-
-    protected function getSetting($key)
-    {
-        $value = ArrayHelper::getValue($this->settings, $key) ?? null;
-
-        if (!is_array($value)) {
-            return Craft::parseEnv($value);
-        }
-
-        return $value;
     }
 
     protected function getLineItemDimensions($lineItem)

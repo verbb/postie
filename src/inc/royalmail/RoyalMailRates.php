@@ -9,7 +9,10 @@ class RoyalMailRates
     // Properties
     // =========================================================================
 
-    private static $euro = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HU', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'];
+    public static $order;
+    public static $checkCompensation = false;
+
+    private static $euro = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'];
 
     private static $europe = ['AL','AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
 
@@ -21,19 +24,58 @@ class RoyalMailRates
 
     private static $australasia = ['AU', 'PF', 'NU', 'TO', 'CX', 'KI', 'PG', 'TV', 'CC', 'NR', 'PN', 'VU', 'CK', 'NC', 'SB', 'WF', 'FJ', 'NZ', 'TK', 'WS'];
 
+    private static $europeNonEu = ['AL', 'AD', 'AM', 'AZ', 'BY', 'BA', 'GE', 'IS', 'LI', 'MD', 'MC', 'ME', 'MK', 'NO', 'RU', 'SM', 'RS', 'CH', 'TR', 'UA', 'GB', 'VA',];
+
     protected static $rateYears = [
         '2019' => '2019-03-25',
         '2020' => '2020-03-23',
         '2021' => '2021-01-01',
     ];
 
+    protected static $internationalDefaultBox = [
+        'letter' => [
+            'length' => 240,
+            'width' => 165,
+            'height' => 5,
+            'weight' => 100,
+        ],
+        'large-letter' => [
+            'length' => 353,
+            'width' => 250,
+            'height' => 25,
+            'weight' => 750,
+        ],
+        'long-parcel' => [
+            'length' => 600,
+            'width' => 150,
+            'height' => 150,
+            'weight' => 2000,
+        ],
+        'square-parcel' => [
+            'length' => 300,
+            'width' => 300,
+            'height' => 300,
+            'weight' => 2000,
+        ],
+        'parcel' => [
+            'length' => 450,
+            'width' => 225,
+            'height' => 225,
+            'weight' => 2000,
+        ],
+    ];
+
 
     // Public Methods
     // =========================================================================
 
-    public static function getRates($country, $service)
+    public static function getRates($country, $service, $provider, $order)
     {
         $rates = [];
+
+        // Set some variables
+        self::$checkCompensation = $provider->getSetting('checkCompensation');
+        self::$order = $order;
 
         // Get the function we should be using rates for
         $methodName = 'get' . StringHelper::toPascalCase($service) . 'Rates';
@@ -60,7 +102,11 @@ class RoyalMailRates
         return $rates;
     }
 
-    public static function getFirstClassRates($country)
+
+    // Protected Methods
+    // =========================================================================
+
+    protected static function getFirstClassRates($country)
     {
         $zone = self::getZone($country);
 
@@ -140,10 +186,10 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        return self::getBoxPricing($boxes, $bands, 20);
     }
 
-    public static function getFirstClassSignedRates($country)
+    protected static function getFirstClassSignedRates($country)
     {
         $zone = self::getZone($country);
 
@@ -151,7 +197,79 @@ class RoyalMailRates
             return [];
         }
 
-        $boxPricing = self::getFirstClassRates($country);
+        $bands = [
+            '2021' => [
+                'letter' => [
+                    100 => 85,
+                ],
+                'large-letter' => [
+                    100 => 129,
+                    250 => 183,
+                    500 => 239,
+                    750 => 330,
+                ],
+                'small-parcel-wide' => [
+                    1000 => 385,
+                    2000 => 557,
+                ],
+                'small-parcel-deep' => [
+                    1000 => 385,
+                    2000 => 557,
+                ],
+                'small-parcel-bigger' => [
+                    1000 => 385,
+                    2000 => 557,
+                ],
+                'medium-parcel' => [
+                    1000 => 600,
+                    2000 => 902,
+                    5000 => 1585,
+                    10000 => 2190,
+                    20000 => 3340,
+                ],
+            ],
+        ];
+
+        $boxes = [
+            'letter' => [
+                'length' => 240,
+                'width' => 165,
+                'height' => 5,
+                'weight' => 100,
+            ],
+            'large-letter' => [
+                'length' => 353,
+                'width' => 250,
+                'height' => 25,
+                'weight' => 750,
+            ],
+            'small-parcel-wide' => [
+                'length' => 450,
+                'width' => 350,
+                'height' => 80,
+                'weight' => 2000,
+            ],
+            'small-parcel-deep' => [
+                'length' => 350,
+                'width' => 250,
+                'height' => 160,
+                'weight' => 2000,
+            ],
+            'small-parcel-bigger' => [
+                'length' => 450,
+                'width' => 350,
+                'height' => 160,
+                'weight' => 2000,
+            ],
+            'medium-parcel' => [
+                'length' => 610,
+                'width' => 460,
+                'height' => 460,
+                'weight' => 20000,
+            ],
+        ];
+
+        $boxPricing = self::getBoxPricing($boxes, $bands, 50);
 
         $signedForCost = self::getValueForYear([
             '2019' => 120,
@@ -178,7 +296,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    public static function getSecondClassRates($country)
+    protected static function getSecondClassRates($country)
     {
         $zone = self::getZone($country);
 
@@ -258,10 +376,10 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        return self::getBoxPricing($boxes, $bands, 20);
     }
 
-    public static function getSecondClassSignedRates($country)
+    protected static function getSecondClassSignedRates($country)
     {
         $zone = self::getZone($country);
 
@@ -269,7 +387,79 @@ class RoyalMailRates
             return [];
         }
 
-        $boxPricing = self::getSecondClassRates($country);
+        $bands = [
+            '2021' => [
+                'letter' => [
+                    100 => 66,
+                ],
+                'large-letter' => [
+                    100 => 96,
+                    250 => 153,
+                    500 => 199,
+                    750 => 270,
+                ],
+                'small-parcel-wide' => [
+                    1000 => 320,
+                    2000 => 320,
+                ],
+                'small-parcel-deep' => [
+                    1000 => 320,
+                    2000 => 320,
+                ],
+                'small-parcel-bigger' => [
+                    1000 => 320,
+                    2000 => 320,
+                ],
+                'medium-parcel' => [
+                    1000 => 530,
+                    2000 => 530,
+                    5000 => 899,
+                    10000 => 2025,
+                    20000 => 2855,
+                ],
+            ],
+        ];
+
+        $boxes = [
+            'letter' => [
+                'length' => 240,
+                'width' => 165,
+                'height' => 5,
+                'weight' => 100,
+            ],
+            'large-letter' => [
+                'length' => 353,
+                'width' => 250,
+                'height' => 25,
+                'weight' => 750,
+            ],
+            'small-parcel-wide' => [
+                'length' => 450,
+                'width' => 350,
+                'height' => 80,
+                'weight' => 2000,
+            ],
+            'small-parcel-deep' => [
+                'length' => 350,
+                'width' => 250,
+                'height' => 160,
+                'weight' => 2000,
+            ],
+            'small-parcel-bigger' => [
+                'length' => 450,
+                'width' => 350,
+                'height' => 160,
+                'weight' => 2000,
+            ],
+            'medium-parcel' => [
+                'length' => 610,
+                'width' => 460,
+                'height' => 460,
+                'weight' => 20000,
+            ],
+        ];
+
+        $boxPricing = self::getBoxPricing($boxes, $bands, 50);
 
         $signedForCost = self::getValueForYear([
             '2019' => 120,
@@ -296,7 +486,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    public static function getSpecialDelivery9amRates($country)
+    protected static function getSpecialDelivery9amRates($country)
     {
         $zone = self::getZone($country);
 
@@ -358,10 +548,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getSpecialDelivery1pmRates($country)
+    protected static function getSpecialDelivery1pmRates($country)
     {
         $zone = self::getZone($country);
 
@@ -422,7 +619,7 @@ class RoyalMailRates
         return self::getBoxPricing($boxes, $bands);
     }
 
-    public static function getParcelforceExpress9Rates($country)
+    protected static function getParcelforceExpress9Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -453,10 +650,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getParcelforceExpress10Rates($country)
+    protected static function getParcelforceExpress10Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -487,10 +691,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getParcelforceExpressAmRates($country)
+    protected static function getParcelforceExpressAmRates($country)
     {
         $zone = self::getZone($country);
 
@@ -521,10 +732,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getParcelforceExpress24Rates($country)
+    protected static function getParcelforceExpress24Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -555,10 +773,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getParcelforceExpress48Rates($country)
+    protected static function getParcelforceExpress48Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -589,10 +814,17 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        $boxPricing = self::getBoxPricing($boxes, $bands);
+
+        foreach ($boxPricing as $key => $box) {
+            // 20% VAT
+            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+        }
+
+        return $boxPricing;
     }
 
-    public static function getTracked24Rates($country)
+    protected static function getTracked24Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -660,10 +892,10 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        return self::getBoxPricing($boxes, $bands, 100);
     }
 
-    public static function getTracked48Rates($country)
+    protected static function getTracked48Rates($country)
     {
         $zone = self::getZone($country);
 
@@ -731,11 +963,11 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getBoxPricing($boxes, $bands);
+        return self::getBoxPricing($boxes, $bands, 100);
     }
 
 
-    public static function getInternationalStandardRates($country)
+    protected static function getInternationalStandardRates($country)
     {
         $zone = self::getZone($country);
 
@@ -791,43 +1023,10 @@ class RoyalMailRates
             ],
         ];
 
-        $boxes = [
-            'letter' => [
-                'length' => 240,
-                'width' => 165,
-                'height' => 5,
-                'weight' => 100,
-            ],
-            'large-letter' => [
-                'length' => 353,
-                'width' => 250,
-                'height' => 25,
-                'weight' => 750,
-            ],
-            'long-parcel' => [
-                'length' => 600,
-                'width' => 150,
-                'height' => 150,
-                'weight' => 2000,
-            ],
-            'square-parcel' => [
-                'length' => 300,
-                'width' => 300,
-                'height' => 300,
-                'weight' => 2000,
-            ],
-            'parcel' => [
-                'length' => 450,
-                'width' => 225,
-                'height' => 225,
-                'weight' => 2000,
-            ],
-        ];
-
-        return self::getInternationalBoxPricing($boxes, $bands, $country);
+        return self::getInternationalBoxPricing($bands, $country, 20);
     }
 
-    public static function getInternationalTrackedSignedRates($country)
+    protected static function getInternationalTrackedSignedRates($country)
     {
         $zone = self::getZone($country);
 
@@ -889,43 +1088,10 @@ class RoyalMailRates
             ],
         ];
 
-        $boxes = [
-            'letter' => [
-                'length' => 240,
-                'width' => 165,
-                'height' => 5,
-                'weight' => 100,
-            ],
-            'large-letter' => [
-                'length' => 353,
-                'width' => 250,
-                'height' => 25,
-                'weight' => 750,
-            ],
-            'long-parcel' => [
-                'length' => 600,
-                'width' => 150,
-                'height' => 150,
-                'weight' => 2000,
-            ],
-            'square-parcel' => [
-                'length' => 300,
-                'width' => 300,
-                'height' => 300,
-                'weight' => 2000,
-            ],
-            'parcel' => [
-                'length' => 450,
-                'width' => 225,
-                'height' => 225,
-                'weight' => 2000,
-            ],
-        ];
-
-        return self::getInternationalBoxPricing($boxes, $bands, $country);
+        return self::getInternationalBoxPricing($bands, $country);
     }
 
-    public static function getInternationalTrackedRates($country)
+    protected static function getInternationalTrackedRates($country)
     {
         $zone = self::getZone($country);
 
@@ -987,43 +1153,10 @@ class RoyalMailRates
             ],
         ];
 
-        $boxes = [
-            'letter' => [
-                'length' => 240,
-                'width' => 165,
-                'height' => 5,
-                'weight' => 100,
-            ],
-            'large-letter' => [
-                'length' => 353,
-                'width' => 250,
-                'height' => 25,
-                'weight' => 750,
-            ],
-            'long-parcel' => [
-                'length' => 600,
-                'width' => 150,
-                'height' => 150,
-                'weight' => 2000,
-            ],
-            'square-parcel' => [
-                'length' => 300,
-                'width' => 300,
-                'height' => 300,
-                'weight' => 2000,
-            ],
-            'parcel' => [
-                'length' => 450,
-                'width' => 225,
-                'height' => 225,
-                'weight' => 2000,
-            ],
-        ];
-
-        return self::getInternationalBoxPricing($boxes, $bands, $country);
+        return self::getInternationalBoxPricing($bands, $country);
     }
 
-    public static function getInternationalSignedRates($country)
+    protected static function getInternationalSignedRates($country)
     {
         $zone = self::getZone($country);
 
@@ -1085,43 +1218,10 @@ class RoyalMailRates
             ],
         ];
 
-        $boxes = [
-            'letter' => [
-                'length' => 240,
-                'width' => 165,
-                'height' => 5,
-                'weight' => 100,
-            ],
-            'large-letter' => [
-                'length' => 353,
-                'width' => 250,
-                'height' => 25,
-                'weight' => 750,
-            ],
-            'long-parcel' => [
-                'length' => 600,
-                'width' => 150,
-                'height' => 150,
-                'weight' => 2000,
-            ],
-            'square-parcel' => [
-                'length' => 300,
-                'width' => 300,
-                'height' => 300,
-                'weight' => 2000,
-            ],
-            'parcel' => [
-                'length' => 450,
-                'width' => 225,
-                'height' => 225,
-                'weight' => 2000,
-            ],
-        ];
-
-        return self::getInternationalBoxPricing($boxes, $bands, $country);
+        return self::getInternationalBoxPricing($bands, $country);
     }
 
-    public static function getInternationalEconomyRates($country)
+    protected static function getInternationalEconomyRates($country)
     {
         $zone = self::getZone($country);
 
@@ -1156,43 +1256,10 @@ class RoyalMailRates
             ],
         ];
 
-        $boxes = [
-            'letter' => [
-                'length' => 240,
-                'width' => 165,
-                'height' => 5,
-                'weight' => 100,
-            ],
-            'large-letter' => [
-                'length' => 353,
-                'width' => 250,
-                'height' => 25,
-                'weight' => 750,
-            ],
-            'long-parcel' => [
-                'length' => 600,
-                'width' => 150,
-                'height' => 150,
-                'weight' => 500,
-            ],
-            'square-parcel' => [
-                'length' => 300,
-                'width' => 300,
-                'height' => 300,
-                'weight' => 500,
-            ],
-            'parcel' => [
-                'length' => 450,
-                'width' => 225,
-                'height' => 225,
-                'weight' => 500,
-            ],
-        ];
-
-        return self::getBoxPricing($boxes, $bands);
+        return self::getBoxPricing(self::$internationalDefaultBox, $bands, 20);
     }
 
-    public static function getParcelforceIrelandexpressRates($country)
+    protected static function getParcelforceIrelandexpressRates($country)
     {
         $zone = self::getZone($country);
 
@@ -1267,10 +1334,13 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 200,
+            'maximumTotalCover' => 2500,
+        ]);
     }
 
-    public static function getParcelforceEuropriorityRates($country)
+    protected static function getParcelforceEuropriorityRates($country)
     {
         $zone = self::getZone($country);
 
@@ -1655,10 +1725,13 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 100,
+            'maximumTotalCover' => 2500,
+        ]);
     }
 
-    public static function getParcelforceGlobaleconomyRates($country)
+    protected static function getParcelforceGlobaleconomyRates($country)
     {
         $zone = self::getZone($country);
 
@@ -2043,10 +2116,13 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 0,
+            'maximumTotalCover' => 0,
+        ]);
     }
 
-    public static function getParcelforceGlobalexpressRates($country)
+    protected static function getParcelforceGlobalexpressRates($country)
     {
         $zone = self::getZone($country);
 
@@ -2679,10 +2755,13 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 200,
+            'maximumTotalCover' => 2500,
+        ]);
     }
 
-    public static function getParcelforceGlobalpriorityRates($country)
+    protected static function getParcelforceGlobalpriorityRates($country)
     {
         $zone = self::getZone($country);
 
@@ -2943,10 +3022,13 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 100,
+            'maximumTotalCover' => 2500,
+        ]);
     }
 
-    public static function getParcelforceGlobalvalueRates($country)
+    protected static function getParcelforceGlobalvalueRates($country)
     {
         $zone = self::getZone($country);
 
@@ -3145,7 +3227,10 @@ class RoyalMailRates
             ],
         ];
 
-        return self::getParcelforceBoxPricing($bands, $country);
+        return self::getParcelforceBoxPricing($bands, $country, [
+            'maximumInclusiveCompensation' => 100,
+            'maximumTotalCover' => 500,
+        ]);
     }
 
 
@@ -3173,7 +3258,7 @@ class RoyalMailRates
     {
         if (in_array($country, ['JE', 'GG', 'IM'])) {
             return '4';
-        } else if ('IR' === $country) {
+        } else if ('IE' === $country) {
             return '5';
         } else if (in_array($country, ['BE', 'NL', 'LU'])) {
             return '6';
@@ -3181,8 +3266,10 @@ class RoyalMailRates
             return '7';
         } else if (in_array($country, ['IT', 'ES', 'PT', 'GR'])) {
             return '8';
-        } else if (in_array($country, self::$europe)) {
+        } else if (in_array($country, self::$euro)) {
             return '9';
+        } else if (in_array($country, self::$europeNonEu)) {
+            return '9_NON_EU';
         } else if (in_array($country, ['US', 'CA'])) {
             return '10';
         } else if (in_array($country, self::$farEast)) {
@@ -3224,7 +3311,7 @@ class RoyalMailRates
         return $value;
     }
 
-    private static function getBoxPricing($boxes, $bands)
+    private static function getBoxPricing($boxes, $bands, $maxCompensation = 0)
     {
         // Get the pricing as applicable
         $pricingBand = self::getValueForYear($bands);
@@ -3233,7 +3320,7 @@ class RoyalMailRates
 
         // Get pricing for this year and for each box
         foreach ($boxes as $key => $box) {
-            $prices = $pricingBand[$key] ?? [];
+            $prices = $pricingBand[$key] ?? $pricingBand['packet'] ?? [];
 
             // For ease-of-use, create multiple boxes for each weight
             foreach ($prices as $weight => $price) {
@@ -3242,6 +3329,13 @@ class RoyalMailRates
                 $newBox['weight'] = $weight;
                 $newBox['price'] = $price;
 
+                // Check for max compensation
+                if (self::$checkCompensation && $maxCompensation) {
+                    if ($price > $maxCompensation) {
+                        continue;
+                    }
+                }
+
                 $boxesWithPricing[$newKey] = $newBox;
             }
         }
@@ -3249,25 +3343,26 @@ class RoyalMailRates
         return $boxesWithPricing;
     }
 
-    private static function getInternationalBoxPricing($boxes, $bands, $country)
+    private static function getInternationalBoxPricing($bands, $country, $maxCompensation = 0)
     {
+        $boxes = self::$internationalDefaultBox;
+
         // Prices will be in international format, so grab the right one.
         // Europe, Zone 1, Zone 2, Zone 3 (previously Zone 1)
-        $boxPricing = self::getBoxPricing($boxes, $bands);
-
+        $boxPricing = self::getBoxPricing($boxes, $bands, $maxCompensation);
         $zone = self::getZone($country);
 
         foreach ($boxPricing as $key => &$box) {
-            if ($zone === 'EU') {
+            if ($zone === 'EU' || $zone === 'EUR') {
                 $box['price'] = $box['price'][0];
-            } else if ($zone === 'EUR') {
-                $box['price'] = $box['price'][1];
             } else if ($zone === '1') {
-                $box['price'] = $box['price'][2];
+                $box['price'] = $box['price'][1];
             } else if ($zone === '2') {
-                $box['price'] = $box['price'][3] ?? $box['price'][2];
+                // Fallback to zone 1 for older prices.
+                $box['price'] = $box['price'][2] ?? $box['price'][1];
             } else if ($zone === '3') {
-                $box['price'] = $box['price'][4] ?? $box['price'][2];
+                // Fallback to zone 1 for older prices.
+                $box['price'] = $box['price'][3] ?? $box['price'][1];
             } else {
                 // No price for this country
                 unset($boxPricing[$key]);
@@ -3277,32 +3372,93 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    private static function getParcelforceBoxPricing($bands, $country)
+    private static function getParcelforceBoxPricing($bands, $country, $options = [])
     {
+        $boxesWithPricing = [];
+        $maximumTotalCover = $options['maximumTotalCover'] ?? 0;
+        $maximumInclusiveCompensation = $options['maximumInclusiveCompensation'] ?? 0;
+
         $zone = self::getParcelforceZone($country);
-        
+
         // Get the pricing as applicable
         $pricingBand = self::getValueForYear($bands);
 
         // Get the pricing band for the zone
         $pricing = $pricingBand[$zone] ?? [];
 
-        $boxesWithPricing = [];
+        if (!$pricing) {
+            return [];
+        }
 
-        foreach ($pricing as $weight => $price) {
-            // There are no boxes, so make some large-ish ones. It's weight-based
-            $key = 'Weighted-Box-' . $weight;
+        $totalActualWeight = 0;
+        $totalVolumetricWeight = 0;
+        $totalValuedItems = self::$order->itemSubtotal;
 
-            $boxesWithPricing[$key] = [
-                'length' => 1000,
-                'width' => 1000,
-                'height' => 1000,
-                'weight' => $weight,
-                'price' => $price,
-            ];
+        foreach (self::$order->lineItems as $item) {
+            for ($i = 0; $i < $item->qty; $i++) {
+                $totalActualWeight += $item->weight;
+                $totalVolumetricWeight += self::getVolumetricWeight($item->length, $item->width, $item->height);
+            }
+        }
+
+        $chargeableWeight = ($totalActualWeight > $totalVolumetricWeight) ? $totalActualWeight : $totalVolumetricWeight;
+
+        foreach ($pricing as $maxWeight => $price) {
+            if ($chargeableWeight <= $maxWeight) {
+                // Don't return the quote if valued items is greater than maximum total
+                // cover of the service.
+                if ($maximumTotalCover > 0 && $totalValuedItems > $maximumTotalCover) {
+                    return [];
+                }
+
+                // Additional compensation cost.
+                $price += self::getAdditionalCompensationCost($totalValuedItems, $maximumInclusiveCompensation);
+
+                // Rate includes VAT.
+                $price = $price / 1.2;
+
+                // There are no boxes, so make some large-ish ones. It's weight-based
+                $key = 'Weighted-Box-' . $maxWeight;
+
+                $boxesWithPricing[$key] = [
+                    'length' => 1000,
+                    'width' => 1000,
+                    'height' => 1000,
+                    'weight' => $maxWeight,
+                    'price' => $price,
+                ];
+            }
         }
 
         return $boxesWithPricing;
+    }
+
+    private static function getVolumetricWeight($l, $w, $h) {
+        return ($l * $w * $h) / 5000;
+    }
+
+    private static function getAdditionalCompensationCost($valuedItem, $maximumInclusiveCompensation)
+    {
+        // No compensation included for globaleconomy service and if it's under
+        // max. inc. compensation there's no extra cost.
+        if (!$maximumInclusiveCompensation || $valuedItem <= $maximumInclusiveCompensation) {
+            return 0;
+        }
+
+        // £1.80 including VAT for the first extra £100 cover. The additional
+        // cost is in pence since it will be added before converting back to £.
+        $cost = 180;
+        $extra = ($valuedItem - $maximumInclusiveCompensation) - 100;
+
+        if (0 >= $extra) {
+            return $cost;
+        }
+
+        // £4.50 including VAT for every subsequent £100. The additional cost
+        // is in pence since it will be added before converting back to £.
+        $cost += ceil($extra / 100) * 450;
+
+        return $cost;
     }
 
 }
