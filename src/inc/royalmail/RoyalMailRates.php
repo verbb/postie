@@ -584,7 +584,7 @@ class RoyalMailRates
                     10000 => 2775,
                     20000 => 4235,
                 ],
-                'packet-more' => [
+                'packet-2500' => [
                     100 => 985,
                     500 => 1065,
                     1000 => 1195,
@@ -601,18 +601,21 @@ class RoyalMailRates
                 'width' => 460,
                 'height' => 460,
                 'weight' => 20000,
+                'itemValue' => 500,
             ],
             'packet-1000' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 20000,
+                'itemValue' => 1000,
             ],
-            'packet-more' => [
+            'packet-2500' => [
                 'length' => 610,
                 'width' => 460,
                 'height' => 460,
                 'weight' => 20000,
+                'itemValue' => 2500,
             ],
         ];
 
@@ -647,6 +650,7 @@ class RoyalMailRates
                 'width' => 750,
                 'height' => 750,
                 'weight' => 30000,
+                'itemValue' => 500,
             ],
         ];
 
