@@ -9,6 +9,7 @@ use verbb\postie\models\PackedBoxes;
 use Craft;
 use craft\commerce\elements\Order;
 
+use DVDoug\BoxPacker\BoxList;
 use DVDoug\BoxPacker\InfalliblePacker;
 
 class StaticProvider extends Provider
@@ -28,12 +29,19 @@ class StaticProvider extends Provider
 
     public function getPackagesAndRates($rateAndBoxes, $serviceHandle, $order)
     {
+        $boxes = [];
+
         // We need to return the best-fitting box (including price) for each rate.
         $packer = new InfalliblePacker();
 
+        // Ensure we sort boxes now by price. Could maybe be done in a custom BoxList?
+        uasort($rateAndBoxes, function($a, $b) {
+            return $a['price'] <=> $b['price'];
+        });
+
         // Create new boxes for each available box, storing the price for later
         foreach ($rateAndBoxes as $name => $boxInfo) {
-            $packer->addBox(new Box([
+            $boxes[] = new Box([
                 'reference' => $name,
                 'outerWidth' => $boxInfo['width'],
                 'outerLength' => $boxInfo['length'],
@@ -45,8 +53,18 @@ class StaticProvider extends Provider
                 'maxWeight' => $boxInfo['weight'],
                 'price' => $boxInfo['price'],
                 'maxItemValue' => $boxInfo['itemValue'] ?? null,
-            ]));
+            ]);
         }
+
+        // We need to use a custom BoxList to maintain our custom order of price-cheapest
+        // BoxPacker will by default just pick the smallest box first.
+        $boxList = new BoxList();
+
+        // Add boxes to the BoxList, retaining their order
+        $boxList = $boxList->fromArray($boxes, true);
+
+        // Add the BoxList to the packer, instead of each box (which would be easier)
+        $packer->setBoxes($boxList);
 
         // Prepare the boxes, which is a little stricter than usual if it can't be packed, then no rates
         $packedBoxes = $this->packOrderIntoBoxes($order, $packer)->getSerializedPackedBoxList();
