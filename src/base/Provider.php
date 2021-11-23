@@ -721,6 +721,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'length' => $dimensions['length'],
             'depth' => $dimensions['height'],
             'weight' => $dimensions['weight'],
+            'itemValue' => $lineItem->price,
             'keepFlat' => false,
         ]);
     }

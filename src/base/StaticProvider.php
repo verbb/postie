@@ -44,6 +44,7 @@ class StaticProvider extends Provider
                 'innerDepth' => $boxInfo['height'],
                 'maxWeight' => $boxInfo['weight'],
                 'price' => $boxInfo['price'],
+                'maxItemValue' => $boxInfo['itemValue'] ?? null,
             ]));
         }
 

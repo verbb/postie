@@ -13,6 +13,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
     private $length;
     private $depth;
     private $weight;
+    private $itemValue;
     private $keepFlat;
 
 
@@ -87,5 +88,15 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
     public function setKeepFlat($value)
     {
         $this->keepFlat = $value;
+    }
+
+    public function getItemValue()
+    {
+        return $this->itemValue;
+    }
+
+    public function setItemValue($value)
+    {
+        $this->itemValue = $value;
     }
 }
