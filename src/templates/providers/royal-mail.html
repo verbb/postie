@@ -9,3 +9,12 @@
     on: provider.settings.checkCompensation ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.checkCompensation', 'postie'),
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Include VAT' | t('postie'),
+    instructions: 'Whether to return rates with VAT included.' | t('postie'),
+    id: 'includeVat',
+    name: 'includeVat',
+    on: provider.settings.includeVat ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.includeVat', 'postie'),
+}) }}

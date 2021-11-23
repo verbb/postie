@@ -11,6 +11,7 @@ class RoyalMailRates
 
     public static $order;
     public static $checkCompensation = false;
+    public static $includeVat = false;
 
     private static $euro = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'];
 
@@ -75,6 +76,7 @@ class RoyalMailRates
 
         // Set some variables
         self::$checkCompensation = $provider->getSetting('checkCompensation');
+        self::$includeVat = $provider->getSetting('includeVat');
         self::$order = $order;
 
         // Get the function we should be using rates for
@@ -552,7 +554,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -658,7 +662,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -699,7 +705,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -740,7 +748,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -781,7 +791,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -822,7 +834,9 @@ class RoyalMailRates
 
         foreach ($boxPricing as $key => $box) {
             // 20% VAT
-            $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            if (!self::$includeVat) {
+                $boxPricing[$key]['price'] = $box['price'] / 1.2;
+            }
         }
 
         return $boxPricing;
@@ -3419,7 +3433,9 @@ class RoyalMailRates
                 $price += self::getAdditionalCompensationCost($totalValuedItems, $maximumInclusiveCompensation);
 
                 // Rate includes VAT.
-                $price = $price / 1.2;
+                if (!self::$includeVat) {
+                    $price = $price / 1.2;
+                }
 
                 // There are no boxes, so make some large-ish ones. It's weight-based
                 $key = 'Weighted-Box-' . $maxWeight;
