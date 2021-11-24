@@ -144,6 +144,11 @@ class Service extends Component
                     $shippingMethod->rate = $rate['amount'] ?? 0;
                     $shippingMethod->rateOptions = $rate['options'] ?? [];
 
+                    // Override the rate if this order matches a free-shipping order
+                    if ($this->applyFreeShipping($order)) {
+                        $shippingMethod->rate = 0;
+                    }
+
                     $shippingMethods[] = $shippingMethod;
 
                     // Save it to a local class cache
@@ -175,5 +180,27 @@ class Service extends Component
         foreach ($modifyShippingMethodsEvent->shippingMethods as $shippingMethod) {
             $event->shippingMethods[] = $shippingMethod;
         }
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function applyFreeShipping($order)
+    {
+        $settings = Postie::$plugin->getSettings();
+
+        if (!$settings->applyFreeShipping) {
+            return false;
+        }
+
+        $freeShippingItems = [];
+
+        foreach ($order->lineItems as $lineItem) {
+            $freeShippingItems[] = $lineItem->purchasable->hasFreeShipping();
+        }
+
+        // Are _all_ items in the array the same? Does every item have free shipping?
+        return (bool)array_product($freeShippingItems);
     }
 }

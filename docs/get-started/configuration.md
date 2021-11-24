@@ -23,6 +23,7 @@ return [
 
 - `pluginName` - If you wish to customise the plugin name.
 - `hasCpSection` - Whether to have the plugin pages appear on the main CP sidebar menu.
+- `applyFreeShipping` - Whether to apply free shipping if all items in the cart have been marked with "Free Shipping".
 - `enableCaching` - Whether to enable intelligent caching when fetching rates.
 - `displayDebug` - Whether to display debugging when fetching rates.
 - `displayErrors` - Whether to display errors when fetching rates.

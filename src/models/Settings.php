@@ -14,6 +14,7 @@ class Settings extends Model
 
     public $pluginName = 'Postie';
     public $hasCpSection = false;
+    public $applyFreeShipping = false;
     public $enableCaching = true;
     public $displayDebug = false;
     public $displayErrors = false;

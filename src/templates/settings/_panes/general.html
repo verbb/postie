@@ -22,6 +22,16 @@
     warning: macros.configWarning('hasCpSection', 'postie'),
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Apply Free Shipping' | t('postie'),
+    instructions: 'Whether to apply free shipping if all items in the cart have been marked with "Free Shipping".' | t('postie'),
+    id: 'applyFreeShipping',
+    name: 'applyFreeShipping',
+    on: settings.applyFreeShipping,
+    errors: settings.getErrors('applyFreeShipping'),
+    warning: macros.configWarning('applyFreeShipping', 'postie'),
+}) }}
+
 <hr>
 
 <h2>{{ 'Store Location' | t('commerce') }}</h2>
