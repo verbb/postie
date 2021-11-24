@@ -23,6 +23,7 @@ class RoyalMail extends StaticProvider
     public $weightUnit = 'g';
     public $dimensionUnit = 'mm';
     public $checkCompensation;
+    public $includeVat;
 
 
     // Public Methods
