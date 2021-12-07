@@ -356,8 +356,8 @@ class AustraliaPost extends SinglePackageProvider
                 ]);
             }
 
-            if (isset($response['services']['service'])) {
-                foreach ($response['services']['service'] as $service) {
+            if (isset($response['services'])) {
+                foreach ($response['services'] as $service) {
                     // Update our overall rates, set the cache, etc
                     $this->setRate($packedBox, [
                         'key' => $service['code'],
