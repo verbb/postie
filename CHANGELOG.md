@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.4.14 - 2021-12-08
+
+### Added
+- Add "Apply Free Shipping" plugin setting to apply free shipping on returned rates, if all items have free shipping set.
+- Add "Include VAT" setting for Royal Mail.
+- Add `itemValue` to boxes for packing constraints.
+
+### Changed
+- Update Royal Mail pricing for 2021.
+
+### Fixed
+- Fix Australia Post not returning international rates.
+- Ensure markup rates are only applied if the shipping rate is greater than zero.
+- Fix static providers not always returning the cheapest box available when box-packing.
+- Fix Bring provider link.
+
 ## 2.4.12 - 2021-11-21
 
 ### Fixed
