@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.4.14 - 2021-12-08
+## 2.4.13 - 2021-12-08
 
 ### Added
 - Add "Apply Free Shipping" plugin setting to apply free shipping on returned rates, if all items have free shipping set.
