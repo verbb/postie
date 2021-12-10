@@ -5,9 +5,11 @@ use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
+use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -100,6 +102,72 @@ class UPS extends Provider
         }
 
         return $options;
+    }
+
+    public function getFreightPackingTypeOptions()
+    {
+        return [
+            'BAG' => 'Bag',
+            'BAL' => 'Bale',
+            'BAR' => 'Barrel',
+            'BDL' => 'Bundle',
+            'BIN' => 'Bin',
+            'BOX' => 'Box',
+            'BSK' => 'Basket',
+            'BUN' => 'Bunch',
+            'CAB' => 'Cabinet',
+            'CAN' => 'Can',
+            'CAR' => 'Carrier',
+            'CAS' => 'Case',
+            'CBY' => 'CarBoy',
+            'CON' => 'Container',
+            'CRT' => 'Crate',
+            'CSK' => 'Cask',
+            'CTN' => 'Carton',
+            'CYL' => 'Cylinder',
+            'DRM' => 'Drum',
+            'LOO' => 'Loose',
+            'OTH' => 'Other',
+            'PAL' => 'Pail',
+            'PCS' => 'Pieces',
+            'PKG' => 'Package',
+            'PLN' => 'Pipe Line',
+            'PLT' => 'Pallet',
+            'RCK' => 'Rack',
+            'REL' => 'Reel',
+            'ROL' => 'Roll',
+            'SKD' => 'Skid',
+            'SPL' => 'Spool',
+            'TBE' => 'Tube',
+            'TNK' => 'Tank',
+            'UNT' => 'Unit',
+            'VPK' => 'Van Pack',
+            'WRP' => 'Wrapped',
+        ];
+    }
+
+    public function getFreightClassOptions()
+    {
+        return [
+            '50' => '50',
+            '55' => '55',
+            '60' => '60',
+            '65' => '65',
+            '70' => '70',
+            '77.5' => '77.5',
+            '85' => '85',
+            '92.5' => '92.5',
+            '100' => '100',
+            '110' => '110',
+            '125' => '125',
+            '150' => '150',
+            '175' => '175',
+            '200' => '200',
+            '250' => '250',
+            '300' => '300',
+            '400' => '400',
+            '500' => '500',
+        ];
     }
 
     public function getServiceList(): array
@@ -310,6 +378,18 @@ class UPS extends Provider
         //
         // TESTING
         //
+
+
+
+        // Check for using freight, we have to roll our own solution as `gabrielbull/php-ups-api`
+        // doesn't support LTL rates. One of the reasons TODO our own client libraries.
+        if ($this->getSetting('enableFreight')) {
+            foreach ($packedBoxes as $packedBox) {
+                return $this->fetchFreightRates($storeLocation, $packedBox, $order);
+            }
+
+            return;
+        }
 
         try {
             $shipment = new Shipment();
@@ -565,6 +645,160 @@ class UPS extends Provider
         }
 
         return true;
+    }
+
+    public function fetchFreightRates($storeLocation, $packedBox, $order)
+    {
+        try {
+            $accountNumber = $this->getSetting('accountNumber');
+            $freightClass = $this->getSetting('freightClass');
+            $freightPackingType = $this->getSetting('freightPackingType');
+
+            // UPS Freight LTL
+            $freightService = '308';
+
+            $shipFrom = [];
+            $shipFrom['Name'] = $this->getSetting('freightShipperName');
+            $shipFrom['EMailAddress'] = $this->getSetting('freightShipperEmail');
+            $shipFrom['Address']['AddressLine'] = $storeLocation->address1;
+            $shipFrom['Address']['City'] = $storeLocation->city;
+            $shipFrom['Address']['PostalCode'] = $storeLocation->zipCode;
+
+            // UPS can't handle 3-character states. Ignoring it is valid for international order
+            // But states are also required for US and Canada
+            $allowedZipCodeCountries = ['US', 'CA'];
+
+            if ($storeLocation->country) {
+                $shipFrom['Address']['CountryCode'] = $storeLocation->country->iso;
+                
+                if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
+                    $state = $storeLocation->state->abbreviation ?? '';
+
+                    $shipFrom['Address']['StateProvinceCode'] = $state;
+                }
+            }
+
+            $shipTo = [];
+            $shipTo['Address']['City'] = $order->shippingAddress->city;
+            $shipTo['Address']['PostalCode'] = $order->shippingAddress->zipCode;
+
+            if ($order->shippingAddress->country) {
+                $shipTo['Address']['CountryCode'] = $order->shippingAddress->country->iso;
+
+                if (in_array($order->shippingAddress->country->iso, $allowedZipCodeCountries)) {
+                    $state = $order->shippingAddress->state->abbreviation ?? '';
+
+                    $shipTo['Address']['StateProvinceCode'] = $state;
+                }
+            }
+
+            $payload = [
+                'FreightRateRequest' => [
+                    'ShipperNumber' => $accountNumber,
+                    'ShipFrom' => $shipFrom,
+                    'ShipTo' => $shipTo,
+                    'PaymentInformation' => [
+                        'Payer' => array_merge($shipFrom, [
+                            'ShipperNumber' => $accountNumber,
+                        ]),
+                        'ShipmentBillingOption' => [
+                            'Code' => '10',
+                        ],
+                    ],
+                    'Service' => [
+                        'Code' => $freightService,
+                    ],
+                    'Commodity' => [
+                        'Description' => 'FRS-Freight',
+                        'Weight' =>  [
+                            'Value' => (string)$packedBox['weight'],
+                            'UnitOfMeasurement' => [
+                                'Code' => $this->_getUnitOfMeasurement('weight'),
+                            ],
+                        ],
+                        'Dimensions' => [
+                            'Length' => (string)$packedBox['length'],
+                            'Width' => (string)$packedBox['width'],
+                            'Height' => (string)$packedBox['height'],
+                            'UnitOfMeasurement' => [
+                                'Code' => $this->_getUnitOfMeasurement('dimension'),
+                            ],
+                        ],
+                        'FreightClass' => $freightClass,
+                        'NumberOfPieces' => '1',
+                        'PackagingType' => [
+                            'Code' => $freightPackingType,
+                        ],
+                    ],
+                    'AlternateRateOptions' => [
+                        'Code' => '3',
+                    ],
+                    'PickupRequest' => [
+                        'PickupDate' => date('Ymd'),
+                    ],
+                    'GFPOptions' => [
+                        'GPFAccesorialRateIndicator' => '',
+                    ],
+                    'TimeInTransitIndicator' => '',
+                ],
+            ];
+
+            if (Craft::$app->getConfig()->getGeneral()->devMode) {
+                $accessKey = $this->getSetting('testApiKey');
+                $endpoint = 'https://wwwcie.ups.com/ship/v1/freight/rating/ground';
+            } else {
+                $accessKey = $this->getSetting('apiKey');
+                $endpoint = 'https://onlinetools.ups.com/ship/v1/freight/rating/ground';
+            }
+
+            $client = Craft::createGuzzleClient([
+                'headers' => [
+                    'AccessLicenseNumber' => $accessKey,
+                    'content-type' => 'application/json',
+                    'password' => $this->getSetting('password'),
+                    'username' => $this->getSetting('username'),
+                ],
+            ]);
+
+            $response = $client->request('POST', $endpoint, ['json' => $payload]);
+            $json = Json::decode((string)$response->getBody());
+
+            $handle = 'freight-' . $freightClass;
+
+            $this->_rates[$handle] = [
+                'amount' => $json['FreightRateResponse']['TotalShipmentCharge']['MonetaryValue'] ?? '',
+            ];
+
+            // Allow rate modification via events
+            $modifyRatesEvent = new ModifyRatesEvent([
+                'rates' => $this->_rates,
+                'response' => $json,
+                'order' => $order,
+            ]);
+
+            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
+                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
+            }
+
+            $this->_rates = $modifyRatesEvent->rates;
+
+            // Because this isn't known in advanced, and only ever one rate, create the service dynamically
+            $shippingMethod = new ShippingMethod();
+            $shippingMethod->handle = $handle;
+            $shippingMethod->provider = $this;
+            $shippingMethod->name = 'UPS Freight LTL';
+            $shippingMethod->enabled = true;
+
+            $this->services[$handle] = $shippingMethod;
+        } catch (\Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
+        }
+
+        return $this->_rates;
     }
 
 

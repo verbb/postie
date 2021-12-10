@@ -119,3 +119,59 @@
     on: provider.settings.includeInsurance ?? false,
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.includeInsurance', 'postie'),
 }) }}
+
+{% set enableFreight = provider.settings.enableFreight ?? false %}
+
+{{ forms.lightswitchField({
+    label: 'Enable Freight' | t('postie'),
+    instructions: 'Whether to enable UPS Freight LTL Rates. The origin and destination for the shipment must be the US, along with the store currency set to USD.' | t('postie'),
+    id: 'enableFreight',
+    name: 'enableFreight',
+    on: enableFreight,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.enableFreight', 'postie'),
+    toggle: 'ups-freight',
+}) }}
+
+<div id="ups-freight" class="{{ not enableFreight ? 'hidden' }}">
+    {{ forms.selectField({
+        label: 'Freight Packing Type' | t('postie'),
+        instructions: 'Select the {name} Freight Packing Type.' | t('postie', { name: provider.displayName() }),
+        id: 'freightPackingType',
+        name: 'freightPackingType',
+        value: provider.settings.freightPackingType ?? '',
+        options: provider.getFreightPackingTypeOptions(),
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightPackingType', 'postie'),
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Freight Class' | t('postie'),
+        instructions: 'Select the {name} Freight Class.' | t('postie', { name: provider.displayName() }),
+        id: 'freightClass',
+        name: 'freightClass',
+        value: provider.settings.freightClass ?? '',
+        options: provider.getFreightClassOptions(),
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightClass', 'postie'),
+    }) }}
+
+    <h3>{{ 'Freight Shipper' | t('formie') }}</h3>
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Name' | t('postie'),
+        instructions: 'Enter your {name} Freight Name here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperName',
+        name: 'freightShipperName',
+        value: provider.settings.freightShipperName ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperName', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Email' | t('postie'),
+        instructions: 'Enter your {name} Freight Email here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperEmail',
+        name: 'freightShipperEmail',
+        value: provider.settings.freightShipperEmail ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperEmail', 'postie'),
+    }) }}
+</div>
