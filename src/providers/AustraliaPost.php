@@ -356,8 +356,16 @@ class AustraliaPost extends SinglePackageProvider
                 ]);
             }
 
-            if (isset($response['services'])) {
-                foreach ($response['services'] as $service) {
+            $services = $response['services']['service'] ?? [];
+
+            // The AusPost API doesn't normalise services returned. If only on serviec is returned, it won't be a multi-dimensional
+            // array, which really throws things off. So ensure we normalise services.
+            if (!isset($services[0])) {
+                $services = [$services];
+            }
+
+            if ($services) {
+                foreach ($services as $service) {
                     // Update our overall rates, set the cache, etc
                     $this->setRate($packedBox, [
                         'key' => $service['code'],
