@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.14 - 2021-12-11
+
+### Added
+- Add UPS Freight support.
+
+### Fixed
+- Fix Australia Post international rates (from 2.4.13).
+
 ## 2.4.13 - 2021-12-08
 
 ### Added
