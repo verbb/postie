@@ -45,6 +45,10 @@ class PluginController extends Controller
         }
 
         foreach ($event->query->all() as $variant) {
+            if (!$variant->product->type->hasDimensions) {
+                continue;
+            }
+
             if ($variant->width == 0 || $variant->height == 0 || $variant->length == 0 || $variant->weight == 0) {
                 $variants[] = $variant;
             }
