@@ -437,7 +437,7 @@ class UPS extends Provider
             foreach ($packedBoxes as $packedBox) {
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                $package->getPackageWeight()->setWeight($packedBox['weight']);
+                $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
 
                 if ($this->getSetting('requireSignature')) {
                     $deliveryConfirmation = new DeliveryConfirmation();
@@ -456,9 +456,9 @@ class UPS extends Provider
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
                 $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight($packedBox['height']);
-                $packageDimensions->setWidth($packedBox['width']);
-                $packageDimensions->setLength($packedBox['length']);
+                $packageDimensions->setHeight(round($packedBox['height'], 2));
+                $packageDimensions->setWidth(round($packedBox['width'], 2));
+                $packageDimensions->setLength(round($packedBox['length'], 2));
 
                 $unit = new UnitOfMeasurement;
                 $unit->setCode($this->_getUnitOfMeasurement('dimension'));
@@ -614,15 +614,15 @@ class UPS extends Provider
 
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-            $package->getPackageWeight()->setWeight($packedBox['weight']);
+            $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
             $weightUnit = new UnitOfMeasurement;
             $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
             $packageDimensions = new Dimensions();
-            $packageDimensions->setHeight($packedBox['height']);
-            $packageDimensions->setWidth($packedBox['width']);
-            $packageDimensions->setLength($packedBox['length']);
+            $packageDimensions->setHeight(round($packedBox['height'], 2));
+            $packageDimensions->setWidth(round($packedBox['width'], 2));
+            $packageDimensions->setLength(round($packedBox['length'], 2));
 
             $unit = new UnitOfMeasurement;
             $unit->setCode(UnitOfMeasurement::UOM_IN);
@@ -711,15 +711,15 @@ class UPS extends Provider
                     'Commodity' => [
                         'Description' => 'FRS-Freight',
                         'Weight' =>  [
-                            'Value' => (string)$packedBox['weight'],
+                            'Value' => round((string)$packedBox['weight'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('weight'),
                             ],
                         ],
                         'Dimensions' => [
-                            'Length' => (string)$packedBox['length'],
-                            'Width' => (string)$packedBox['width'],
-                            'Height' => (string)$packedBox['height'],
+                            'Length' => round((string)$packedBox['length'], 2),
+                            'Width' => round((string)$packedBox['width'], 2),
+                            'Height' => round((string)$packedBox['height'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('dimension'),
                             ],
