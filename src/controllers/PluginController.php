@@ -5,6 +5,7 @@ use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippableVariantsEvent;
 
 use Craft;
+use craft\helpers\Db;
 use craft\web\Controller;
 
 use craft\commerce\Plugin as Commerce;
@@ -33,7 +34,7 @@ class PluginController extends Controller
 
         $variants = [];
 
-        $query = Variant::find()->limit(20);
+        $query = Variant::find();
 
         // Allow plugins to modify the variant query
         $event = new ModifyShippableVariantsEvent([
@@ -44,7 +45,7 @@ class PluginController extends Controller
             $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
         }
 
-        foreach ($event->query->all() as $variant) {
+        foreach (Db::each($event->query) as $variant) {
             if (!$variant->product->type->hasDimensions) {
                 continue;
             }
