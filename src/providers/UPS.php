@@ -489,6 +489,8 @@ class UPS extends Provider
                 $shipper = $shipment->getShipper();
                 $shipper->setShipperNumber($accountNumber);
                 $shipment->setPaymentInformation(new PaymentInformation('prepaid', (object)['AccountNumber' => $accountNumber]));
+
+                $shipper->setAddress($shipFromAddress);
             }
 
             $rates = new RateResponse();
