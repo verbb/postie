@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.4.15 - 2021-12-31
+
+### Added
+- Add shipper address to UPS provider for negotiated rates.
+
+### Changed
+- Use query batching for product helper.
+- Ensure products helper only shows variants with dimensions enabled for their product type.
+
+### Fixed
+- Fix UPS throwing an error in some cases due to lack of rounding for dimensions and weight.
+
 ## 2.4.14 - 2021-12-11
 
 ### Added
