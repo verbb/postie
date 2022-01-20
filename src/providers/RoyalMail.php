@@ -109,8 +109,10 @@ class RoyalMail extends StaticProvider
         $allRates = [];
 
         foreach ($services as $handle => $label) {
+            $countryIso = $order->shippingAddress->country->iso ?? '';
+
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = RoyalMailRates::getRates($order->shippingAddress->country->iso, $handle, $this, $order);
+            $rateAndBoxes = RoyalMailRates::getRates($countryIso, $handle, $this, $order);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

@@ -83,8 +83,10 @@ class PostNL extends StaticProvider
         $allRates = [];
 
         foreach ($services as $handle => $label) {
+            $countryIso = $order->shippingAddress->country->iso ?? '';
+
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = PostNLRates::getRates($order->shippingAddress->country->iso, $handle);
+            $rateAndBoxes = PostNLRates::getRates($countryIso, $handle);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

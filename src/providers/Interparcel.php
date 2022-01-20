@@ -66,16 +66,16 @@ class Interparcel extends Provider
 
             $payload = [
                 'collection' => [
-                    'city' => $storeLocation->city,
-                    'postcode' => $storeLocation->zipCode,
-                    'state' => $storeLocation->state->abbreviation,
-                    'country' => $storeLocation->country->iso,
+                    'city' => $storeLocation->city ?? '',
+                    'postcode' => $storeLocation->zipCode ?? '',
+                    'state' => $storeLocation->state->abbreviation ?? '',
+                    'country' => $storeLocation->country->iso ?? '',
                 ],
                 'delivery' => [
-                    'city' => $order->shippingAddress->city,
-                    'postcode' => $order->shippingAddress->zipCode,
-                    'state' => $order->shippingAddress->state->abbreviation,
-                    'country' => $order->shippingAddress->country->iso,
+                    'city' => $order->shippingAddress->city ?? '',
+                    'postcode' => $order->shippingAddress->zipCode ?? '',
+                    'state' => $order->shippingAddress->state->abbreviation ?? '',
+                    'country' => $order->shippingAddress->country->iso ?? '',
                 ],
                 'parcels' => [],
             ];
@@ -174,16 +174,16 @@ class Interparcel extends Provider
             // Create a test payload
             $payload = [
                 'collection' => [
-                    'city' => $sender->city,
-                    'postcode' => $sender->zipCode,
-                    'state' => $sender->state->abbreviation,
-                    'country' => $sender->country->iso,
+                    'city' => $sender->city ?? '',
+                    'postcode' => $sender->zipCode ?? '',
+                    'state' => $sender->state->abbreviation ?? '',
+                    'country' => $sender->country->iso ?? '',
                 ],
                 'delivery' => [
-                    'city' => $recipient->city,
-                    'postcode' => $recipient->zipCode,
-                    'state' => $recipient->state->abbreviation,
-                    'country' => $recipient->country->iso,
+                    'city' => $recipient->city ?? '',
+                    'postcode' => $recipient->zipCode ?? '',
+                    'state' => $recipient->state->abbreviation ?? '',
+                    'country' => $recipient->country->iso ?? '',
                 ],
                 'parcels' => [
                     [

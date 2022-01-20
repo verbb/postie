@@ -302,8 +302,9 @@ class AustraliaPost extends SinglePackageProvider
             $response = [];
 
             $type = $packedBox['type'] ?? '';
+            $countryIso = $order->shippingAddress->country->iso ?? '';
 
-            if ($order->shippingAddress->country->iso === 'AU') {
+            if ($countryIso === 'AU') {
                 Provider::log($this, 'Domestic API call');
 
                 $payload = [

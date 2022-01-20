@@ -345,18 +345,20 @@ class FedEx extends Provider
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
         if ($storeLocation->country) {
-            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $storeLocation->country->iso;
+            $countryIso = $storeLocation->country->iso ?? '';
+            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $countryIso;
 
-            if ($storeLocation->country->iso == 'US' || $storeLocation->country->iso == 'CA') {
+            if ($countryIso == 'US' || $countryIso == 'CA') {
                 $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
             }
         }
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
         if ($order->shippingAddress->country) {
-            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $order->shippingAddress->country->iso;
+            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryIso;
             
-            if ($order->shippingAddress->country->iso == 'US' || $order->shippingAddress->country->iso == 'CA') {
+            if ($countryIso == 'US' || $countryIso == 'CA') {
                 $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
             }
         }

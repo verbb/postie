@@ -98,10 +98,10 @@ class Bring extends Provider
             $response = [];
 
             $payload = [
-                'frompostalcode' => $storeLocation->zipCode,
-                'fromcountry' => $storeLocation->country->iso,
-                'topostalcode' => $order->shippingAddress->zipCode,
-                'tocountry' => $order->shippingAddress->country->iso,
+                'frompostalcode' => $storeLocation->zipCode ?? '',
+                'fromcountry' => $storeLocation->country->iso ?? '',
+                'topostalcode' => $order->shippingAddress->zipCode ?? '',
+                'tocountry' => $order->shippingAddress->country->iso ?? '',
                 'postingatpostoffice' => 'false',
                 'weight' => $packedBoxes->getTotalWeight(),
 
@@ -194,10 +194,10 @@ class Bring extends Provider
 
             // Create a test payload
             $payload = [
-                'frompostalcode' => $sender->zipCode,
-                'fromcountry' => $sender->country->iso,
-                'topostalcode' => $recipient->zipCode,
-                'tocountry' => $recipient->country->iso,
+                'frompostalcode' => $sender->zipCode ?? '',
+                'fromcountry' => $sender->country->iso ?? '',
+                'topostalcode' => $recipient->zipCode ?? '',
+                'tocountry' => $recipient->country->iso ?? '',
                 'postingatpostoffice' => 'false',
                 'weight' => $packedBox['weight'],
                 'postingatpostoffice' => 'false',

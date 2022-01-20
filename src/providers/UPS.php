@@ -402,9 +402,10 @@ class UPS extends Provider
             $allowedZipCodeCountries = ['US', 'CA'];
 
             if ($storeLocation->country) {
-                $shipFromAddress->setCountryCode($storeLocation->country->iso);
+                $countryIso = $storeLocation->country->iso ?? '';
+                $shipFromAddress->setCountryCode($countryIso);
                 
-                if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
+                if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
                     $shipFromAddress->setStateProvinceCode($state);
@@ -425,9 +426,10 @@ class UPS extends Provider
             }
 
             if ($order->shippingAddress->country) {
-                $shipToAddress->setCountryCode($order->shippingAddress->country->iso);
+                $countryIso = $order->shippingAddress->country->iso ?? '';
+                $shipToAddress->setCountryCode($countryIso);
 
-                if (in_array($order->shippingAddress->country->iso, $allowedZipCodeCountries)) {
+                if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $order->shippingAddress->state->abbreviation ?? '';
 
                     $shipToAddress->setStateProvinceCode($state);
@@ -671,9 +673,10 @@ class UPS extends Provider
             $allowedZipCodeCountries = ['US', 'CA'];
 
             if ($storeLocation->country) {
-                $shipFrom['Address']['CountryCode'] = $storeLocation->country->iso;
+                $countryIso = $storeLocation->country->iso ?? '';
+                $shipFrom['Address']['CountryCode'] = $countryIso;
                 
-                if (in_array($storeLocation->country->iso, $allowedZipCodeCountries)) {
+                if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
                     $shipFrom['Address']['StateProvinceCode'] = $state;
@@ -685,9 +688,10 @@ class UPS extends Provider
             $shipTo['Address']['PostalCode'] = $order->shippingAddress->zipCode;
 
             if ($order->shippingAddress->country) {
-                $shipTo['Address']['CountryCode'] = $order->shippingAddress->country->iso;
+                $countryIso = $order->shippingAddress->country->iso ?? '';
+                $shipTo['Address']['CountryCode'] = $countryIso;
 
-                if (in_array($order->shippingAddress->country->iso, $allowedZipCodeCountries)) {
+                if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $order->shippingAddress->state->abbreviation ?? '';
 
                     $shipTo['Address']['StateProvinceCode'] = $state;

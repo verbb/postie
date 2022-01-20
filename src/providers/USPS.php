@@ -184,7 +184,9 @@ class USPS extends Provider
         //
 
         try {
-            if ($order->shippingAddress->country->iso == 'US') {
+            $countryIso = $order->shippingAddress->country->iso ?? '';
+
+            if ($countryIso == 'US') {
                 Provider::log($this, 'Domestic rate service call');
 
                 foreach ($packedBoxes as $packedBox) {
@@ -263,7 +265,7 @@ class USPS extends Provider
             }
 
             // Responses will be different depending on domestic/international
-            if ($order->shippingAddress->country->iso == 'US') {
+            if ($countryIso == 'US') {
                 $packages = $response['RateV4Response']['Package'] ?? [];
             } else {
                 $packages = $response['IntlRateV2Response']['Package'] ?? [];

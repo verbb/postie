@@ -84,16 +84,18 @@ class NewZealandPost extends SinglePackageProvider
         try {
             $response = [];
 
-            if ($order->shippingAddress->country->iso == 'NZ') {
+            $countryIso = $order->shippingAddress->country->iso ?? '';
+
+            if ($countryIso == 'NZ') {
                 Provider::log($this, 'Domestic API call');
 
                 $payload = [
-                    'pickup_city' => $storeLocation->city,
-                    'pickup_postcode' => $storeLocation->zipCode,
-                    'pickup_country' => $storeLocation->country->iso,
-                    'delivery_city' => $order->shippingAddress->city,
-                    'delivery_postcode' => $order->shippingAddress->zipCode,
-                    'delivery_country' => $order->shippingAddress->country->iso,
+                    'pickup_city' => $storeLocation->city ?? '',
+                    'pickup_postcode' => $storeLocation->zipCode ?? '',
+                    'pickup_country' => $storeLocation->country->iso ?? '',
+                    'delivery_city' => $order->shippingAddress->city ?? '',
+                    'delivery_postcode' => $order->shippingAddress->zipCode ?? '',
+                    'delivery_country' => $order->shippingAddress->country->iso ?? '',
                     'envelope_size' => 'ALL',
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],
@@ -129,7 +131,7 @@ class NewZealandPost extends SinglePackageProvider
                 Provider::log($this, 'International API call');
 
                 $payload = [
-                    'country_code' => $order->shippingAddress->country->iso,
+                    'country_code' => $order->shippingAddress->country->iso ?? '',
                     'value' => (float)$order->total,
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],
@@ -200,12 +202,12 @@ class NewZealandPost extends SinglePackageProvider
 
             // Create a test payload
             $payload = [
-                'pickup_city' => $sender->city,
-                'pickup_postcode' => $sender->zipCode,
-                'pickup_country' => $sender->country->iso,
-                'delivery_city' => $recipient->city,
-                'delivery_postcode' => $recipient->zipCode,
-                'delivery_country' => $recipient->country->iso,
+                'pickup_city' => $sender->city ?? '',
+                'pickup_postcode' => $sender->zipCode ?? '',
+                'pickup_country' => $sender->country->iso ?? '',
+                'delivery_city' => $recipient->city ?? '',
+                'delivery_postcode' => $recipient->zipCode ?? '',
+                'delivery_country' => $recipient->country->iso ?? '',
                 'envelope_size' => 'ALL',
                 'weight' => $packedBox['weight'],
                 'length' => $packedBox['length'],

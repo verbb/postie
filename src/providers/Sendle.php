@@ -69,12 +69,12 @@ class Sendle extends SinglePackageProvider
             $response = [];
 
             $payload = [
-                'pickup_suburb' => $storeLocation->city,
-                'pickup_postcode' => $storeLocation->zipCode,
-                'pickup_country' => $storeLocation->country->iso,
-                'delivery_suburb' => $order->shippingAddress->city,
-                'delivery_postcode' => $order->shippingAddress->zipCode,
-                'delivery_country' => $order->shippingAddress->country->iso,
+                'pickup_suburb' => $storeLocation->city ?? '',
+                'pickup_postcode' => $storeLocation->zipCode ?? '',
+                'pickup_country' => $storeLocation->country->iso ?? '',
+                'delivery_suburb' => $order->shippingAddress->city ?? '',
+                'delivery_postcode' => $order->shippingAddress->zipCode ?? '',
+                'delivery_country' => $order->shippingAddress->country->iso ?? '',
                 'weight_value' => $packedBox['weight'],
                 'weight_units' => $this->weightUnit,
             ];
@@ -136,12 +136,12 @@ class Sendle extends SinglePackageProvider
 
             // Create a test payload
             $payload = [
-                'pickup_suburb' => $sender->city,
-                'pickup_postcode' => $sender->zipCode,
-                'pickup_country' => $sender->country->iso,
-                'delivery_suburb' => $recipient->city,
-                'delivery_postcode' => $recipient->zipCode,
-                'delivery_country' => $recipient->country->iso,
+                'pickup_suburb' => $sender->city ?? '',
+                'pickup_postcode' => $sender->zipCode ?? '',
+                'pickup_country' => $sender->country->iso ?? '',
+                'delivery_suburb' => $recipient->city ?? '',
+                'delivery_postcode' => $recipient->zipCode ?? '',
+                'delivery_country' => $recipient->country->iso ?? '',
                 'weight_value' => $packedBox['weight'],
                 'weight_units' => $this->weightUnit,
             ];
