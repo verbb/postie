@@ -102,6 +102,8 @@ class CanadaPost extends Provider
         $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
+        $countryIso = $order->shippingAddress->country->iso ?? '';
+
         try {
             $optionsXml = '';
 
@@ -122,6 +124,20 @@ class CanadaPost extends Provider
                 }
             }
 
+            $destinationXml = '<international>
+                <country-code>' . $countryIso . '</country-code>
+            </international>';
+
+            if ($countryIso === 'CA') {
+                $destinationXml = '<domestic>
+                    <postal-code>' . $orderZipCode . '</postal-code>
+                </domestic>';
+            } else if ($countryIso === 'US') {
+                $destinationXml = '<united-states>
+                    <zip-code>' . $orderZipCode . '</zip-code>
+                </united-states>';
+            }
+
             $payload = '<?xml version="1.0" encoding="UTF-8"?>
                 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
                     <customer-number>' . $this->getSetting('customerNumber') . '</customer-number>
@@ -131,9 +147,7 @@ class CanadaPost extends Provider
                     ' . $optionsXml . '
                     <origin-postal-code>' . $originZipCode . '</origin-postal-code>
                     <destination>
-                        <domestic>
-                            <postal-code>' . $orderZipCode . '</postal-code>
-                        </domestic>
+                        ' . $destinationXml . '
                     </destination>
                 </mailing-scenario>';
 
