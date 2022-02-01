@@ -117,7 +117,7 @@ class DHLExpress extends Provider
                         'ShipTimestamp' => $shipTimestamp,
                         'UnitOfMeasurement' => 'SI',
                         'Content' => 'NON_DOCUMENTS',
-                        'DeclaredValue' => $order->totalPrice,
+                        'DeclaredValue' => $packedBoxes->getTotalPrice(),
                         'DeclaredValueCurrecyCode' => $order->currency,
                         'PaymentInfo' => 'DAP',
                         'Account' => $this->getSetting('account'),

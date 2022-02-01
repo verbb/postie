@@ -558,7 +558,7 @@ class FedEx extends Provider
 
             if ($this->getSetting('includeInsurance')) {
                 $packageLineItem->InsuredValue->Currency = $order->paymentCurrency;
-                $packageLineItem->InsuredValue->Amount = (float)$order->total;
+                $packageLineItem->InsuredValue->Amount = $packedBoxes->getTotalPrice();
             }
 
             $packages[] = $packageLineItem;

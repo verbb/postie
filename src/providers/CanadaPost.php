@@ -113,7 +113,7 @@ class CanadaPost extends Provider
                     $optionsXml .= '<option-code>' . $option . '</option-code>';
 
                     if ($option === 'COV') {
-                        $optionsXml .= '<option-amount>' . $order->total . '</option-amount>';
+                        $optionsXml .= '<option-amount>' . $packedBoxes->getTotalPrice() . '</option-amount>';
                     }
 
                     $optionsXml .= '</option>';

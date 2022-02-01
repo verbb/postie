@@ -132,7 +132,7 @@ class NewZealandPost extends SinglePackageProvider
 
                 $payload = [
                     'country_code' => $order->shippingAddress->country->iso ?? '',
-                    'value' => (float)$order->total,
+                    'value' => $packedBoxes->getTotalPrice(),
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],
                     'width' => $packedBox['width'],

@@ -470,7 +470,7 @@ class UPS extends Provider
 
                 if ($this->getSetting('includeInsurance')) {
                     $insuredValue = new InsuredValue();
-                    $insuredValue->setMonetaryValue((float)$order->total);
+                    $insuredValue->setMonetaryValue($packedBoxes->getTotalPrice());
                     $insuredValue->setCurrencyCode($order->paymentCurrency);
 
                     $packageServiceOptions = new PackageServiceOptions();

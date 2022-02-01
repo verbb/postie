@@ -56,23 +56,15 @@ class PackedBoxes extends Model
                 $weight = 0.01;
             }
 
-            $listItem = [
+            $list[] = [
                 'name' => $packedBox->getBox()->getReference(),
                 'weight' => $weight,
                 'width' => $width,
                 'length' => $length,
                 'height' => $height,
+                'type' => $packedBox->getBox()->getType() ?? '',
+                'price' => $packedBox->getBox()->getPrice() ?? 0,
             ];
-
-            if ($type = $packedBox->getBox()->getType()) {
-                $listItem['type'] = $type;
-            }
-
-            if ($price = $packedBox->getBox()->getPrice()) {
-                $listItem['price'] = $price;
-            }
-
-            $list[] = $listItem;
         }
 
         return $list;
@@ -136,5 +128,18 @@ class PackedBoxes extends Model
         $totalBoxWidth = round($totalBoxWidth, 2);
 
         return $totalBoxWidth;
+    }
+
+    public function getTotalPrice()
+    {
+        $totalPrice = 0;
+
+        foreach ($this->packedBoxList as $packedBox) {
+            foreach ($packedBox->getItems() as $packedItem) {
+                $totalPrice += (float)$packedItem->getItem()->getItemValue();
+            }
+        }
+
+        return $totalPrice;
     }
 }
