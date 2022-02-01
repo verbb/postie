@@ -146,7 +146,7 @@ class USPS extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -189,7 +189,7 @@ class USPS extends Provider
             if ($countryIso == 'US') {
                 Provider::log($this, 'Domestic rate service call');
 
-                foreach ($packedBoxes as $packedBox) {
+                foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                     // Create new package object and assign the properties
                     // apparently the order you assign them is important so make sure
                     // to set them as the example below
@@ -218,7 +218,7 @@ class USPS extends Provider
                 $client->setInternationalCall(true);
                 $client->addExtraOption('Revision', 2);
 
-                foreach ($packedBoxes as $packedBox) {
+                foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                     $package = new RatePackage();
                     $package->setPounds($packedBox['weight']);
                     $package->setOunces(0);

@@ -50,7 +50,7 @@ class NewZealandPost extends SinglePackageProvider
     // Protected Methods
     // =========================================================================
 
-    protected function fetchShippingRate($order, $storeLocation, $packedBox)
+    protected function fetchShippingRate($order, $storeLocation, $packedBox, $packedBoxes)
     {
         //
         // TESTING

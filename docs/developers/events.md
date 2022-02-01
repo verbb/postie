@@ -14,7 +14,22 @@ use yii\base\Event;
 
 Event::on(USPS::class, Provider::EVENT_BEFORE_FETCH_RATES, function(FetchRatesEvent $event) {
     $storeLocation = $event->storeLocation;
-    $dimensions = $event->dimensions;
+    $packedBoxes = $event->packedBoxes;
+
+    // For example, updating dimensions/weight of boxes, items packed into boxes, and more
+    foreach ($event->packedBoxes->packedBoxList as $packedBox) {
+        // Update the internal reference (name) for the box
+        $packedBox->getBox()->setReference('Some special box');
+
+        // Update the maximum weight
+        $packedBox->getBox()->setMaxWeight(9999);
+
+        // Modify dimensions/weights of items in a box
+        foreach ($packedBox->getItems() as $packedItem) {
+            $packedItem->getItem()->setWidth(12);
+            $packedItem->getItem()->setHeight(5);
+        }
+    }
 });
 ```
 

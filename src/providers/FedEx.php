@@ -261,7 +261,7 @@ class FedEx extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -540,7 +540,7 @@ class FedEx extends Provider
     {
         $packages = [];
 
-        foreach ($packedBoxes as $packedBox) {
+        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
             // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
             $packageLineItem = new RequestedPackageLineItem();
 

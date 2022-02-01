@@ -11,6 +11,9 @@ class FetchRatesEvent extends Event
     // =========================================================================
 
     public $storeLocation;
-    public $dimensions;
     public $order;
+    public $packedBoxes;
+    
+    // Deprecated - todo remove at next breakpoint
+    public $dimensions;
 }

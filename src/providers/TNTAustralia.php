@@ -69,7 +69,7 @@ class TNTAustralia extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -82,7 +82,7 @@ class TNTAustralia extends Provider
         try {
             $packagesXml = '';
 
-            foreach ($packedBoxes as $packedBox) {
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                 $packagesXml .= '<packageLine>
                     <numberOfPackages>1</numberOfPackages>
                     <dimensions unit="cm">

@@ -53,7 +53,7 @@ class DHLExpress extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -139,7 +139,7 @@ class DHLExpress extends Provider
                 ],
             ];
 
-            foreach ($packedBoxes as $i => $packedBox) {
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $i => $packedBox) {
                 $payload['RateRequest']['RequestedShipment']['Packages']['RequestedPackages'][] = [
                     '@number' => ($i + 1),
                     'Weight' => [

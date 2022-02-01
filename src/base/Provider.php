@@ -641,12 +641,15 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]));
     }
 
-    protected function beforeFetchRates(&$storeLocation, &$dimensions, $order)
+    protected function beforeFetchRates(&$storeLocation, &$packedBoxes, $order)
     {
         $fetchRatesEvent = new FetchRatesEvent([
             'storeLocation' => $storeLocation,
-            'dimensions' => $dimensions,
             'order' => $order,
+            'packedBoxes' => $packedBoxes,
+
+            // Deprecated - todo remove at next breakpoint
+            'dimensions' => $packedBoxes->getSerializedPackedBoxList(),
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_RATES)) {
@@ -655,7 +658,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         // Update back
         $storeLocation = $fetchRatesEvent->storeLocation;
-        $dimensions = $fetchRatesEvent->dimensions;
     }
 
     protected function getLineItemDimensions($lineItem)

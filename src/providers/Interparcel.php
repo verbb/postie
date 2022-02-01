@@ -43,7 +43,7 @@ class Interparcel extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -80,7 +80,7 @@ class Interparcel extends Provider
                 'parcels' => [],
             ];
 
-            foreach ($packedBoxes as $packedBox) {
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                 $payload['parcels'][] = [
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],

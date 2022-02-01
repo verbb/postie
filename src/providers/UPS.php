@@ -356,7 +356,7 @@ class UPS extends Provider
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and dimensions modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
@@ -384,7 +384,7 @@ class UPS extends Provider
         // Check for using freight, we have to roll our own solution as `gabrielbull/php-ups-api`
         // doesn't support LTL rates. One of the reasons TODO our own client libraries.
         if ($this->getSetting('enableFreight')) {
-            foreach ($packedBoxes as $packedBox) {
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                 return $this->fetchFreightRates($storeLocation, $packedBox, $order);
             }
 
@@ -436,7 +436,7 @@ class UPS extends Provider
                 }
             }
 
-            foreach ($packedBoxes as $packedBox) {
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                 $package = new Package();
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
                 $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
