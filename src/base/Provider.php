@@ -670,12 +670,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $width = (new Length($lineItem->width, $settings->dimensionUnits))->toUnit('mm');
         $height = (new Length($lineItem->height, $settings->dimensionUnits))->toUnit('mm');
         
-        return [
+        $dimensions = [
             'length' => $length,
             'width'  => $width,
             'height' => $height,
             'weight' => $weight,
         ];
+
+        // Check if this line item actually has dimensions or weight
+        if (!array_filter($dimensions)) {
+            return false;
+        }
+
+        return $dimensions;
     }
 
     protected function getOrderDimensions($order, $weightUnit, $dimensionUnit)
@@ -717,6 +724,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $dimensions = $this->getLineItemDimensions($lineItem);
 
+        // Check if any dimensions are blank, return false
+        if (!$dimensions) {
+            return false;
+        }
+
         return new Item([
             'description' => "Item {$lineItem->id}",
             'width' => $dimensions['width'],
@@ -737,6 +749,12 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         $dimensions = $this->getLineItemDimensions($lineItem);
+
+        // Check if any dimensions are blank, return false
+        if (!$dimensions) {
+            return false;
+        }
+
 
         return new Box([
             'reference' => "Box {$lineItem->id}",
