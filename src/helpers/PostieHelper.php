@@ -26,4 +26,29 @@ class PostieHelper
 
         return $array;
     }
+
+    public static function getSignature($order, $prefix = '')
+    {
+        $totalLength = 0;
+        $totalWidth = 0;
+        $totalHeight = 0;
+
+        foreach ($order->lineItems as $key => $lineItem) {
+            $totalLength += ($lineItem->qty * $lineItem->length);
+            $totalWidth += ($lineItem->qty * $lineItem->width);
+            $totalHeight += ($lineItem->qty * $lineItem->height);
+        }
+
+        $signature = implode('.', [
+            $prefix,
+            $order->getTotalQty(),
+            $order->getTotalWeight(),
+            $totalWidth,
+            $totalHeight,
+            $totalLength,
+            implode('.', $order->shippingAddress->addressLines),
+        ]);
+
+        return md5($signature);
+    }
 }

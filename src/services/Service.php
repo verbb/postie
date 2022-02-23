@@ -3,6 +3,7 @@ namespace verbb\postie\services;
 
 use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippingMethodsEvent;
+use verbb\postie\helpers\PostieHelper;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
@@ -16,8 +17,6 @@ class Service extends Component
 {
     // Properties
     // =========================================================================
-
-    private $_cachedShippingMethods;
 
     const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
 
@@ -98,12 +97,6 @@ class Service extends Component
      */
     public function getShippingMethodsForOrder(Order $order): array
     {
-        // Provide some class-based local cache, because this function is called multiple times
-        // throughout an order-update lifecycle. Do this, even if caching is disabled
-        if ($this->_cachedShippingMethods) {
-            return $this->_cachedShippingMethods;
-        }
-
         // Fetch all providers (enabled or otherwise)
         $providers = Postie::getInstance()->getProviders()->getAllProviders();
 
@@ -150,9 +143,6 @@ class Service extends Component
                     }
 
                     $shippingMethods[] = $shippingMethod;
-
-                    // Save it to a local class cache
-                    $this->_cachedShippingMethods[] = $shippingMethod;
                 }
             }
         }

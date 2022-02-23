@@ -6,6 +6,7 @@ use verbb\postie\events\FetchRatesEvent;
 use verbb\postie\events\ModifyPayloadEvent;
 use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\events\PackOrderEvent;
+use verbb\postie\helpers\PostieHelper;
 use verbb\postie\models\Box;
 use verbb\postie\models\Item;
 use verbb\postie\models\PackedBoxes;
@@ -401,7 +402,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if ($settings->enableCaching) {        
             // Setup some caching mechanism to save API requests
-            $signature = $this->getSignature($this->handle, $order);
+            $signature = PostieHelper::getSignature($order, $this->handle);
             $cacheKey = 'postie-shipment-' . $signature;
 
             // Get the rate from the cache (if any)
@@ -433,8 +434,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function prepareFetchShippingRates($order)
     {
         $settings = Postie::$plugin->getSettings();
-        $cachedRates = Postie::$plugin->getProviderCache()->getRates($this->handle);
         $request = Craft::$app->getRequest();
+
+        // Try and fetch rates based on the order signature right now.
+        // This happens regardless of our global cache settings, because it's an in-memory, memoization
+        // cache, but greatly improves performance, even when cache is turned off.
+        $signature = PostieHelper::getSignature($order, $this->handle);
+        $cachedRates = Postie::$plugin->getProviderCache()->getRates($signature);
 
         if ($cachedRates === null) {
             // Check if we're manually fetching rates, only proceed if we are
@@ -458,35 +464,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
 
             // Save the rates, globally for the entire request, not just this provider instance
-            Postie::$plugin->getProviderCache()->setRates($this->handle, $cachedRates);
+            Postie::$plugin->getProviderCache()->setRates($signature, $cachedRates);
         }
 
         return $cachedRates;
-    }
-
-    public function getSignature($handle, $order)
-    {
-        $totalLength = 0;
-        $totalWidth = 0;
-        $totalHeight = 0;
-
-        foreach ($order->lineItems as $key => $lineItem) {
-            $totalLength += ($lineItem->qty * $lineItem->length);
-            $totalWidth += ($lineItem->qty * $lineItem->width);
-            $totalHeight += ($lineItem->qty * $lineItem->height);
-        }
-
-        $signature = implode('.', [
-            $handle,
-            $order->getTotalQty(),
-            $order->getTotalWeight(),
-            $totalWidth,
-            $totalHeight,
-            $totalLength,
-            implode('.', $order->shippingAddress->addressLines),
-        ]);
-
-        return md5($signature);
     }
 
     public function getMaxPackageWeight($order)
