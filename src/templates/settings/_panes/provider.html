@@ -137,6 +137,9 @@
         rows: provider.getBoxSizesRows(),
         errors: provider.getErrors('boxSizes'),
         warning: macros.configWarning('providers.' ~ provider.handle ~ '.boxSizes', 'postie'),
+        allowAdd: true,
+        allowDelete: true,
+        allowReorder: true,
     }) }}
 </div>
 
@@ -186,12 +189,12 @@
                     <tr>
                         <td width="45%">
                             <div class="field">
-                                {%- spaceless %}
+                                {%- apply spaceless %}
                                     <a href="{{ cpEditUrl }}">
                                         <span class="status {% if enabled %}green{% endif %}"></span>
                                         <strong>{{ name }}</strong>
                                     </a>
-                                {% endspaceless -%}
+                                {% endapply -%}
                             </div>
                         </td>
 

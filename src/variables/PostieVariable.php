@@ -11,7 +11,10 @@ use yii\base\Behavior;
 
 class PostieVariable
 {
-    public function getPluginName()
+    // Public Methods
+    // =========================================================================
+
+    public function getPluginName(): string
     {
         return Postie::$plugin->getPluginName();
     }

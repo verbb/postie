@@ -1,19 +1,19 @@
 <?php
 namespace verbb\postie\events;
 
-use yii\base\Event;
-
 use craft\commerce\elements\Order;
+
+use yii\base\Event;
 
 class FetchRatesEvent extends Event
 {
     // Properties
     // =========================================================================
 
-    public $storeLocation;
-    public $order;
-    public $packedBoxes;
+    public ?string $storeLocation = null;
+    public ?Order $order = null;
+    public mixed $packedBoxes = null;
     
     // Deprecated - todo remove at next breakpoint
-    public $dimensions;
+    public mixed $dimensions = null;
 }

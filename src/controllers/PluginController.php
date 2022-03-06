@@ -24,7 +24,7 @@ class PluginController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionSettings()
+    public function actionSettings(): \yii\web\Response
     {
         if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
             throw new ForbiddenHttpException('Administrative changes are disallowed in this environment.');

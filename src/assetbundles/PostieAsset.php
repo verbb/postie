@@ -12,7 +12,7 @@ class PostieAsset extends AssetBundle
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = "@verbb/postie/resources/dist";
 

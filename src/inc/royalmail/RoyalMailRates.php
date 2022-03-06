@@ -10,30 +10,30 @@ class RoyalMailRates
     // =========================================================================
 
     public static $order;
-    public static $checkCompensation = false;
-    public static $includeVat = false;
+    public static bool $checkCompensation = false;
+    public static bool $includeVat = false;
 
-    private static $euro = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'];
+    private static array $euro = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'];
 
-    private static $europe = ['AL','AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
+    private static array $europe = ['AL','AD', 'AM', 'AT', 'BY', 'BE', 'BA', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FO', 'FI', 'FR', 'GE', 'GI', 'GR', 'HU', 'HR', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MK', 'MT', 'NO', 'NL', 'PO', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'VA'];
 
-    private static $worldZone2 = ['AU', 'PW','IO', 'CX', 'CC', 'CK', 'FJ', 'PF', 'TF', 'KI', 'MO', 'NR', 'NC', 'NZ', 'PG', 'NU', 'NF', 'LA', 'PN', 'TO', 'TV', 'WS', 'AS', 'SG', 'SB', 'TK'];
+    private static array $worldZone2 = ['AU', 'PW','IO', 'CX', 'CC', 'CK', 'FJ', 'PF', 'TF', 'KI', 'MO', 'NR', 'NC', 'NZ', 'PG', 'NU', 'NF', 'LA', 'PN', 'TO', 'TV', 'WS', 'AS', 'SG', 'SB', 'TK'];
 
-    private static $worldZone3 = ['US'];
+    private static array $worldZone3 = ['US'];
 
-    private static $farEast = ['CN', 'HK', 'MO', 'JP', 'MN', 'KP', 'KR', 'TW', 'BN', 'KH', 'TL', 'ID', 'LA', 'MY', 'MM', 'PH', 'SG', 'TH', 'VN', 'RU'];
+    private static array $farEast = ['CN', 'HK', 'MO', 'JP', 'MN', 'KP', 'KR', 'TW', 'BN', 'KH', 'TL', 'ID', 'LA', 'MY', 'MM', 'PH', 'SG', 'TH', 'VN', 'RU'];
 
-    private static $australasia = ['AU', 'PF', 'NU', 'TO', 'CX', 'KI', 'PG', 'TV', 'CC', 'NR', 'PN', 'VU', 'CK', 'NC', 'SB', 'WF', 'FJ', 'NZ', 'TK', 'WS'];
+    private static array $australasia = ['AU', 'PF', 'NU', 'TO', 'CX', 'KI', 'PG', 'TV', 'CC', 'NR', 'PN', 'VU', 'CK', 'NC', 'SB', 'WF', 'FJ', 'NZ', 'TK', 'WS'];
 
-    private static $europeNonEu = ['AL', 'AD', 'AM', 'AZ', 'BY', 'BA', 'GE', 'IS', 'LI', 'MD', 'MC', 'ME', 'MK', 'NO', 'RU', 'SM', 'RS', 'CH', 'TR', 'UA', 'GB', 'VA',];
+    private static array $europeNonEu = ['AL', 'AD', 'AM', 'AZ', 'BY', 'BA', 'GE', 'IS', 'LI', 'MD', 'MC', 'ME', 'MK', 'NO', 'RU', 'SM', 'RS', 'CH', 'TR', 'UA', 'GB', 'VA',];
 
-    protected static $rateYears = [
+    protected static array $rateYears = [
         '2019' => '2019-03-25',
         '2020' => '2020-03-23',
         '2021' => '2021-01-01',
     ];
 
-    protected static $internationalDefaultBox = [
+    protected static array $internationalDefaultBox = [
         'letter' => [
             'length' => 240,
             'width' => 165,
@@ -70,7 +70,7 @@ class RoyalMailRates
     // Public Methods
     // =========================================================================
 
-    public static function getRates($country, $service, $provider, $order)
+    public static function getRates($country, $service, $provider, $order): array
     {
         $rates = [];
 
@@ -108,7 +108,7 @@ class RoyalMailRates
     // Protected Methods
     // =========================================================================
 
-    protected static function getFirstClassRates($country)
+    protected static function getFirstClassRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -191,7 +191,7 @@ class RoyalMailRates
         return self::getBoxPricing($boxes, $bands, 20);
     }
 
-    protected static function getFirstClassSignedRates($country)
+    protected static function getFirstClassSignedRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -298,7 +298,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getSecondClassRates($country)
+    protected static function getSecondClassRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -381,7 +381,7 @@ class RoyalMailRates
         return self::getBoxPricing($boxes, $bands, 20);
     }
 
-    protected static function getSecondClassSignedRates($country)
+    protected static function getSecondClassSignedRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -488,7 +488,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getSpecialDelivery9amRates($country)
+    protected static function getSpecialDelivery9amRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -562,7 +562,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getSpecialDelivery1pmRates($country)
+    protected static function getSpecialDelivery1pmRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -626,7 +626,7 @@ class RoyalMailRates
         return self::getBoxPricing($boxes, $bands);
     }
 
-    protected static function getParcelforceExpress9Rates($country)
+    protected static function getParcelforceExpress9Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -670,7 +670,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getParcelforceExpress10Rates($country)
+    protected static function getParcelforceExpress10Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -713,7 +713,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getParcelforceExpressAmRates($country)
+    protected static function getParcelforceExpressAmRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -756,7 +756,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getParcelforceExpress24Rates($country)
+    protected static function getParcelforceExpress24Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -799,7 +799,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getParcelforceExpress48Rates($country)
+    protected static function getParcelforceExpress48Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -842,7 +842,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    protected static function getTracked24Rates($country)
+    protected static function getTracked24Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -913,7 +913,7 @@ class RoyalMailRates
         return self::getBoxPricing($boxes, $bands, 100);
     }
 
-    protected static function getTracked48Rates($country)
+    protected static function getTracked48Rates($country): array
     {
         $zone = self::getZone($country);
 
@@ -985,7 +985,7 @@ class RoyalMailRates
     }
 
 
-    protected static function getInternationalStandardRates($country)
+    protected static function getInternationalStandardRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1044,7 +1044,7 @@ class RoyalMailRates
         return self::getInternationalBoxPricing($bands, $country, 20);
     }
 
-    protected static function getInternationalTrackedSignedRates($country)
+    protected static function getInternationalTrackedSignedRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1109,7 +1109,7 @@ class RoyalMailRates
         return self::getInternationalBoxPricing($bands, $country);
     }
 
-    protected static function getInternationalTrackedRates($country)
+    protected static function getInternationalTrackedRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1174,7 +1174,7 @@ class RoyalMailRates
         return self::getInternationalBoxPricing($bands, $country);
     }
 
-    protected static function getInternationalSignedRates($country)
+    protected static function getInternationalSignedRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1239,7 +1239,7 @@ class RoyalMailRates
         return self::getInternationalBoxPricing($bands, $country);
     }
 
-    protected static function getInternationalEconomyRates($country)
+    protected static function getInternationalEconomyRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1277,7 +1277,7 @@ class RoyalMailRates
         return self::getBoxPricing(self::$internationalDefaultBox, $bands, 20);
     }
 
-    protected static function getParcelforceIrelandexpressRates($country)
+    protected static function getParcelforceIrelandexpressRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1358,7 +1358,7 @@ class RoyalMailRates
         ]);
     }
 
-    protected static function getParcelforceEuropriorityRates($country)
+    protected static function getParcelforceEuropriorityRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -1749,7 +1749,7 @@ class RoyalMailRates
         ]);
     }
 
-    protected static function getParcelforceGlobaleconomyRates($country)
+    protected static function getParcelforceGlobaleconomyRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -2140,7 +2140,7 @@ class RoyalMailRates
         ]);
     }
 
-    protected static function getParcelforceGlobalexpressRates($country)
+    protected static function getParcelforceGlobalexpressRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -2779,7 +2779,7 @@ class RoyalMailRates
         ]);
     }
 
-    protected static function getParcelforceGlobalpriorityRates($country)
+    protected static function getParcelforceGlobalpriorityRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -3046,7 +3046,7 @@ class RoyalMailRates
         ]);
     }
 
-    protected static function getParcelforceGlobalvalueRates($country)
+    protected static function getParcelforceGlobalvalueRates($country): array
     {
         $zone = self::getZone($country);
 
@@ -3255,7 +3255,7 @@ class RoyalMailRates
     // Private Methods
     // =========================================================================
 
-    private static function getZone($country)
+    private static function getZone($country): string
     {
         if ($country === 'GB') {
             return 'UK';
@@ -3272,7 +3272,7 @@ class RoyalMailRates
         return '1';
     }
 
-    private static function getParcelforceZone($country)
+    private static function getParcelforceZone($country): string
     {
         if (in_array($country, ['JE', 'GG', 'IM'])) {
             return '4';
@@ -3299,7 +3299,7 @@ class RoyalMailRates
         return '12';
     }
 
-    private static function getRateYear()
+    private static function getRateYear(): int|string|null
     {
         // Get the last item as default
         $currentYear = key(array_slice(self::$rateYears, -1, 1, true));
@@ -3329,7 +3329,7 @@ class RoyalMailRates
         return $value;
     }
 
-    private static function getBoxPricing($boxes, $bands, $maxCompensation = 0)
+    private static function getBoxPricing($boxes, $bands, $maxCompensation = 0): array
     {
         // Get the pricing as applicable
         $pricingBand = self::getValueForYear($bands);
@@ -3361,7 +3361,7 @@ class RoyalMailRates
         return $boxesWithPricing;
     }
 
-    private static function getInternationalBoxPricing($bands, $country, $maxCompensation = 0)
+    private static function getInternationalBoxPricing($bands, $country, $maxCompensation = 0): array
     {
         $boxes = self::$internationalDefaultBox;
 
@@ -3390,7 +3390,7 @@ class RoyalMailRates
         return $boxPricing;
     }
 
-    private static function getParcelforceBoxPricing($bands, $country, $options = [])
+    private static function getParcelforceBoxPricing($bands, $country, $options = []): array
     {
         $boxesWithPricing = [];
         $maximumTotalCover = $options['maximumTotalCover'] ?? 0;
@@ -3453,11 +3453,11 @@ class RoyalMailRates
         return $boxesWithPricing;
     }
 
-    private static function getVolumetricWeight($l, $w, $h) {
+    private static function getVolumetricWeight($l, $w, $h): float|int {
         return ($l * $w * $h) / 5000;
     }
 
-    private static function getAdditionalCompensationCost($valuedItem, $maximumInclusiveCompensation)
+    private static function getAdditionalCompensationCost($valuedItem, $maximumInclusiveCompensation): float|int
     {
         // No compensation included for globaleconomy service and if it's under
         // max. inc. compensation there's no extra cost.

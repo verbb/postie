@@ -22,12 +22,12 @@ class StaticProvider extends Provider
         return false;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         return [];
     }
 
-    public function getPackagesAndRates($rateAndBoxes, $serviceHandle, $order)
+    public function getPackagesAndRates($rateAndBoxes, $serviceHandle, $order): array
     {
         $boxes = [];
 
@@ -127,7 +127,7 @@ class StaticProvider extends Provider
         $packedBoxes = $packer->pack();
 
         if (!$packedBoxes) {
-            Provider::error(Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
+            Provider::error($this, Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
         }
 
         $packedBoxes = new PackedBoxes($packedBoxes, $this->weightUnit, $this->dimensionUnit);

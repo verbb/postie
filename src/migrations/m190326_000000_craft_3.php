@@ -17,7 +17,7 @@ class m190326_000000_craft_3 extends Migration
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         // Don't make the same config changes twice
         $projectConfig = Craft::$app->getProjectConfig();
@@ -139,9 +139,11 @@ class m190326_000000_craft_3 extends Migration
 
         // Re-enable FK checks
         $this->execute($queryBuilder->checkIntegrity(true));
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190326_000000_craft_3 cannot be reverted.\n";
         return false;

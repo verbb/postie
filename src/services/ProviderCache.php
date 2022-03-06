@@ -12,7 +12,7 @@ class ProviderCache extends Component
     // Properties
     // =========================================================================
 
-    public $rates = [];
+    public array $rates = [];
 
 
     // Public Methods
@@ -23,7 +23,7 @@ class ProviderCache extends Component
         return $this->rates[$key] ?? null;
     }
 
-    public function setRates($key, $value)
+    public function setRates($key, $value): void
     {
         $this->rates[$key] = $value;
     }

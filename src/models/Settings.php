@@ -9,19 +9,19 @@ use craft\helpers\ArrayHelper;
 
 class Settings extends Model
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $pluginName = 'Postie';
-    public $hasCpSection = false;
-    public $applyFreeShipping = false;
-    public $enableCaching = true;
-    public $displayDebug = false;
-    public $displayErrors = false;
-    public $displayFlashErrors = false;
-    public $manualFetchRates = false;
-    public $fetchRatesPostValue = 'postie-fetch-rates';
-    public $providers = [];
+    public string $pluginName = 'Postie';
+    public bool $hasCpSection = false;
+    public bool $applyFreeShipping = false;
+    public bool $enableCaching = true;
+    public bool $displayDebug = false;
+    public bool $displayErrors = false;
+    public bool $displayFlashErrors = false;
+    public bool $manualFetchRates = false;
+    public string $fetchRatesPostValue = 'postie-fetch-rates';
+    public array $providers = [];
 
 
     // Public Methods
@@ -36,7 +36,7 @@ class Settings extends Model
         return $rules;
     }
 
-    public function validateProviders()
+    public function validateProviders(): void
     {
         foreach ($this->providers as $key => $provider) {
             if (!$provider['enabled']) {

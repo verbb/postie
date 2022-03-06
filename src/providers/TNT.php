@@ -16,17 +16,21 @@ class TNT extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'TNT');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -114,7 +118,7 @@ class TNT extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -131,7 +135,7 @@ class TNT extends Provider
         return $this->_client;
     }
 
-    private function _request(string $method, string $uri, array $options = [])
+    private function _request(string $method, string $uri, array $options = []): \DOMDocument|\SimpleXMLElement
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
@@ -141,7 +145,7 @@ class TNT extends Provider
         return Xml::build($xml->asXml());
     }
 
-    private function _numberOfWorkingDates($from, $days) {
+    private function _numberOfWorkingDates($from, $days): array {
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 

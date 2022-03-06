@@ -28,73 +28,21 @@ class FedEx extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'lb';
-    public $dimensionUnit = 'in';
+    public string $weightUnit = 'lb';
+    public string $dimensionUnit = 'in';
 
-    private $maxWeight = 68038.9; // 150lbs
+    private float $maxWeight = 68038.9; // 150lbs
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        // Turn off SOAP wsdl caching
-        ini_set("soap.wsdl_cache_enabled", "0");
-    }
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'FedEx');
     }
 
-    public function getServiceList(): array
-    {
-        return [
-            // Domestic
-            'FEDEX_1_DAY_FREIGHT'       => 'FedEx 1 Day Freight',
-            'FEDEX_2_DAY'               => 'FedEx 2 Day',
-            'FEDEX_2_DAY_AM'            => 'FedEx 2 Day AM',
-            'FEDEX_2_DAY_FREIGHT'       => 'FedEx 2 DAY Freight',
-            'FEDEX_3_DAY_FREIGHT'       => 'FedEx 3 Day Freight',
-            'FEDEX_EXPRESS_SAVER'       => 'FedEx Express Saver',
-            'FEDEX_FIRST_FREIGHT'       => 'FedEx First Freight',
-            'FEDEX_FREIGHT_ECONOMY'     => 'FedEx Freight Economy',
-            'FEDEX_FREIGHT_PRIORITY'    => 'FedEx Freight Priority',
-            'FEDEX_GROUND'              => 'FedEx Ground',
-            'FIRST_OVERNIGHT'           => 'FedEx First Overnight',
-            'PRIORITY_OVERNIGHT'        => 'FedEx Priority Overnight',
-            'STANDARD_OVERNIGHT'        => 'FedEx Standard Overnight',
-            'GROUND_HOME_DELIVERY'      => 'FedEx Ground Home Delivery',
-            'SAME_DAY'                  => 'FedEx Same Day',
-            'SAME_DAY_CITY'             => 'FedEx Same Day City',
-            'SMART_POST'                => 'FedEx Smart Post',
-
-            // UK domestic services 
-            'FEDEX_DISTANCE_DEFERRED'       => 'FedEx Distance Deferred',
-            'FEDEX_NEXT_DAY_EARLY_MORNING'  => 'FedEx Next Day Early Morning',
-            'FEDEX_NEXT_DAY_MID_MORNING'    => 'FedEx Next Day Mid Morning',
-            'FEDEX_NEXT_DAY_AFTERNOON'      => 'FedEx Next Day Afternoon',
-            'FEDEX_NEXT_DAY_END_OF_DAY'     => 'FedEx Next Day End of Day',
-            'FEDEX_NEXT_DAY_FREIGHT'        => 'FedEx Next Day Freight',
-
-            // International
-            'INTERNATIONAL_ECONOMY'                     => 'FedEx International Economy',
-            'INTERNATIONAL_ECONOMY_FREIGHT'             => 'FedEx International Economy Freight',
-            'INTERNATIONAL_ECONOMY_DISTRIBUTION'        => 'FedEx International Economy Distribution',
-            'INTERNATIONAL_FIRST'                       => 'FedEx International First',
-            'INTERNATIONAL_PRIORITY'                    => 'FedEx International Priority',
-            'INTERNATIONAL_PRIORITY_FREIGHT'            => 'FedEx International Priority Freight',
-            'INTERNATIONAL_PRIORITY_DISTRIBUTION'       => 'FedEx International Priority Distribution',
-            'INTERNATIONAL_PRIORITY_EXPRESS'            => 'FedEx International Priority Express',
-            'EUROPE_FIRST_INTERNATIONAL_PRIORITY'       => 'FedEx Europe First International Priority',
-            'INTERNATIONAL_DISTRIBUTION_FREIGHT'        => 'FedEx International Distribution',
-        ];
-    }
-
-    public static function defineDefaultBoxes()
+    public static function defineDefaultBoxes(): array
     {
         return [
             [
@@ -230,7 +178,63 @@ class FedEx extends Provider
         ];
     }
 
-    public function getWeightUnitOptions()
+    
+    // Public Methods
+    // =========================================================================
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Turn off SOAP wsdl caching
+        ini_set("soap.wsdl_cache_enabled", "0");
+    }
+
+    public function getServiceList(): array
+    {
+        return [
+            // Domestic
+            'FEDEX_1_DAY_FREIGHT'       => 'FedEx 1 Day Freight',
+            'FEDEX_2_DAY'               => 'FedEx 2 Day',
+            'FEDEX_2_DAY_AM'            => 'FedEx 2 Day AM',
+            'FEDEX_2_DAY_FREIGHT'       => 'FedEx 2 DAY Freight',
+            'FEDEX_3_DAY_FREIGHT'       => 'FedEx 3 Day Freight',
+            'FEDEX_EXPRESS_SAVER'       => 'FedEx Express Saver',
+            'FEDEX_FIRST_FREIGHT'       => 'FedEx First Freight',
+            'FEDEX_FREIGHT_ECONOMY'     => 'FedEx Freight Economy',
+            'FEDEX_FREIGHT_PRIORITY'    => 'FedEx Freight Priority',
+            'FEDEX_GROUND'              => 'FedEx Ground',
+            'FIRST_OVERNIGHT'           => 'FedEx First Overnight',
+            'PRIORITY_OVERNIGHT'        => 'FedEx Priority Overnight',
+            'STANDARD_OVERNIGHT'        => 'FedEx Standard Overnight',
+            'GROUND_HOME_DELIVERY'      => 'FedEx Ground Home Delivery',
+            'SAME_DAY'                  => 'FedEx Same Day',
+            'SAME_DAY_CITY'             => 'FedEx Same Day City',
+            'SMART_POST'                => 'FedEx Smart Post',
+
+            // UK domestic services 
+            'FEDEX_DISTANCE_DEFERRED'       => 'FedEx Distance Deferred',
+            'FEDEX_NEXT_DAY_EARLY_MORNING'  => 'FedEx Next Day Early Morning',
+            'FEDEX_NEXT_DAY_MID_MORNING'    => 'FedEx Next Day Mid Morning',
+            'FEDEX_NEXT_DAY_AFTERNOON'      => 'FedEx Next Day Afternoon',
+            'FEDEX_NEXT_DAY_END_OF_DAY'     => 'FedEx Next Day End of Day',
+            'FEDEX_NEXT_DAY_FREIGHT'        => 'FedEx Next Day Freight',
+
+            // International
+            'INTERNATIONAL_ECONOMY'                     => 'FedEx International Economy',
+            'INTERNATIONAL_ECONOMY_FREIGHT'             => 'FedEx International Economy Freight',
+            'INTERNATIONAL_ECONOMY_DISTRIBUTION'        => 'FedEx International Economy Distribution',
+            'INTERNATIONAL_FIRST'                       => 'FedEx International First',
+            'INTERNATIONAL_PRIORITY'                    => 'FedEx International Priority',
+            'INTERNATIONAL_PRIORITY_FREIGHT'            => 'FedEx International Priority Freight',
+            'INTERNATIONAL_PRIORITY_DISTRIBUTION'       => 'FedEx International Priority Distribution',
+            'INTERNATIONAL_PRIORITY_EXPRESS'            => 'FedEx International Priority Express',
+            'EUROPE_FIRST_INTERNATIONAL_PRIORITY'       => 'FedEx Europe First International Priority',
+            'INTERNATIONAL_DISTRIBUTION_FREIGHT'        => 'FedEx International Distribution',
+        ];
+    }
+
+    public function getWeightUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
@@ -238,7 +242,7 @@ class FedEx extends Provider
         ];
     }
 
-    public function getDimensionUnitOptions()
+    public function getDimensionUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
@@ -246,12 +250,12 @@ class FedEx extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?float
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -314,7 +318,7 @@ class FedEx extends Provider
         return $this->_rates;
     }
 
-    public function fetchShippingRate($order, $storeLocation, $packedBoxes, $requestType = '')
+    public function fetchShippingRate($order, $storeLocation, $packedBoxes, $requestType = ''): void
     {
         $rateRequest = new RateRequest();
 
@@ -536,7 +540,7 @@ class FedEx extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _createPackageLineItem($order, $packedBoxes)
+    private function _createPackageLineItem($order, $packedBoxes): array
     {
         $packages = [];
 

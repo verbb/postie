@@ -38,13 +38,13 @@ class UPS extends Provider
     // Properties
     // =========================================================================
 
-    public $handle = 'ups';
-    public $weightUnit = 'lb';
-    public $dimensionUnit = 'in';
+    public string $handle = 'ups';
+    public string $weightUnit = 'lb';
+    public string $dimensionUnit = 'in';
 
-    private $maxWeight = 68038.9; // 150lbs
+    private float $maxWeight = 68038.9; // 150lbs
 
-    private $pickupCode = [
+    private array $pickupCode = [
         '01' => 'Daily Pickup',
         '03' => 'Customer Counter',
         '06' => 'One Time Pickup',
@@ -53,7 +53,7 @@ class UPS extends Provider
         '20' => 'Air Service Center',
     ];
 
-    private $euCountries = [
+    private array $euCountries = [
         'AT' => 'Austria',
         'BE' => 'Belgium',
         'BG' => 'Bulgaria',
@@ -85,7 +85,7 @@ class UPS extends Provider
     ];
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -93,7 +93,11 @@ class UPS extends Provider
         return Craft::t('postie', 'UPS');
     }
 
-    public function getPickupTypeOptions()
+    
+    // Public Methods
+    // =========================================================================
+
+    public function getPickupTypeOptions(): array
     {
         $options = [];
 
@@ -104,7 +108,7 @@ class UPS extends Provider
         return $options;
     }
 
-    public function getFreightPackingTypeOptions()
+    public function getFreightPackingTypeOptions(): array
     {
         return [
             'BAG' => 'Bag',
@@ -146,7 +150,7 @@ class UPS extends Provider
         ];
     }
 
-    public function getFreightClassOptions()
+    public function getFreightClassOptions(): array
     {
         return [
             '50' => '50',
@@ -242,7 +246,7 @@ class UPS extends Provider
         ];
     }
 
-    public static function defineDefaultBoxes()
+    public static function defineDefaultBoxes(): array
     {
         return [
             [
@@ -318,7 +322,7 @@ class UPS extends Provider
         ];
     }
 
-    public function getWeightUnitOptions()
+    public function getWeightUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
@@ -326,7 +330,7 @@ class UPS extends Provider
         ];
     }
 
-    public function getDimensionUnitOptions()
+    public function getDimensionUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
@@ -334,7 +338,7 @@ class UPS extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?float
     {
         return $this->maxWeight;
     }
@@ -651,7 +655,7 @@ class UPS extends Provider
         return true;
     }
 
-    public function fetchFreightRates($storeLocation, $packedBox, $order)
+    public function fetchFreightRates($storeLocation, $packedBox, $order): ?array
     {
         try {
             $accountNumber = $this->getSetting('accountNumber');
@@ -811,7 +815,7 @@ class UPS extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): ?\Ups\Rate
     {
         if (!$this->_client) {
             if (Craft::$app->getConfig()->getGeneral()->devMode) {
@@ -829,12 +833,12 @@ class UPS extends Provider
         return $this->_client;
     }
 
-    private function _inEU($country)
+    private function _inEU($country): bool
     {
         return isset($this->euCountries[$country->iso]) ? true : false;
     }
 
-    private function _getServiceHandle($code, $storeLocation, $shippingAddress)
+    private function _getServiceHandle($code, $storeLocation, $shippingAddress): bool|string
     {
         // We need some smarts here, because UPS has multiple handles for the same service code, depending on the
         // origin or destination of the parcel. Do a little more work here...

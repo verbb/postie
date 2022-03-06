@@ -18,14 +18,14 @@ class DHLExpress extends Provider
     // Properties
     // =========================================================================
 
-    public $handle = 'dhlExpress';
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $handle = 'dhlExpress';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxWeight = 70000; // 70kg
+    private int $maxWeight = 70000; // 70kg
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -33,17 +33,21 @@ class DHLExpress extends Provider
         return Craft::t('postie', 'DHL Express');
     }
 
+    
+    // Public Methods
+    // =========================================================================
+
     public function supportsDynamicServices(): bool
     {
         return true;
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -287,7 +291,7 @@ class DHLExpress extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if ($this->_client) {
             return $this->_client;

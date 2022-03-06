@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\models;
 
+use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyShippingRuleEvent;
 
 use Craft;
@@ -20,10 +21,10 @@ class ShippingMethod extends BaseShippingMethod
     // Properties
     // =========================================================================
 
-    public $provider;
-    public $rate;
-    public $rateOptions;
-    public $shippingMethodCategories;
+    public ?Provider $provider = null;
+    public ?float $rate = null;
+    public ?array $rateOptions = null;
+    public mixed $shippingMethodCategories = null;
 
 
     // Public Methods
@@ -34,7 +35,7 @@ class ShippingMethod extends BaseShippingMethod
         return $this->provider->name;
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return null;
     }

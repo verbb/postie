@@ -20,17 +20,21 @@ class Bring extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'g';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'g';
+    public string $dimensionUnit = 'cm';
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'Bring');
     }
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -63,7 +67,7 @@ class Bring extends Provider
         ];
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -224,7 +228,7 @@ class Bring extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if ($this->_client) {
             return $this->_client;

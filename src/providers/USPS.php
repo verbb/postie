@@ -21,21 +21,25 @@ class USPS extends Provider
     // Properties
     // =========================================================================
 
-    public $handle = 'usps';
-    public $weightUnit = 'lb';
-    public $dimensionUnit = 'in';
+    public string $handle = 'usps';
+    public string $weightUnit = 'lb';
+    public string $dimensionUnit = 'in';
 
-    private $maxDomesticWeight = 31751.5; // 70lbs
-    private $maxInternationalWeight = 9071.85; // 20lbs
+    private float $maxDomesticWeight = 31751.5; // 70lbs
+    private float $maxInternationalWeight = 9071.85; // 20lbs
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'USPS');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -120,7 +124,7 @@ class USPS extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?float
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -129,7 +133,7 @@ class USPS extends Provider
         return $this->maxDomesticWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): bool|array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -385,7 +389,7 @@ class USPS extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): ?\USPS\Rate
     {
         if (!$this->_client) {
             $username = $this->getSetting('username');
@@ -396,7 +400,7 @@ class USPS extends Provider
         return $this->_client;
     }
 
-    private function _getServiceHandle($string)
+    private function _getServiceHandle($string): string
     {
         $replace = [
             '&lt;sup&gt;&#8482;&lt;/sup&gt;',
@@ -410,7 +414,7 @@ class USPS extends Provider
         return $string;
     }
 
-    private function _parseZipCode($zip)
+    private function _parseZipCode($zip): string
     {
         $zip = explode('-', $zip)[0] ?? $zip;
 

@@ -19,7 +19,7 @@ class TestingHelper
     // Properties
     // =========================================================================
 
-    private static $_addresses = [
+    private static array $_addresses = [
         [
             'address1' => '552 Victoria Street',
             'city' => 'North Melbourne',
@@ -144,10 +144,10 @@ class TestingHelper
     ];
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
-    public static function getTestAddress($country, $criteria = [])
+    public static function getTestAddress($country, $criteria = []): \craft\commerce\models\Address
     {
         $filter = array_merge(['country' => $country], $criteria);
 
@@ -177,7 +177,7 @@ class TestingHelper
         return $address;
     }
 
-    public static function getTestPackedBoxes($dimensionUnit, $weightUnit, $qty1 = 1, $qty2 = 1)
+    public static function getTestPackedBoxes($dimensionUnit, $weightUnit, $qty1 = 1, $qty2 = 1): array
     {
         $packer = new Packer();
 

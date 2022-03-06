@@ -10,7 +10,7 @@ class m201201_000000_new_settings extends Migration
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         // Don't make the same config changes twice
         $projectConfig = Craft::$app->getProjectConfig();
@@ -32,9 +32,11 @@ class m201201_000000_new_settings extends Migration
                 $projectConfig->set("plugins.postie.settings.providers.{$key}", $provider);
             }
         }
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m201201_000000_new_settings cannot be reverted.\n";
         return false;

@@ -20,23 +20,27 @@ class PostNL extends StaticProvider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'g';
-    public $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+    public string $dimensionUnit = 'mm';
 
 
     // Properties
     // =========================================================================
 
-    public $handle = 'postNl';
+    public string $handle = 'postNl';
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'PostNL');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -51,7 +55,7 @@ class PostNL extends StaticProvider
         ];
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {

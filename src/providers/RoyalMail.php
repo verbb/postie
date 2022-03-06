@@ -20,19 +20,23 @@ class RoyalMail extends StaticProvider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'g';
-    public $dimensionUnit = 'mm';
-    public $checkCompensation;
-    public $includeVat;
+    public string $weightUnit = 'g';
+    public string $dimensionUnit = 'mm';
+    public ?bool $checkCompensation = null;
+    public ?bool $includeVat = null;
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'Royal Mail');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -76,7 +80,7 @@ class RoyalMail extends StaticProvider
         return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/royal-mail.png", true);
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {

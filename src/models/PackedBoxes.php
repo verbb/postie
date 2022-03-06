@@ -14,9 +14,9 @@ class PackedBoxes extends Model
     // Properties
     // =========================================================================
 
-    private $packedBoxList;
-    private $weightUnit;
-    private $dimensionUnit;
+    private mixed $packedBoxList = null;
+    private ?string $weightUnit = null;
+    private ?string $dimensionUnit = null;
 
 
     // Public Methods
@@ -33,7 +33,7 @@ class PackedBoxes extends Model
         return $this->packedBoxList;
     }
 
-    public function getSerializedPackedBoxList()
+    public function getSerializedPackedBoxList(): array
     {
         $list = [];
 
@@ -70,7 +70,7 @@ class PackedBoxes extends Model
         return $list;
     }
 
-    public function getTotalWeight()
+    public function getTotalWeight(): float
     {
         $totalBoxWeight = 0;
 
@@ -85,7 +85,7 @@ class PackedBoxes extends Model
         return $totalBoxWeight;
     }
 
-    public function getTotalLength()
+    public function getTotalLength(): float
     {
         $totalBoxLength = 0;
 
@@ -100,7 +100,7 @@ class PackedBoxes extends Model
         return $totalBoxLength;
     }
 
-    public function getTotalHeight()
+    public function getTotalHeight(): float
     {
         $totalBoxHeight = 0;
 
@@ -115,7 +115,7 @@ class PackedBoxes extends Model
         return $totalBoxHeight;
     }
 
-    public function getTotalWidth()
+    public function getTotalWidth(): float
     {
         $totalBoxWidth = 0;
 
@@ -130,7 +130,7 @@ class PackedBoxes extends Model
         return $totalBoxWidth;
     }
 
-    public function getTotalPrice()
+    public function getTotalPrice(): float|int
     {
         $totalPrice = 0;
 

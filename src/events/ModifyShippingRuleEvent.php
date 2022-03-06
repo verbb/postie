@@ -1,17 +1,19 @@
 <?php
 namespace verbb\postie\events;
 
-use yii\base\Event;
+use verbb\postie\base\Provider;
 
 use craft\commerce\elements\Order;
+
+use yii\base\Event;
 
 class ModifyShippingRuleEvent extends Event
 {
     // Properties
     // =========================================================================
 
-    public $provider;
-    public $shippingRule;
-    public $shippingMethod;
+    public ?Provider $provider;
+    public mixed $shippingRule;
+    public mixed $shippingMethod;
 
 }

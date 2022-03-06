@@ -16,19 +16,23 @@ class Fastway extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxWeight = 5000; // 5kg
+    private int $maxWeight = 5000; // 5kg
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'Fastway');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -50,12 +54,12 @@ class Fastway extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): bool|array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -177,7 +181,7 @@ class Fastway extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -197,14 +201,14 @@ class Fastway extends Provider
         return Json::decode((string)$response->getBody());
     }
 
-    private function _getServiceHandle($string)
+    private function _getServiceHandle($string): array|string
     {
         $string = str_replace('-', '_', $string);
         
         return $string;
     }
 
-    private function _getCountryCode($country)
+    private function _getCountryCode($country): bool|int
     {
         if ($country == 'Australia') {
             return 1;

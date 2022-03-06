@@ -17,14 +17,14 @@ class NewZealandPost extends SinglePackageProvider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxDomesticWeight = 25000; // 25kg
-    private $maxInternationalWeight = 30000; // 30kg
+    private int $maxDomesticWeight = 25000; // 25kg
+    private int $maxInternationalWeight = 30000; // 30kg
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -32,12 +32,16 @@ class NewZealandPost extends SinglePackageProvider
         return Craft::t('postie', 'New Zealand Post');
     }
 
+    
+    // Public Methods
+    // =========================================================================
+
     public function supportsDynamicServices(): bool
     {
         return true;
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -235,7 +239,7 @@ class NewZealandPost extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if ($this->_client) {
             return $this->_client;

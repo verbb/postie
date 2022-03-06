@@ -7,6 +7,7 @@ use verbb\postie\variables\PostieVariable;
 use verbb\postie\twigextensions\Extension;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\events\PluginEvent;
 use craft\events\RegisterUrlRulesEvent;
@@ -22,11 +23,11 @@ use yii\base\Event;
 
 class Postie extends Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $schemaVersion = '2.1.0';
-    public $hasCpSettings = true;
+    public string $schemaVersion = '2.1.0';
+    public bool $hasCpSettings = true;
 
 
     // Traits
@@ -38,7 +39,7 @@ class Postie extends Plugin
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -59,17 +60,17 @@ class Postie extends Plugin
         }
     }
 
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return Craft::t('postie', $this->getSettings()->pluginName);
     }
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
-        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('postie/settings'));
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('postie/settings'));
     }
 
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
@@ -81,7 +82,7 @@ class Postie extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel(): Settings
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -90,12 +91,12 @@ class Postie extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _registerTwigExtensions()
+    private function _registerTwigExtensions(): void
     {
         Craft::$app->view->registerTwigExtension(new Extension);
     }
 
-    private function _registerCpRoutes()
+    private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
@@ -105,14 +106,14 @@ class Postie extends Plugin
         });
     }
 
-    private function _registerVariables()
+    private function _registerVariables(): void
     {
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('postie', PostieVariable::class);
         });
     }
 
-    private function _registerEventHandlers()
+    private function _registerEventHandlers(): void
     {
         // Whenever we update the cart, we need to check if manual fetching of rates is set. If it is, we need to check for the
         // correct POST param, then set a session variable to save it. This is because the fetching of shipping rates isn't done
@@ -128,7 +129,7 @@ class Postie extends Plugin
         });
     }
 
-    private function _registerCommerceEventListeners()
+    private function _registerCommerceEventListeners(): void
     {
         Event::on(ShippingMethods::class, ShippingMethods::EVENT_REGISTER_AVAILABLE_SHIPPING_METHODS, [$this->getService(), 'registerShippingMethods']);
     }

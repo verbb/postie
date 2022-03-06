@@ -1,14 +1,16 @@
 <?php
 namespace verbb\postie\events;
 
-use yii\base\Event;
+use craft\elements\db\ElementQueryInterface;
 
 use craft\commerce\elements\Order;
+
+use yii\base\Event;
 
 class ModifyShippableVariantsEvent extends Event
 {
     // Properties
     // =========================================================================
 
-    public $query;
+    public ElementQueryInterface $query = null;
 }

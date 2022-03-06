@@ -18,21 +18,25 @@ class TNTAustralia extends Provider
     // Properties
     // =========================================================================
 
-    public $handle = 'tntAustralia';
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $handle = 'tntAustralia';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxDomesticWeight = 70000; // 70kg
-    private $maxInternationalWeight = 500000; // 500kg
+    private int $maxDomesticWeight = 70000; // 70kg
+    private int $maxInternationalWeight = 500000; // 500kg
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'TNT Australia');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -50,7 +54,7 @@ class TNTAustralia extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -59,7 +63,7 @@ class TNTAustralia extends Provider
         return $this->maxDomesticWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -248,7 +252,7 @@ class TNTAustralia extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -262,7 +266,7 @@ class TNTAustralia extends Provider
         return $this->_client;
     }
 
-    private function _request(string $method, string $uri, array $options = [])
+    private function _request(string $method, string $uri, array $options = []): \DOMDocument|\SimpleXMLElement
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
@@ -272,7 +276,7 @@ class TNTAustralia extends Provider
         return Xml::build($xml->asXml());
     }
 
-    private function _formatXml($payload)
+    private function _formatXml($payload): bool|string
     {
         $doc = new \DomDocument('1.0');
         $doc->preserveWhiteSpace = false;
@@ -281,7 +285,7 @@ class TNTAustralia extends Provider
         return $doc->saveXML();
     }
 
-    private function _numberOfWorkingDates($from, $days) {
+    private function _numberOfWorkingDates($from, $days): array {
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 

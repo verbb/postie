@@ -5,9 +5,14 @@ use craft\base\SavableComponentInterface;
 
 interface ProviderInterface extends SavableComponentInterface
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string;
+
+
+    // Public Methods
+    // =========================================================================
+
     public function fetchShippingRates($order);
 }

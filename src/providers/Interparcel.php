@@ -16,11 +16,11 @@ class Interparcel extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -28,12 +28,16 @@ class Interparcel extends Provider
         return Craft::t('postie', 'Interparcel');
     }
 
+    
+    // Public Methods
+    // =========================================================================
+
     public function supportsDynamicServices(): bool
     {
         return true;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -215,7 +219,7 @@ class Interparcel extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if ($this->_client) {
             return $this->_client;

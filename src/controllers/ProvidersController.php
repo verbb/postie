@@ -13,13 +13,13 @@ class ProvidersController extends Controller
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = ['check-connection'];
+    protected array|bool|int $allowAnonymous = ['check-connection'];
 
 
     // Public Methods
     // =========================================================================
 
-    public function actionCheckConnection()
+    public function actionCheckConnection(): \yii\web\Response
     {
         $this->requirePostRequest();
 

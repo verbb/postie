@@ -17,14 +17,14 @@ class Sendle extends SinglePackageProvider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxDomesticWeight = 25000; // 25kg
-    private $maxInternationalWeight = 31751.5; // 70lbs
+    private int $maxDomesticWeight = 25000; // 25kg
+    private float $maxInternationalWeight = 31751.5; // 70lbs
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -32,12 +32,16 @@ class Sendle extends SinglePackageProvider
         return Craft::t('postie', 'Sendle');
     }
 
+    
+    // Public Methods
+    // =========================================================================
+
     public function supportsDynamicServices(): bool
     {
         return true;
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): float|int|null
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -166,7 +170,7 @@ class Sendle extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if ($this->_client) {
             return $this->_client;

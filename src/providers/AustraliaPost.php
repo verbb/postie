@@ -26,15 +26,15 @@ class AustraliaPost extends SinglePackageProvider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxDomesticWeight = 22000; // 22kg
-    private $maxInternationalWeight = 20000; // 20kg
-    private $_countryList = [];
+    private int $maxDomesticWeight = 22000; // 22kg
+    private int $maxInternationalWeight = 20000; // 20kg
+    private array $_countryList = [];
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -42,60 +42,7 @@ class AustraliaPost extends SinglePackageProvider
         return Craft::t('postie', 'Australia Post');
     }
 
-    public function getServiceList(): array
-    {
-        return [
-            // Domestic - Parcel
-            'AUS_PARCEL_REGULAR' => 'Australia Post Parcel Post',
-            'AUS_PARCEL_REGULAR_SATCHEL_500G' => 'Australia Post Parcel Post Small Satchel',
-            'AUS_PARCEL_REGULAR_SATCHEL_3KG' => 'Australia Post Parcel Post Small Satchel',
-            'AUS_PARCEL_REGULAR_SATCHEL_5KG' => 'Australia Post Parcel Post Small Satchel',
-            'AUS_PARCEL_EXPRESS' => 'Australia Post Express Post',
-            'AUS_PARCEL_EXPRESS_SATCHEL_500G' => 'Australia Post Express Post Small Satchel',
-            'AUS_PARCEL_EXPRESS_SATCHEL_3KG' => 'Australia Post Express Post Medium (3Kg) Satchel',
-            'AUS_PARCEL_EXPRESS_SATCHEL_5KG' => 'Australia Post Express Post Large (5Kg) Satchel',
-            'AUS_PARCEL_COURIER' => 'Australia Post Courier Post',
-            'AUS_PARCEL_COURIER_SATCHEL_MEDIUM' => 'Australia Post Courier Post Assessed Medium Satchel',
-            
-            // Domestic - Letter
-            'AUS_LETTER_REGULAR_SMALL' => 'Australia Post Letter Regular Small',
-            'AUS_LETTER_REGULAR_MEDIUM' => 'Australia Post Letter Regular Medium',
-            'AUS_LETTER_REGULAR_LARGE' => 'Australia Post Letter Regular Large',
-            'AUS_LETTER_REGULAR_LARGE_125' => 'Australia Post Letter Regular Large (125g)',
-            'AUS_LETTER_REGULAR_LARGE_250' => 'Australia Post Letter Regular Large (250g)',
-            'AUS_LETTER_REGULAR_LARGE_500' => 'Australia Post Letter Regular Large (500g)',
-            'AUS_LETTER_EXPRESS_SMALL' => 'Australia Post Letter Express Small',
-            'AUS_LETTER_EXPRESS_MEDIUM' => 'Australia Post Letter Express Medium',
-            'AUS_LETTER_EXPRESS_LARGE' => 'Australia Post Letter Express Large',
-            'AUS_LETTER_EXPRESS_LARGE_125' => 'Australia Post Letter Express Large (125g)',
-            'AUS_LETTER_EXPRESS_LARGE_250' => 'Australia Post Letter Express Large (250g)',
-            'AUS_LETTER_EXPRESS_LARGE_500' => 'Australia Post Letter Express Large (500g)',
-            'AUS_LETTER_PRIORITY_SMALL' => 'Australia Post Letter Priority Small',
-            'AUS_LETTER_PRIORITY_MEDIUM' => 'Australia Post Letter Priority Medium',
-            'AUS_LETTER_PRIORITY_LARGE' => 'Australia Post Letter Priority Large',
-            'AUS_LETTER_PRIORITY_LARGE_125' => 'Australia Post Letter Priority Large (125g)',
-            'AUS_LETTER_PRIORITY_LARGE_250' => 'Australia Post Letter Priority Large (250g)',
-            'AUS_LETTER_PRIORITY_LARGE_500' => 'Australia Post Letter Priority Large (500g)',
-
-            // International - Parcel
-            'INT_PARCEL_STD_OWN_PACKAGING' => 'Australia Post International Standard',
-            'INT_PARCEL_EXP_OWN_PACKAGING' => 'Australia Post International Express',
-            'INT_PARCEL_COR_OWN_PACKAGING' => 'Australia Post International Courier',
-            'INT_PARCEL_AIR_OWN_PACKAGING' => 'Australia Post International Economy Air',
-            'INT_PARCEL_SEA_OWN_PACKAGING' => 'Australia Post International Economy Sea',
-
-            // International - Letter
-            'INT_LETTER_REG_SMALL_ENVELOPE' => 'Australia Post International Letter DL',
-            'INT_LETTER_REG_LARGE_ENVELOPE' => 'Australia Post International Letter B4',
-            'INT_LETTER_EXP_OWN_PACKAGING' => 'Australia Post International Letter Express',
-            'INT_LETTER_COR_OWN_PACKAGING' => 'Australia Post International Letter Courier',
-            'INT_LETTER_AIR_OWN_PACKAGING_LIGHT' => 'Australia Post International Letter Air Light',
-            'INT_LETTER_AIR_OWN_PACKAGING_MEDIUM' => 'Australia Post International Letter Air Medium',
-            'INT_LETTER_AIR_OWN_PACKAGING_HEAVY' => 'Australia Post International Letter Air Heavy',
-        ];
-    }
-
-    public static function defineDefaultBoxes()
+    public static function defineDefaultBoxes(): array
     {
         return [
             [
@@ -244,7 +191,63 @@ class AustraliaPost extends SinglePackageProvider
         ];
     }
 
-    public function getBoxSizesSettings()
+    // Public Methods
+    // =========================================================================
+
+    public function getServiceList(): array
+    {
+        return [
+            // Domestic - Parcel
+            'AUS_PARCEL_REGULAR' => 'Australia Post Parcel Post',
+            'AUS_PARCEL_REGULAR_SATCHEL_500G' => 'Australia Post Parcel Post Small Satchel',
+            'AUS_PARCEL_REGULAR_SATCHEL_3KG' => 'Australia Post Parcel Post Small Satchel',
+            'AUS_PARCEL_REGULAR_SATCHEL_5KG' => 'Australia Post Parcel Post Small Satchel',
+            'AUS_PARCEL_EXPRESS' => 'Australia Post Express Post',
+            'AUS_PARCEL_EXPRESS_SATCHEL_500G' => 'Australia Post Express Post Small Satchel',
+            'AUS_PARCEL_EXPRESS_SATCHEL_3KG' => 'Australia Post Express Post Medium (3Kg) Satchel',
+            'AUS_PARCEL_EXPRESS_SATCHEL_5KG' => 'Australia Post Express Post Large (5Kg) Satchel',
+            'AUS_PARCEL_COURIER' => 'Australia Post Courier Post',
+            'AUS_PARCEL_COURIER_SATCHEL_MEDIUM' => 'Australia Post Courier Post Assessed Medium Satchel',
+            
+            // Domestic - Letter
+            'AUS_LETTER_REGULAR_SMALL' => 'Australia Post Letter Regular Small',
+            'AUS_LETTER_REGULAR_MEDIUM' => 'Australia Post Letter Regular Medium',
+            'AUS_LETTER_REGULAR_LARGE' => 'Australia Post Letter Regular Large',
+            'AUS_LETTER_REGULAR_LARGE_125' => 'Australia Post Letter Regular Large (125g)',
+            'AUS_LETTER_REGULAR_LARGE_250' => 'Australia Post Letter Regular Large (250g)',
+            'AUS_LETTER_REGULAR_LARGE_500' => 'Australia Post Letter Regular Large (500g)',
+            'AUS_LETTER_EXPRESS_SMALL' => 'Australia Post Letter Express Small',
+            'AUS_LETTER_EXPRESS_MEDIUM' => 'Australia Post Letter Express Medium',
+            'AUS_LETTER_EXPRESS_LARGE' => 'Australia Post Letter Express Large',
+            'AUS_LETTER_EXPRESS_LARGE_125' => 'Australia Post Letter Express Large (125g)',
+            'AUS_LETTER_EXPRESS_LARGE_250' => 'Australia Post Letter Express Large (250g)',
+            'AUS_LETTER_EXPRESS_LARGE_500' => 'Australia Post Letter Express Large (500g)',
+            'AUS_LETTER_PRIORITY_SMALL' => 'Australia Post Letter Priority Small',
+            'AUS_LETTER_PRIORITY_MEDIUM' => 'Australia Post Letter Priority Medium',
+            'AUS_LETTER_PRIORITY_LARGE' => 'Australia Post Letter Priority Large',
+            'AUS_LETTER_PRIORITY_LARGE_125' => 'Australia Post Letter Priority Large (125g)',
+            'AUS_LETTER_PRIORITY_LARGE_250' => 'Australia Post Letter Priority Large (250g)',
+            'AUS_LETTER_PRIORITY_LARGE_500' => 'Australia Post Letter Priority Large (500g)',
+
+            // International - Parcel
+            'INT_PARCEL_STD_OWN_PACKAGING' => 'Australia Post International Standard',
+            'INT_PARCEL_EXP_OWN_PACKAGING' => 'Australia Post International Express',
+            'INT_PARCEL_COR_OWN_PACKAGING' => 'Australia Post International Courier',
+            'INT_PARCEL_AIR_OWN_PACKAGING' => 'Australia Post International Economy Air',
+            'INT_PARCEL_SEA_OWN_PACKAGING' => 'Australia Post International Economy Sea',
+
+            // International - Letter
+            'INT_LETTER_REG_SMALL_ENVELOPE' => 'Australia Post International Letter DL',
+            'INT_LETTER_REG_LARGE_ENVELOPE' => 'Australia Post International Letter B4',
+            'INT_LETTER_EXP_OWN_PACKAGING' => 'Australia Post International Letter Express',
+            'INT_LETTER_COR_OWN_PACKAGING' => 'Australia Post International Letter Courier',
+            'INT_LETTER_AIR_OWN_PACKAGING_LIGHT' => 'Australia Post International Letter Air Light',
+            'INT_LETTER_AIR_OWN_PACKAGING_MEDIUM' => 'Australia Post International Letter Air Medium',
+            'INT_LETTER_AIR_OWN_PACKAGING_HEAVY' => 'Australia Post International Letter Air Heavy',
+        ];
+    }
+
+    public function getBoxSizesSettings(): array
     {
         $sizes = parent::getBoxSizesSettings();
 
@@ -270,7 +273,7 @@ class AustraliaPost extends SinglePackageProvider
         return $sizes;
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -444,7 +447,7 @@ class AustraliaPost extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([

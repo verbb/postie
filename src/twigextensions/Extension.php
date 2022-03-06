@@ -3,11 +3,11 @@ namespace verbb\postie\twigextensions;
 
 use verbb\postie\helpers\PostieHelper;
 
-use Twig_Extension;
-use Twig_SimpleFunction;
-use Twig_SimpleFilter;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+use Twig\TwigFilter;
 
-class Extension extends Twig_Extension
+class Extension extends AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -20,7 +20,7 @@ class Extension extends Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new Twig_SimpleFunction('get', [$this, 'getValueByKey']),
+            new TwigFunction('get', [$this, 'getValueByKey']),
         ];
     }
 

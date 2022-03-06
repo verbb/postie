@@ -1,16 +1,18 @@
 <?php
 namespace verbb\postie\events;
 
-use yii\base\Event;
+use verbb\postie\base\Provider;
 
 use craft\commerce\elements\Order;
+
+use yii\base\Event;
 
 class ModifyPayloadEvent extends Event
 {
     // Properties
     // =========================================================================
 
-    public $provider;
-    public $payload;
-    public $order;
+    public ?Provider $provider = null;
+    public ?array $payload = null;
+    public ?Order $order = null;
 }

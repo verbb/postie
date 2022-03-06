@@ -3,7 +3,7 @@ namespace verbb\postie\helpers;
 
 class PostieHelper
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function getValueByKey(array $array, $key, $default = null)
@@ -27,7 +27,7 @@ class PostieHelper
         return $array;
     }
 
-    public static function getSignature($order, $prefix = '')
+    public static function getSignature($order, $prefix = ''): string
     {
         $totalLength = 0;
         $totalWidth = 0;

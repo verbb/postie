@@ -60,22 +60,22 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Properties
     // =========================================================================
 
-    public $name;
-    public $handle;
-    public $enabled;
-    public $settings = [];
-    public $markUpRate;
-    public $markUpBase;
-    public $services = [];
-    public $restrictServices = true;
-    public $packingMethod = self::PACKING_SINGLE_BOX;
-    public $boxSizes = [];
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public ?string $name = null;
+    public ?string $handle = null;
+    public ?bool $enabled = null;
+    public array $settings = [];
+    public ?float $markUpRate = null;
+    public ?string $markUpBase = null;
+    public array $services = [];
+    public bool $restrictServices = true;
+    public string $packingMethod = self::PACKING_SINGLE_BOX;
+    public array $boxSizes = [];
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    protected $_client;
-    protected $_rates;
-    protected $_cachedRates;
+    protected mixed $_client = null;
+    protected ?array $_rates = null;
+    protected ?array $_cachedRates = null;
 
 
     // Static Methods
@@ -117,7 +117,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         Postie::error($message);
     }
 
-    public static function defineDefaultBoxes()
+    public static function defineDefaultBoxes(): array
     {
         return [];
     }
@@ -140,7 +140,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->name;
     }
@@ -157,7 +157,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getClass(): string
     {
-        $nsClass = get_class($this);
+        $nsClass = $this::class;
 
         return substr($nsClass, strrpos($nsClass, "\\") + 1);
     }
@@ -165,7 +165,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function getIconUrl(): string
     {
         try {
-            $handle = StringHelper::toKebabCase($this->displayName());
+            $handle = StringHelper::toKebabCase(static::displayName());
 
             return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
         } catch (\Throwable $e) {
@@ -199,9 +199,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return [];
     }
 
-    public function getSettingsHtml(): string
+    public function getSettingsHtml(): ?string
     {
-        $handle = StringHelper::toKebabCase($this->displayName());
+        $handle = StringHelper::toKebabCase(static::displayName());
 
         return Craft::$app->getView()->renderTemplate("postie/providers/$handle", [
             'provider' => $this,
@@ -297,7 +297,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $settings;
     }
 
-    public function getMarkUpBaseOptions()
+    public function getMarkUpBaseOptions(): array
     {
         return [
             self::PERCENTAGE => StringHelper::toTitleCase(self::PERCENTAGE),
@@ -305,7 +305,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function getWeightUnitOptions()
+    public function getWeightUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Grams (g)'), 'value' => 'g' ],
@@ -314,7 +314,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function getDimensionUnitOptions()
+    public function getDimensionUnitOptions(): array
     {
         return [
             [ 'label' => Craft::t('commerce', 'Millimeters (mm)'), 'value' => 'mm' ],
@@ -489,7 +489,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return false;
     }
 
-    public function getBoxSizesSettings()
+    public function getBoxSizesSettings(): array
     {
         return [
             'name' => [
@@ -543,7 +543,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function getBoxSizesRows()
+    public function getBoxSizesRows(): array
     {
         $boxSizes = [];
 
@@ -603,7 +603,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Protected Methods
     // =========================================================================
 
-    protected function beforeSendPayload($provider, &$payload, $order)
+    protected function beforeSendPayload($provider, &$payload, $order): void
     {
         $event = new ModifyPayloadEvent([
             'provider' => $provider,
@@ -622,7 +622,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]));
     }
 
-    protected function beforeFetchRates(&$storeLocation, &$packedBoxes, $order)
+    protected function beforeFetchRates(&$storeLocation, &$packedBoxes, $order): void
     {
         $fetchRatesEvent = new FetchRatesEvent([
             'storeLocation' => $storeLocation,
@@ -641,7 +641,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $storeLocation = $fetchRatesEvent->storeLocation;
     }
 
-    protected function getLineItemDimensions($lineItem)
+    protected function getLineItemDimensions($lineItem): array|bool
     {
         $settings = Commerce::getInstance()->getSettings();
 
@@ -666,7 +666,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $dimensions;
     }
 
-    protected function getOrderDimensions($order, $weightUnit, $dimensionUnit)
+    protected function getOrderDimensions($order, $weightUnit, $dimensionUnit): array
     {
         $settings = Commerce::getInstance()->getSettings();
 
@@ -695,7 +695,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    protected function getBoxItemFromLineItem($lineItem)
+    protected function getBoxItemFromLineItem($lineItem): bool|\verbb\postie\models\Item
     {
         $product = $lineItem->getPurchasable();
 
@@ -721,7 +721,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]);
     }
 
-    protected function getBoxFromLineItem($lineItem)
+    protected function getBoxFromLineItem($lineItem): bool|\verbb\postie\models\Box
     {
         $product = $lineItem->getPurchasable();
 
@@ -750,7 +750,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]);
     }
 
-    protected function getBoxSizes()
+    protected function getBoxSizes(): array
     {
         $boxes = [];
 
@@ -892,7 +892,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         if (!$packedBoxes) {
-            self::error(Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
+            self::error($this, Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
         }
 
         $packedBoxes = new PackedBoxes($packedBoxes, $this->weightUnit, $this->dimensionUnit);

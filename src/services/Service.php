@@ -24,7 +24,7 @@ class Service extends Component
     // Public Methods
     // =========================================================================
 
-    public function onAfterSaveOrder(Event $event)
+    public function onAfterSaveOrder(Event $event): void
     {
         if (!is_a($event->element, Order::class)) {
             return;
@@ -48,7 +48,7 @@ class Service extends Component
         }
     }
 
-    public function onBeforeSavePluginSettings($event)
+    public function onBeforeSavePluginSettings($event): void
     {
         $settings = $event->plugin->getSettings();
 
@@ -150,7 +150,7 @@ class Service extends Component
         return $shippingMethods;
     }
 
-    public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event)
+    public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event): void
     {
         if (!$event->order) {
             return;
@@ -176,7 +176,7 @@ class Service extends Component
     // Private Methods
     // =========================================================================
 
-    private function applyFreeShipping($order)
+    private function applyFreeShipping($order): bool
     {
         $settings = Postie::$plugin->getSettings();
 

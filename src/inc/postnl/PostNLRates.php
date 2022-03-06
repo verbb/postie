@@ -20,22 +20,22 @@ class PostNLRates
     // =========================================================================
 
     // List of countries in EUR1 region.
-    private static $eur1 = ['AT', 'BE', 'DE', 'DK', 'ES', 'FR', 'GB', 'GBR', 'IT', 'LU', 'MC', 'SE'];
+    private static array $eur1 = ['AT', 'BE', 'DE', 'DK', 'ES', 'FR', 'GB', 'GBR', 'IT', 'LU', 'MC', 'SE'];
 
     // List of countries in EUR2 region.
-    private static $eur2 = ['AX', 'BG', 'CZ', 'EE', 'FI', 'HR', 'HU', 'IE', 'IM', 'LT', 'LV', 'PL', 'PT', 'RO', 'SI', 'SK', 'XA', 'XM'];
+    private static array $eur2 = ['AX', 'BG', 'CZ', 'EE', 'FI', 'HR', 'HU', 'IE', 'IM', 'LT', 'LV', 'PL', 'PT', 'RO', 'SI', 'SK', 'XA', 'XM'];
 
     // List of countries in EUR3 region.
-    private static $eur3 = ['AD', 'AL', 'BA', 'BY', 'CNI', 'CY', 'FO', 'GG', 'GI', 'GL', 'GR', 'IS', 'JE', 'LI', 'MD', 'ME', 'MK', 'MT', 'NO', 'RS', 'SM', 'TR', 'UA', 'VA', 'CH'];
+    private static array $eur3 = ['AD', 'AL', 'BA', 'BY', 'CNI', 'CY', 'FO', 'GG', 'GI', 'GL', 'GR', 'IS', 'JE', 'LI', 'MD', 'ME', 'MK', 'MT', 'NO', 'RS', 'SM', 'TR', 'UA', 'VA', 'CH'];
 
     // Rest of the world.
-    private static $world = ['AE', 'AM', 'ANT', 'AQ', 'AR', 'AS', 'AW', 'AZ', 'BB', 'BD', 'BF', 'BI', 'BM', 'BN', 'CG', 'CI', 'CM', 'CN', 'DJ', 'DZ', 'EG', 'FK', 'GE', 'GF', 'GH', 'GM', 'GN', 'GP', 'HK', 'IN', 'IQ', 'JM', 'JP', 'KE', 'KG', 'KP', 'KR', 'KW', 'KZ', 'LK', 'MA', 'MG', 'ML', 'MM', 'MN', 'MO', 'MQ', 'MR', 'MS', 'MU', 'MY', 'NC', 'NE', 'NG', 'NZ', 'PF', 'RE', 'RU', 'RUA', 'SC', 'SG', 'SN', 'SY', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TM', 'TN', 'TW', 'TZ', 'UG', 'UZ', 'VC', 'WS', 'XS', 'XZ', 'YE', 'ZW', 'AF', 'AG', 'AI', 'AO', 'AU', 'BH', 'BJ', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CK', 'CL', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'DM', 'DO', 'EC', 'EH', 'ER', 'ET', 'FJ', 'FM', 'GA', 'GD', 'GQ', 'GS', 'GT', 'GU', 'GW', 'GY', 'HM', 'HN', 'HT', 'ID', 'IL', 'IR', 'JO', 'KH', 'KI', 'KM', 'KN', 'KY', 'LA', 'LB', 'LC', 'LR', 'LS', 'LY', 'MH', 'MP', 'MV', 'MW', 'MX', 'MZ', 'NA', 'NF', 'NI', 'NP', 'NR', 'NU', 'OM', 'PA', 'PC', 'PE', 'PG', 'PH', 'PK', 'PM', 'PN', 'PR', 'PS', 'PW', 'PY', 'QA', 'RW', 'SA', 'SB', 'SD', 'SH', 'SHST', 'SJ', 'SL', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SZ', 'TC', 'TK', 'TL', 'TO', 'TT', 'TV', 'UM', 'US', 'UY', 'VE', 'VI', 'VN', 'VU', 'WF', 'X1', 'XL', 'YT', 'ZA', 'ZM'];
+    private static array $world = ['AE', 'AM', 'ANT', 'AQ', 'AR', 'AS', 'AW', 'AZ', 'BB', 'BD', 'BF', 'BI', 'BM', 'BN', 'CG', 'CI', 'CM', 'CN', 'DJ', 'DZ', 'EG', 'FK', 'GE', 'GF', 'GH', 'GM', 'GN', 'GP', 'HK', 'IN', 'IQ', 'JM', 'JP', 'KE', 'KG', 'KP', 'KR', 'KW', 'KZ', 'LK', 'MA', 'MG', 'ML', 'MM', 'MN', 'MO', 'MQ', 'MR', 'MS', 'MU', 'MY', 'NC', 'NE', 'NG', 'NZ', 'PF', 'RE', 'RU', 'RUA', 'SC', 'SG', 'SN', 'SY', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TM', 'TN', 'TW', 'TZ', 'UG', 'UZ', 'VC', 'WS', 'XS', 'XZ', 'YE', 'ZW', 'AF', 'AG', 'AI', 'AO', 'AU', 'BH', 'BJ', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CK', 'CL', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'DM', 'DO', 'EC', 'EH', 'ER', 'ET', 'FJ', 'FM', 'GA', 'GD', 'GQ', 'GS', 'GT', 'GU', 'GW', 'GY', 'HM', 'HN', 'HT', 'ID', 'IL', 'IR', 'JO', 'KH', 'KI', 'KM', 'KN', 'KY', 'LA', 'LB', 'LC', 'LR', 'LS', 'LY', 'MH', 'MP', 'MV', 'MW', 'MX', 'MZ', 'NA', 'NF', 'NI', 'NP', 'NR', 'NU', 'OM', 'PA', 'PC', 'PE', 'PG', 'PH', 'PK', 'PM', 'PN', 'PR', 'PS', 'PW', 'PY', 'QA', 'RW', 'SA', 'SB', 'SD', 'SH', 'SHST', 'SJ', 'SL', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SZ', 'TC', 'TK', 'TL', 'TO', 'TT', 'TV', 'UM', 'US', 'UY', 'VE', 'VI', 'VN', 'VU', 'WF', 'X1', 'XL', 'YT', 'ZA', 'ZM'];
 
 
     // Public Methods
     // =========================================================================
 
-    public static function getRates($country, $service)
+    public static function getRates($country, $service): array
     {
         $rates = [];
 
@@ -70,7 +70,7 @@ class PostNLRates
         return $rates;
     }
 
-    public static function getDomesticBriefRates()
+    public static function getDomesticBriefRates(): array
     {
         return [
             'brief-20g' => [
@@ -121,7 +121,7 @@ class PostNLRates
         ];
     }
 
-    public static function getDomesticBrievenbuspakjeRates()
+    public static function getDomesticBrievenbuspakjeRates(): array
     {
         return [
             'brievenbuspakje-2kg' => [
@@ -136,14 +136,14 @@ class PostNLRates
         ];
     }
 
-    public static function getDomesticPakketNoTrackAndTraceRates()
+    public static function getDomesticPakketNoTrackAndTraceRates(): array
     {
         return [
 
         ];
     }
 
-    public static function getDomesticPakketRates()
+    public static function getDomesticPakketRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -194,7 +194,7 @@ class PostNLRates
         ];
     }
 
-    public static function getDomesticAangetekendRates()
+    public static function getDomesticAangetekendRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -245,7 +245,7 @@ class PostNLRates
         ];
     }
 
-    public static function getDomesticVerzekerserviceRates()
+    public static function getDomesticVerzekerserviceRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -296,7 +296,7 @@ class PostNLRates
         ];
     }
 
-    public static function getDomesticBetaalserviceRates()
+    public static function getDomesticBetaalserviceRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -347,7 +347,7 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalBriefRates()
+    public static function getInternationalBriefRates(): array
     {
         return [
             'brief-20g' => [
@@ -418,14 +418,14 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalBrievenbuspakjeRates()
+    public static function getInternationalBrievenbuspakjeRates(): array
     {
         return [
 
         ];
     }
 
-    public static function getInternationalPakketNoTrackAndTraceRates()
+    public static function getInternationalPakketNoTrackAndTraceRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -444,7 +444,7 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalPakketRates()
+    public static function getInternationalPakketRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -515,7 +515,7 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalAangetekendRates()
+    public static function getInternationalAangetekendRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -586,7 +586,7 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalVerzekerserviceRates()
+    public static function getInternationalVerzekerserviceRates(): array
     {
         return [
             'pakket-2kg' => [
@@ -657,7 +657,7 @@ class PostNLRates
         ];
     }
 
-    public static function getInternationalBetaalserviceRates()
+    public static function getInternationalBetaalserviceRates(): array
     {
         return [
 
@@ -668,7 +668,7 @@ class PostNLRates
     // Private Methods
     // =========================================================================
 
-    private static function getZone($country)
+    private static function getZone($country): int
     {
         if ($country === 'NL') {
             return self::ZONE_NL;
@@ -685,7 +685,7 @@ class PostNLRates
         return 0;
     }
 
-    private static function getPrefix($country)
+    private static function getPrefix($country): string
     {
         if ($country === 'NL') {
             return 'domestic';

@@ -16,7 +16,7 @@ class ShippingMethodsController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionEdit($providerHandle, $serviceHandle)
+    public function actionEdit($providerHandle, $serviceHandle): \yii\web\Response
     {
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
@@ -36,7 +36,7 @@ class ShippingMethodsController extends Controller
         ]);
     }
 
-    public function actionSave()
+    public function actionSave(): ?\yii\web\Response
     {
         $this->requirePostRequest();
         $request = Craft::$app->getRequest();

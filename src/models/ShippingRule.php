@@ -14,9 +14,9 @@ class ShippingRule extends BaseShippingRule
     // Properties
     // =========================================================================
 
-    public $provider;
-    public $shippingMethod;
-    public $options = [];
+    public ?Provider $provider = null;
+    public mixed $shippingMethod = null;
+    public array $options = [];
 
 
     // Public Methods

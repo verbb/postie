@@ -17,8 +17,8 @@ class Install extends Migration
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
-
+        return true;
     }
 }

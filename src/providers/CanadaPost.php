@@ -18,19 +18,23 @@ class CanadaPost extends Provider
     // Properties
     // =========================================================================
 
-    public $weightUnit = 'kg';
-    public $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+    public string $dimensionUnit = 'cm';
 
-    private $maxWeight = 30000; // 30kg
+    private int $maxWeight = 30000; // 30kg
 
     
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('postie', 'Canada Post');
     }
+
+    
+    // Public Methods
+    // =========================================================================
 
     public function getServiceList(): array
     {
@@ -68,12 +72,12 @@ class CanadaPost extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -255,7 +259,7 @@ class CanadaPost extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient()
+    private function _getClient(): \GuzzleHttp\Client
     {
         $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
 
@@ -306,12 +310,12 @@ class CanadaPost extends Provider
         }
     }
 
-    private function _getServiceHandle($value)
+    private function _getServiceHandle($value): array|string
     {
         return str_replace('.', '_', $value);
     }
 
-    private function _formatXml($payload)
+    private function _formatXml($payload): bool|string
     {
         $doc = new \DomDocument('1.0');
         $doc->preserveWhiteSpace = false;

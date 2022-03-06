@@ -21,27 +21,27 @@ class ColissimoRates
     // =========================================================================
 
     // France, Andorra, Monaco
-    private static $france = [
+    private static array $france = [
         'FR', 'AD', 'MC',
     ];
     
     // DOM
-    private static $DOM = [
+    private static array $DOM = [
         'GP', 'MQ', 'GY', 'RE', 'YT',
     ];
     
     // TOM
-    private static $TOM = [
+    private static array $TOM = [
         'PM', 'BL', 'MF', 'WF', 'PF', 'TF', 'NC',
     ];
     
     // International Zone A: Europe, Switzerland
-    private static $internationalZoneA = [
+    private static array $internationalZoneA = [
         'AT', 'BE', 'BG', 'CY', 'HR', 'DK', 'ES', 'EE', 'FI', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'CZ', 'RO', 'GB', 'SK', 'SI', 'SE', 'CH', 'VA',
     ];
     
     // International Zone B: Eastern Europe (except Russia and European Union), Norway, Maghreb
-    private static $internationalZoneB = [
+    private static array $internationalZoneB = [
         'AL', 'AM', 'AZ', 'BY', 'BA', 'GE', 'IS', 'LI', 'MK', 'MD', 'ME', 'RS', 'TR', 'UA', 'NO', 'DZ', 'LY', 'MO', 'MR', 'TN',
     ];
 
@@ -49,7 +49,7 @@ class ColissimoRates
     // Public Methods
     // =========================================================================
 
-    public static function getRates($country, $service)
+    public static function getRates($country, $service): array
     {
         $rates = [];
 
@@ -84,7 +84,7 @@ class ColissimoRates
         return $rates;
     }
 
-    public static function getFrFranceRates()
+    public static function getFrFranceRates(): array
     {
         return [
             'pack-250' => [
@@ -162,7 +162,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getFrEmballageFranceRates()
+    public static function getFrEmballageFranceRates(): array
     {
         return [
             'bubble-bag-XS' => [
@@ -267,7 +267,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getDomEconomiqueOutremerRates()
+    public static function getDomEconomiqueOutremerRates(): array
     {
         return [
             'pack-500' => [
@@ -336,7 +336,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getDomOutremerRates()
+    public static function getDomOutremerRates(): array
     {
         return [
             'pack-500' => [
@@ -396,7 +396,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getEmballageInternationalRates()
+    public static function getEmballageInternationalRates(): array
     {
         return [
             'pack-500' => [
@@ -462,7 +462,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getEuropeRates()
+    public static function getEuropeRates(): array
     {
         return [
             'pack-500' => [
@@ -522,7 +522,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getInternationalRates()
+    public static function getInternationalRates(): array
     {
         return [
             'pack-500' => [
@@ -588,7 +588,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getTomEconomiqueOutremerRates()
+    public static function getTomEconomiqueOutremerRates(): array
     {
         return [
             'pack-500' => [
@@ -648,7 +648,7 @@ class ColissimoRates
         ];
     }
 
-    public static function getTomOutremerRates()
+    public static function getTomOutremerRates(): array
     {
         return [
             'pack-500' => [
@@ -712,7 +712,7 @@ class ColissimoRates
     // Private Methods
     // =========================================================================
 
-    private static function getZone($country)
+    private static function getZone($country): int
     {
         if (in_array($country, self::$france)) {
             return self::ZONE_FR;
@@ -729,7 +729,7 @@ class ColissimoRates
         return self::ZONE_INTERNATIONAL_C;
     }
 
-    private static function getPrefix($country)
+    private static function getPrefix($country): string
     {
         if (in_array($country, self::$france)) {
             return 'fr';

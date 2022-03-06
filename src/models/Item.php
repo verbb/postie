@@ -8,19 +8,19 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
     // Properties
     // =========================================================================
 
-    private $description;
-    private $width;
-    private $length;
-    private $depth;
-    private $weight;
-    private $itemValue;
-    private $keepFlat;
+    private ?string $description = null;
+    private ?int $width = null;
+    private ?int $length = null;
+    private ?int $depth = null;
+    private ?int $weight = null;
+    private ?bool $keepFlat = null;
+    private ?float $itemValue = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function setDimensions($description, $width, $length, $depth, $weight)
+    public function setDimensions($description, $width, $length, $depth, $weight): void
     {
         $this->description = $description;
         $this->width = $width;
@@ -35,7 +35,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (string)$this->description;
     }
 
-    public function setDescription($value)
+    public function setDescription($value): void
     {
         $this->description = $value;
     }
@@ -45,7 +45,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (int)$this->width;
     }
 
-    public function setWidth($value)
+    public function setWidth($value): void
     {
         $this->width = $value;
     }
@@ -55,7 +55,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (int)$this->length;
     }
 
-    public function setLength($value)
+    public function setLength($value): void
     {
         $this->length = $value;
     }
@@ -65,7 +65,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (int)$this->depth;
     }
 
-    public function setDepth($value)
+    public function setDepth($value): void
     {
         $this->depth = $value;
     }
@@ -75,7 +75,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (int)$this->weight;
     }
 
-    public function setWeight($value)
+    public function setWeight($value): void
     {
         $this->weight = $value;
     }
@@ -85,7 +85,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return (bool)$this->keepFlat;
     }
 
-    public function setKeepFlat($value)
+    public function setKeepFlat($value): void
     {
         $this->keepFlat = $value;
     }
@@ -95,7 +95,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         return $this->itemValue;
     }
 
-    public function setItemValue($value)
+    public function setItemValue($value): void
     {
         $this->itemValue = $value;
     }

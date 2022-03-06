@@ -11,24 +11,24 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
     // Properties
     // =========================================================================
 
-    private $reference;
-    private $outerWidth;
-    private $outerLength;
-    private $outerDepth;
-    private $emptyWeight;
-    private $innerWidth;
-    private $innerLength;
-    private $innerDepth;
-    private $maxWeight;
-    private $type = '';
-    private $price = null;
-    private $maxItemValue = null;
+    private ?string $reference = null;
+    private ?int $outerWidth = null;
+    private ?int $outerLength = null;
+    private ?int $outerDepth = null;
+    private ?int $emptyWeight = null;
+    private ?int $innerWidth = null;
+    private ?int $innerLength = null;
+    private ?int $innerDepth = null;
+    private ?int $maxWeight = null;
+    private ?string $type = null;
+    private ?float $price = null;
+    private ?float $maxItemValue = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function setDimensions($reference, $width, $length, $depth, $weight)
+    public function setDimensions($reference, $width, $length, $depth, $weight): void
     {
         $this->reference = $reference;
         $this->outerWidth = $width;
@@ -46,7 +46,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (string)$this->reference;
     }
 
-    public function setReference($value)
+    public function setReference($value): void
     {
         $this->reference = $value;
     }
@@ -56,7 +56,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->outerWidth;
     }
 
-    public function setOuterWidth($value)
+    public function setOuterWidth($value): void
     {
         $this->outerWidth = $value;
     }
@@ -66,7 +66,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->outerLength;
     }
 
-    public function setOuterLength($value)
+    public function setOuterLength($value): void
     {
         $this->outerLength = $value;
     }
@@ -76,7 +76,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->outerDepth;
     }
 
-    public function setOuterDepth($value)
+    public function setOuterDepth($value): void
     {
         $this->outerDepth = $value;
     }
@@ -86,7 +86,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->emptyWeight;
     }
 
-    public function setEmptyWeight($value)
+    public function setEmptyWeight($value): void
     {
         $this->emptyWeight = $value;
     }
@@ -96,7 +96,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->innerWidth;
     }
 
-    public function setInnerWidth($value)
+    public function setInnerWidth($value): void
     {
         $this->innerWidth = $value;
     }
@@ -106,7 +106,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->innerLength;
     }
 
-    public function setInnerLength($value)
+    public function setInnerLength($value): void
     {
         $this->innerLength = $value;
     }
@@ -116,7 +116,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->innerDepth;
     }
 
-    public function setInnerDepth($value)
+    public function setInnerDepth($value): void
     {
         $this->innerDepth = $value;
     }
@@ -126,7 +126,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (int)$this->maxWeight;
     }
 
-    public function setMaxWeight($value)
+    public function setMaxWeight($value): void
     {
         $this->maxWeight = $value;
     }
@@ -136,7 +136,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return (string)$this->type;
     }
 
-    public function setType($value)
+    public function setType($value): void
     {
         $this->type = $value;
     }
@@ -146,7 +146,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return $this->price;
     }
 
-    public function setPrice($value)
+    public function setPrice($value): void
     {
         $this->price = $value;
     }
@@ -156,7 +156,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         return $this->maxItemValue;
     }
 
-    public function setMaxItemValue($value)
+    public function setMaxItemValue($value): void
     {
         $this->maxItemValue = $value;
     }

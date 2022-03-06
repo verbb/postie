@@ -14,13 +14,13 @@ class SinglePackageProvider extends Provider
     // Properties
     // =========================================================================
 
-    private $_cachedPackageRates = [];
+    private array $_cachedPackageRates = [];
 
     
     // Public Methods
     // =========================================================================
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -69,7 +69,7 @@ class SinglePackageProvider extends Provider
     // Protected Methods
     // =========================================================================
 
-    protected function setRate($packedBox, $payload)
+    protected function setRate($packedBox, $payload): void
     {
         $key = $payload['key'];
         $rate = $payload['value'];
@@ -91,14 +91,14 @@ class SinglePackageProvider extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _setCachedRateForBox($packedBox, $payload)
+    private function _setCachedRateForBox($packedBox, $payload): void
     {
         $cacheKey = implode('.', $packedBox);
 
         $this->_cachedPackageRates[$cacheKey] = $payload;
     }
 
-    private function _getCachedRateForBox($packedBox)
+    private function _getCachedRateForBox($packedBox): void
     {
         $cacheKey = implode('.', $packedBox);
 
