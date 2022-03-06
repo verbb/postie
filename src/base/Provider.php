@@ -557,10 +557,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $boxSizes = [];
 
-        if (!is_array($this->boxSizes)) {
-            $this->boxSizes = [];
-        }
-
         $defaultBoxes = static::defineDefaultBoxes();
 
         foreach ($defaultBoxes as $key => &$defaultBox) {

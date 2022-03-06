@@ -157,10 +157,6 @@ class Service extends Component
 
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event): void
     {
-        if (!$event->order) {
-            return;
-        }
-
         $shippingMethods = $this->getShippingMethodsForOrder($event->order);
 
         $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([

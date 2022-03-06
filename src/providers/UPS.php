@@ -833,7 +833,7 @@ class UPS extends Provider
 
     private function _inEU($country): bool
     {
-        return isset($this->euCountries[$country->iso]) ? true : false;
+        return isset($this->euCountries[$country->iso]);
     }
 
     private function _getServiceHandle($code, $storeLocation, $shippingAddress): bool|string
