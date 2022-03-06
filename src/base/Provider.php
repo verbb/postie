@@ -257,7 +257,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 // that'll cause an infinite loop.
                 $tempProvider->enabled = $settings['enabled'] ?? null;
                 $tempProvider->settings = $settings['settings'] ?? null;
-                $tempProvider->markUpRate = (float)$settings['markUpRate'] ?? null;
+                $tempProvider->markUpRate = (float)($settings['markUpRate'] ?? null);
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
                 $tempProvider->restrictServices = $settings['restrictServices'] ?? null;
                 $tempProvider->packingMethod = $settings['packingMethod'] ?? null;
@@ -269,7 +269,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
                 // Stored in plugin settings as an array, config file as just the name
                 if (is_array($info)) {
-                    $shippingMethod->name = $info['name'] ?? $this->getServiceList()[$handle] ?? '';
+                    $shippingMethod->name = $info['name'] ?? self::getServiceList()[$handle] ?? '';
                     $shippingMethod->enabled = $info['enabled'] ?? '';
 
                     // Also sort out saved shipping categories
@@ -343,7 +343,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $shippingMethods = [];
 
-        if ($this->supportsDynamicServices()) {
+        if ($this::supportsDynamicServices()) {
             $shippingRates = $this->getShippingRates($order) ?? [];
 
             foreach (array_keys($shippingRates) as $key => $handle) {
@@ -638,9 +638,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'storeLocation' => $storeLocation,
             'order' => $order,
             'packedBoxes' => $packedBoxes,
-
-            // Deprecated - todo remove at next breakpoint
-            'dimensions' => $packedBoxes->getSerializedPackedBoxList(),
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_RATES)) {
