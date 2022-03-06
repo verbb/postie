@@ -103,7 +103,7 @@ class RoyalMail extends StaticProvider
         if ($this->restrictServices) {
             $services = ArrayHelper::where($this->services, 'enabled', true);
         } else {
-            $services = $this->getServiceList();
+            $services = self::getServiceList();
         }
 
         $allRates = [];

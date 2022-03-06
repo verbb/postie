@@ -94,14 +94,14 @@ class Fastway extends Provider
             $countryCode = $this->_getCountryCode($order->shippingAddress->country);
 
             if (!$countryCode) {
-                return false;
+                return null;
             }
 
             $response = $this->_request('GET', 'pickuprf/' . $storeLocation->zipCode . '/' . $countryCode);
             $franchiseCode = $response['result']['franchise_code'] ?? false;
 
             if (!$franchiseCode) {
-                return false;
+                return null;
             }
 
             $url = [

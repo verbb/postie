@@ -11,12 +11,12 @@ class ModifyRatesEvent extends Event
     // =========================================================================
 
     /**
-     * @var array A map of rate data, each element containing an `amount` key and an `options` key with Provider-specific API data.
+     * @var array|null A map of rate data, each element containing an `amount` key and an `options` key with Provider-specific API data.
      */
     public ?array $rates = [];
 
     /**
-     * @var array The raw API response object from the Provider.
+     * @var array|null The raw API response object from the Provider.
      */
     public ?array $response = [];
 

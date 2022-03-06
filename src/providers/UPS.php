@@ -353,7 +353,7 @@ class UPS extends Provider
 
         if (!$client) {
             Provider::error($this, 'Unable to communicate with API.');
-            return false;
+            return null;
         }
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();

@@ -118,7 +118,7 @@ class Bring extends Provider
             if ($this->restrictServices) {
                 $payload['product'] = array_keys(ArrayHelper::where($this->services, 'enabled', true));
             } else {
-                $payload['product'] = array_keys($this->getServiceList());
+                $payload['product'] = array_keys(self::getServiceList());
             }
 
             $this->beforeSendPayload($this, $payload, $order);
