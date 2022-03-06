@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -10,6 +9,10 @@ use Craft;
 use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
+
+use GuzzleHttp\Client;
+
+use Throwable;
 
 class Interparcel extends Provider
 {
@@ -37,7 +40,7 @@ class Interparcel extends Provider
         return true;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -120,7 +123,7 @@ class Interparcel extends Provider
             if ($services) {
                 foreach ($services as $service) {
                     $this->_rates[$service['service']] = [
-                        'amount' => (float)$service['price'] ?? '',
+                        'amount' => (float)($service['price'] ?? 0),
                         'options' => $service,
                     ];
                 }
@@ -142,7 +145,7 @@ class Interparcel extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -202,7 +205,7 @@ class Interparcel extends Provider
             $response = $this->_request('POST', 'quote/v2', [
                 'json' => ['shipment' => $payload],
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -219,7 +222,7 @@ class Interparcel extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if ($this->_client) {
             return $this->_client;

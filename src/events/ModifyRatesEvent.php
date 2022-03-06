@@ -21,7 +21,7 @@ class ModifyRatesEvent extends Event
     public array $response = [];
 
     /**
-     * @var Order The order that was used when requesting rates.
+     * @var ?Order The order that was used when requesting rates.
      */
     public ?Order $order = null;
 }

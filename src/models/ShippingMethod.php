@@ -4,8 +4,6 @@ namespace verbb\postie\models;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyShippingRuleEvent;
 
-use Craft;
-use craft\base\Model;
 use craft\helpers\UrlHelper;
 
 use craft\commerce\base\ShippingMethod as BaseShippingMethod;
@@ -80,7 +78,7 @@ class ShippingMethod extends BaseShippingMethod
 
     public function getIsEnabled(): bool
     {
-        return (bool)$this->enabled && isset($this->rate);
+        return $this->enabled && isset($this->rate);
     }
 
     public function getCpEditUrl(): string

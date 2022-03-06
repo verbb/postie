@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\base;
 
-use verbb\postie\base\Provider;
 use verbb\postie\events\PackOrderEvent;
 use verbb\postie\models\Box;
 use verbb\postie\models\PackedBoxes;
@@ -22,7 +21,7 @@ class StaticProvider extends Provider
         return false;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         return [];
     }
@@ -61,7 +60,7 @@ class StaticProvider extends Provider
         $boxList = new BoxList();
 
         // Add boxes to the BoxList, retaining their order
-        $boxList = $boxList->fromArray($boxes, true);
+        $boxList = $boxList::fromArray($boxes, true);
 
         // Add the BoxList to the packer, instead of each box (which would be easier)
         $packer->setBoxes($boxList);

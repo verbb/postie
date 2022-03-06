@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -12,16 +11,15 @@ use craft\helpers\Json;
 use craft\commerce\Plugin as Commerce;
 
 use FedEx\RateService\Request;
-use FedEx\RateService\ComplexType;
-use FedEx\RateService\ComplexType\ContactAndAddress;
 use FedEx\RateService\ComplexType\RateRequest;
 use FedEx\RateService\ComplexType\RequestedPackageLineItem;
-use FedEx\RateService\SimpleType;
 use FedEx\RateService\SimpleType\LinearUnits;
 use FedEx\RateService\SimpleType\PaymentType;
 use FedEx\RateService\SimpleType\RateRequestType;
 use FedEx\RateService\SimpleType\ServiceOptionType;
 use FedEx\RateService\SimpleType\WeightUnits;
+
+use Throwable;
 
 class FedEx extends Provider
 {
@@ -250,12 +248,12 @@ class FedEx extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order): ?float
+    public function getMaxPackageWeight($order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -307,7 +305,7 @@ class FedEx extends Provider
             }
             
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -402,12 +400,12 @@ class FedEx extends Provider
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');;
+            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');
 
             $lineItems = [];
 
             // Modify each line item to contain extra required info for freight
-            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => &$packageLineItem) {
+            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => $packageLineItem) {
                 $packageLineItem->SequenceNumber = $key + 1;
                 $packageLineItem->PhysicalPackaging = 'SKID';
                 $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
@@ -468,7 +466,7 @@ class FedEx extends Provider
                 $this->_rates[$rateReplyDetails->ServiceType] = [
                     'amount' => $rate,
                     'options' => [
-                        'ServiceType' => $rateReplyDetails->ServiceType ?? '',
+                        'ServiceType' => $rateReplyDetails->ServiceType,
                         'ServiceDescription' => $rateReplyDetails->ServiceDescription->Description ?? '',
                         'packagingType' => $rateReplyDetails->PackagingType ?? '',
                         'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
@@ -476,7 +474,7 @@ class FedEx extends Provider
                         'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
                         'transitTime' => $rateReplyDetails->TransitTime ?? '',
                         'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
-                        'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? '',
+                        'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? false,
                         'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
                         'destinationServiceArea' => $rateReplyDetails->DestinationServiceArea ?? '',
                     ],
@@ -523,7 +521,7 @@ class FedEx extends Provider
             $rateServiceRequest = new Request();
             $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
             $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -545,7 +543,7 @@ class FedEx extends Provider
         $packages = [];
 
         foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-            // Assuming we pack all order line items into one package to save shipping costs we creating just one package line item
+            // Assuming we pack all order line items into one package to save shipping costs we created just one package line item
             $packageLineItem = new RequestedPackageLineItem();
 
             // Weight
@@ -571,7 +569,7 @@ class FedEx extends Provider
         return $packages;
     }
 
-    private function _getUnitOfMeasurement($type)
+    private function _getUnitOfMeasurement($type): string
     {
         $units = [
             'lb' => WeightUnits::_LB,
@@ -587,5 +585,7 @@ class FedEx extends Provider
         if ($type === 'dimension') {
             return $units[$this->dimensionUnit] ?? LinearUnits::_IN;
         }
+
+        return '';
     }
 }

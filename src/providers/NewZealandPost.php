@@ -1,16 +1,16 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
 
-use craft\commerce\Plugin as Commerce;
+use GuzzleHttp\Client;
+
+use Throwable;
 
 class NewZealandPost extends SinglePackageProvider
 {
@@ -121,7 +121,7 @@ class NewZealandPost extends SinglePackageProvider
                         $this->setRate($packedBox, [
                             'key' => $service['description'],
                             'value' => [
-                                'amount' => (float)$service['price_including_surcharge_and_gst'] ?? '',
+                                'amount' => (float)($service['price_including_surcharge_and_gst'] ?? 0),
                                 'options' => $service,
                             ],
                         ]);
@@ -160,7 +160,7 @@ class NewZealandPost extends SinglePackageProvider
                         $this->setRate($packedBox, [
                             'key' => $service['description'],
                             'value' => [
-                                'amount' => (float)$service['price_including_gst'] ?? '',
+                                'amount' => (float)($service['price_including_gst'] ?? 0),
                                 'options' => $service,
                             ],
                         ]);
@@ -171,7 +171,7 @@ class NewZealandPost extends SinglePackageProvider
                     ]));
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -222,7 +222,7 @@ class NewZealandPost extends SinglePackageProvider
             $response = $this->_request('GET', 'domestic', [
                 'query' => $payload,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -239,7 +239,7 @@ class NewZealandPost extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if ($this->_client) {
             return $this->_client;

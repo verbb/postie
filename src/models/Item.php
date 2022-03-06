@@ -90,7 +90,7 @@ class Item extends Model implements \DVDoug\BoxPacker\Item
         $this->keepFlat = $value;
     }
 
-    public function getItemValue()
+    public function getItemValue(): ?float
     {
         return $this->itemValue;
     }

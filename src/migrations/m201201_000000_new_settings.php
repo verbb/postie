@@ -17,7 +17,7 @@ class m201201_000000_new_settings extends Migration
         $schemaVersion = $projectConfig->get('plugins.postie.schemaVersion', true);
         
         if (version_compare($schemaVersion, '2.1.0', '>=')) {
-            return;
+            return true;
         }
 
         $providers = $projectConfig->get('plugins.postie.settings.providers');

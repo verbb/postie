@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -12,6 +11,11 @@ use craft\helpers\Json;
 use craft\commerce\Plugin as Commerce;
 
 use Cake\Utility\Xml as XmlParser;
+
+use DomDocument;
+use Throwable;
+
+use GuzzleHttp\Client;
 
 class CanadaPost extends Provider
 {
@@ -77,7 +81,7 @@ class CanadaPost extends Provider
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -155,7 +159,7 @@ class CanadaPost extends Provider
                     </destination>
                 </mailing-scenario>';
 
-            // Pretty the output just so its easier to debug
+            // Pretty the output just so it's easier to debug
             $payload = $this->_formatXml($payload);
 
             $this->beforeSendPayload($this, $payload, $order);
@@ -167,7 +171,7 @@ class CanadaPost extends Provider
                     $serviceHandle = $this->_getServiceHandle($service['service-code']);
 
                     $this->_rates[$serviceHandle] = [
-                        'amount' => (float)$service['price-details']['due'] ?? '',
+                        'amount' => (float)($service['price-details']['due'] ?? 0),
                         'options' => $service,
                     ];
                 }
@@ -189,7 +193,7 @@ class CanadaPost extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = $this->_parseResponse($e->getResponse());
                 $message = $data['messages']['message']['description'] ?? $e->getMessage();
@@ -242,7 +246,7 @@ class CanadaPost extends Provider
                 </mailing-scenario>';
 
             $response = $this->_request('POST', 'rs/ship/price', ['body' => $payload]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -259,7 +263,7 @@ class CanadaPost extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
 
@@ -285,14 +289,14 @@ class CanadaPost extends Provider
         return $this->_client;
     }
 
-    private function _request(string $method, string $uri, array $options = [])
+    private function _request(string $method, string $uri, array $options = []): ?array
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
         return $this->_parseResponse($response);
     }
 
-    private function _parseResponse($response)
+    private function _parseResponse($response): ?array
     {
         try {
             // Allow parsing errors to be caught
@@ -301,13 +305,15 @@ class CanadaPost extends Provider
             $xml = simplexml_load_string((string)$response->getBody());
 
             return XmlParser::toArray($xml);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if ($parseErrors = libxml_get_errors()) {
                 Provider::error($this, 'Invalid XML: ' . $parseErrors[0]->message . ': Line #' . $parseErrors[0]->line . '.');
             } else {
                 Provider::error($this, 'Request error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
             }
         }
+
+        return null;
     }
 
     private function _getServiceHandle($value): array|string
@@ -317,7 +323,7 @@ class CanadaPost extends Provider
 
     private function _formatXml($payload): bool|string
     {
-        $doc = new \DomDocument('1.0');
+        $doc = new DomDocument('1.0');
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
         $doc->loadXML(simplexml_load_string($payload)->asXML());

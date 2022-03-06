@@ -147,7 +147,7 @@ class TestingHelper
     // Static Methods
     // =========================================================================
 
-    public static function getTestAddress($country, $criteria = []): \craft\commerce\models\Address
+    public static function getTestAddress($country, $criteria = []): Address
     {
         $filter = array_merge(['country' => $country], $criteria);
 
@@ -166,11 +166,11 @@ class TestingHelper
         // Add back the country/state
         if ($countryIso) {
             $country = Commerce::getInstance()->countries->getCountryByIso($countryIso);
-            $address->countryId = $country->id ?? '';
+            $address->countryId = $country->id ?? null;
 
             if ($country && $stateIso) {
                 $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, $stateIso);
-                $address->stateId = $state->id ?? '';
+                $address->stateId = $state->id ?? null;
             }
         }
 

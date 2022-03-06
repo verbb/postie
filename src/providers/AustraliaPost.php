@@ -1,16 +1,16 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
 
-use craft\commerce\Plugin as Commerce;
+use Throwable;
+
+use GuzzleHttp\Client;
 
 class AustraliaPost extends SinglePackageProvider
 {
@@ -268,9 +268,7 @@ class AustraliaPost extends SinglePackageProvider
 
         // Add the new column, but before the enabled lightswitch
         $index = array_search('enabled', array_keys($sizes));
-        $sizes = array_merge(array_slice($sizes, 0, $index), $newCols, array_slice($sizes, $index));
-
-        return $sizes;
+        return array_merge(array_slice($sizes, 0, $index), $newCols, array_slice($sizes, $index));
     }
 
     public function getMaxPackageWeight($order): ?int
@@ -362,7 +360,7 @@ class AustraliaPost extends SinglePackageProvider
 
             $services = $response['services']['service'] ?? [];
 
-            // The AusPost API doesn't normalise services returned. If only on serviec is returned, it won't be a multi-dimensional
+            // The AusPost API doesn't normalise services returned. If only on service is returned, it won't be a multidimensional
             // array, which really throws things off. So ensure we normalise services.
             if (!isset($services[0])) {
                 $services = [$services];
@@ -374,7 +372,7 @@ class AustraliaPost extends SinglePackageProvider
                     $this->setRate($packedBox, [
                         'key' => $service['code'],
                         'value' => [
-                            'amount' => (float)$service['price'] ?? '',
+                            'amount' => (float)($service['price'] ?? 0),
                             'options' => $service,
                         ],
                     ]);
@@ -384,7 +382,7 @@ class AustraliaPost extends SinglePackageProvider
                     'json' => Json::encode($response),
                 ]));
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -430,7 +428,7 @@ class AustraliaPost extends SinglePackageProvider
             $response = $this->_request('GET', 'postage/parcel/domestic/service.json', [
                 'query' => $payload,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -447,7 +445,7 @@ class AustraliaPost extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -475,7 +473,7 @@ class AustraliaPost extends SinglePackageProvider
             if (!$this->_countryList) {
                 $this->_countryList = $this->_request('GET', 'postage/country.json');
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $cachePath = Craft::getAlias('@vendor/verbb/postie/src/inc/australia-post/countries.json');
 
             $this->_countryList = Json::decode(file_get_contents($cachePath));

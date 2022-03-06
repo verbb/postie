@@ -3,7 +3,6 @@ namespace verbb\postie\services;
 
 use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippingMethodsEvent;
-use verbb\postie\helpers\PostieHelper;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
@@ -63,6 +62,8 @@ class Service extends Component
             unset($provider['services']);
         }
 
+        unset($provider);
+
         // Patch in any shipping categories defined for each enabled providers' services
         foreach ($providers as $providerHandle => &$provider) {
             if ($provider['enabled']) {
@@ -81,11 +82,15 @@ class Service extends Component
                     }                    
                 }
 
+                unset($service);
+
                 if ($services) {
                     $provider['services'] = $services;
                 }
             }
         }
+
+        unset($provider);
 
         $settings->providers = $providers;
 

@@ -3,10 +3,6 @@ namespace verbb\postie\models;
 
 use verbb\postie\base\Provider;
 
-use Craft;
-use craft\base\Model;
-
-use craft\commerce\base\ShippingRuleInterface;
 use craft\commerce\models\ShippingRule as BaseShippingRule;
 
 class ShippingRule extends BaseShippingRule

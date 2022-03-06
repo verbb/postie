@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\services;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\base\ProviderInterface;
 use verbb\postie\events\RegisterProviderTypesEvent;
@@ -17,12 +16,9 @@ use verbb\postie\providers\NewZealandPost;
 use verbb\postie\providers\PostNL;
 use verbb\postie\providers\RoyalMail;
 use verbb\postie\providers\Sendle;
-use verbb\postie\providers\TNT;
 use verbb\postie\providers\TNTAustralia;
 use verbb\postie\providers\UPS;
 use verbb\postie\providers\USPS;
-
-use Craft;
 
 use yii\base\Component;
 
@@ -54,7 +50,7 @@ class Providers extends Component
         return $providers;
     }
 
-    public function getProviderByHandle($handle)
+    public function getProviderByHandle($handle): ?Provider
     {
         $providers = $this->getAllProviders();
 
@@ -63,6 +59,8 @@ class Providers extends Component
                 return $provider;
             }
         }
+
+        return null;
     }
 
 

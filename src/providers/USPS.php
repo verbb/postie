@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -16,12 +15,14 @@ use craft\commerce\Plugin as Commerce;
 use USPS\Rate;
 use USPS\RatePackage;
 
+use Throwable;
+
 class USPS extends Provider
 {
     // Properties
     // =========================================================================
 
-    public string $handle = 'usps';
+    public ?string $handle = 'usps';
     public string $weightUnit = 'lb';
     public string $dimensionUnit = 'in';
 
@@ -124,7 +125,7 @@ class USPS extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order): ?float
+    public function getMaxPackageWeight($order): ?int
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -133,7 +134,7 @@ class USPS extends Provider
         return $this->maxDomesticWeight;
     }
 
-    public function fetchShippingRates($order): bool|array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -312,8 +313,7 @@ class USPS extends Provider
 
                     // Combine the package and service information as options
                     $optionData = array_merge($package, $service);
-                    unset($optionData['Service']);
-                    unset($optionData['Postage']);
+                    unset($optionData['Service'], $optionData['Postage']);
 
                     $this->_rates[$serviceHandle] = [
                         'amount' => $amount,
@@ -334,7 +334,7 @@ class USPS extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -372,7 +372,7 @@ class USPS extends Provider
             $client->addPackage($package);
 
             $client->getRate();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -389,7 +389,7 @@ class USPS extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): ?\USPS\Rate
+    private function _getClient(): ?Rate
     {
         if (!$this->_client) {
             $username = $this->getSetting('username');
@@ -409,15 +409,11 @@ class USPS extends Provider
 
         $string = str_replace($replace, '', $string);
         $string = StringHelper::toSnakeCase($string);
-        $string = strtoupper($string);
-
-        return $string;
+        return strtoupper($string);
     }
 
     private function _parseZipCode($zip): string
     {
-        $zip = explode('-', $zip)[0] ?? $zip;
-
-        return $zip;
+        return explode('-', $zip)[0] ?? $zip;
     }
 }

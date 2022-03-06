@@ -1,11 +1,7 @@
 <?php
 namespace verbb\postie\services;
 
-use verbb\postie\Postie;
-
-use Craft;
 use craft\base\Component;
-use craft\db\Query;
 
 class ProviderCache extends Component
 {

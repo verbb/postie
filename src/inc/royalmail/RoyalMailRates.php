@@ -1,15 +1,16 @@
 <?php
 namespace verbb\postie\inc\royalmail;
 
-use Craft;
 use craft\helpers\StringHelper;
+
+use craft\commerce\elements\Order;
 
 class RoyalMailRates
 {
     // Properties
     // =========================================================================
 
-    public static $order;
+    public static ?Order $order = null;
     public static bool $checkCompensation = false;
     public static bool $includeVat = false;
 
@@ -284,7 +285,7 @@ class RoyalMailRates
         ]);
 
         foreach ($boxPricing as $key => &$box) {
-            if (strstr($key, 'letter-')) {
+            if (str_contains($key, 'letter-')) {
                 $additionalCost = $signedForCost;
             } else {
                 $additionalCost = $signedForPackageCost;
@@ -474,7 +475,7 @@ class RoyalMailRates
         ]);
 
         foreach ($boxPricing as $key => &$box) {
-            if (strstr($key, 'letter-')) {
+            if (str_contains($key, 'letter-')) {
                 $additionalCost = $signedForCost;
             } else {
                 $additionalCost = $signedForPackageCost;
@@ -3259,13 +3260,21 @@ class RoyalMailRates
     {
         if ($country === 'GB') {
             return 'UK';
-        } else if (in_array($country, self::$euro)) {
+        }
+
+        if (in_array($country, self::$euro)) {
             return 'EU';
-        } else if (in_array($country, self::$europe)) {
+        }
+
+        if (in_array($country, self::$europe)) {
             return 'EUR';
-        } else if (in_array($country, self::$worldZone2)) {
+        }
+
+        if (in_array($country, self::$worldZone2)) {
             return '2';
-        } else if (in_array($country, self::$worldZone3)) {
+        }
+
+        if (in_array($country, self::$worldZone3)) {
             return '3';
         }
 
@@ -3276,23 +3285,41 @@ class RoyalMailRates
     {
         if (in_array($country, ['JE', 'GG', 'IM'])) {
             return '4';
-        } else if ('IE' === $country) {
+        }
+
+        if ('IE' === $country) {
             return '5';
-        } else if (in_array($country, ['BE', 'NL', 'LU'])) {
+        }
+
+        if (in_array($country, ['BE', 'NL', 'LU'])) {
             return '6';
-        } else if (in_array($country, ['FR', 'DE', 'DK'])) {
+        }
+
+        if (in_array($country, ['FR', 'DE', 'DK'])) {
             return '7';
-        } else if (in_array($country, ['IT', 'ES', 'PT', 'GR'])) {
+        }
+
+        if (in_array($country, ['IT', 'ES', 'PT', 'GR'])) {
             return '8';
-        } else if (in_array($country, self::$euro)) {
+        }
+
+        if (in_array($country, self::$euro)) {
             return '9';
-        } else if (in_array($country, self::$europeNonEu)) {
+        }
+
+        if (in_array($country, self::$europeNonEu)) {
             return '9_NON_EU';
-        } else if (in_array($country, ['US', 'CA'])) {
+        }
+
+        if (in_array($country, ['US', 'CA'])) {
             return '10';
-        } else if (in_array($country, self::$farEast)) {
+        }
+
+        if (in_array($country, self::$farEast)) {
             return '11';
-        } else if (in_array($country, self::$australasia)) {
+        }
+
+        if (in_array($country, self::$australasia)) {
             return '11';
         }
 

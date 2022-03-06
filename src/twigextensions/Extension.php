@@ -5,7 +5,6 @@ use verbb\postie\helpers\PostieHelper;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Twig\TwigFilter;
 
 class Extension extends AbstractExtension
 {
@@ -29,5 +28,7 @@ class Extension extends AbstractExtension
         if (is_array($array)) {
             return PostieHelper::getValueByKey($array, $value);
         }
+
+        return null;
     }
 }

@@ -14,5 +14,5 @@ interface ProviderInterface extends SavableComponentInterface
     // Public Methods
     // =========================================================================
 
-    public function fetchShippingRates($order);
+    public function fetchShippingRates($order): ?array;
 }

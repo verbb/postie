@@ -17,7 +17,6 @@ use craft\base\SavableComponent;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
-use craft\web\Response;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
@@ -27,15 +26,14 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 
 use DVDoug\BoxPacker\InfalliblePacker;
-use DVDoug\BoxPacker\ItemTooLargeException;
 use DVDoug\BoxPacker\PackedBox;
-use DVDoug\BoxPacker\PackedBoxList;
 use DVDoug\BoxPacker\PackedItem;
 use DVDoug\BoxPacker\PackedItemList;
 
 use Cake\Utility\Hash;
 
 use Exception;
+use Throwable;
 
 abstract class Provider extends SavableComponent implements ProviderInterface
 {
@@ -81,7 +79,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Static Methods
     // =========================================================================
 
-    public static function log($provider, $message, $throwError = false)
+    public static function log($provider, $message, $throwError = false): void
     {
         $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
@@ -97,7 +95,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         Postie::log($message);
     }
 
-    public static function error($provider, $message, $throwError = false)
+    public static function error($provider, $message, $throwError = false): void
     {
         $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
         $message = $provider->name . ': ' . $message;
@@ -128,9 +126,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function __construct()
     {
+        parent::__construct();
+
         // Setup default name + handle
-        $this->name = $this->name ?? $this->displayName();
-        $this->handle = $this->handle ?? StringHelper::toCamelCase($this->displayName());
+        $this->name = $this->name ?? self::displayName();
+        $this->handle = $this->handle ?? StringHelper::toCamelCase(self::displayName());
 
         // Populate and override provider settings from the plugin settings and config file
         foreach ($this->getSettings() as $key => $value) {
@@ -168,20 +168,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $handle = StringHelper::toKebabCase(static::displayName());
 
             return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return '';
         }
-    }
-
-    public function isConfigured(): bool
-    {
-        $config = $this->getProviderConfig();
-
-        if (!empty($config)) {
-            return true;
-        }
-
-        return false;
     }
 
     public function supportsDynamicServices(): bool
@@ -375,7 +364,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $this->services[$handle] ?? [];
     }
 
-    public function getShippingRates($order)
+    public function getShippingRates($order): ?array
     {
         $settings = Postie::$plugin->getSettings();
         $request = Craft::$app->getRequest();
@@ -383,19 +372,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         if (!$order) {
             Provider::log($this, 'Missing required order variable.');
 
-            return;
+            return null;
         }
 
         if (!$order->getLineItems()) {
             Provider::log($this, 'No line items for order.');
 
-            return;
+            return null;
         }
 
         if (!$order->shippingAddress && !$order->estimatedShippingAddress) {
             Provider::log($this, 'No shipping address for order.');
 
-            return;
+            return null;
         }
 
         $shippingRates = [];
@@ -470,7 +459,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $cachedRates;
     }
 
-    public function getMaxPackageWeight($order)
+    public function getMaxPackageWeight($order): ?int
     {
         return null;
     }
@@ -482,11 +471,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $sourceCountry = $storeLocation->country->iso ?? '';
         $destinationCountry = $order->shippingAddress->country->iso ?? '';
 
-        if ($storeLocation !== $destinationCountry) {
-            return true;
-        }
-
-        return false;
+        return $storeLocation !== $destinationCountry;
     }
 
     public function getBoxSizesSettings(): array
@@ -571,9 +556,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
         }
 
-        $boxSizes = array_merge($defaultBoxes, $this->boxSizes);
+        unset($defaultBox);
 
-        return $boxSizes;
+        return array_merge($defaultBoxes, $this->boxSizes);
     }
 
     public function checkConnection($useCache = true): bool
@@ -590,7 +575,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getSetting($key)
     {
-        $value = ArrayHelper::getValue($this->settings, $key) ?? null;
+        $value = ArrayHelper::getValue($this->settings, $key);
 
         if (!is_array($value)) {
             return Craft::parseEnv($value);
@@ -695,7 +680,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    protected function getBoxItemFromLineItem($lineItem): bool|\verbb\postie\models\Item
+    protected function getBoxItemFromLineItem($lineItem): bool|Item
     {
         $product = $lineItem->getPurchasable();
 
@@ -721,7 +706,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]);
     }
 
-    protected function getBoxFromLineItem($lineItem): bool|\verbb\postie\models\Box
+    protected function getBoxFromLineItem($lineItem): bool|Box
     {
         $product = $lineItem->getPurchasable();
 

@@ -4,13 +4,9 @@ namespace verbb\postie\migrations;
 use Craft;
 use craft\db\Migration;
 use craft\db\Query;
-use craft\db\Table;
-use craft\elements\Entry;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\MigrationHelper;
 use craft\helpers\StringHelper;
-use craft\services\Plugins;
 
 class m190326_000000_craft_3 extends Migration
 {
@@ -24,7 +20,7 @@ class m190326_000000_craft_3 extends Migration
         $schemaVersion = $projectConfig->get('plugins.postie.schemaVersion', true);
         
         if (version_compare($schemaVersion, '2.0.0', '>=')) {
-            return;
+            return true;
         }
 
         // Create the new tokens table
@@ -45,11 +41,7 @@ class m190326_000000_craft_3 extends Migration
                 $handle = StringHelper::toCamelCase($provider['handle']);
                 $provider['settings'] = Json::decode($provider['settings']);
 
-                unset($provider['id']);
-                unset($provider['handle']);
-                unset($provider['dateCreated']);
-                unset($provider['dateUpdated']);
-                unset($provider['uid']);
+                unset($provider['id'], $provider['handle'], $provider['dateCreated'], $provider['dateUpdated'], $provider['uid']);
 
                 $projectConfig->set('plugins.postie.settings.providers.' . $handle, $provider);
             }

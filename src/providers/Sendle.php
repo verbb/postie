@@ -1,16 +1,16 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\SinglePackageProvider;
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 
 use Craft;
 use craft\helpers\Json;
 
-use craft\commerce\Plugin as Commerce;
+use GuzzleHttp\Client;
+
+use Throwable;
 
 class Sendle extends SinglePackageProvider
 {
@@ -41,7 +41,7 @@ class Sendle extends SinglePackageProvider
         return true;
     }
 
-    public function getMaxPackageWeight($order): float|int|null
+    public function getMaxPackageWeight($order): ?int
     {
         if ($this->getIsInternational($order)) {
             return $this->maxInternationalWeight;
@@ -95,7 +95,7 @@ class Sendle extends SinglePackageProvider
                     $this->setRate($packedBox, [
                         'key' => $service['plan_name'],
                         'value' => [
-                            'amount' => (float)$service['quote']['gross']['amount'] ?? '',
+                            'amount' => (float)($service['quote']['gross']['amount'] ?? 0),
                             'options' => $service,
                         ],
                     ]);
@@ -105,7 +105,7 @@ class Sendle extends SinglePackageProvider
                     'json' => Json::encode($response),
                 ]));
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -153,7 +153,7 @@ class Sendle extends SinglePackageProvider
             $response = $this->_request('GET', 'quote', [
                 'query' => $payload,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -170,7 +170,7 @@ class Sendle extends SinglePackageProvider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if ($this->_client) {
             return $this->_client;

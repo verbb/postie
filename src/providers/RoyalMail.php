@@ -1,19 +1,15 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\base\StaticProvider;
 use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\helpers\TestingHelper;
 use verbb\postie\inc\royalmail\RoyalMailRates;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
-use craft\commerce\elements\Order;
 
 class RoyalMail extends StaticProvider
 {
@@ -80,7 +76,7 @@ class RoyalMail extends StaticProvider
         return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/royal-mail.png", true);
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -130,7 +126,7 @@ class RoyalMail extends StaticProvider
         if ($allRates) {
             foreach ($allRates as $service) {
                 $this->_rates[$service['service']] = [
-                    'amount' => (float)$service['price'] ?? '',
+                    'amount' => (float)($service['price'] ?? 0),
                     'options' => $service,
                 ];
             }

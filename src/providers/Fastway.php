@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -10,6 +9,10 @@ use Craft;
 use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
+
+use GuzzleHttp\Client;
+
+use Throwable;
 
 class Fastway extends Provider
 {
@@ -59,7 +62,7 @@ class Fastway extends Provider
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order): bool|array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -116,7 +119,7 @@ class Fastway extends Provider
                     $serviceHandle = $this->_getServiceHandle($service['labelcolour']);
 
                     $this->_rates[$serviceHandle] = [
-                        'amount' => (float)$service['totalprice_normal'] ?? '',
+                        'amount' => (float)($service['totalprice_normal'] ?? 0),
                         'options' => $response['result'],
                     ];
                 }
@@ -139,7 +142,7 @@ class Fastway extends Provider
 
             $this->_rates = $modifyRatesEvent->rates;
             
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -164,7 +167,7 @@ class Fastway extends Provider
             // Create a test payload
             $countryCode = $this->_getCountryCode('Australia');
             $response = $this->_request('GET', 'pickuprf/' . $sender->zipCode . '/' . $countryCode);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -181,7 +184,7 @@ class Fastway extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -203,20 +206,24 @@ class Fastway extends Provider
 
     private function _getServiceHandle($string): array|string
     {
-        $string = str_replace('-', '_', $string);
-        
-        return $string;
+        return str_replace('-', '_', $string);
     }
 
     private function _getCountryCode($country): bool|int
     {
         if ($country == 'Australia') {
             return 1;
-        } else if ($country == 'New Zealand') {
+        }
+
+        if ($country == 'New Zealand') {
             return 6;
-        } else if ($country == 'Ireland') {
+        }
+
+        if ($country == 'Ireland') {
             return 11;
-        } else if ($country == 'South Africa') {
+        }
+
+        if ($country == 'South Africa') {
             return 24;
         }
 

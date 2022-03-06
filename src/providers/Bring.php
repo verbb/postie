@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -13,7 +12,9 @@ use craft\helpers\UrlHelper;
 
 use craft\commerce\Plugin as Commerce;
 
-use function GuzzleHttp\Psr7\build_query;
+use GuzzleHttp\Client;
+
+use Throwable;
 
 class Bring extends Provider
 {
@@ -67,7 +68,7 @@ class Bring extends Provider
         ];
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -106,7 +107,6 @@ class Bring extends Provider
                 'fromcountry' => $storeLocation->country->iso ?? '',
                 'topostalcode' => $order->shippingAddress->zipCode ?? '',
                 'tocountry' => $order->shippingAddress->country->iso ?? '',
-                'postingatpostoffice' => 'false',
                 'weight' => $packedBoxes->getTotalWeight(),
 
                 // Tells whether the parcel is delivered at a post office when it is shipped.
@@ -124,7 +124,7 @@ class Bring extends Provider
             $this->beforeSendPayload($this, $payload, $order);
 
             $response = $this->_request('GET', 'products', [
-                'query' => build_query($payload),
+                'query' => $payload,
             ]);
 
             $services = $response['consignments'][0]['products'] ?? [];
@@ -163,7 +163,7 @@ class Bring extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -204,14 +204,13 @@ class Bring extends Provider
                 'tocountry' => $recipient->country->iso ?? '',
                 'postingatpostoffice' => 'false',
                 'weight' => $packedBox['weight'],
-                'postingatpostoffice' => 'false',
                 'product' => ['PA_DOREN'],
             ];
 
             $response = $this->_request('GET', 'products', [
-                'query' => build_query($payload),
+                'query' => $payload,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -228,7 +227,7 @@ class Bring extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if ($this->_client) {
             return $this->_client;

@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\inc\colissimo;
 
-use Craft;
 use craft\helpers\StringHelper;
 
 class ColissimoRates
@@ -716,13 +715,21 @@ class ColissimoRates
     {
         if (in_array($country, self::$france)) {
             return self::ZONE_FR;
-        } else if (in_array($country, self::$DOM)) {
+        }
+
+        if (in_array($country, self::$DOM)) {
             return self::ZONE_DOM;
-        } else if (in_array($country, self::$TOM)) {
+        }
+
+        if (in_array($country, self::$TOM)) {
             return self::ZONE_TOM;
-        } else if (in_array($country, self::$internationalZoneA)) {
+        }
+
+        if (in_array($country, self::$internationalZoneA)) {
             return self::ZONE_INTERNATIONAL_A;
-        } else if (in_array($country, self::$internationalZoneB)) {
+        }
+
+        if (in_array($country, self::$internationalZoneB)) {
             return self::ZONE_INTERNATIONAL_B;
         }
 
@@ -733,9 +740,13 @@ class ColissimoRates
     {
         if (in_array($country, self::$france)) {
             return 'fr';
-        } else if (in_array($country, self::$DOM)) {
+        }
+
+        if (in_array($country, self::$DOM)) {
             return 'dom';
-        } else if (in_array($country, self::$TOM)) {
+        }
+
+        if (in_array($country, self::$TOM)) {
             return 'tom';
         }
 

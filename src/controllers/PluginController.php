@@ -12,6 +12,7 @@ use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Variant;
 
 use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 
 class PluginController extends Controller
 {
@@ -24,7 +25,7 @@ class PluginController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionSettings(): \yii\web\Response
+    public function actionSettings(): Response
     {
         if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
             throw new ForbiddenHttpException('Administrative changes are disallowed in this environment.');

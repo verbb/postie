@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\inc\postnl;
 
-use Craft;
 use craft\helpers\StringHelper;
 
 class PostNLRates
@@ -672,13 +671,21 @@ class PostNLRates
     {
         if ($country === 'NL') {
             return self::ZONE_NL;
-        } else if (in_array($country, self::$eur1)) {
+        }
+
+        if (in_array($country, self::$eur1)) {
             return self::ZONE_EU1;
-        } else if (in_array($country, self::$eur2)) {
+        }
+
+        if (in_array($country, self::$eur2)) {
             return self::ZONE_EU2;
-        } else if (in_array($country, self::$eur3)) {
+        }
+
+        if (in_array($country, self::$eur3)) {
             return self::ZONE_EU3;
-        } else if (in_array($country, self::$world)) {
+        }
+
+        if (in_array($country, self::$world)) {
             return self::ZONE_WORLD;
         }
 

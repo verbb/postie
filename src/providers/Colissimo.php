@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\base\StaticProvider;
 use verbb\postie\events\ModifyRatesEvent;
@@ -9,10 +8,8 @@ use verbb\postie\inc\colissimo\ColissimoRates;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
-use craft\commerce\elements\Order;
 
 class Colissimo extends StaticProvider
 {
@@ -48,7 +45,7 @@ class Colissimo extends StaticProvider
         ];
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -106,7 +103,7 @@ class Colissimo extends StaticProvider
         if ($allRates) {
             foreach ($allRates as $service) {
                 $this->_rates[$service['service']] = [
-                    'amount' => (float)$service['price'] ?? '',
+                    'amount' => (float)($service['price'] ?? 0),
                     'options' => $service,
                 ];
             }

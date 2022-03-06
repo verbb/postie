@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -13,12 +12,19 @@ use craft\commerce\Plugin as Commerce;
 
 use Cake\Utility\Xml;
 
+use GuzzleHttp\Client;
+
+use DateTime;
+use DomDocument;
+use SimpleXMLElement;
+use Throwable;
+
 class TNTAustralia extends Provider
 {
     // Properties
     // =========================================================================
 
-    public string $handle = 'tntAustralia';
+    public ?string $handle = 'tntAustralia';
     public string $weightUnit = 'kg';
     public string $dimensionUnit = 'cm';
 
@@ -63,7 +69,7 @@ class TNTAustralia extends Provider
         return $this->maxDomesticWeight;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -128,7 +134,7 @@ class TNTAustralia extends Provider
                     </ratedTransitTimeEnquiry>
                 </enquiry>';
 
-            // Pretty the output just so its easier to debug
+            // Pretty the output just so it's easier to debug
             $xmlRequest = $this->_formatXml($xmlRequest);
 
             $payload = [
@@ -144,7 +150,7 @@ class TNTAustralia extends Provider
             if (isset($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'])) {
                 foreach ($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'] as $service) {
                     $this->_rates[$service['product']['code']] = [
-                        'amount' => (float)$service['quote']['price'] ?? '',
+                        'amount' => (float)($service['quote']['price'] ?? 0),
                         'options' => $service,
                     ];
                 }
@@ -167,7 +173,7 @@ class TNTAustralia extends Provider
 
             $this->_rates = $modifyRatesEvent->rates;
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -235,7 +241,7 @@ class TNTAustralia extends Provider
             ];
 
             $response = $this->_request('POST', 'Rtt/inputRequest.asp', ['form_params' => $payload]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -252,7 +258,7 @@ class TNTAustralia extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -266,7 +272,7 @@ class TNTAustralia extends Provider
         return $this->_client;
     }
 
-    private function _request(string $method, string $uri, array $options = []): \DOMDocument|\SimpleXMLElement
+    private function _request(string $method, string $uri, array $options = []): DOMDocument|SimpleXMLElement
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
@@ -278,7 +284,7 @@ class TNTAustralia extends Provider
 
     private function _formatXml($payload): bool|string
     {
-        $doc = new \DomDocument('1.0');
+        $doc = new DomDocument('1.0');
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
         $doc->loadXML(simplexml_load_string($payload)->asXML());
@@ -289,7 +295,7 @@ class TNTAustralia extends Provider
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 
-        $from = new \DateTime($from);
+        $from = new DateTime($from);
         $dates = [];
 
         while ($days) {

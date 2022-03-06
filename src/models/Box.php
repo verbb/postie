@@ -1,9 +1,6 @@
 <?php
 namespace verbb\postie\models;
 
-use verbb\postie\base\Provider;
-
-use Craft;
 use craft\base\Model;
 
 class Box extends Model implements \DVDoug\BoxPacker\Box
@@ -141,7 +138,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         $this->type = $value;
     }
 
-    public function getPrice()
+    public function getPrice(): ?float
     {
         return $this->price;
     }
@@ -151,7 +148,7 @@ class Box extends Model implements \DVDoug\BoxPacker\Box
         $this->price = $value;
     }
 
-    public function getMaxItemValue()
+    public function getMaxItemValue(): ?float
     {
         return $this->maxItemValue;
     }

@@ -1,11 +1,7 @@
 <?php
 namespace verbb\postie\base;
 
-use verbb\postie\Postie;
 use verbb\postie\events\ModifyRatesEvent;
-
-use Craft;
-use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -20,7 +16,7 @@ class SinglePackageProvider extends Provider
     // Public Methods
     // =========================================================================
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -35,7 +31,7 @@ class SinglePackageProvider extends Provider
         // Allow location and packages modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
-        // Because the API doesn't support multi-boxing, and we might have mutliple boxes, we need to 
+        // Because the API doesn't support multi-boxing, and we might have multiple boxes, we need to
         // make potentially several API requests to fetch the correct total rate.
         foreach ($packedBoxes as $packedBox) {
             // For multi-packed requests where we're fetching the exact same package dimensions/weights, we can cache the request.
@@ -98,11 +94,11 @@ class SinglePackageProvider extends Provider
         $this->_cachedPackageRates[$cacheKey] = $payload;
     }
 
-    private function _getCachedRateForBox($packedBox): void
+    private function _getCachedRateForBox($packedBox)
     {
         $cacheKey = implode('.', $packedBox);
 
-        $this->_cachedPackageRates[$cacheKey] ?? null;
+        return $this->_cachedPackageRates[$cacheKey] ?? null;
     }
 
 }

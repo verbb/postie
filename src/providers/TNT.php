@@ -1,15 +1,20 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 
 use Craft;
-use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
 use Cake\Utility\Xml;
+
+use GuzzleHttp\Client;
+
+use DateTime;
+use SimpleXMLElement;
+use DOMDocument;
+use Throwable;
 
 class TNT extends Provider
 {
@@ -38,7 +43,7 @@ class TNT extends Provider
         ];
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -103,7 +108,7 @@ class TNT extends Provider
 
             $response = $this->_request('POST', 'expressconnect/pricing/getprice', ['body' => $payload]);
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -118,7 +123,7 @@ class TNT extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if (!$this->_client) {
             $this->_client = Craft::createGuzzleClient([
@@ -135,7 +140,7 @@ class TNT extends Provider
         return $this->_client;
     }
 
-    private function _request(string $method, string $uri, array $options = []): \DOMDocument|\SimpleXMLElement
+    private function _request(string $method, string $uri, array $options = []): DOMDocument|SimpleXMLElement
     {
         $response = $this->_getClient()->request($method, $uri, $options);
 
@@ -149,7 +154,7 @@ class TNT extends Provider
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 
-        $from = new \DateTime($from);
+        $from = new DateTime($from);
         $dates = [];
 
         while ($days) {

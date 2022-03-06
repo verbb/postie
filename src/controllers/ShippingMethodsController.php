@@ -2,21 +2,19 @@
 namespace verbb\postie\controllers;
 
 use verbb\postie\Postie;
-use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\web\Controller;
 
-use craft\commerce\Plugin as Commerce;
-use craft\commerce\elements\Variant;
 use craft\commerce\records\ShippingRuleCategory;
+use yii\web\Response;
 
 class ShippingMethodsController extends Controller
 {
     // Public Methods
     // =========================================================================
 
-    public function actionEdit($providerHandle, $serviceHandle): \yii\web\Response
+    public function actionEdit($providerHandle, $serviceHandle): Response
     {
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
@@ -36,7 +34,7 @@ class ShippingMethodsController extends Controller
         ]);
     }
 
-    public function actionSave(): ?\yii\web\Response
+    public function actionSave(): ?Response
     {
         $this->requirePostRequest();
         $request = Craft::$app->getRequest();

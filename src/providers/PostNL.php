@@ -1,19 +1,15 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\base\StaticProvider;
 use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\helpers\TestingHelper;
 use verbb\postie\inc\postnl\PostNLRates;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
-use craft\commerce\elements\Order;
 
 class PostNL extends StaticProvider
 {
@@ -27,7 +23,7 @@ class PostNL extends StaticProvider
     // Properties
     // =========================================================================
 
-    public string $handle = 'postNl';
+    public ?string $handle = 'postNl';
 
 
     // Static Methods
@@ -55,7 +51,7 @@ class PostNL extends StaticProvider
         ];
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -104,7 +100,7 @@ class PostNL extends StaticProvider
         if ($allRates) {
             foreach ($allRates as $service) {
                 $this->_rates[$service['service']] = [
-                    'amount' => (float)$service['price'] ?? '',
+                    'amount' => (float)($service['price'] ?? 0),
                     'options' => $service,
                 ];
             }

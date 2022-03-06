@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -11,14 +10,17 @@ use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 
+use GuzzleHttp\Client;
+
 use DateTime;
+use Throwable;
 
 class DHLExpress extends Provider
 {
     // Properties
     // =========================================================================
 
-    public string $handle = 'dhlExpress';
+    public ?string $handle = 'dhlExpress';
     public string $weightUnit = 'kg';
     public string $dimensionUnit = 'cm';
 
@@ -47,7 +49,7 @@ class DHLExpress extends Provider
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order): array
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -200,7 +202,7 @@ class DHLExpress extends Provider
                     'json' => Json::encode($response),
                 ]));
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'hasResponse')) {
                 $data = Json::decode((string)$e->getResponse()->getBody());
                 $message = $data['error']['errorMessage'] ?? $e->getMessage();
@@ -274,7 +276,7 @@ class DHLExpress extends Provider
             $response = $this->_request('POST', 'RateRequest', [
                 'json' => $payload,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -291,7 +293,7 @@ class DHLExpress extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): \GuzzleHttp\Client
+    private function _getClient(): Client
     {
         if ($this->_client) {
             return $this->_client;

@@ -1,9 +1,6 @@
 <?php
 namespace verbb\postie\models;
 
-use verbb\postie\base\Provider;
-
-use Craft;
 use craft\base\Model;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
@@ -23,6 +20,8 @@ class PackedBoxes extends Model
     // =========================================================================
 
     public function __construct($packedBoxList, $weightUnit, $dimensionUnit) {
+        parent::__construct();
+
         $this->packedBoxList = $packedBoxList;
         $this->weightUnit = $weightUnit;
         $this->dimensionUnit = $dimensionUnit;
@@ -80,9 +79,7 @@ class PackedBoxes extends Model
 
         // Box weights are always in grams
         $totalBoxWeight = (new Mass($totalBoxWeight, 'g'))->toUnit($this->weightUnit);
-        $totalBoxWeight = round($totalBoxWeight, 2);
-
-        return $totalBoxWeight;
+        return round($totalBoxWeight, 2);
     }
 
     public function getTotalLength(): float
@@ -95,9 +92,7 @@ class PackedBoxes extends Model
 
         // Box lengths are always in mm
         $totalBoxLength = (new Length($totalBoxLength, 'mm'))->toUnit($this->dimensionUnit);
-        $totalBoxLength = round($totalBoxLength, 2);
-
-        return $totalBoxLength;
+        return round($totalBoxLength, 2);
     }
 
     public function getTotalHeight(): float
@@ -110,9 +105,7 @@ class PackedBoxes extends Model
 
         // Box heights are always in mm
         $totalBoxHeight = (new Length($totalBoxHeight, 'mm'))->toUnit($this->dimensionUnit);
-        $totalBoxHeight = round($totalBoxHeight, 2);
-
-        return $totalBoxHeight;
+        return round($totalBoxHeight, 2);
     }
 
     public function getTotalWidth(): float
@@ -125,9 +118,7 @@ class PackedBoxes extends Model
 
         // Box widths are always in mm
         $totalBoxWidth = (new Length($totalBoxWidth, 'mm'))->toUnit($this->dimensionUnit);
-        $totalBoxWidth = round($totalBoxWidth, 2);
-
-        return $totalBoxWidth;
+        return round($totalBoxWidth, 2);
     }
 
     public function getTotalPrice(): float|int

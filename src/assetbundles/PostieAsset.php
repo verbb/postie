@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\assetbundles;
 
-use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 

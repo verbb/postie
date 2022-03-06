@@ -1,7 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
 use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
@@ -9,7 +8,6 @@ use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\helpers\Json;
-use craft\helpers\StringHelper;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -29,16 +27,17 @@ use Ups\Entity\RateResponse;
 use Ups\Entity\Service;
 use Ups\Entity\ShipFrom;
 use Ups\Entity\Shipment;
-use Ups\Entity\Shipper;
 use Ups\Entity\UnitOfMeasurement;
 use Ups\Exception\InvalidResponseException;
+
+use Throwable;
 
 class UPS extends Provider
 {
     // Properties
     // =========================================================================
 
-    public string $handle = 'ups';
+    public ?string $handle = 'ups';
     public string $weightUnit = 'lb';
     public string $dimensionUnit = 'in';
 
@@ -338,12 +337,12 @@ class UPS extends Provider
         ];
     }
 
-    public function getMaxPackageWeight($order): ?float
+    public function getMaxPackageWeight($order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order)
+    public function fetchShippingRates($order): ?array
     {
         // If we've locally cached the results, return that
         if ($this->_rates) {
@@ -392,7 +391,7 @@ class UPS extends Provider
                 return $this->fetchFreightRates($storeLocation, $packedBox, $order);
             }
 
-            return;
+            return [];
         }
 
         try {
@@ -445,7 +444,7 @@ class UPS extends Provider
                 $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
                 $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
 
-                if ($this->getSetting('requireSignature')) {
+                if ($requireSignature = $this->getSetting('requireSignature')) {
                     $deliveryConfirmation = new DeliveryConfirmation();
 
                     if ($requireSignature === 'required') {
@@ -585,7 +584,7 @@ class UPS extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -642,7 +641,7 @@ class UPS extends Provider
             $rateRequest = new RateRequest();
             $rateRequest->setShipment($shipment);
             $rates = $this->_getClient()->shopRates($rateRequest);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -800,7 +799,7 @@ class UPS extends Provider
             $shippingMethod->enabled = true;
 
             $this->services[$handle] = $shippingMethod;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -815,7 +814,7 @@ class UPS extends Provider
     // Private Methods
     // =========================================================================
 
-    private function _getClient(): ?\Ups\Rate
+    private function _getClient(): ?Rate
     {
         if (!$this->_client) {
             if (Craft::$app->getConfig()->getGeneral()->devMode) {
@@ -924,12 +923,10 @@ class UPS extends Provider
         //     'TT_S_EU_TO_OTHER_STANDARD' => '68',
         // ];
 
-        $serviceHandle = array_search($code, $services);
-
-        return $serviceHandle;
+        return array_search($code, $services);
     }
 
-    private function _getUnitOfMeasurement($type)
+    private function _getUnitOfMeasurement($type): string
     {
         $units = [
             'lb' => UnitOfMeasurement::UOM_LBS,
@@ -945,5 +942,7 @@ class UPS extends Provider
         if ($type === 'dimension') {
             return $units[$this->dimensionUnit] ?? UnitOfMeasurement::UOM_IN;
         }
+
+        return '';
     }
 }

@@ -7,6 +7,7 @@ use Craft;
 use craft\web\Controller;
 
 use Exception;
+use yii\web\Response;
 
 class ProvidersController extends Controller
 {
@@ -19,7 +20,7 @@ class ProvidersController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionCheckConnection(): \yii\web\Response
+    public function actionCheckConnection(): Response
     {
         $this->requirePostRequest();
 
@@ -32,7 +33,7 @@ class ProvidersController extends Controller
 
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
-        if (!$provider->supportsConnection()) {
+        if (!$provider::supportsConnection()) {
             return $this->asErrorJson(Craft::t('postie', '“{handle}” does not support connection.', ['handle' => $providerHandle]));
         }
 
