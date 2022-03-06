@@ -17,16 +17,6 @@ use Throwable;
 
 class DHLExpress extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'dhlExpress';
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxWeight = 70000; // 70kg
-
-
     // Static Methods
     // =========================================================================
 
@@ -35,7 +25,17 @@ class DHLExpress extends Provider
         return Craft::t('postie', 'DHL Express');
     }
 
-    
+
+    // Properties
+    // =========================================================================
+
+    public ?string $handle = 'dhlExpress';
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 70kg
+
+    private int $maxWeight = 70000;
+
+
     // Public Methods
     // =========================================================================
 

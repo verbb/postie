@@ -21,17 +21,6 @@ use Throwable;
 
 class TNTAustralia extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'tntAustralia';
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxDomesticWeight = 70000; // 70kg
-    private int $maxInternationalWeight = 500000; // 500kg
-
-
     // Static Methods
     // =========================================================================
 
@@ -40,7 +29,17 @@ class TNTAustralia extends Provider
         return Craft::t('postie', 'TNT Australia');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public ?string $handle = 'tntAustralia';
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 70kg
+
+    private int $maxDomesticWeight = 70000; // 500kg
+    private int $maxInternationalWeight = 500000;
+
+
     // Public Methods
     // =========================================================================
 
@@ -101,7 +100,7 @@ class TNTAustralia extends Provider
                         <height>' . $packedBox['height'] . '</height>
                     </dimensions>
                     <weight unit="kg">
-                        <weight>' . $packedBox['weight'] .'</weight>
+                        <weight>' . $packedBox['weight'] . '</weight>
                     </weight>
                 </packageLine>';
             }
@@ -116,9 +115,9 @@ class TNTAustralia extends Provider
                                 <state>' . $storeLocation->state . '</state>
                             </collectionAddress>
                             <deliveryAddress>
-                                <suburb>' . $order->shippingAddress->city .'</suburb>
-                                <postCode>' . $order->shippingAddress->zipCode .'</postCode>
-                                <state>' . $order->shippingAddress->state .'</state>
+                                <suburb>' . $order->shippingAddress->city . '</suburb>
+                                <postCode>' . $order->shippingAddress->zipCode . '</postCode>
+                                <state>' . $order->shippingAddress->state . '</state>
                             </deliveryAddress>
                             <shippingDate>' . $nextDate[0] . '</shippingDate>
                             <userCurrentLocalDateTime>' . date('Y-m-d\TH:i:s') . '</userCurrentLocalDateTime>
@@ -172,7 +171,6 @@ class TNTAustralia extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
@@ -206,9 +204,9 @@ class TNTAustralia extends Provider
                                 <state>' . $sender->state . '</state>
                             </collectionAddress>
                             <deliveryAddress>
-                                <suburb>' . $recipient->city .'</suburb>
-                                <postCode>' . $recipient->zipCode .'</postCode>
-                                <state>' . $recipient->state .'</state>
+                                <suburb>' . $recipient->city . '</suburb>
+                                <postCode>' . $recipient->zipCode . '</postCode>
+                                <state>' . $recipient->state . '</state>
                             </deliveryAddress>
                             <dangerousGoods>
                                 <dangerous>false</dangerous>
@@ -222,7 +220,7 @@ class TNTAustralia extends Provider
                                         <height>' . $packedBox['height'] . '</height>
                                     </dimensions>
                                     <weight unit="kg">
-                                        <weight>' . $packedBox['weight'] .'</weight>
+                                        <weight>' . $packedBox['weight'] . '</weight>
                                     </weight>
                                 </packageLine>
                             </packageLines>
@@ -265,7 +263,7 @@ class TNTAustralia extends Provider
                 'base_uri' => 'https://www.tntexpress.com.au',
                 'headers' => [
                     'Content-Type' => 'application/xml',
-                ]
+                ],
             ]);
         }
 
@@ -291,7 +289,8 @@ class TNTAustralia extends Provider
         return $doc->saveXML();
     }
 
-    private function _numberOfWorkingDates($from, $days): array {
+    private function _numberOfWorkingDates($from, $days): array
+    {
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 

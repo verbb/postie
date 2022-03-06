@@ -23,15 +23,6 @@ use Throwable;
 
 class FedEx extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'lb';
-    public string $dimensionUnit = 'in';
-
-    private float $maxWeight = 68038.9; // 150lbs
-
-    
     // Static Methods
     // =========================================================================
 
@@ -176,7 +167,15 @@ class FedEx extends Provider
         ];
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'in'; // 150lbs
+    public string $weightUnit = 'lb';
+
+    private float $maxWeight = 68038.9;
+
+
     // Public Methods
     // =========================================================================
 
@@ -192,59 +191,59 @@ class FedEx extends Provider
     {
         return [
             // Domestic
-            'FEDEX_1_DAY_FREIGHT'       => 'FedEx 1 Day Freight',
-            'FEDEX_2_DAY'               => 'FedEx 2 Day',
-            'FEDEX_2_DAY_AM'            => 'FedEx 2 Day AM',
-            'FEDEX_2_DAY_FREIGHT'       => 'FedEx 2 DAY Freight',
-            'FEDEX_3_DAY_FREIGHT'       => 'FedEx 3 Day Freight',
-            'FEDEX_EXPRESS_SAVER'       => 'FedEx Express Saver',
-            'FEDEX_FIRST_FREIGHT'       => 'FedEx First Freight',
-            'FEDEX_FREIGHT_ECONOMY'     => 'FedEx Freight Economy',
-            'FEDEX_FREIGHT_PRIORITY'    => 'FedEx Freight Priority',
-            'FEDEX_GROUND'              => 'FedEx Ground',
-            'FIRST_OVERNIGHT'           => 'FedEx First Overnight',
-            'PRIORITY_OVERNIGHT'        => 'FedEx Priority Overnight',
-            'STANDARD_OVERNIGHT'        => 'FedEx Standard Overnight',
-            'GROUND_HOME_DELIVERY'      => 'FedEx Ground Home Delivery',
-            'SAME_DAY'                  => 'FedEx Same Day',
-            'SAME_DAY_CITY'             => 'FedEx Same Day City',
-            'SMART_POST'                => 'FedEx Smart Post',
+            'FEDEX_1_DAY_FREIGHT' => 'FedEx 1 Day Freight',
+            'FEDEX_2_DAY' => 'FedEx 2 Day',
+            'FEDEX_2_DAY_AM' => 'FedEx 2 Day AM',
+            'FEDEX_2_DAY_FREIGHT' => 'FedEx 2 DAY Freight',
+            'FEDEX_3_DAY_FREIGHT' => 'FedEx 3 Day Freight',
+            'FEDEX_EXPRESS_SAVER' => 'FedEx Express Saver',
+            'FEDEX_FIRST_FREIGHT' => 'FedEx First Freight',
+            'FEDEX_FREIGHT_ECONOMY' => 'FedEx Freight Economy',
+            'FEDEX_FREIGHT_PRIORITY' => 'FedEx Freight Priority',
+            'FEDEX_GROUND' => 'FedEx Ground',
+            'FIRST_OVERNIGHT' => 'FedEx First Overnight',
+            'PRIORITY_OVERNIGHT' => 'FedEx Priority Overnight',
+            'STANDARD_OVERNIGHT' => 'FedEx Standard Overnight',
+            'GROUND_HOME_DELIVERY' => 'FedEx Ground Home Delivery',
+            'SAME_DAY' => 'FedEx Same Day',
+            'SAME_DAY_CITY' => 'FedEx Same Day City',
+            'SMART_POST' => 'FedEx Smart Post',
 
             // UK domestic services 
-            'FEDEX_DISTANCE_DEFERRED'       => 'FedEx Distance Deferred',
-            'FEDEX_NEXT_DAY_EARLY_MORNING'  => 'FedEx Next Day Early Morning',
-            'FEDEX_NEXT_DAY_MID_MORNING'    => 'FedEx Next Day Mid Morning',
-            'FEDEX_NEXT_DAY_AFTERNOON'      => 'FedEx Next Day Afternoon',
-            'FEDEX_NEXT_DAY_END_OF_DAY'     => 'FedEx Next Day End of Day',
-            'FEDEX_NEXT_DAY_FREIGHT'        => 'FedEx Next Day Freight',
+            'FEDEX_DISTANCE_DEFERRED' => 'FedEx Distance Deferred',
+            'FEDEX_NEXT_DAY_EARLY_MORNING' => 'FedEx Next Day Early Morning',
+            'FEDEX_NEXT_DAY_MID_MORNING' => 'FedEx Next Day Mid Morning',
+            'FEDEX_NEXT_DAY_AFTERNOON' => 'FedEx Next Day Afternoon',
+            'FEDEX_NEXT_DAY_END_OF_DAY' => 'FedEx Next Day End of Day',
+            'FEDEX_NEXT_DAY_FREIGHT' => 'FedEx Next Day Freight',
 
             // International
-            'INTERNATIONAL_ECONOMY'                     => 'FedEx International Economy',
-            'INTERNATIONAL_ECONOMY_FREIGHT'             => 'FedEx International Economy Freight',
-            'INTERNATIONAL_ECONOMY_DISTRIBUTION'        => 'FedEx International Economy Distribution',
-            'INTERNATIONAL_FIRST'                       => 'FedEx International First',
-            'INTERNATIONAL_PRIORITY'                    => 'FedEx International Priority',
-            'INTERNATIONAL_PRIORITY_FREIGHT'            => 'FedEx International Priority Freight',
-            'INTERNATIONAL_PRIORITY_DISTRIBUTION'       => 'FedEx International Priority Distribution',
-            'INTERNATIONAL_PRIORITY_EXPRESS'            => 'FedEx International Priority Express',
-            'EUROPE_FIRST_INTERNATIONAL_PRIORITY'       => 'FedEx Europe First International Priority',
-            'INTERNATIONAL_DISTRIBUTION_FREIGHT'        => 'FedEx International Distribution',
+            'INTERNATIONAL_ECONOMY' => 'FedEx International Economy',
+            'INTERNATIONAL_ECONOMY_FREIGHT' => 'FedEx International Economy Freight',
+            'INTERNATIONAL_ECONOMY_DISTRIBUTION' => 'FedEx International Economy Distribution',
+            'INTERNATIONAL_FIRST' => 'FedEx International First',
+            'INTERNATIONAL_PRIORITY' => 'FedEx International Priority',
+            'INTERNATIONAL_PRIORITY_FREIGHT' => 'FedEx International Priority Freight',
+            'INTERNATIONAL_PRIORITY_DISTRIBUTION' => 'FedEx International Priority Distribution',
+            'INTERNATIONAL_PRIORITY_EXPRESS' => 'FedEx International Priority Express',
+            'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'FedEx Europe First International Priority',
+            'INTERNATIONAL_DISTRIBUTION_FREIGHT' => 'FedEx International Distribution',
         ];
     }
 
     public function getWeightUnitOptions(): array
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
-            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
+            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
         ];
     }
 
     public function getDimensionUnitOptions(): array
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
-            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
+            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
         ];
     }
 
@@ -303,7 +302,7 @@ class FedEx extends Provider
             if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
                 $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
             }
-            
+
             $this->_rates = $modifyRatesEvent->rates;
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
@@ -359,7 +358,7 @@ class FedEx extends Provider
         if ($order->shippingAddress->country) {
             $countryIso = $order->shippingAddress->country->iso ?? '';
             $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryIso;
-            
+
             if ($countryIso == 'US' || $countryIso == 'CA') {
                 $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
             }
@@ -480,7 +479,7 @@ class FedEx extends Provider
                     ],
                 ];
             }
-        } elseif (isset($rateReply->Notifications)) {
+        } else if (isset($rateReply->Notifications)) {
             foreach ($rateReply->Notifications as $message) {
                 Provider::error($this, 'Rate Error: ' . $message->Message);
             }

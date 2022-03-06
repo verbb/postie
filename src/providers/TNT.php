@@ -18,13 +18,6 @@ use Throwable;
 
 class TNT extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    
     // Static Methods
     // =========================================================================
 
@@ -33,7 +26,13 @@ class TNT extends Provider
         return Craft::t('postie', 'TNT');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+
+
     // Public Methods
     // =========================================================================
 
@@ -66,7 +65,7 @@ class TNT extends Provider
                     <priceCheck>
                         <rateId>rate1</rateId>
                         <sender>
-                            <country>' . $storeLocation->country->name .'</country>
+                            <country>' . $storeLocation->country->name . '</country>
                             <town>' . $storeLocation->city . '</town>
                             <postcode>' . $storeLocation->zipCode . '</postcode>
                         </sender>
@@ -81,23 +80,23 @@ class TNT extends Provider
                             <type>N</type>
                         </product>
                         <account>
-                            <accountNumber>' . $this->getSetting('accountNumber') .'</accountNumber>
-                            <accountCountry>' . $storeLocation->country->name .'</accountCountry>
+                            <accountNumber>' . $this->getSetting('accountNumber') . '</accountNumber>
+                            <accountCountry>' . $storeLocation->country->name . '</accountCountry>
                         </account>
-                        <currency>' . $order->currency .'</currency>
+                        <currency>' . $order->currency . '</currency>
                         <priceBreakDown>false</priceBreakDown>
                         <consignmentDetails>
-                            <totalWeight>' . $dimensions['weight'] .'</totalWeight>
-                            <totalVolume>' . $volume .'</totalVolume>
+                            <totalWeight>' . $dimensions['weight'] . '</totalWeight>
+                            <totalVolume>' . $volume . '</totalVolume>
                             <totalNumberOfPieces>1</totalNumberOfPieces>
                         </consignmentDetails>
                         <pieceLine>
                             <numberOfPieces>1</numberOfPieces>
                             <pieceMeasurements>
-                                <length>' . $dimensions['length'] .'</length>
-                                <width>' . $dimensions['width'] .'</width>
-                                <height>' . $dimensions['height'] .'</height>
-                                <weight>' . $dimensions['weight'] .'</weight>
+                                <length>' . $dimensions['length'] . '</length>
+                                <width>' . $dimensions['width'] . '</width>
+                                <height>' . $dimensions['height'] . '</height>
+                                <weight>' . $dimensions['weight'] . '</weight>
                             </pieceMeasurements>
                             <pallet>0</pallet>
                         </pieceLine>
@@ -107,7 +106,6 @@ class TNT extends Provider
             $this->beforeSendPayload($this, $payload, $order);
 
             $response = $this->_request('POST', 'expressconnect/pricing/getprice', ['body' => $payload]);
-
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
@@ -129,11 +127,11 @@ class TNT extends Provider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => 'https://express.tnt.com',
                 'auth' => [
-                    $this->getSetting('username'), $this->getSetting('password')
+                    $this->getSetting('username'), $this->getSetting('password'),
                 ],
                 'headers' => [
                     'Content-Type' => 'application/xml',
-                ]
+                ],
             ]);
         }
 
@@ -150,7 +148,8 @@ class TNT extends Provider
         return Xml::build($xml->asXml());
     }
 
-    private function _numberOfWorkingDates($from, $days): array {
+    private function _numberOfWorkingDates($from, $days): array
+    {
         $workingDays = [1, 2, 3, 4, 5];
         $holidayDays = ['*-12-25', '*-12-26', '*-12-27', '*-12-28', '*-12-29', '*-12-30', '*-12-31', '*-01-01', '*-01-02', '*-01-03', '*-01-04', '*-01-05', '*-01-26'];
 

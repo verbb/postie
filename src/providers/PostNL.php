@@ -13,19 +13,6 @@ use craft\commerce\Plugin as Commerce;
 
 class PostNL extends StaticProvider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'g';
-    public string $dimensionUnit = 'mm';
-
-
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'postNl';
-
-
     // Static Methods
     // =========================================================================
 
@@ -34,7 +21,14 @@ class PostNL extends StaticProvider
         return Craft::t('postie', 'PostNL');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public ?string $handle = 'postNl';
+    public string $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+
+
     // Public Methods
     // =========================================================================
 

@@ -16,15 +16,6 @@ use Throwable;
 
 class Fastway extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxWeight = 5000; // 5kg
-
-    
     // Static Methods
     // =========================================================================
 
@@ -33,7 +24,16 @@ class Fastway extends Provider
         return Craft::t('postie', 'Fastway');
     }
 
-    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 5kg
+
+    private int $maxWeight = 5000;
+
+
     // Public Methods
     // =========================================================================
 
@@ -141,7 +141,6 @@ class Fastway extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-            
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),

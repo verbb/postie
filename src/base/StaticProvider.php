@@ -113,7 +113,7 @@ class StaticProvider extends Provider
         if ($this->packingMethod === Provider::PACKING_PER_ITEM) {
             foreach ($order->getLineItems() as $lineItem) {
                 // Don't forget to factor in quantities
-                for ($i = 0; $i < $lineItem->qty; $i++) { 
+                for ($i = 0; $i < $lineItem->qty; $i++) {
                     // Add the single item to the single box
                     if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                         $packer->addItem($boxItem, 1);

@@ -26,8 +26,8 @@ class Postie extends Plugin
     // Properties
     // =========================================================================
 
-    public string $schemaVersion = '2.1.0';
     public bool $hasCpSettings = true;
+    public string $schemaVersion = '2.1.0';
 
 
     // Traits
@@ -52,7 +52,7 @@ class Postie extends Plugin
         $this->_registerVariables();
         $this->_registerEventHandlers();
         $this->_registerCommerceEventListeners();
-        
+
         $this->hasCpSection = $this->getSettings()->hasCpSection;
 
         if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {

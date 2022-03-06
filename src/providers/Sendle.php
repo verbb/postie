@@ -14,16 +14,6 @@ use Throwable;
 
 class Sendle extends SinglePackageProvider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxDomesticWeight = 25000; // 25kg
-    private float $maxInternationalWeight = 31751.5; // 70lbs
-
-    
     // Static Methods
     // =========================================================================
 
@@ -32,7 +22,16 @@ class Sendle extends SinglePackageProvider
         return Craft::t('postie', 'Sendle');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 25kg
+
+    private int $maxDomesticWeight = 25000; // 70lbs
+    private float $maxInternationalWeight = 31751.5;
+
+
     // Public Methods
     // =========================================================================
 

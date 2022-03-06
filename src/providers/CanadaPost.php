@@ -19,15 +19,6 @@ use GuzzleHttp\Client;
 
 class CanadaPost extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxWeight = 30000; // 30kg
-
-    
     // Static Methods
     // =========================================================================
 
@@ -36,7 +27,16 @@ class CanadaPost extends Provider
         return Craft::t('postie', 'Canada Post');
     }
 
-    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 30kg
+
+    private int $maxWeight = 30000;
+
+
     // Public Methods
     // =========================================================================
 
@@ -107,7 +107,7 @@ class CanadaPost extends Provider
         //
 
         // Remove spaces in zip code
-        $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
+        $originZipCode = str_replace(' ', '', $storeLocation->zipCode);
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
         $countryIso = $order->shippingAddress->country->iso ?? '';
@@ -227,7 +227,7 @@ class CanadaPost extends Provider
             $packedBox = $packedBoxes[0];
 
             // Remove spaces in zip code
-            $originZipCode = str_replace(' ', '', $sender->zipCode); 
+            $originZipCode = str_replace(' ', '', $sender->zipCode);
             $orderZipCode = str_replace(' ', '', $recipient->zipCode);
 
             // Create a test payload
@@ -277,12 +277,12 @@ class CanadaPost extends Provider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => $baseUri,
                 'auth' => [
-                    $this->getSetting('username'), $this->getSetting('password')
+                    $this->getSetting('username'), $this->getSetting('password'),
                 ],
                 'headers' => [
                     'Content-Type' => 'application/vnd.cpc.ship.rate-v3+xml',
                     'Accept' => 'application/vnd.cpc.ship.rate-v3+xml',
-                ]
+                ],
             ]);
         }
 

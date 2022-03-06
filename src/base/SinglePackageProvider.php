@@ -12,7 +12,7 @@ class SinglePackageProvider extends Provider
 
     private array $_cachedPackageRates = [];
 
-    
+
     // Public Methods
     // =========================================================================
 

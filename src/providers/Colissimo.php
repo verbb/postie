@@ -13,13 +13,6 @@ use craft\commerce\Plugin as Commerce;
 
 class Colissimo extends StaticProvider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'g';
-    public string $dimensionUnit = 'mm';
-
-
     // Static Methods
     // =========================================================================
 
@@ -28,7 +21,14 @@ class Colissimo extends StaticProvider
         return Craft::t('postie', 'Colissimo');
     }
 
-    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+
+
     // Public Methods
     // =========================================================================
 

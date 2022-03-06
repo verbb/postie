@@ -16,13 +16,6 @@ use Throwable;
 
 class Interparcel extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    
     // Static Methods
     // =========================================================================
 
@@ -31,7 +24,13 @@ class Interparcel extends Provider
         return Craft::t('postie', 'Interparcel');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+
+
     // Public Methods
     // =========================================================================
 

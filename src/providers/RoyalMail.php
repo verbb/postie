@@ -13,15 +13,6 @@ use craft\commerce\Plugin as Commerce;
 
 class RoyalMail extends StaticProvider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'g';
-    public string $dimensionUnit = 'mm';
-    public ?bool $checkCompensation = null;
-    public ?bool $includeVat = null;
-
-
     // Static Methods
     // =========================================================================
 
@@ -30,7 +21,16 @@ class RoyalMail extends StaticProvider
         return Craft::t('postie', 'Royal Mail');
     }
 
-    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+    public ?bool $checkCompensation = null;
+    public ?bool $includeVat = null;
+
+
     // Public Methods
     // =========================================================================
 

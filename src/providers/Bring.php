@@ -18,13 +18,6 @@ use Throwable;
 
 class Bring extends Provider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'g';
-    public string $dimensionUnit = 'cm';
-
-
     // Static Methods
     // =========================================================================
 
@@ -32,6 +25,13 @@ class Bring extends Provider
     {
         return Craft::t('postie', 'Bring');
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'g';
 
 
     // Public Methods

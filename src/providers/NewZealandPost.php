@@ -14,16 +14,6 @@ use Throwable;
 
 class NewZealandPost extends SinglePackageProvider
 {
-    // Properties
-    // =========================================================================
-
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
-
-    private int $maxDomesticWeight = 25000; // 25kg
-    private int $maxInternationalWeight = 30000; // 30kg
-
-    
     // Static Methods
     // =========================================================================
 
@@ -32,7 +22,16 @@ class NewZealandPost extends SinglePackageProvider
         return Craft::t('postie', 'New Zealand Post');
     }
 
-    
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg'; // 25kg
+
+    private int $maxDomesticWeight = 25000; // 30kg
+    private int $maxInternationalWeight = 30000;
+
+
     // Public Methods
     // =========================================================================
 

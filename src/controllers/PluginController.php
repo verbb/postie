@@ -60,11 +60,11 @@ class PluginController extends Controller
 
         $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
 
-        return $this->renderTemplate('postie/settings', array(
+        return $this->renderTemplate('postie/settings', [
             'settings' => $settings,
             'variants' => $variants,
             'providers' => $providers,
             'storeLocation' => $storeLocation,
-        ));
+        ]);
     }
 }

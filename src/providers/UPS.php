@@ -34,23 +34,96 @@ use Throwable;
 
 class UPS extends Provider
 {
+    // Static Methods
+    // =========================================================================
+
+    public static function displayName(): string
+    {
+        return Craft::t('postie', 'UPS');
+    }
+
+    public static function defineDefaultBoxes(): array
+    {
+        return [
+            [
+                'id' => 'ups-1',
+                'name' => 'UPS Letter',
+                'boxLength' => 12.5,
+                'boxWidth' => 9.5,
+                'boxHeight' => 0.25,
+                'boxWeight' => 0,
+                'maxWeight' => 0.5,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-2',
+                'name' => 'Tube',
+                'boxLength' => 38,
+                'boxWidth' => 6,
+                'boxHeight' => 6,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-3',
+                'name' => '10KG Box',
+                'boxLength' => 16.5,
+                'boxWidth' => 13.25,
+                'boxHeight' => 10.75,
+                'boxWeight' => 0,
+                'maxWeight' => 22,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-4',
+                'name' => '25KG Box',
+                'boxLength' => 19.75,
+                'boxWidth' => 17.75,
+                'boxHeight' => 13.2,
+                'boxWeight' => 0,
+                'maxWeight' => 55,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-5',
+                'name' => 'Small Express Box',
+                'boxLength' => 13,
+                'boxWidth' => 11,
+                'boxHeight' => 2,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-6',
+                'name' => 'Medium Express Box',
+                'boxLength' => 16,
+                'boxWidth' => 11,
+                'boxHeight' => 3,
+                'boxWeight' => 0,
+                'maxWeight' => 100,
+                'enabled' => true,
+            ],
+            [
+                'id' => 'ups-7',
+                'name' => 'Large Express Box',
+                'boxLength' => 18,
+                'boxWidth' => 13,
+                'boxHeight' => 3,
+                'boxWeight' => 0,
+                'maxWeight' => 30,
+                'enabled' => true,
+            ],
+        ];
+    }
+
     // Properties
     // =========================================================================
 
-    public ?string $handle = 'ups';
-    public string $weightUnit = 'lb';
+    public ?string $handle = 'ups'; // 150lbs
     public string $dimensionUnit = 'in';
-
-    private float $maxWeight = 68038.9; // 150lbs
-
-    private array $pickupCode = [
-        '01' => 'Daily Pickup',
-        '03' => 'Customer Counter',
-        '06' => 'One Time Pickup',
-        '07' => 'On Call Air',
-        '19' => 'Letter Center',
-        '20' => 'Air Service Center',
-    ];
+    public string $weightUnit = 'lb';
 
     private array $euCountries = [
         'AT' => 'Austria',
@@ -83,16 +156,18 @@ class UPS extends Provider
         'SK' => 'Slovakia',
     ];
 
+    private float $maxWeight = 68038.9;
 
-    // Static Methods
-    // =========================================================================
+    private array $pickupCode = [
+        '01' => 'Daily Pickup',
+        '03' => 'Customer Counter',
+        '06' => 'One Time Pickup',
+        '07' => 'On Call Air',
+        '19' => 'Letter Center',
+        '20' => 'Air Service Center',
+    ];
 
-    public static function displayName(): string
-    {
-        return Craft::t('postie', 'UPS');
-    }
 
-    
     // Public Methods
     // =========================================================================
 
@@ -245,95 +320,19 @@ class UPS extends Provider
         ];
     }
 
-    public static function defineDefaultBoxes(): array
-    {
-        return [
-            [
-                'id' => 'ups-1',
-                'name' => 'UPS Letter',
-                'boxLength' => 12.5,
-                'boxWidth' => 9.5,
-                'boxHeight' => 0.25,
-                'boxWeight' => 0,
-                'maxWeight' => 0.5,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-2',
-                'name' => 'Tube',
-                'boxLength' => 38,
-                'boxWidth' => 6,
-                'boxHeight' => 6,
-                'boxWeight' => 0,
-                'maxWeight' => 100,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-3',
-                'name' => '10KG Box',
-                'boxLength' => 16.5,
-                'boxWidth' => 13.25,
-                'boxHeight' => 10.75,
-                'boxWeight' => 0,
-                'maxWeight' => 22,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-4',
-                'name' => '25KG Box',
-                'boxLength' => 19.75,
-                'boxWidth' => 17.75,
-                'boxHeight' => 13.2,
-                'boxWeight' => 0,
-                'maxWeight' => 55,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-5',
-                'name' => 'Small Express Box',
-                'boxLength' => 13,
-                'boxWidth' => 11,
-                'boxHeight' => 2,
-                'boxWeight' => 0,
-                'maxWeight' => 100,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-6',
-                'name' => 'Medium Express Box',
-                'boxLength' => 16,
-                'boxWidth' => 11,
-                'boxHeight' => 3,
-                'boxWeight' => 0,
-                'maxWeight' => 100,
-                'enabled' => true,
-            ],
-            [
-                'id' => 'ups-7',
-                'name' => 'Large Express Box',
-                'boxLength' => 18,
-                'boxWidth' => 13,
-                'boxHeight' => 3,
-                'boxWeight' => 0,
-                'maxWeight' => 30,
-                'enabled' => true,
-            ],
-        ];
-    }
-
     public function getWeightUnitOptions(): array
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
-            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
+            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
         ];
     }
 
     public function getDimensionUnitOptions(): array
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
-            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
+            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
         ];
     }
 
@@ -383,7 +382,6 @@ class UPS extends Provider
         //
 
 
-
         // Check for using freight, we have to roll our own solution as `gabrielbull/php-ups-api`
         // doesn't support LTL rates. One of the reasons TODO our own client libraries.
         if ($this->getSetting('enableFreight')) {
@@ -407,7 +405,7 @@ class UPS extends Provider
             if ($storeLocation->country) {
                 $countryIso = $storeLocation->country->iso ?? '';
                 $shipFromAddress->setCountryCode($countryIso);
-                
+
                 if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
@@ -516,7 +514,7 @@ class UPS extends Provider
 
             // Check for Sure Post rates - must be a separate request
             $surePost = $this->services['S_SURE_POST']->enabled ?? false;
-            
+
             if ($surePost) {
                 $service = new Service;
                 $service->setCode(Service::S_SURE_POST);
@@ -595,65 +593,6 @@ class UPS extends Provider
         return $this->_rates;
     }
 
-    protected function fetchConnection(): bool
-    {
-        try {
-            // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
-
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
-            $packedBox = $packedBoxes[0];
-
-            // Create a test payload
-            $shipment = new Shipment();
-            $shipFromAddress = new Address();
-            $shipFromAddress->setPostalCode($sender->zipCode);
-
-            $shipFrom = new ShipFrom();
-            $shipFrom->setAddress($shipFromAddress);
-            $shipment->setShipFrom($shipFrom);
-
-            $shipTo = $shipment->getShipTo();
-            $shipToAddress = $shipTo->getAddress();
-            $shipToAddress->setPostalCode($recipient->zipCode);
-
-            $package = new Package();
-            $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-            $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
-            $weightUnit = new UnitOfMeasurement;
-            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
-            $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
-
-            $packageDimensions = new Dimensions();
-            $packageDimensions->setHeight(round($packedBox['height'], 2));
-            $packageDimensions->setWidth(round($packedBox['width'], 2));
-            $packageDimensions->setLength(round($packedBox['length'], 2));
-
-            $unit = new UnitOfMeasurement;
-            $unit->setCode(UnitOfMeasurement::UOM_IN);
-
-            $packageDimensions->setUnitOfMeasurement($unit);
-            $package->setDimensions($packageDimensions);
-            $shipment->addPackage($package);
-
-            $rateRequest = new RateRequest();
-            $rateRequest->setShipment($shipment);
-            $rates = $this->_getClient()->shopRates($rateRequest);
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]), true);
-
-            return false;
-        }
-
-        return true;
-    }
-
     public function fetchFreightRates($storeLocation, $packedBox, $order): ?array
     {
         try {
@@ -678,7 +617,7 @@ class UPS extends Provider
             if ($storeLocation->country) {
                 $countryIso = $storeLocation->country->iso ?? '';
                 $shipFrom['Address']['CountryCode'] = $countryIso;
-                
+
                 if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
@@ -719,7 +658,7 @@ class UPS extends Provider
                     ],
                     'Commodity' => [
                         'Description' => 'FRS-Freight',
-                        'Weight' =>  [
+                        'Weight' => [
                             'Value' => round((string)$packedBox['weight'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('weight'),
@@ -808,6 +747,65 @@ class UPS extends Provider
         }
 
         return $this->_rates;
+    }
+
+    protected function fetchConnection(): bool
+    {
+        try {
+            // Create test addresses
+            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+
+            // Create a test package
+            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
+            $packedBox = $packedBoxes[0];
+
+            // Create a test payload
+            $shipment = new Shipment();
+            $shipFromAddress = new Address();
+            $shipFromAddress->setPostalCode($sender->zipCode);
+
+            $shipFrom = new ShipFrom();
+            $shipFrom->setAddress($shipFromAddress);
+            $shipment->setShipFrom($shipFrom);
+
+            $shipTo = $shipment->getShipTo();
+            $shipToAddress = $shipTo->getAddress();
+            $shipToAddress->setPostalCode($recipient->zipCode);
+
+            $package = new Package();
+            $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
+            $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
+            $weightUnit = new UnitOfMeasurement;
+            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
+            $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
+
+            $packageDimensions = new Dimensions();
+            $packageDimensions->setHeight(round($packedBox['height'], 2));
+            $packageDimensions->setWidth(round($packedBox['width'], 2));
+            $packageDimensions->setLength(round($packedBox['length'], 2));
+
+            $unit = new UnitOfMeasurement;
+            $unit->setCode(UnitOfMeasurement::UOM_IN);
+
+            $packageDimensions->setUnitOfMeasurement($unit);
+            $package->setDimensions($packageDimensions);
+            $shipment->addPackage($package);
+
+            $rateRequest = new RateRequest();
+            $rateRequest->setShipment($shipment);
+            $rates = $this->_getClient()->shopRates($rateRequest);
+        } catch (Throwable $e) {
+            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]), true);
+
+            return false;
+        }
+
+        return true;
     }
 
 
