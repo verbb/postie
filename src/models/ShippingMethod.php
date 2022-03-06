@@ -13,7 +13,7 @@ class ShippingMethod extends BaseShippingMethod
     // Constants
     // =========================================================================
 
-    const EVENT_MODIFY_SHIPPING_RULE = 'modifyShippingRule';
+    public const EVENT_MODIFY_SHIPPING_RULE = 'modifyShippingRule';
 
 
     // Properties

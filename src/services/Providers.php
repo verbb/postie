@@ -27,7 +27,7 @@ class Providers extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_PROVIDER_TYPES = 'registerProviderTypes';
+    public const EVENT_REGISTER_PROVIDER_TYPES = 'registerProviderTypes';
 
 
     // Public Methods

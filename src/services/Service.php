@@ -17,7 +17,7 @@ class Service extends Component
     // Properties
     // =========================================================================
 
-    const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
+    public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
 
 
     // Public Methods

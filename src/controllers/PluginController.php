@@ -19,7 +19,7 @@ class PluginController extends Controller
     // Constants
     // =========================================================================
 
-    const EVENT_MODIFY_VARIANT_QUERY = 'modifyVariantQuery';
+    public const EVENT_MODIFY_VARIANT_QUERY = 'modifyVariantQuery';
 
 
     // Public Methods

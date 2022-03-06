@@ -8,11 +8,11 @@ class PostNLRates
     // Constants
     // =========================================================================
 
-    const ZONE_NL = 1;
-    const ZONE_EU1 = 2;
-    const ZONE_EU2 = 3;
-    const ZONE_EU3 = 4;
-    const ZONE_WORLD = 5;
+    public const ZONE_NL = 1;
+    public const ZONE_EU1 = 2;
+    public const ZONE_EU2 = 3;
+    public const ZONE_EU3 = 4;
+    public const ZONE_WORLD = 5;
 
 
     // Properties

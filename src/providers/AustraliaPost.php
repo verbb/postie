@@ -17,10 +17,10 @@ class AustraliaPost extends SinglePackageProvider
     // Constants
     // =========================================================================
 
-    const TYPE_BOX = 'box';
-    const TYPE_ENVELOPE = 'envelope';
-    const TYPE_PACKET = 'packet';
-    const TYPE_TUBE = 'tube';
+    public const TYPE_BOX = 'box';
+    public const TYPE_ENVELOPE = 'envelope';
+    public const TYPE_PACKET = 'packet';
+    public const TYPE_TUBE = 'tube';
 
 
     // Static Methods

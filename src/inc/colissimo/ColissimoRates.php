@@ -8,12 +8,12 @@ class ColissimoRates
     // Constants
     // =========================================================================
 
-    const ZONE_FR = 1;
-    const ZONE_DOM = 2;
-    const ZONE_TOM = 3;
-    const ZONE_INTERNATIONAL_A = 4;
-    const ZONE_INTERNATIONAL_B = 5;
-    const ZONE_INTERNATIONAL_C = 6;
+    public const ZONE_FR = 1;
+    public const ZONE_DOM = 2;
+    public const ZONE_TOM = 3;
+    public const ZONE_INTERNATIONAL_A = 4;
+    public const ZONE_INTERNATIONAL_B = 5;
+    public const ZONE_INTERNATIONAL_C = 6;
 
 
     // Properties

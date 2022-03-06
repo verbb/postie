@@ -40,19 +40,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Constants
     // =========================================================================
 
-    const PERCENTAGE = 'percentage';
-    const VALUE = 'value';
+    public const PERCENTAGE = 'percentage';
+    public const VALUE = 'value';
 
-    const PACKING_PER_ITEM = 'perItem';
-    const PACKING_BOX = 'boxPacking';
-    const PACKING_SINGLE_BOX = 'singleBox';
+    public const PACKING_PER_ITEM = 'perItem';
+    public const PACKING_BOX = 'boxPacking';
+    public const PACKING_SINGLE_BOX = 'singleBox';
 
-    const EVENT_MODIFY_RATES = 'modifyRates';
-    const EVENT_MODIFY_PAYLOAD = 'modifyPayload';
-    const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
-    const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
-    const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
-    const EVENT_MODIFY_SHIPPING_METHODS = 'modifyShippingMethods';
+    public const EVENT_MODIFY_RATES = 'modifyRates';
+    public const EVENT_MODIFY_PAYLOAD = 'modifyPayload';
+    public const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
+    public const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
+    public const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
+    public const EVENT_MODIFY_SHIPPING_METHODS = 'modifyShippingMethods';
 
 
     // Static Methods
@@ -157,7 +157,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $this->handle = $config['handle'];
 
         // Populate and override provider settings from the plugin settings and config file
-        $config = array_merge($config, $this->getSettings($config));
+        $config = array_merge($config, $this->getSettings());
 
         // Config normalization
         if (array_key_exists('boxSizes', $config)) {
