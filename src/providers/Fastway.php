@@ -24,20 +24,7 @@ class Fastway extends Provider
         return Craft::t('postie', 'Fastway');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg'; // 5kg
-
-    private int $maxWeight = 5000;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             'RED' => 'Road Parcel (Red)',
@@ -56,6 +43,19 @@ class Fastway extends Provider
             'SAT_NAT_A5' => 'National Network A5 Satchel',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+
+    private int $maxWeight = 5000; // 5kg
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getMaxPackageWeight($order): ?int
     {

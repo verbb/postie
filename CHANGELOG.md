@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+
+### Changed
+- `Provider::supportsDynamicServices()` is now a static function.
+- `Provider::getServiceList()` is now a static function.
+
+
 ## 2.4.15 - 2021-12-31
 
 ### Added

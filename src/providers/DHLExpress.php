@@ -25,24 +25,24 @@ class DHLExpress extends Provider
         return Craft::t('postie', 'DHL Express');
     }
 
+    public static function supportsDynamicServices(): bool
+    {
+        return true;
+    }
+
 
     // Properties
     // =========================================================================
 
     public ?string $handle = 'dhlExpress';
     public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg'; // 70kg
+    public string $weightUnit = 'kg';
 
-    private int $maxWeight = 70000;
+    private int $maxWeight = 70000; // 70kg
 
 
     // Public Methods
     // =========================================================================
-
-    public function supportsDynamicServices(): bool
-    {
-        return true;
-    }
 
     public function getMaxPackageWeight($order): ?int
     {

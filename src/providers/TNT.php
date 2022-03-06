@@ -26,6 +26,12 @@ class TNT extends Provider
         return Craft::t('postie', 'TNT');
     }
 
+    public static function getServiceList(): array
+    {
+        return [
+        ];
+    }
+
     // Properties
     // =========================================================================
 
@@ -35,12 +41,6 @@ class TNT extends Provider
 
     // Public Methods
     // =========================================================================
-
-    public function getServiceList(): array
-    {
-        return [
-        ];
-    }
 
     public function fetchShippingRates($order): ?array
     {

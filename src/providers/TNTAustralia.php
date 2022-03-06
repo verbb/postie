@@ -29,21 +29,7 @@ class TNTAustralia extends Provider
         return Craft::t('postie', 'TNT Australia');
     }
 
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'tntAustralia';
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg'; // 70kg
-
-    private int $maxDomesticWeight = 70000; // 500kg
-    private int $maxInternationalWeight = 500000;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             'EX10' => '10:00 Express',
@@ -58,6 +44,21 @@ class TNTAustralia extends Provider
             '701' => 'National Same day',
         ];
     }
+    
+
+    // Properties
+    // =========================================================================
+
+    public ?string $handle = 'tntAustralia';
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+
+    private int $maxDomesticWeight = 70000; // 70kg
+    private int $maxInternationalWeight = 500000; // 500kg
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getMaxPackageWeight($order): ?int
     {

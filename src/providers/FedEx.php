@@ -167,27 +167,7 @@ class FedEx extends Provider
         ];
     }
 
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'in'; // 150lbs
-    public string $weightUnit = 'lb';
-
-    private float $maxWeight = 68038.9;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        // Turn off SOAP wsdl caching
-        ini_set("soap.wsdl_cache_enabled", "0");
-    }
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             // Domestic
@@ -229,6 +209,27 @@ class FedEx extends Provider
             'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'FedEx Europe First International Priority',
             'INTERNATIONAL_DISTRIBUTION_FREIGHT' => 'FedEx International Distribution',
         ];
+    }
+    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'in';
+    public string $weightUnit = 'lb';
+
+    private float $maxWeight = 68038.9; // 150lbs
+
+
+    // Public Methods
+    // =========================================================================
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Turn off SOAP wsdl caching
+        ini_set("soap.wsdl_cache_enabled", "0");
     }
 
     public function getWeightUnitOptions(): array

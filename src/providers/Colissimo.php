@@ -21,18 +21,7 @@ class Colissimo extends StaticProvider
         return Craft::t('postie', 'Colissimo');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'mm';
-    public string $weightUnit = 'g';
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             'france' => 'France',
@@ -44,6 +33,17 @@ class Colissimo extends StaticProvider
             'emballage-international' => 'Emballage International',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+
+
+    // Public Methods
+    // =========================================================================
 
     public function fetchShippingRates($order): ?array
     {

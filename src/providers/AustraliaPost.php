@@ -180,21 +180,7 @@ class AustraliaPost extends SinglePackageProvider
         ];
     }
 
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'cm'; // 22kg
-    public string $weightUnit = 'kg'; // 20kg
-
-    private array $_countryList = [];
-    private int $maxDomesticWeight = 22000;
-    private int $maxInternationalWeight = 20000;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             // Domestic - Parcel
@@ -246,6 +232,21 @@ class AustraliaPost extends SinglePackageProvider
             'INT_LETTER_AIR_OWN_PACKAGING_HEAVY' => 'Australia Post International Letter Air Heavy',
         ];
     }
+    
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm'; // 22kg
+    public string $weightUnit = 'kg'; // 20kg
+
+    private array $_countryList = [];
+    private int $maxDomesticWeight = 22000;
+    private int $maxInternationalWeight = 20000;
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getBoxSizesSettings(): array
     {

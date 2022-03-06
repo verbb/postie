@@ -27,22 +27,7 @@ class USPS extends Provider
         return Craft::t('postie', 'USPS');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'usps';
-    public string $dimensionUnit = 'in';
-    public string $weightUnit = 'lb'; // 70lbs
-
-    private float $maxDomesticWeight = 31751.5; // 20lbs
-    private float $maxInternationalWeight = 9071.85;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             // Domestic
@@ -124,6 +109,21 @@ class USPS extends Provider
             'FIRST_CLASS_PACKAGE_INTERNATIONAL_SERVICE' => 'USPS First-Class Package International Service',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public ?string $handle = 'usps';
+    public string $dimensionUnit = 'in';
+    public string $weightUnit = 'lb'; // 70lbs
+
+    private float $maxDomesticWeight = 31751.5; // 20lbs
+    private float $maxInternationalWeight = 9071.85;
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getMaxPackageWeight($order): ?int
     {

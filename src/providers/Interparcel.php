@@ -24,6 +24,12 @@ class Interparcel extends Provider
         return Craft::t('postie', 'Interparcel');
     }
 
+    public static function supportsDynamicServices(): bool
+    {
+        return true;
+    }
+
+
     // Properties
     // =========================================================================
 
@@ -33,11 +39,6 @@ class Interparcel extends Provider
 
     // Public Methods
     // =========================================================================
-
-    public function supportsDynamicServices(): bool
-    {
-        return true;
-    }
 
     public function fetchShippingRates($order): ?array
     {

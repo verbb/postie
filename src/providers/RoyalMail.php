@@ -21,20 +21,7 @@ class RoyalMail extends StaticProvider
         return Craft::t('postie', 'Royal Mail');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'mm';
-    public string $weightUnit = 'g';
-    public ?bool $checkCompensation = null;
-    public ?bool $includeVat = null;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             // Domestic
@@ -70,6 +57,19 @@ class RoyalMail extends StaticProvider
             'parcelforce-globalvalue' => 'Parcelforce Worldwide Global Value',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'mm';
+    public string $weightUnit = 'g';
+    public ?bool $checkCompensation = null;
+    public ?bool $includeVat = null;
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getIconUrl(): string
     {

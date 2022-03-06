@@ -22,6 +22,12 @@ class NewZealandPost extends SinglePackageProvider
         return Craft::t('postie', 'New Zealand Post');
     }
 
+    public static function supportsDynamicServices(): bool
+    {
+        return true;
+    }
+    
+
     // Properties
     // =========================================================================
 
@@ -34,11 +40,6 @@ class NewZealandPost extends SinglePackageProvider
 
     // Public Methods
     // =========================================================================
-
-    public function supportsDynamicServices(): bool
-    {
-        return true;
-    }
 
     public function getMaxPackageWeight($order): ?int
     {

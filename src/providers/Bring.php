@@ -26,18 +26,7 @@ class Bring extends Provider
         return Craft::t('postie', 'Bring');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'g';
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             'SERVICEPAKKE' => 'Klimanøytral Servicepakke',
@@ -67,6 +56,17 @@ class Bring extends Provider
             'OX' => 'Oil Express',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'g';
+
+
+    // Public Methods
+    // =========================================================================
 
     public function fetchShippingRates($order): ?array
     {

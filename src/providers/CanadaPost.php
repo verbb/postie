@@ -27,20 +27,7 @@ class CanadaPost extends Provider
         return Craft::t('postie', 'Canada Post');
     }
 
-
-    // Properties
-    // =========================================================================
-
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg'; // 30kg
-
-    private int $maxWeight = 30000;
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function getServiceList(): array
+    public static function getServiceList(): array
     {
         return [
             // Domestic
@@ -75,6 +62,19 @@ class CanadaPost extends Provider
             'INT_SP_SURF' => 'Small Packet International Surface',
         ];
     }
+
+
+    // Properties
+    // =========================================================================
+
+    public string $dimensionUnit = 'cm';
+    public string $weightUnit = 'kg';
+
+    private int $maxWeight = 30000; // 30kg
+
+
+    // Public Methods
+    // =========================================================================
 
     public function getMaxPackageWeight($order): ?int
     {

@@ -58,6 +58,33 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Static Methods
     // =========================================================================
 
+    public static function defineDefaultBoxes(): array
+    {
+        return [];
+    }
+
+    public static function supportsConnection(): bool
+    {
+        return true;
+    }
+
+    public static function supportsDynamicServices(): bool
+    {
+        return false;
+    }
+
+    public static function getServiceList(): array
+    {
+        return [];
+    }
+
+    public static function getClass(): string
+    {
+        $nsClass = self::class;
+
+        return substr($nsClass, strrpos($nsClass, "\\") + 1);
+    }
+
     public static function log($provider, $message, $throwError = false): void
     {
         $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
@@ -94,16 +121,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         Postie::error($message);
     }
 
-    public static function defineDefaultBoxes(): array
-    {
-        return [];
-    }
-
-    public static function supportsConnection(): bool
-    {
-        return true;
-    }
-
 
     // Properties
     // =========================================================================
@@ -129,48 +146,66 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Public Methods
     // =========================================================================
 
-    public function __construct()
+    public function __construct($config = [])
     {
-        parent::__construct();
+        // Set default name and handles
+        $config['name'] = $config['name'] ?? self::displayName();
+        $config['handle'] = $config['handle'] ?? StringHelper::toCamelCase(self::displayName());
 
-        // Setup default name + handle
-        $this->name = $this->name ?? self::displayName();
-        $this->handle = $this->handle ?? StringHelper::toCamelCase(self::displayName());
+        // Apply here for `getSettings()` at least until a proper refactor of settings
+        $this->name = $config['name'];
+        $this->handle = $config['handle'];
 
         // Populate and override provider settings from the plugin settings and config file
-        foreach ($this->getSettings() as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
+        $config = array_merge($config, $this->getSettings($config));
+
+        // Config normalization
+        if (array_key_exists('boxSizes', $config)) {
+            if (is_string($config['boxSizes'])) {
+                $config['boxSizes'] = Json::decodeIfJson($config['boxSizes']);
+            }
+
+            if (!is_array($config['boxSizes'])) {
+                unset($config['boxSizes']);
             }
         }
+
+        if (array_key_exists('services', $config)) {
+            if (is_string($config['services'])) {
+                $config['services'] = Json::decodeIfJson($config['services']);
+            }
+
+            if (!is_array($config['services'])) {
+                unset($config['services']);
+            }
+        }
+
+        if (array_key_exists('markUpRate', $config)) {
+            $config['markUpRate'] = (float)$config['markUpRate'];
+        }
+
+        parent::__construct($config);
     }
 
     public function __toString(): string
     {
-        return (string)$this->name;
+        return (string)$this->getName();
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
-    public function getHandle(): string
+    public function getHandle(): ?string
     {
-        return (string)$this->handle;
-    }
-
-    public function getClass(): string
-    {
-        $nsClass = $this::class;
-
-        return substr($nsClass, strrpos($nsClass, "\\") + 1);
+        return $this->handle;
     }
 
     public function getIconUrl(): string
     {
         try {
-            $handle = StringHelper::toKebabCase(static::displayName());
+            $handle = StringHelper::toKebabCase(self::displayName());
 
             return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
         } catch (Throwable $e) {
@@ -178,19 +213,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
     }
 
-    public function supportsDynamicServices(): bool
-    {
-        return false;
-    }
-
-    public function getServiceList(): array
-    {
-        return [];
-    }
-
     public function getSettingsHtml(): ?string
     {
-        $handle = StringHelper::toKebabCase(static::displayName());
+        $handle = StringHelper::toKebabCase(self::displayName());
 
         return Craft::$app->getView()->renderTemplate("postie/providers/$handle", [
             'provider' => $this,
@@ -232,7 +257,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 // that'll cause an infinite loop.
                 $tempProvider->enabled = $settings['enabled'] ?? null;
                 $tempProvider->settings = $settings['settings'] ?? null;
-                $tempProvider->markUpRate = $settings['markUpRate'] ?? null;
+                $tempProvider->markUpRate = (float)$settings['markUpRate'] ?? null;
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
                 $tempProvider->restrictServices = $settings['restrictServices'] ?? null;
                 $tempProvider->packingMethod = $settings['packingMethod'] ?? null;

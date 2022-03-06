@@ -22,6 +22,12 @@ class Sendle extends SinglePackageProvider
         return Craft::t('postie', 'Sendle');
     }
 
+    public static function supportsDynamicServices(): bool
+    {
+        return true;
+    }
+    
+
     // Properties
     // =========================================================================
 
@@ -34,11 +40,6 @@ class Sendle extends SinglePackageProvider
 
     // Public Methods
     // =========================================================================
-
-    public function supportsDynamicServices(): bool
-    {
-        return true;
-    }
 
     public function getMaxPackageWeight($order): ?int
     {

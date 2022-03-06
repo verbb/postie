@@ -118,10 +118,83 @@ class UPS extends Provider
         ];
     }
 
+    public static function getServiceList(): array
+    {
+        return [
+            // Domestic
+            'S_AIR_1DAYEARLYAM' => 'UPS Next Day Air Early AM',
+            'S_AIR_1DAY' => 'UPS Next Day Air',
+            'S_AIR_1DAYSAVER' => 'Next Day Air Saver',
+            'S_AIR_2DAYAM' => 'UPS Second Day Air AM',
+            'S_AIR_2DAY' => 'UPS Second Day Air',
+            'S_3DAYSELECT' => 'UPS Three-Day Select',
+            'S_GROUND' => 'UPS Ground',
+            'S_SURE_POST' => 'UPS Sure Post',
+
+            // International
+            'S_STANDARD' => 'UPS Standard',
+            'S_WW_EXPRESS' => 'UPS Worldwide Express',
+            'S_WW_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
+            'S_WW_EXPEDITED' => 'UPS Worldwide Expedited',
+            'S_SAVER' => 'UPS Saver',
+            'S_ACCESS_POINT' => 'UPS Access Point Economy',
+
+            'S_UPSTODAY_STANDARD' => 'UPS Today Standard',
+            'S_UPSTODAY_DEDICATEDCOURIER' => 'UPS Today Dedicated Courier',
+            'S_UPSTODAY_INTERCITY' => 'UPS Today Intercity',
+            'S_UPSTODAY_EXPRESS' => 'UPS Today Express',
+            'S_UPSTODAY_EXPRESSSAVER' => 'UPS Today Express Saver',
+            'S_UPSWW_EXPRESSFREIGHT' => 'UPS Worldwide Express Freight',
+
+            // Time in Transit Response Service Codes: United States Domestic Shipments
+            'TT_S_US_AIR_1DAYAM' => 'UPS Next Day Air Early',
+            'TT_S_US_AIR_1DAY' => 'UPS Next Day Air',
+            'TT_S_US_AIR_SAVER' => 'UPS Next Day Air Saver',
+            'TT_S_US_AIR_2DAYAM' => 'UPS Second Day Air A.M.',
+            'TT_S_US_AIR_2DAY' => 'UPS Second Day Air',
+            'TT_S_US_3DAYSELECT' => 'UPS Three-Day Select',
+            'TT_S_US_GROUND' => 'UPS Ground',
+            'TT_S_US_AIR_1DAYSATAM' => 'UPS Next Day Air Early (Saturday Delivery)',
+            'TT_S_US_AIR_1DAYSAT' => 'UPS Next Day Air (Saturday Delivery)',
+            'TT_S_US_AIR_2DAYSAT' => 'UPS Second Day Air (Saturday Delivery)',
+
+            // Time in Transit Response Service Codes: Other Shipments Originating in US
+            'TT_S_US_INTL_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
+            'TT_S_US_INTL_EXPRESS' => 'UPS Worldwide Express',
+            'TT_S_US_INTL_SAVER' => 'UPS Worldwide Express Saver',
+            'TT_S_US_INTL_STANDARD' => 'UPS Standard',
+            'TT_S_US_INTL_EXPEDITED' => 'UPS Worldwide Expedited',
+
+            // Time in Transit Response Service Codes: Shipments Originating in the EU
+            // Destination is WITHIN the Origin Country
+            'TT_S_EU_EXPRESSPLUS' => 'UPS Express Plus',
+            'TT_S_EU_EXPRESS' => 'UPS Express',
+            'TT_S_EU_SAVER' => 'UPS Express Saver',
+            'TT_S_EU_STANDARD' => 'UPS Standard',
+
+            // Time in Transit Response Service Codes: Shipments Originating in the EU
+            // Destination is Another EU Country
+            'TT_S_EU_TO_EU_EXPRESSPLUS' => 'UPS Express Plus',
+            'TT_S_EU_TO_EU_EXPRESS' => 'UPS Express',
+            'TT_S_EU_TO_EU_SAVER' => 'UPS Express Saver',
+            'TT_S_EU_TO_EU_STANDARD' => 'UPS Standard',
+
+            // Time in Transit Response Service Codes: Shipments Originating in the EU
+            // Destination is Outside the EU
+            'TT_S_EU_TO_OTHER_EXPRESS_NA1' => 'UPS Express NA 1',
+            'TT_S_EU_TO_OTHER_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
+            'TT_S_EU_TO_OTHER_EXPRESS' => 'UPS Express',
+            'TT_S_EU_TO_OTHER_SAVER' => 'UPS Express Saver',
+            'TT_S_EU_TO_OTHER_EXPEDITED' => 'UPS Expedited',
+            'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
+        ];
+    }
+    
+
     // Properties
     // =========================================================================
 
-    public ?string $handle = 'ups'; // 150lbs
+    public ?string $handle = 'ups';
     public string $dimensionUnit = 'in';
     public string $weightUnit = 'lb';
 
@@ -156,7 +229,7 @@ class UPS extends Provider
         'SK' => 'Slovakia',
     ];
 
-    private float $maxWeight = 68038.9;
+    private float $maxWeight = 68038.9; // 150lbs
 
     private array $pickupCode = [
         '01' => 'Daily Pickup',
@@ -245,78 +318,6 @@ class UPS extends Provider
             '300' => '300',
             '400' => '400',
             '500' => '500',
-        ];
-    }
-
-    public function getServiceList(): array
-    {
-        return [
-            // Domestic
-            'S_AIR_1DAYEARLYAM' => 'UPS Next Day Air Early AM',
-            'S_AIR_1DAY' => 'UPS Next Day Air',
-            'S_AIR_1DAYSAVER' => 'Next Day Air Saver',
-            'S_AIR_2DAYAM' => 'UPS Second Day Air AM',
-            'S_AIR_2DAY' => 'UPS Second Day Air',
-            'S_3DAYSELECT' => 'UPS Three-Day Select',
-            'S_GROUND' => 'UPS Ground',
-            'S_SURE_POST' => 'UPS Sure Post',
-
-            // International
-            'S_STANDARD' => 'UPS Standard',
-            'S_WW_EXPRESS' => 'UPS Worldwide Express',
-            'S_WW_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'S_WW_EXPEDITED' => 'UPS Worldwide Expedited',
-            'S_SAVER' => 'UPS Saver',
-            'S_ACCESS_POINT' => 'UPS Access Point Economy',
-
-            'S_UPSTODAY_STANDARD' => 'UPS Today Standard',
-            'S_UPSTODAY_DEDICATEDCOURIER' => 'UPS Today Dedicated Courier',
-            'S_UPSTODAY_INTERCITY' => 'UPS Today Intercity',
-            'S_UPSTODAY_EXPRESS' => 'UPS Today Express',
-            'S_UPSTODAY_EXPRESSSAVER' => 'UPS Today Express Saver',
-            'S_UPSWW_EXPRESSFREIGHT' => 'UPS Worldwide Express Freight',
-
-            // Time in Transit Response Service Codes: United States Domestic Shipments
-            'TT_S_US_AIR_1DAYAM' => 'UPS Next Day Air Early',
-            'TT_S_US_AIR_1DAY' => 'UPS Next Day Air',
-            'TT_S_US_AIR_SAVER' => 'UPS Next Day Air Saver',
-            'TT_S_US_AIR_2DAYAM' => 'UPS Second Day Air A.M.',
-            'TT_S_US_AIR_2DAY' => 'UPS Second Day Air',
-            'TT_S_US_3DAYSELECT' => 'UPS Three-Day Select',
-            'TT_S_US_GROUND' => 'UPS Ground',
-            'TT_S_US_AIR_1DAYSATAM' => 'UPS Next Day Air Early (Saturday Delivery)',
-            'TT_S_US_AIR_1DAYSAT' => 'UPS Next Day Air (Saturday Delivery)',
-            'TT_S_US_AIR_2DAYSAT' => 'UPS Second Day Air (Saturday Delivery)',
-
-            // Time in Transit Response Service Codes: Other Shipments Originating in US
-            'TT_S_US_INTL_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'TT_S_US_INTL_EXPRESS' => 'UPS Worldwide Express',
-            'TT_S_US_INTL_SAVER' => 'UPS Worldwide Express Saver',
-            'TT_S_US_INTL_STANDARD' => 'UPS Standard',
-            'TT_S_US_INTL_EXPEDITED' => 'UPS Worldwide Expedited',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is WITHIN the Origin Country
-            'TT_S_EU_EXPRESSPLUS' => 'UPS Express Plus',
-            'TT_S_EU_EXPRESS' => 'UPS Express',
-            'TT_S_EU_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_STANDARD' => 'UPS Standard',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is Another EU Country
-            'TT_S_EU_TO_EU_EXPRESSPLUS' => 'UPS Express Plus',
-            'TT_S_EU_TO_EU_EXPRESS' => 'UPS Express',
-            'TT_S_EU_TO_EU_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_TO_EU_STANDARD' => 'UPS Standard',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is Outside the EU
-            'TT_S_EU_TO_OTHER_EXPRESS_NA1' => 'UPS Express NA 1',
-            'TT_S_EU_TO_OTHER_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'TT_S_EU_TO_OTHER_EXPRESS' => 'UPS Express',
-            'TT_S_EU_TO_OTHER_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_TO_OTHER_EXPEDITED' => 'UPS Expedited',
-            'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
         ];
     }
 
