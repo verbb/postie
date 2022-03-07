@@ -166,7 +166,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
 
             if (!is_array($config['boxSizes'])) {
-                unset($config['boxSizes']);
+                $config['boxSizes'] = [];
             }
         }
 
@@ -176,7 +176,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
 
             if (!is_array($config['services'])) {
-                unset($config['services']);
+                $config['services'] = [];
             }
         }
 
