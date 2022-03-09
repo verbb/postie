@@ -1,12 +1,13 @@
 # Changelog
 
-## Unreleased
-
+## 3.0.0-beta.1 - 2022-03-10
 
 ### Changed
+- Now requires PHP `^8.0.2`.
+- Now requires Craft `^4.0.0-beta.1`.
+- Now requires Craft Commerce `^4.0.0-beta.1`.
 - `Provider::supportsDynamicServices()` is now a static function.
 - `Provider::getServiceList()` is now a static function.
-
 
 ## 2.4.15 - 2021-12-31
 

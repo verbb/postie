@@ -103,7 +103,7 @@ class Service extends Component
     public function getShippingMethodsForOrder(Order $order): array
     {
         // Fetch all providers (enabled or otherwise)
-        $providers = Postie::getInstance()->getProviders()->getAllProviders();
+        $providers = Postie::$plugin->getProviders()->getAllProviders();
 
         $shippingMethods = [];
 
