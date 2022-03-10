@@ -5,7 +5,7 @@ use Craft;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\helpers\Json;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
 class m190326_000000_craft_3 extends Migration
@@ -25,8 +25,8 @@ class m190326_000000_craft_3 extends Migration
 
         // Create the new tokens table
         if ($this->db->tableExists('{{%postie_address}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%postie_address}}');
-            MigrationHelper::dropAllIndexesOnTable('{{%postie_address}}');
+            Db::dropAllForeignKeysOnTable('{{%postie_address}}');
+            Db::dropAllIndexesOnTable('{{%postie_address}}');
 
             $this->dropTableIfExists('{{%postie_address}}');
         }
@@ -109,22 +109,22 @@ class m190326_000000_craft_3 extends Migration
 
         // Remove at the end, as items are all related
         if ($this->db->tableExists('{{%postie_providers}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%postie_providers}}');
-            MigrationHelper::dropAllIndexesOnTable('{{%postie_providers}}');
+            Db::dropAllForeignKeysOnTable('{{%postie_providers}}');
+            Db::dropAllIndexesOnTable('{{%postie_providers}}');
 
             $this->dropTableIfExists('{{%postie_providers}}');
         }
 
         if ($this->db->tableExists('{{%postie_shipping_methods}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%postie_shipping_methods}}');
-            MigrationHelper::dropAllIndexesOnTable('{{%postie_shipping_methods}}');
+            Db::dropAllForeignKeysOnTable('{{%postie_shipping_methods}}');
+            Db::dropAllIndexesOnTable('{{%postie_shipping_methods}}');
 
             $this->dropTableIfExists('{{%postie_shipping_methods}}');
         }
 
         if ($this->db->tableExists('{{%postie_shipping_method_categories}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%postie_shipping_method_categories}}');
-            MigrationHelper::dropAllIndexesOnTable('{{%postie_shipping_method_categories}}');
+            Db::dropAllForeignKeysOnTable('{{%postie_shipping_method_categories}}');
+            Db::dropAllIndexesOnTable('{{%postie_shipping_method_categories}}');
 
             $this->dropTableIfExists('{{%postie_shipping_method_categories}}');
         }

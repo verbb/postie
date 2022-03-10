@@ -28,13 +28,13 @@ class ProvidersController extends Controller
         $providerHandle = $request->getParam('providerHandle');
 
         if (!$providerHandle) {
-            return $this->asErrorJson(Craft::t('postie', 'Unknown provider: “{handle}”', ['handle' => $providerHandle]));
+            return $this->asFailure(Craft::t('postie', 'Unknown provider: “{handle}”', ['handle' => $providerHandle]));
         }
 
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
         if (!$provider::supportsConnection()) {
-            return $this->asErrorJson(Craft::t('postie', '“{handle}” does not support connection.', ['handle' => $providerHandle]));
+            return $this->asFailure(Craft::t('postie', '“{handle}” does not support connection.', ['handle' => $providerHandle]));
         }
 
         // Populate the provider with settings
@@ -46,7 +46,7 @@ class ProvidersController extends Controller
                 'success' => $provider->checkConnection(false),
             ]);
         } catch (Exception $e) {
-            return $this->asErrorJson($e->getMessage());
+            return $this->asFailure($e->getMessage());
         }
     }
 }

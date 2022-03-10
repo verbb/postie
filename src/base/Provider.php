@@ -14,6 +14,7 @@ use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\base\SavableComponent;
+use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
@@ -574,7 +575,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $value = ArrayHelper::getValue($this->settings, $key);
 
         if (!is_array($value)) {
-            return Craft::parseEnv($value);
+            return App::parseEnv($value);
         }
 
         return $value;
