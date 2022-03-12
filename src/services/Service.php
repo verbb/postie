@@ -3,6 +3,7 @@ namespace verbb\postie\services;
 
 use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippingMethodsEvent;
+use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
@@ -29,6 +30,7 @@ class Service extends Component
             return;
         }
 
+        /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
         $request = Craft::$app->getRequest();
 
@@ -179,6 +181,7 @@ class Service extends Component
 
     private function applyFreeShipping($order): bool
     {
+        /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
         if (!$settings->applyFreeShipping) {

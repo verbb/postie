@@ -3,6 +3,7 @@ namespace verbb\postie\controllers;
 
 use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippableVariantsEvent;
+use verbb\postie\models\Settings;
 
 use Craft;
 use craft\helpers\Db;
@@ -31,6 +32,7 @@ class PluginController extends Controller
             throw new ForbiddenHttpException('Administrative changes are disallowed in this environment.');
         }
 
+        /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
         $variants = [];

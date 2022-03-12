@@ -35,6 +35,7 @@ use Cake\Utility\Hash;
 
 use Exception;
 use Throwable;
+use verbb\postie\models\Settings;
 
 abstract class Provider extends SavableComponent implements ProviderInterface
 {
@@ -367,6 +368,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getShippingRates($order): ?array
     {
+        /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
         $request = Craft::$app->getRequest();
 
@@ -423,6 +425,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function prepareFetchShippingRates($order)
     {
+        /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
         $request = Craft::$app->getRequest();
 
