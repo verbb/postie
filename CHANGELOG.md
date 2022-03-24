@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0-beta.2 - 2022-03-24
+
+### Changed
+- Now requires Postie `2.2.7` in order to update from Craft 3.
+
+### Fixed
+- Fix Commerce/Craft deprecations.
+- More Commerce `^4.0.0-beta.1` compatibility fixes.
+
 ## 3.0.0-beta.1 - 2022-03-10
 
 ### Changed
