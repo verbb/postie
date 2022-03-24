@@ -148,7 +148,7 @@ class USPS extends Provider
             return null;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -160,38 +160,38 @@ class USPS extends Provider
         // TESTING
         //
         // $country = Commerce::getInstance()->countries->getCountryByIso('US');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'CA');
+        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'CA');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = 'One Infinite Loop';
-        // $storeLocation->city = 'Cupertino';
-        // $storeLocation->zipCode = '95014';
-        // $storeLocation->stateId = $state->id;
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->addressLine1 = 'One Infinite Loop';
+        // $storeLocation->locality = 'Cupertino';
+        // $storeLocation->postalCode = '95014';
+        // $storeLocation->administrativeAreaId = $administrativeArea->id;
         // $storeLocation->countryId = $country->id;
 
-        // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
-        // $order->shippingAddress->city = 'Mountain View';
-        // $order->shippingAddress->zipCode = '94043';
-        // $order->shippingAddress->stateId = $state->id;
+        // $order->shippingAddress->addressLine1 = '1600 Amphitheatre Parkway';
+        // $order->shippingAddress->locality = 'Mountain View';
+        // $order->shippingAddress->postalCode = '94043';
+        // $order->shippingAddress->administrativeAreaId = $administrativeArea->id;
         // $order->shippingAddress->countryId = $country->id;
 
         // // International
         // // $country = Commerce::getInstance()->countries->getCountryByIso('CA');
-        // // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'ON');
+        // // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'ON');
 
-        // // $order->shippingAddress->address1 = '80 Spadina Ave';
-        // // $order->shippingAddress->city = 'Toronto';
-        // // $order->shippingAddress->zipCode = 'M5V 2J4';
-        // // $order->shippingAddress->stateId = $state->id;
+        // // $order->shippingAddress->addressLine1 = '80 Spadina Ave';
+        // // $order->shippingAddress->locality = 'Toronto';
+        // // $order->shippingAddress->postalCode = 'M5V 2J4';
+        // // $order->shippingAddress->administrativeAreaId = $administrativeArea->id;
         // // $order->shippingAddress->countryId = $country->id;
         //
         //
         //
 
         try {
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
-            if ($countryIso == 'US') {
+            if ($countryCode == 'US') {
                 Provider::log($this, 'Domestic rate service call');
 
                 foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
@@ -205,8 +205,8 @@ class USPS extends Provider
                     $package->setService(RatePackage::SERVICE_ALL);
                     $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
 
-                    $package->setZipOrigination($this->_parseZipCode($storeLocation->zipCode));
-                    $package->setZipDestination($this->_parseZipCode($order->shippingAddress->zipCode));
+                    $package->setZipOrigination($this->_parseZipCode($storeLocation->postalCode));
+                    $package->setZipDestination($this->_parseZipCode($order->shippingAddress->postalCode));
                     $package->setPounds($packedBox['weight']);
                     $package->setOunces(0);
                     $package->setContainer('');
@@ -230,7 +230,7 @@ class USPS extends Provider
                     $package->setField('Machinable', 'True');
                     $package->setField('MailType', 'Package');
                     $package->setField('ValueOfContents', $order->getTotalSaleAmount());
-                    $package->setField('Country', $order->shippingAddress->country->name);
+                    $package->setField('Country', $order->shippingAddress->countryCode);
 
                     $package->setField('Container', RatePackage::CONTAINER_RECTANGULAR);
 
@@ -240,12 +240,12 @@ class USPS extends Provider
                     $package->setField('Height', $packedBox['length']);
                     $package->setField('Girth', round($packedBox['length'] * 2 + $packedBox['height'] * 2));
 
-                    $package->setField('OriginZip', $this->_parseZipCode($storeLocation->zipCode));
+                    $package->setField('OriginZip', $this->_parseZipCode($storeLocation->postalCode));
                     $package->setField('CommercialFlag', 'N');
 
-                    if ($order->shippingAddress->zipCode) {
+                    if ($order->shippingAddress->postalCode) {
                         $package->setField('AcceptanceDateTime', DateTimeHelper::toIso8601(time()));
-                        $package->setField('DestinationPostalCode', $this->_parseZipCode($order->shippingAddress->zipCode));
+                        $package->setField('DestinationPostalCode', $this->_parseZipCode($order->shippingAddress->postalCode));
                     }
 
                     // add the package to the client stack
@@ -270,7 +270,7 @@ class USPS extends Provider
             }
 
             // Responses will be different depending on domestic/international
-            if ($countryIso == 'US') {
+            if ($countryCode == 'US') {
                 $packages = $response['RateV4Response']['Package'] ?? [];
             } else {
                 $packages = $response['IntlRateV2Response']['Package'] ?? [];
@@ -349,8 +349,8 @@ class USPS extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+            $sender = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -362,8 +362,8 @@ class USPS extends Provider
             $package = new RatePackage();
             $package->setService(RatePackage::SERVICE_ALL);
             $package->setFirstClassMailType(RatePackage::MAIL_TYPE_PARCEL);
-            $package->setZipOrigination($sender->zipCode);
-            $package->setZipDestination($recipient->zipCode);
+            $package->setZipOrigination($sender->postalCode);
+            $package->setZipDestination($recipient->postalCode);
             $package->setPounds($packedBox['weight']);
             $package->setOunces(0);
             $package->setContainer('');

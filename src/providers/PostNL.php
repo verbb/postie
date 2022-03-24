@@ -53,17 +53,17 @@ class PostNL extends StaticProvider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         //
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('NL', ['city' => 'Rotterdam']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('NL', ['city' => 'Amsterdam']);
+        // $storeLocation = TestingHelper::getTestAddress('NL', ['locality' => 'Rotterdam']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('NL', ['locality' => 'Amsterdam'], $order);
 
         // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
         //
         // 
         //
@@ -78,10 +78,10 @@ class PostNL extends StaticProvider
         $allRates = [];
 
         foreach ($services as $handle => $label) {
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = PostNLRates::getRates($countryIso, $handle);
+            $rateAndBoxes = PostNLRates::getRates($countryCode, $handle);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

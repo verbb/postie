@@ -17,7 +17,7 @@
 {% set selectedSubnavItem = 'settings' %}
 {% set fullPageForm = true %}
 
-{% if not storeLocation.address1 %}
+{% if not storeLocation.addressLine1 %}
     {% set navItems = navItems | merge({ 'general': { title: 'General' | t('postie'), badge: 1 } }) %}
 {% endif %}
 

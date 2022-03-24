@@ -5,7 +5,7 @@ use verbb\postie\models\Box;
 use verbb\postie\models\Item;
 
 use craft\helpers\ArrayHelper;
-use craft\commerce\models\Address;
+use craft\elements\Address;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -21,125 +21,125 @@ class TestingHelper
 
     private static array $_addresses = [
         [
-            'address1' => '552 Victoria Street',
-            'city' => 'North Melbourne',
-            'zipCode' => '3051',
-            'state' => 'VIC',
-            'country' => 'AU',
+            'addressLine1' => '552 Victoria Street',
+            'locality' => 'North Melbourne',
+            'postalCode' => '3051',
+            'administrativeArea' => 'VIC',
+            'countryCode' => 'AU',
         ],
         [
-            'address1' => '83 Langride Street',
-            'city' => 'Collingwood',
-            'zipCode' => '3066',
-            'state' => 'VIC',
-            'country' => 'AU',
+            'addressLine1' => '83 Langride Street',
+            'locality' => 'Collingwood',
+            'postalCode' => '3066',
+            'administrativeArea' => 'VIC',
+            'countryCode' => 'AU',
         ],
         [
-            'address1' => '10-14 Cameron Street',
-            'city' => 'Launceston',
-            'zipCode' => '7250',
-            'state' => 'TAS',
-            'country' => 'AU',
+            'addressLine1' => '10-14 Cameron Street',
+            'locality' => 'Launceston',
+            'postalCode' => '7250',
+            'administrativeArea' => 'TAS',
+            'countryCode' => 'AU',
         ],
         [
-            'address1' => 'One Infinite Loop',
-            'city' => 'Cupertino',
-            'zipCode' => '95014',
-            'state' => 'CA',
-            'country' => 'US',
+            'addressLine1' => 'One Infinite Loop',
+            'locality' => 'Cupertino',
+            'postalCode' => '95014',
+            'administrativeArea' => 'CA',
+            'countryCode' => 'US',
         ],
         [
-            'address1' => '1600 Amphitheatre Parkway',
-            'city' => 'Mountain View',
-            'zipCode' => '94043',
-            'state' => 'CA',
-            'country' => 'US',
+            'addressLine1' => '1600 Amphitheatre Parkway',
+            'locality' => 'Mountain View',
+            'postalCode' => '94043',
+            'administrativeArea' => 'CA',
+            'countryCode' => 'US',
         ],
         [
-            'address1' => '290 Bremner Blvd',
-            'city' => 'Toronto',
-            'zipCode' => 'M5V 3L9',
-            'state' => 'ON',
-            'country' => 'CA',
+            'addressLine1' => '290 Bremner Blvd',
+            'locality' => 'Toronto',
+            'postalCode' => 'M5V 3L9',
+            'administrativeArea' => 'ON',
+            'countryCode' => 'CA',
         ],
         [
-            'address1' => '275 Notre-Dame St. East',
-            'city' => 'Montreal',
-            'zipCode' => 'H2Y 1C6',
-            'state' => 'QC',
-            'country' => 'CA',
+            'addressLine1' => '275 Notre-Dame St. East',
+            'locality' => 'Montreal',
+            'postalCode' => 'H2Y 1C6',
+            'administrativeArea' => 'QC',
+            'countryCode' => 'CA',
         ],
         [
-            'address1' => '109 Wakefield Street',
-            'city' => 'Wellington',
-            'zipCode' => '6011',
-            'country' => 'NZ',
+            'addressLine1' => '109 Wakefield Street',
+            'locality' => 'Wellington',
+            'postalCode' => '6011',
+            'countryCode' => 'NZ',
         ],
         [
-            'address1' => '86 Kilmore Street',
-            'city' => 'Christchurch',
-            'zipCode' => '8013',
-            'country' => 'NZ',
+            'addressLine1' => '86 Kilmore Street',
+            'locality' => 'Christchurch',
+            'postalCode' => '8013',
+            'countryCode' => 'NZ',
         ],
         [
-            'address1' => '2 Bedfont Lane',
-            'city' => 'London',
-            'zipCode' => 'CV226PD',
-            'country' => 'GB',
+            'addressLine1' => '2 Bedfont Lane',
+            'locality' => 'London',
+            'postalCode' => 'CV226PD',
+            'countryCode' => 'GB',
         ],
         [
-            'address1' => 'Southam Rd',
-            'city' => 'Dunchurch',
-            'zipCode' => 'CV226PD',
-            'country' => 'GB',
+            'addressLine1' => 'Southam Rd',
+            'locality' => 'Dunchurch',
+            'postalCode' => 'CV226PD',
+            'countryCode' => 'GB',
         ],
         [
-            'address1' => '139 Main St',
-            'city' => 'Glasgow',
-            'zipCode' => 'G73 2JJ',
-            'country' => 'GB',
+            'addressLine1' => '139 Main St',
+            'locality' => 'Glasgow',
+            'postalCode' => 'G73 2JJ',
+            'countryCode' => 'GB',
         ],
         [
-            'address1' => 'Rådhusplassen 1',
-            'city' => 'Oslo',
-            'zipCode' => '0037',
-            'country' => 'NO',
+            'addressLine1' => 'Rådhusplassen 1',
+            'locality' => 'Oslo',
+            'postalCode' => '0037',
+            'countryCode' => 'NO',
         ],
         [
-            'address1' => 'Neumanns gate 2a',
-            'city' => 'Bergen',
-            'zipCode' => '5011',
-            'country' => 'NO',
+            'addressLine1' => 'Neumanns gate 2a',
+            'locality' => 'Bergen',
+            'postalCode' => '5011',
+            'countryCode' => 'NO',
         ],
         [
-            'address1' => 'Place de l\'Hôtel de Ville',
-            'city' => 'Paris',
-            'zipCode' => '75004',
-            'country' => 'FR',
+            'addressLine1' => 'Place de l\'Hôtel de Ville',
+            'locality' => 'Paris',
+            'postalCode' => '75004',
+            'countryCode' => 'FR',
         ],
         [
-            'address1' => '5 Rue de l\'Hôtel de ville',
-            'city' => 'Nice',
-            'zipCode' => '06000',
-            'country' => 'FR',
+            'addressLine1' => '5 Rue de l\'Hôtel de ville',
+            'locality' => 'Nice',
+            'postalCode' => '06000',
+            'countryCode' => 'FR',
         ],
         [
-            'address1' => 'Dame St',
-            'city' => 'Dublin',
-            'zipCode' => '8PVM+H5',
-            'country' => 'IR',
+            'addressLine1' => 'Dame St',
+            'locality' => 'Dublin',
+            'postalCode' => '8PVM+H5',
+            'countryCode' => 'IR',
         ],
         [
-            'address1' => 'Coolsingel 40',
-            'city' => 'Rotterdam',
-            'zipCode' => '3011 AD',
-            'country' => 'NL',
+            'addressLine1' => 'Coolsingel 40',
+            'locality' => 'Rotterdam',
+            'postalCode' => '3011 AD',
+            'countryCode' => 'NL',
         ],
         [
-            'address1' => 'Nieuwezijds Voorburgwal 147',
-            'city' => 'Amsterdam',
-            'zipCode' => '1012 RJ',
-            'country' => 'NL',
+            'addressLine1' => 'Nieuwezijds Voorburgwal 147',
+            'locality' => 'Amsterdam',
+            'postalCode' => '1012 RJ',
+            'countryCode' => 'NL',
         ],
     ];
 
@@ -147,34 +147,22 @@ class TestingHelper
     // Static Methods
     // =========================================================================
 
-    public static function getTestAddress($country, $criteria = []): Address
+    public static function getTestAddress($countryCode, $criteria = [], $order = null): Address
     {
-        $filter = array_merge(['country' => $country], $criteria);
+        $filter = array_merge(['countryCode' => $countryCode], $criteria);
 
         $addresses = ArrayHelper::whereMultiple(self::$_addresses, $filter);
 
         // Get the first address returned
         $address = ArrayHelper::firstValue($addresses) ?? [];
 
-        // Rip out state/country for later. Will throw an error when trying to create the address.
-        $countryIso = ArrayHelper::remove($address, 'country');
-        $stateIso = ArrayHelper::remove($address, 'state');
-
-        // Create a new address model, even if empty
-        $address = new Address($address);
-
-        // Add back the country/state
-        if ($countryIso) {
-            $country = Commerce::getInstance()->countries->getCountryByIso($countryIso);
-            $address->countryId = $country->id ?? null;
-
-            if ($country && $stateIso) {
-                $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, $stateIso);
-                $address->stateId = $state->id ?? null;
-            }
+        // Set the owner of the address to be the order, if present
+        if ($order) {
+            $address['ownerId'] = $order->id;
         }
 
-        return $address;
+        // Create a new address element, even if empty
+        return new Address($address);
     }
 
     public static function getTestPackedBoxes($dimensionUnit, $weightUnit, $qty1 = 1, $qty2 = 1): array

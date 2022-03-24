@@ -1,8 +1,9 @@
 <?php
 namespace verbb\postie\events;
 
+use craft\elements\Address;
+
 use craft\commerce\elements\Order;
-use craft\commerce\models\Address;
 
 use yii\base\Event;
 

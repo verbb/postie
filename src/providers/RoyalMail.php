@@ -83,17 +83,17 @@ class RoyalMail extends StaticProvider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         //
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('GB', ['city' => 'London']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['city' => 'Glasgow']);
+        // $storeLocation = TestingHelper::getTestAddress('GB', ['locality' => 'London']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['locality' => 'Glasgow'], $order);
 
         // // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC'], $order);
         // $order->shippingAddress = TestingHelper::getTestAddress('IR');
         //
         //
@@ -109,10 +109,10 @@ class RoyalMail extends StaticProvider
         $allRates = [];
 
         foreach ($services as $handle => $label) {
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = RoyalMailRates::getRates($countryIso, $handle, $this, $order);
+            $rateAndBoxes = RoyalMailRates::getRates($countryCode, $handle, $this, $order);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

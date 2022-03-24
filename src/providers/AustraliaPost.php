@@ -291,11 +291,11 @@ class AustraliaPost extends SinglePackageProvider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
 
         // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
         //
         // 
         //
@@ -304,14 +304,14 @@ class AustraliaPost extends SinglePackageProvider
             $response = [];
 
             $type = $packedBox['type'] ?? '';
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
-            if ($countryIso === 'AU') {
+            if ($countryCode === 'AU') {
                 Provider::log($this, 'Domestic API call');
 
                 $payload = [
-                    'from_postcode' => $storeLocation->zipCode,
-                    'to_postcode' => $order->shippingAddress->zipCode,
+                    'from_postcode' => $storeLocation->postalCode,
+                    'to_postcode' => $order->shippingAddress->postalCode,
                     'length' => $packedBox['length'],
                     'width' => $packedBox['width'],
                     'height' => $packedBox['height'],
@@ -409,8 +409,8 @@ class AustraliaPost extends SinglePackageProvider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package - API only accepts cm/kg
             $packedBoxes = TestingHelper::getTestPackedBoxes('cm', 'kg');
@@ -418,8 +418,8 @@ class AustraliaPost extends SinglePackageProvider
 
             // Create a test payload
             $payload = [
-                'from_postcode' => $sender->zipCode,
-                'to_postcode' => $recipient->zipCode,
+                'from_postcode' => $sender->postalCode,
+                'to_postcode' => $recipient->postalCode,
                 'length' => $packedBox['length'],
                 'width' => $packedBox['width'],
                 'height' => $packedBox['height'],

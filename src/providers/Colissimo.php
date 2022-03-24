@@ -52,7 +52,7 @@ class Colissimo extends StaticProvider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         //
         // TESTING
@@ -60,17 +60,17 @@ class Colissimo extends StaticProvider
         // Domestic
         // $country = Commerce::getInstance()->countries->getCountryByIso('FR');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = 'Place de l\'Hôtel de Ville';
-        // $storeLocation->city = 'Paris';
-        // $storeLocation->zipCode = '75004';
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->addressLine1 = 'Place de l\'Hôtel de Ville';
+        // $storeLocation->locality = 'Paris';
+        // $storeLocation->postalCode = '75004';
         // $storeLocation->countryId = $country->id;
 
         // $country = Commerce::getInstance()->countries->getCountryByIso('FR');
 
-        // $order->shippingAddress->address1 = '5 Rue de l\'Hôtel de ville';
-        // $order->shippingAddress->city = 'Nice';
-        // $order->shippingAddress->zipCode = '06000';
+        // $order->shippingAddress->addressLine1 = '5 Rue de l\'Hôtel de ville';
+        // $order->shippingAddress->locality = 'Nice';
+        // $order->shippingAddress->postalCode = '06000';
         // $order->shippingAddress->countryId = $country->id;
         //
         //
@@ -86,10 +86,10 @@ class Colissimo extends StaticProvider
         $allRates = [];
 
         foreach ($services as $handle => $label) {
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
             // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = ColissimoRates::getRates($countryIso, $handle);
+            $rateAndBoxes = ColissimoRates::getRates($countryCode, $handle);
 
             // Determine the best packages, and calculate the total price
             $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);

@@ -63,7 +63,7 @@
                     <span class="label light">{{ craft.commerce.settings.weightUnits }}</span>
                 </td>
                 <td>
-                    {% if variant.isEditable() %}
+                    {% if variant.canSave(currentUser) %}
                         <a href="{{ variant.getCpEditUrl() }}">
                             <span class="icon"><span data-icon="edit"></span></span>
                         </a>

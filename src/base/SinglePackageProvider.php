@@ -23,7 +23,7 @@ class SinglePackageProvider extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();

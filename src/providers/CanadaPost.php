@@ -88,7 +88,7 @@ class CanadaPost extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -99,18 +99,18 @@ class CanadaPost extends Provider
         //
         // TESTING
         //
-        // $storeLocation->zipCode = 'K1H 7S5'; 
-        // $order->shippingAddress->zipCode = 'K1H 7S5';
+        // $storeLocation->postalCode = 'K1H 7S5'; 
+        // $order->shippingAddress->postalCode = 'K1H 7S5';
         // $dimensions['weight'] = 0.45359237;
         //
         //
         //
 
         // Remove spaces in zip code
-        $originZipCode = str_replace(' ', '', $storeLocation->zipCode);
-        $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
+        $originPostalCode = str_replace(' ', '', $storeLocation->postalCode);
+        $orderPostalCode = str_replace(' ', '', $order->shippingAddress->postalCode);
 
-        $countryIso = $order->shippingAddress->country->iso ?? '';
+        $countryCode = $order->shippingAddress->countryCode ?? '';
 
         try {
             $optionsXml = '';
@@ -133,16 +133,16 @@ class CanadaPost extends Provider
             }
 
             $destinationXml = '<international>
-                <country-code>' . $countryIso . '</country-code>
+                <country-code>' . $countryCode . '</country-code>
             </international>';
 
-            if ($countryIso === 'CA') {
+            if ($countryCode === 'CA') {
                 $destinationXml = '<domestic>
-                    <postal-code>' . $orderZipCode . '</postal-code>
+                    <postal-code>' . $orderPostalCode . '</postal-code>
                 </domestic>';
-            } else if ($countryIso === 'US') {
+            } else if ($countryCode === 'US') {
                 $destinationXml = '<united-states>
-                    <zip-code>' . $orderZipCode . '</zip-code>
+                    <zip-code>' . $orderPostalCode . '</zip-code>
                 </united-states>';
             }
 
@@ -153,7 +153,7 @@ class CanadaPost extends Provider
                         <weight>' . $packedBoxes->getTotalWeight() . '</weight>
                     </parcel-characteristics>
                     ' . $optionsXml . '
-                    <origin-postal-code>' . $originZipCode . '</origin-postal-code>
+                    <origin-postal-code>' . $originpostalCode . '</origin-postal-code>
                     <destination>
                         ' . $destinationXml . '
                     </destination>
@@ -219,16 +219,16 @@ class CanadaPost extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
-            $recipient = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
+            $sender = TestingHelper::getTestAddress('CA', ['locality' => 'Toronto']);
+            $recipient = TestingHelper::getTestAddress('CA', ['locality' => 'Montreal']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
             $packedBox = $packedBoxes[0];
 
             // Remove spaces in zip code
-            $originZipCode = str_replace(' ', '', $sender->zipCode);
-            $orderZipCode = str_replace(' ', '', $recipient->zipCode);
+            $originPostalCode = str_replace(' ', '', $sender->postalCode);
+            $orderPostalCode = str_replace(' ', '', $recipient->postalCode);
 
             // Create a test payload
             $payload = '<?xml version="1.0" encoding="UTF-8"?>
@@ -237,10 +237,10 @@ class CanadaPost extends Provider
                     <parcel-characteristics>
                         <weight>' . $packedBox['weight'] . '</weight>
                     </parcel-characteristics>
-                    <origin-postal-code>' . $originZipCode . '</origin-postal-code>
+                    <origin-postal-code>' . $originPostalCode . '</origin-postal-code>
                     <destination>
                         <domestic>
-                            <postal-code>' . $orderZipCode . '</postal-code>
+                            <postal-code>' . $orderPostalCode . '</postal-code>
                         </domestic>
                     </destination>
                 </mailing-scenario>';

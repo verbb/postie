@@ -69,7 +69,7 @@ class Fastway extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -81,11 +81,11 @@ class Fastway extends Provider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
 
         // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
         //
         // 
         //
@@ -97,7 +97,7 @@ class Fastway extends Provider
                 return null;
             }
 
-            $response = $this->_request('GET', 'pickuprf/' . $storeLocation->zipCode . '/' . $countryCode);
+            $response = $this->_request('GET', 'pickuprf/' . $storeLocation->postalCode . '/' . $countryCode);
             $franchiseCode = $response['result']['franchise_code'] ?? false;
 
             if (!$franchiseCode) {
@@ -107,8 +107,8 @@ class Fastway extends Provider
             $url = [
                 'lookup',
                 $franchiseCode,
-                $order->shippingAddress->city,
-                $order->shippingAddress->zipCode,
+                $order->shippingAddress->locality,
+                $order->shippingAddress->postalCode,
                 $packedBoxes->getTotalWeight(),
             ];
 
@@ -156,8 +156,8 @@ class Fastway extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -165,7 +165,7 @@ class Fastway extends Provider
 
             // Create a test payload
             $countryCode = $this->_getCountryCode('Australia');
-            $response = $this->_request('GET', 'pickuprf/' . $sender->zipCode . '/' . $countryCode);
+            $response = $this->_request('GET', 'pickuprf/' . $sender->postalCode . '/' . $countryCode);
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),

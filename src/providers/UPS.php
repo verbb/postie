@@ -356,7 +356,7 @@ class UPS extends Provider
             return null;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -368,16 +368,16 @@ class UPS extends Provider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+        // $storeLocation = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View'], $order);
 
         // Canada
-        // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
+        // $storeLocation = TestingHelper::getTestAddress('CA', ['locality' => 'Toronto']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['locality' => 'Montreal'], $order);
 
         // EU
-        // $storeLocation = TestingHelper::getTestAddress('GB', ['city' => 'London']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['city' => 'Dunchurch']);
+        // $storeLocation = TestingHelper::getTestAddress('GB', ['locality' => 'London']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['locality' => 'Dunchurch'], $order);
         //
         // TESTING
         //
@@ -397,20 +397,20 @@ class UPS extends Provider
             $shipment = new Shipment();
 
             $shipFromAddress = new Address();
-            $shipFromAddress->setPostalCode($storeLocation->zipCode);
+            $shipFromAddress->setPostalCode($storeLocation->postalCode);
 
             // UPS can't handle 3-character states. Ignoring it is valid for international order
             // But states are also required for US and Canada
             $allowedZipCodeCountries = ['US', 'CA'];
 
-            if ($storeLocation->country) {
-                $countryIso = $storeLocation->country->iso ?? '';
-                $shipFromAddress->setCountryCode($countryIso);
+            if ($storeLocation->countryCode) {
+                $countryCode = $storeLocation->countryCode ?? '';
+                $shipFromAddress->setCountryCode($countryCode);
 
-                if (in_array($countryIso, $allowedZipCodeCountries)) {
-                    $state = $storeLocation->state->abbreviation ?? '';
+                if (in_array($countryCode, $allowedZipCodeCountries)) {
+                    $administrativeArea = $storeLocation->administrativeArea ?? '';
 
-                    $shipFromAddress->setStateProvinceCode($state);
+                    $shipFromAddress->setStateProvinceCode($administrativeArea);
                 }
             }
 
@@ -421,20 +421,20 @@ class UPS extends Provider
 
             $shipTo = $shipment->getShipTo();
             $shipToAddress = $shipTo->getAddress();
-            $shipToAddress->setPostalCode($order->shippingAddress->zipCode);
+            $shipToAddress->setPostalCode($order->shippingAddress->postalCode);
 
             if ($this->getSetting('residentialAddress')) {
                 $shipToAddress->setResidentialAddressIndicator(true);
             }
 
-            if ($order->shippingAddress->country) {
-                $countryIso = $order->shippingAddress->country->iso ?? '';
-                $shipToAddress->setCountryCode($countryIso);
+            if ($order->shippingAddress->countryCode) {
+                $countryCode = $order->shippingAddress->countryCode ?? '';
+                $shipToAddress->setCountryCode($countryCode);
 
-                if (in_array($countryIso, $allowedZipCodeCountries)) {
-                    $state = $order->shippingAddress->state->abbreviation ?? '';
+                if (in_array($countryCode, $allowedZipCodeCountries)) {
+                    $administrativeArea = $order->shippingAddress->administrativeArea ?? '';
 
-                    $shipToAddress->setStateProvinceCode($state);
+                    $shipToAddress->setStateProvinceCode($administrativeArea);
                 }
             }
 
@@ -607,37 +607,37 @@ class UPS extends Provider
             $shipFrom = [];
             $shipFrom['Name'] = $this->getSetting('freightShipperName');
             $shipFrom['EMailAddress'] = $this->getSetting('freightShipperEmail');
-            $shipFrom['Address']['AddressLine'] = $storeLocation->address1;
-            $shipFrom['Address']['City'] = $storeLocation->city;
-            $shipFrom['Address']['PostalCode'] = $storeLocation->zipCode;
+            $shipFrom['Address']['AddressLine'] = $storeLocation->addressLine1;
+            $shipFrom['Address']['City'] = $storeLocation->locality;
+            $shipFrom['Address']['PostalCode'] = $storeLocation->postalCode;
 
             // UPS can't handle 3-character states. Ignoring it is valid for international order
             // But states are also required for US and Canada
             $allowedZipCodeCountries = ['US', 'CA'];
 
-            if ($storeLocation->country) {
-                $countryIso = $storeLocation->country->iso ?? '';
-                $shipFrom['Address']['CountryCode'] = $countryIso;
+            if ($storeLocation->countryCode) {
+                $countryCode = $storeLocation->countryCode ?? '';
+                $shipFrom['Address']['CountryCode'] = $countryCode;
 
-                if (in_array($countryIso, $allowedZipCodeCountries)) {
-                    $state = $storeLocation->state->abbreviation ?? '';
+                if (in_array($countryCode, $allowedZipCodeCountries)) {
+                    $administrativeArea = $storeLocation->administrativeArea ?? '';
 
-                    $shipFrom['Address']['StateProvinceCode'] = $state;
+                    $shipFrom['Address']['StateProvinceCode'] = $administrativeArea;
                 }
             }
 
             $shipTo = [];
-            $shipTo['Address']['City'] = $order->shippingAddress->city;
-            $shipTo['Address']['PostalCode'] = $order->shippingAddress->zipCode;
+            $shipTo['Address']['City'] = $order->shippingAddress->locality;
+            $shipTo['Address']['PostalCode'] = $order->shippingAddress->postalCode;
 
-            if ($order->shippingAddress->country) {
-                $countryIso = $order->shippingAddress->country->iso ?? '';
-                $shipTo['Address']['CountryCode'] = $countryIso;
+            if ($order->shippingAddress->countryCode) {
+                $countryCode = $order->shippingAddress->countryCode ?? '';
+                $shipTo['Address']['CountryCode'] = $countryCode;
 
-                if (in_array($countryIso, $allowedZipCodeCountries)) {
-                    $state = $order->shippingAddress->state->abbreviation ?? '';
+                if (in_array($countryCode, $allowedZipCodeCountries)) {
+                    $administrativeArea = $order->shippingAddress->administrativeArea ?? '';
 
-                    $shipTo['Address']['StateProvinceCode'] = $state;
+                    $shipTo['Address']['StateProvinceCode'] = $administrativeArea;
                 }
             }
 
@@ -754,8 +754,8 @@ class UPS extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+            $sender = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -764,7 +764,7 @@ class UPS extends Provider
             // Create a test payload
             $shipment = new Shipment();
             $shipFromAddress = new Address();
-            $shipFromAddress->setPostalCode($sender->zipCode);
+            $shipFromAddress->setPostalCode($sender->postalCode);
 
             $shipFrom = new ShipFrom();
             $shipFrom->setAddress($shipFromAddress);
@@ -772,7 +772,7 @@ class UPS extends Provider
 
             $shipTo = $shipment->getShipTo();
             $shipToAddress = $shipTo->getAddress();
-            $shipToAddress->setPostalCode($recipient->zipCode);
+            $shipToAddress->setPostalCode($recipient->postalCode);
 
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
@@ -833,7 +833,7 @@ class UPS extends Provider
 
     private function _inEU($country): bool
     {
-        return isset($this->euCountries[$country->iso]);
+        return isset($this->euCountries[$countryCode]);
     }
 
     private function _getServiceHandle($code, $storeLocation, $shippingAddress): bool|string

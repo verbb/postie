@@ -470,10 +470,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getIsInternational($order): bool
     {
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
-        $sourceCountry = $storeLocation->country->iso ?? '';
-        $destinationCountry = $order->shippingAddress->country->iso ?? '';
+        $sourceCountry = $storeLocation->countryCode ?? '';
+        $destinationCountry = $order->shippingAddress->countryCode ?? '';
 
         return $storeLocation !== $destinationCountry;
     }

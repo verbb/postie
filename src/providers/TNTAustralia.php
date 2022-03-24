@@ -76,7 +76,7 @@ class TNTAustralia extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -111,14 +111,14 @@ class TNTAustralia extends Provider
                     <ratedTransitTimeEnquiry>
                         <cutOffTimeEnquiry>
                             <collectionAddress>
-                                <suburb>' . $storeLocation->city . '</suburb>
-                                <postCode>' . $storeLocation->zipCode . '</postCode>
-                                <state>' . $storeLocation->state . '</state>
+                                <suburb>' . $storeLocation->locality . '</suburb>
+                                <postCode>' . $storeLocation->postalCode . '</postCode>
+                                <state>' . $storeLocation->administrativeArea . '</state>
                             </collectionAddress>
                             <deliveryAddress>
-                                <suburb>' . $order->shippingAddress->city . '</suburb>
-                                <postCode>' . $order->shippingAddress->zipCode . '</postCode>
-                                <state>' . $order->shippingAddress->state . '</state>
+                                <suburb>' . $order->shippingAddress->locality . '</suburb>
+                                <postCode>' . $order->shippingAddress->postalCode . '</postCode>
+                                <state>' . $order->shippingAddress->administrativeArea . '</state>
                             </deliveryAddress>
                             <shippingDate>' . $nextDate[0] . '</shippingDate>
                             <userCurrentLocalDateTime>' . date('Y-m-d\TH:i:s') . '</userCurrentLocalDateTime>
@@ -187,8 +187,8 @@ class TNTAustralia extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -200,14 +200,14 @@ class TNTAustralia extends Provider
                     <ratedTransitTimeEnquiry>
                         <cutOffTimeEnquiry>
                             <collectionAddress>
-                                <suburb>' . $sender->city . '</suburb>
-                                <postCode>' . $sender->zipCode . '</postCode>
-                                <state>' . $sender->state . '</state>
+                                <suburb>' . $sender->locality . '</suburb>
+                                <postCode>' . $sender->postalCode . '</postCode>
+                                <state>' . $sender->administrativeArea . '</state>
                             </collectionAddress>
                             <deliveryAddress>
-                                <suburb>' . $recipient->city . '</suburb>
-                                <postCode>' . $recipient->zipCode . '</postCode>
-                                <state>' . $recipient->state . '</state>
+                                <suburb>' . $recipient->locality . '</suburb>
+                                <postCode>' . $recipient->postalCode . '</postCode>
+                                <state>' . $recipient->administrativeArea . '</state>
                             </deliveryAddress>
                             <dangerousGoods>
                                 <dangerous>false</dangerous>

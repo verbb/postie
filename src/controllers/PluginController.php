@@ -60,7 +60,7 @@ class PluginController extends Controller
 
         $providers = Postie::$plugin->getProviders()->getAllProviders();
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         return $this->renderTemplate('postie/settings', [
             'settings' => $settings,

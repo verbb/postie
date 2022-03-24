@@ -61,25 +61,25 @@ class NewZealandPost extends SinglePackageProvider
         //
         // $country = Commerce::getInstance()->countries->getCountryByIso('NZ');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = '109 Wakefield Street';
-        // $storeLocation->city = 'Wellington';
-        // $storeLocation->zipCode = '6011';
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->addressLine1 = '109 Wakefield Street';
+        // $storeLocation->locality = 'Wellington';
+        // $storeLocation->postalCode = '6011';
         // $storeLocation->countryId = $country->id;
 
-        // $order->shippingAddress->address1 = '86 Kilmore Street';
-        // $order->shippingAddress->city = 'Christchurch';
-        // $order->shippingAddress->zipCode = '8013';
+        // $order->shippingAddress->addressLine1 = '86 Kilmore Street';
+        // $order->shippingAddress->locality = 'Christchurch';
+        // $order->shippingAddress->postalCode = '8013';
         // $order->shippingAddress->countryId = $country->id;
 
         // // International
         // $country = Commerce::getInstance()->countries->getCountryByIso('AU');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'TAS');
+        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'TAS');
 
-        // $order->shippingAddress->address1 = '10-14 Cameron Street';
-        // $order->shippingAddress->city = 'Launceston';
-        // $order->shippingAddress->zipCode = '7250';
-        // $order->shippingAddress->stateId = $state->id;
+        // $order->shippingAddress->addressLine1 = '10-14 Cameron Street';
+        // $order->shippingAddress->locality = 'Launceston';
+        // $order->shippingAddress->postalCode = '7250';
+        // $order->shippingAddress->administrativeAreaId = $administrativeArea->id;
         // $order->shippingAddress->countryId = $country->id;
         //
         // 
@@ -88,18 +88,18 @@ class NewZealandPost extends SinglePackageProvider
         try {
             $response = [];
 
-            $countryIso = $order->shippingAddress->country->iso ?? '';
+            $countryCode = $order->shippingAddress->countryCode ?? '';
 
-            if ($countryIso == 'NZ') {
+            if ($countryCode == 'NZ') {
                 Provider::log($this, 'Domestic API call');
 
                 $payload = [
-                    'pickup_city' => $storeLocation->city ?? '',
-                    'pickup_postcode' => $storeLocation->zipCode ?? '',
-                    'pickup_country' => $storeLocation->country->iso ?? '',
-                    'delivery_city' => $order->shippingAddress->city ?? '',
-                    'delivery_postcode' => $order->shippingAddress->zipCode ?? '',
-                    'delivery_country' => $order->shippingAddress->country->iso ?? '',
+                    'pickup_city' => $storeLocation->locality ?? '',
+                    'pickup_postcode' => $storeLocation->postalCode ?? '',
+                    'pickup_country' => $storeLocation->countryCode ?? '',
+                    'delivery_city' => $order->shippingAddress->locality ?? '',
+                    'delivery_postcode' => $order->shippingAddress->postalCode ?? '',
+                    'delivery_country' => $order->shippingAddress->countryCode ?? '',
                     'envelope_size' => 'ALL',
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],
@@ -135,7 +135,7 @@ class NewZealandPost extends SinglePackageProvider
                 Provider::log($this, 'International API call');
 
                 $payload = [
-                    'country_code' => $order->shippingAddress->country->iso ?? '',
+                    'country_code' => $order->shippingAddress->countryCode ?? '',
                     'value' => $packedBoxes->getTotalPrice(),
                     'weight' => $packedBox['weight'],
                     'length' => $packedBox['length'],
@@ -197,8 +197,8 @@ class NewZealandPost extends SinglePackageProvider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('NZ', ['city' => 'Wellington']);
-            $recipient = TestingHelper::getTestAddress('NZ', ['city' => 'Christchurch']);
+            $sender = TestingHelper::getTestAddress('NZ', ['locality' => 'Wellington']);
+            $recipient = TestingHelper::getTestAddress('NZ', ['locality' => 'Christchurch']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -206,12 +206,12 @@ class NewZealandPost extends SinglePackageProvider
 
             // Create a test payload
             $payload = [
-                'pickup_city' => $sender->city ?? '',
-                'pickup_postcode' => $sender->zipCode ?? '',
-                'pickup_country' => $sender->country->iso ?? '',
-                'delivery_city' => $recipient->city ?? '',
-                'delivery_postcode' => $recipient->zipCode ?? '',
-                'delivery_country' => $recipient->country->iso ?? '',
+                'pickup_city' => $sender->locality ?? '',
+                'pickup_postcode' => $sender->postalCode ?? '',
+                'pickup_country' => $sender->countryCode ?? '',
+                'delivery_city' => $recipient->locality ?? '',
+                'delivery_postcode' => $recipient->postalCode ?? '',
+                'delivery_country' => $recipient->countryCode ?? '',
                 'envelope_size' => 'ALL',
                 'weight' => $packedBox['weight'],
                 'length' => $packedBox['length'],

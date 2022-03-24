@@ -260,7 +260,7 @@ class FedEx extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -272,12 +272,12 @@ class FedEx extends Provider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+        // $storeLocation = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View'], $order);
 
         // Canada 
-        // $storeLocation = TestingHelper::getTestAddress('CA', ['city' => 'Toronto']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['city' => 'Montreal']);
+        // $storeLocation = TestingHelper::getTestAddress('CA', ['locality' => 'Toronto']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['locality' => 'Montreal'], $order);
 
         // Freight
         // $order->currency = 'USD';
@@ -332,14 +332,14 @@ class FedEx extends Provider
 
         // Shipper
         $rateRequest->RequestedShipment->PreferredCurrency = $order->currency;
-        $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->address1];
-        $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->city;
-        $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->zipCode;
+        $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->addressLine1];
+        $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->locality;
+        $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->postalCode;
 
         // Recipient
-        $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->address1];
-        $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->city;
-        $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->zipCode;
+        $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->addressLine1];
+        $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->locality;
+        $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->postalCode;
 
         if ($this->getSetting('residentialAddress')) {
             $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
@@ -347,21 +347,21 @@ class FedEx extends Provider
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
         if ($storeLocation->country) {
-            $countryIso = $storeLocation->country->iso ?? '';
-            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $countryIso;
+            $countryCode = $storeLocation->countryCode ?? '';
+            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $countryCode;
 
-            if ($countryIso == 'US' || $countryIso == 'CA') {
-                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->state->abbreviation ?? '';
+            if ($countryCode == 'US' || $countryCode == 'CA') {
+                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->administrativeArea ?? '';
             }
         }
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
         if ($order->shippingAddress->country) {
-            $countryIso = $order->shippingAddress->country->iso ?? '';
-            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryIso;
+            $countryCode = $order->shippingAddress->countryCode ?? '';
+            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryCode;
 
-            if ($countryIso == 'US' || $countryIso == 'CA') {
-                $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->state->abbreviation ?? '';
+            if ($countryCode == 'US' || $countryCode == 'CA') {
+                $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->administrativeArea ?? '';
             }
         }
 
@@ -495,8 +495,8 @@ class FedEx extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['city' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['city' => 'Mountain View']);
+            $sender = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+            $recipient = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -513,10 +513,10 @@ class FedEx extends Provider
             $rateRequest->Version->Minor = 0;
             $rateRequest->Version->Intermediate = 0;
             $rateRequest->ReturnTransitAndCommit = true;
-            $rateRequest->RequestedShipment->Shipper->Address->City = $sender->city;
-            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $sender->zipCode;
-            $rateRequest->RequestedShipment->Recipient->Address->City = $recipient->city;
-            $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $recipient->zipCode;
+            $rateRequest->RequestedShipment->Shipper->Address->City = $sender->locality;
+            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $sender->postalCode;
+            $rateRequest->RequestedShipment->Recipient->Address->City = $recipient->locality;
+            $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $recipient->postalCode;
 
             $rateServiceRequest = new Request();
             $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);

@@ -47,7 +47,7 @@ class Interparcel extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -59,11 +59,11 @@ class Interparcel extends Provider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
 
         // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
         //
         // 
         //
@@ -73,16 +73,16 @@ class Interparcel extends Provider
 
             $payload = [
                 'collection' => [
-                    'city' => $storeLocation->city ?? '',
-                    'postcode' => $storeLocation->zipCode ?? '',
-                    'state' => $storeLocation->state->abbreviation ?? '',
-                    'country' => $storeLocation->country->iso ?? '',
+                    'city' => $storeLocation->locality ?? '',
+                    'postcode' => $storeLocation->postalCode ?? '',
+                    'state' => $storeLocation->administrativeArea ?? '',
+                    'country' => $storeLocation->countryCode ?? '',
                 ],
                 'delivery' => [
-                    'city' => $order->shippingAddress->city ?? '',
-                    'postcode' => $order->shippingAddress->zipCode ?? '',
-                    'state' => $order->shippingAddress->state->abbreviation ?? '',
-                    'country' => $order->shippingAddress->country->iso ?? '',
+                    'city' => $order->shippingAddress->locality ?? '',
+                    'postcode' => $order->shippingAddress->postalCode ?? '',
+                    'state' => $order->shippingAddress->administrativeArea ?? '',
+                    'country' => $order->shippingAddress->countryCode ?? '',
                 ],
                 'parcels' => [],
             ];
@@ -171,8 +171,8 @@ class Interparcel extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -181,16 +181,16 @@ class Interparcel extends Provider
             // Create a test payload
             $payload = [
                 'collection' => [
-                    'city' => $sender->city ?? '',
-                    'postcode' => $sender->zipCode ?? '',
-                    'state' => $sender->state->abbreviation ?? '',
-                    'country' => $sender->country->iso ?? '',
+                    'city' => $sender->locality ?? '',
+                    'postcode' => $sender->postalCode ?? '',
+                    'state' => $sender->administrativeArea ?? '',
+                    'country' => $sender->countryCode ?? '',
                 ],
                 'delivery' => [
-                    'city' => $recipient->city ?? '',
-                    'postcode' => $recipient->zipCode ?? '',
-                    'state' => $recipient->state->abbreviation ?? '',
-                    'country' => $recipient->country->iso ?? '',
+                    'city' => $recipient->locality ?? '',
+                    'postcode' => $recipient->postalCode ?? '',
+                    'state' => $recipient->administrativeArea ?? '',
+                    'country' => $recipient->countryCode ?? '',
                 ],
                 'parcels' => [
                     [

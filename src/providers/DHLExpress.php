@@ -56,7 +56,7 @@ class DHLExpress extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -68,31 +68,31 @@ class DHLExpress extends Provider
         // TESTING
         //
         // $country = Commerce::getInstance()->countries->getCountryByIso('DE');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'DE');
+        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'DE');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->city = 'Berlin';
-        // $storeLocation->zipCode = '12345';
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->locality = 'Berlin';
+        // $storeLocation->postalCode = '12345';
         // $storeLocation->countryId = $country->id;
 
-        // $order->shippingAddress->city = 'Berlin';
-        // $order->shippingAddress->zipCode = '12345';
+        // $order->shippingAddress->locality = 'Berlin';
+        // $order->shippingAddress->postalCode = '12345';
         // $order->shippingAddress->countryId = $country->id;
 
         // $country = Commerce::getInstance()->countries->getCountryByIso('US');
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'CA');
+        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'CA');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->address1 = 'One Infinite Loop';
-        // $storeLocation->city = 'Cupertino';
-        // $storeLocation->zipCode = '95014';
-        // $storeLocation->stateId = $state->id;
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->addressLine1 = 'One Infinite Loop';
+        // $storeLocation->locality = 'Cupertino';
+        // $storeLocation->postalCode = '95014';
+        // $storeLocation->administrativeAreaId = $administrativeArea->id;
         // $storeLocation->countryId = $country->id;
 
-        // $order->shippingAddress->address1 = '1600 Amphitheatre Parkway';
-        // $order->shippingAddress->city = 'Mountain View';
-        // $order->shippingAddress->zipCode = '94043';
-        // $order->shippingAddress->stateId = $state->id;
+        // $order->shippingAddress->addressLine1 = '1600 Amphitheatre Parkway';
+        // $order->shippingAddress->locality = 'Mountain View';
+        // $order->shippingAddress->postalCode = '94043';
+        // $order->shippingAddress->administrativeAreaId = $administrativeArea->id;
         // $order->shippingAddress->countryId = $country->id;
         //
         // 
@@ -130,14 +130,14 @@ class DHLExpress extends Provider
 
                         'Ship' => [
                             'Shipper' => [
-                                'City' => $storeLocation->city ?? '',
-                                'PostalCode' => $storeLocation->zipCode ?? '',
-                                'CountryCode' => $storeLocation->country->iso ?? '',
+                                'City' => $storeLocation->locality ?? '',
+                                'PostalCode' => $storeLocation->postalCode ?? '',
+                                'CountryCode' => $storeLocation->countryCode ?? '',
                             ],
                             'Recipient' => [
-                                'City' => $order->shippingAddress->city ?? '',
-                                'PostalCode' => $order->shippingAddress->zipCode ?? '',
-                                'CountryCode' => $order->shippingAddress->country->iso ?? '',
+                                'City' => $order->shippingAddress->locality ?? '',
+                                'PostalCode' => $order->shippingAddress->postalCode ?? '',
+                                'CountryCode' => $order->shippingAddress->countryCode ?? '',
                             ],
                         ],
                         'Packages' => [],
@@ -228,8 +228,8 @@ class DHLExpress extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -246,14 +246,14 @@ class DHLExpress extends Provider
                         'PaymentInfo' => 'DAP',
                         'Ship' => [
                             'Shipper' => [
-                                'City' => $sender->city ?? '',
-                                'PostalCode' => $sender->zipCode ?? '',
-                                'CountryCode' => $sender->country->iso ?? '',
+                                'City' => $sender->locality ?? '',
+                                'PostalCode' => $sender->postalCode ?? '',
+                                'CountryCode' => $sender->countryCode ?? '',
                             ],
                             'Recipient' => [
-                                'City' => $recipient->city ?? '',
-                                'PostalCode' => $recipient->zipCode ?? '',
-                                'CountryCode' => $recipient->country->iso ?? '',
+                                'City' => $recipient->locality ?? '',
+                                'PostalCode' => $recipient->postalCode ?? '',
+                                'CountryCode' => $recipient->countryCode ?? '',
                             ],
                         ],
                         'Packages' => [

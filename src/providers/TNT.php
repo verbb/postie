@@ -49,7 +49,7 @@ class TNT extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
         $dimensions = $this->getDimensions($order, 'kg', 'cm');
         $volume = $dimensions['width'] * $dimensions['height'] * $dimensions['length'];
         $nextDate = $this->_numberOfWorkingDates(date('Y-m-d'), 1);
@@ -66,13 +66,13 @@ class TNT extends Provider
                         <rateId>rate1</rateId>
                         <sender>
                             <country>' . $storeLocation->country->name . '</country>
-                            <town>' . $storeLocation->city . '</town>
-                            <postcode>' . $storeLocation->zipCode . '</postcode>
+                            <town>' . $storeLocation->locality . '</town>
+                            <postcode>' . $storeLocation->postalCode . '</postcode>
                         </sender>
                         <delivery>
                             <country>' . $order->shippingAddress->country->name . '</country>
-                            <town>' . $order->shippingAddress->city . '</town>
-                            <postcode>' . $order->shippingAddress->zipCode . '</postcode>
+                            <town>' . $order->shippingAddress->locality . '</town>
+                            <postcode>' . $order->shippingAddress->postalCode . '</postcode>
                         </delivery>
                         <collectionDateTime>' . $nextDate[0] . '</collectionDateTime>
                         <product>

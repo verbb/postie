@@ -75,7 +75,7 @@ class Bring extends Provider
             return $this->_rates;
         }
 
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);
@@ -88,12 +88,12 @@ class Bring extends Provider
         //
         // $country = Commerce::getInstance()->countries->getCountryByIso('NO');
 
-        // $storeLocation = new craft\commerce\models\Address();
-        // $storeLocation->zipCode = '0470';
+        // $storeLocation = new craft\elements\Address();
+        // $storeLocation->postalCode = '0470';
         // $storeLocation->countryId = $country->id;
 
-        // $state = Commerce::getInstance()->states->getStateByAbbreviation($country->id, 'NO');
-        // $order->shippingAddress->zipCode = '0151';
+        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'NO');
+        // $order->shippingAddress->postalCode = '0151';
         // $order->shippingAddress->countryId = $country->id;
         //
         // 
@@ -103,10 +103,10 @@ class Bring extends Provider
             $response = [];
 
             $payload = [
-                'frompostalcode' => $storeLocation->zipCode ?? '',
-                'fromcountry' => $storeLocation->country->iso ?? '',
-                'topostalcode' => $order->shippingAddress->zipCode ?? '',
-                'tocountry' => $order->shippingAddress->country->iso ?? '',
+                'frompostalcode' => $storeLocation->postalCode ?? '',
+                'fromcountry' => $storeLocation->countryCode ?? '',
+                'topostalcode' => $order->shippingAddress->postalCode ?? '',
+                'tocountry' => $order->shippingAddress->countryCode ?? '',
                 'weight' => $packedBoxes->getTotalWeight(),
 
                 // Tells whether the parcel is delivered at a post office when it is shipped.
@@ -189,8 +189,8 @@ class Bring extends Provider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('NO', ['city' => 'Oslo']);
-            $recipient = TestingHelper::getTestAddress('NO', ['city' => 'Bergen']);
+            $sender = TestingHelper::getTestAddress('NO', ['locality' => 'Oslo']);
+            $recipient = TestingHelper::getTestAddress('NO', ['locality' => 'Bergen']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -198,10 +198,10 @@ class Bring extends Provider
 
             // Create a test payload
             $payload = [
-                'frompostalcode' => $sender->zipCode ?? '',
-                'fromcountry' => $sender->country->iso ?? '',
-                'topostalcode' => $recipient->zipCode ?? '',
-                'tocountry' => $recipient->country->iso ?? '',
+                'frompostalcode' => $sender->postalCode ?? '',
+                'fromcountry' => $sender->countryCode ?? '',
+                'topostalcode' => $recipient->postalCode ?? '',
+                'tocountry' => $recipient->countryCode ?? '',
                 'postingatpostoffice' => 'false',
                 'weight' => $packedBox['weight'],
                 'product' => ['PA_DOREN'],

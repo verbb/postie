@@ -60,11 +60,11 @@ class Sendle extends SinglePackageProvider
         // TESTING
         //
         // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
 
         // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
         //
         // 
         //
@@ -73,12 +73,12 @@ class Sendle extends SinglePackageProvider
             $response = [];
 
             $payload = [
-                'pickup_suburb' => $storeLocation->city ?? '',
-                'pickup_postcode' => $storeLocation->zipCode ?? '',
-                'pickup_country' => $storeLocation->country->iso ?? '',
-                'delivery_suburb' => $order->shippingAddress->city ?? '',
-                'delivery_postcode' => $order->shippingAddress->zipCode ?? '',
-                'delivery_country' => $order->shippingAddress->country->iso ?? '',
+                'pickup_suburb' => $storeLocation->locality ?? '',
+                'pickup_postcode' => $storeLocation->postalCode ?? '',
+                'pickup_country' => $storeLocation->countryCode ?? '',
+                'delivery_suburb' => $order->shippingAddress->locality ?? '',
+                'delivery_postcode' => $order->shippingAddress->postalCode ?? '',
+                'delivery_country' => $order->shippingAddress->countryCode ?? '',
                 'weight_value' => $packedBox['weight'],
                 'weight_units' => $this->weightUnit,
             ];
@@ -131,8 +131,8 @@ class Sendle extends SinglePackageProvider
     {
         try {
             // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
             // Create a test package
             $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
@@ -140,12 +140,12 @@ class Sendle extends SinglePackageProvider
 
             // Create a test payload
             $payload = [
-                'pickup_suburb' => $sender->city ?? '',
-                'pickup_postcode' => $sender->zipCode ?? '',
-                'pickup_country' => $sender->country->iso ?? '',
-                'delivery_suburb' => $recipient->city ?? '',
-                'delivery_postcode' => $recipient->zipCode ?? '',
-                'delivery_country' => $recipient->country->iso ?? '',
+                'pickup_suburb' => $sender->locality ?? '',
+                'pickup_postcode' => $sender->postalCode ?? '',
+                'pickup_country' => $sender->countryCode ?? '',
+                'delivery_suburb' => $recipient->locality ?? '',
+                'delivery_postcode' => $recipient->postalCode ?? '',
+                'delivery_country' => $recipient->countryCode ?? '',
                 'weight_value' => $packedBox['weight'],
                 'weight_units' => $this->weightUnit,
             ];
