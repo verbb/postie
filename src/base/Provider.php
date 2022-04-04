@@ -628,9 +628,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'storeLocation' => $storeLocation,
             'order' => $order,
             'packedBoxes' => $packedBoxes,
-
-            // Deprecated - todo remove at next breakpoint
-            'dimensions' => $packedBoxes->getSerializedPackedBoxList(),
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_RATES)) {
