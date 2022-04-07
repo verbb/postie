@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.17 - 2022-04-07
+
+### Fixed
+- Remove deprecated `dimensions` in `FetchRatesEvent`.
+
 ## 2.4.16 - 2022-04-01
 
 ### Changed
