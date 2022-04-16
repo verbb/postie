@@ -1,6 +1,7 @@
 # Configuration
+Create a `postie.php` file under your `/config` directory with the following options available to you. You can also use multi-environment options to change these per environment.
 
-Create an `postie.php` file under your `/config` directory with the following options available to you. You can also use multi-environment options to change these per environment.
+The below shows the defaults already used by Postie, so you don't need to add these options unless you want to modify the values.
 
 ```php
 <?php
@@ -20,7 +21,6 @@ return [
 ```
 
 ### Configuration options
-
 - `pluginName` - If you wish to customise the plugin name.
 - `hasCpSection` - Whether to have the plugin pages appear on the main CP sidebar menu.
 - `applyFreeShipping` - Whether to apply free shipping if all items in the cart have been marked with "Free Shipping".
