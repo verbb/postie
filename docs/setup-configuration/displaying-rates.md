@@ -41,7 +41,7 @@ You might have something similar to the below in your templates. The below is ta
 Without any further alterations, rates should appear within this loop, alongside any manually-create shipping methods.
 
 :::tip
-Can't see your rates during checkout? Be sure to check the [Troubleshooting guide](docs:support/troubleshooting).
+Can't see your rates during checkout? Be sure to check the [Troubleshooting guide](docs:get-started/troubleshooting).
 :::
 
 ### Rate options
