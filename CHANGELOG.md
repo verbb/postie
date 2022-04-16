@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.18 - 2022-04-09
+
+### Fixed
+- Fix an error with `SinglePackageProvider` and `EVENT_BEFORE_FETCH_RATES` incorrectly serializing packed boxes.
+
 ## 2.4.17 - 2022-04-07
 
 ### Fixed
