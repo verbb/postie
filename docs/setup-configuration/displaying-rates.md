@@ -1,13 +1,11 @@
 # Displaying Rates
-
 There's nothing you need to do to display rates from providers, which means as long as you have the provider enabled, and some shipping methods enabled, they'll appear in checkout.
 
 :::tip
 Note that shipping methods will not appear in your control panel under Commerce > Shipping. Refer to [Github issue](https://github.com/craftcms/commerce/issues/730).
 :::
 
-### Template
-
+## Template
 You might have something similar to the below in your templates. The below is take from the default Commerce templates:
 
 ```twig
@@ -44,8 +42,7 @@ Without any further alterations, rates should appear within this loop, alongside
 Can't see your rates during checkout? Be sure to check the [Troubleshooting guide](docs:get-started/troubleshooting).
 :::
 
-### Rate options
-
+## Rate options
 When fetching rates from providers, Postie not only returns the price amount, but a few other handy options related to the rate. These can be accessed via the shipping method rate. This may be useful to find information about how long a chosen rate may take to ship, etc.
 
 ```twig

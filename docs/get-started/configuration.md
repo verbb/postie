@@ -20,7 +20,7 @@ return [
 ];
 ```
 
-### Configuration options
+## Configuration options
 - `pluginName` - If you wish to customise the plugin name.
 - `hasCpSection` - Whether to have the plugin pages appear on the main CP sidebar menu.
 - `applyFreeShipping` - Whether to apply free shipping if all items in the cart have been marked with "Free Shipping".
@@ -31,7 +31,7 @@ return [
 - `fetchRatesPostValue` - Specify a POST param value for manually fetching rates. Refer to [Manually Fetching Rates](docs:setup-configuration/manually-fetching-rates).
 - `providers` - A collection of options for each provider.
 
-#### Providers
+### Providers
 Supply your client configurations as per the below. Must be keyed with the handle for the provider (camel-cased name).
 
 ```php

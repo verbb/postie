@@ -1,10 +1,10 @@
 # Requirements
 
-### Craft CMS
+## Craft CMS
 Postie requires Craft CMS 3.5 or greater.
 
-### Craft Commerce
+## Craft Commerce
 Postie requires Craft Commerce 3.2 or greater.
 
-### PHP
+## PHP
 Postie requires PHP 7.2.5 or greater.

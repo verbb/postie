@@ -1,6 +1,6 @@
 # FedEx
 
-### Connect to the FedEx API
+## Connect to the FedEx API
 1. Go to <a href="https://www.fedex.com/login/web/jsp/contactInfo1.jsp" target="_blank">FedEx Developers Centre</a> and register for API access.
 1. Register a <a href="https://www.fedex.com/wpor/web/jsp/commonTC.jsp" target="_blank">FedEx Web Services Production Access</a>.
 1. Copy the **Account Number** from FedEx and paste in the **Account Number** field in Postie.
@@ -8,7 +8,7 @@
 1. Copy the **API Key** from FedEx and paste in the **Key** field in Postie.
 1. Copy the **Password** from FedEx and paste in the **Password** field in Postie.
 
-### Services
+## Services
 The below service are available with FedEx for domestic and international customer destination addresses.
 
 - Domestic
@@ -48,7 +48,7 @@ The below service are available with FedEx for domestic and international custom
     - FedEx Europe First International Priority
     - FedEx International Distribution
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

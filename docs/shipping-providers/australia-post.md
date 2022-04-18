@@ -1,11 +1,11 @@
 # Australia Post
 In order to use Australia Post, you'll need to ensure you are using a valid Australian address as your store location. You'll also need to ensure your Craft Commerce default currency is set to AUD.
 
-### Connect to the Australia Post API
+## Connect to the Australia Post API
 1. Go to <a href="https://developers.auspost.com.au/apis/pacpcs-registration" target="_blank">Australia Post Developers website</a> and register for an API Key.
 1. Copy the **API Key** from Australia Post and paste in the **API Key** field in Postie.
 
-### Services
+## Services
 The below service are available with Australia Post for domestic and international customer destination addresses.
 
 - Domestic (Parcel)
@@ -53,7 +53,7 @@ The below service are available with Australia Post for domestic and internation
     - International Letter Air Medium
     - International Letter Air Heavy
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

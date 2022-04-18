@@ -1,5 +1,4 @@
 # Provider
-
 You can register additional shipping providers to post to by registering your class. Then, you'll need to create your provider class to implement the `ProviderInterface`.
 
 :::tip

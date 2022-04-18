@@ -1,6 +1,6 @@
 # UPS
 
-### Connect to the {name} API
+## Connect to the {name} API
 1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">{name} Developer Kit</a> and register for API access.
 1. Copy the **API Key** from {name} and paste in the **API Key** field below.
 1. Copy the **Test API Key** from {name} and paste in the **Test API Key** field below.
@@ -8,7 +8,7 @@
 1. Copy the **Password** from {name} and paste in the **Password** field below.
 1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
 
-### Services
+## Services
 The below service are available with UPS for domestic and international customer destination addresses.
 
 - Domestic
@@ -64,7 +64,7 @@ The below service are available with UPS for domestic and international customer
     - UPS Expedited
     - UPS Standard
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

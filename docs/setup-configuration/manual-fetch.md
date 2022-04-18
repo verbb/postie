@@ -1,5 +1,4 @@
 # Manually Fetching Rates
-
 As soon as your cart has a valid address, Commerce will try to provide shipping methods and rules for the customer to choose. This might be useful for showing live rates on the product or cart pages. However, in the case of Postie, this means that requests to each enabled providers API's are fired - potentially unnecessarily.
 
 Because of this, you may notice adding to cart, or anything interacting with your cart is slow. While Postie does feature caching of returned rates from providers - so long as your address and cart contents haven't changed - this does not improve when adding items to a cart for example.

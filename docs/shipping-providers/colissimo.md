@@ -3,7 +3,7 @@ In order to use Colissimo, you'll need to ensure you are using a valid France ad
 
 Colissimo do not offer live rates via their API. Prices according to the [2017 price guide](http://www.colissimo.fr/particuliers/envoyer_un_colis/decouvrir_loffre_colissimo/Tarifs_colissimo/Tarifs_colissimo.jsp).
 
-### Services
+## Services
 The below service are available with Colissimo for domestic and international customer destination addresses.
 
 - France
@@ -14,7 +14,7 @@ The below service are available with Colissimo for domestic and international cu
 - International
 - Emballage International
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

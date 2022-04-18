@@ -3,7 +3,7 @@ In order to use PostNL, you'll need to ensure you are using a valid Netherlands 
 
 PostNL do not offer live rates via their API. Prices according to the [2018 price guide](http://www.postnl.nl/Images/Postal-Rates-sheet-january-2016-PostNL_tcm10-71860.pdf).
 
-### Services
+## Services
 The below service are available with PostNL for domestic and international customer destination addresses.
 
 - Brief
@@ -14,7 +14,7 @@ The below service are available with PostNL for domestic and international custo
 - Verzekerservice
 - Betaalservice
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php
