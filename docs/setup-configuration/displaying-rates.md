@@ -6,7 +6,7 @@ Note that shipping methods will not appear in your control panel under Commerce 
 :::
 
 ## Template
-You might have something similar to the below in your templates. The below is take from the default Commerce templates:
+You might have something similar to the below in your templates. The below is taken from the default Commerce templates:
 
 ```twig
 {% if cart.availableShippingMethodOptions | length %}
