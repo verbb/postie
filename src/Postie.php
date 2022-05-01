@@ -46,8 +46,8 @@ class Postie extends Plugin
 
         self::$plugin = $this;
 
-        $this->_setPluginComponents();
-        $this->_setLogging();
+        $this->_registerComponents();
+        $this->_registerLogTarget();
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
