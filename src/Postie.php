@@ -48,11 +48,14 @@ class Postie extends Plugin
 
         $this->_registerComponents();
         $this->_registerLogTarget();
-        $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
         $this->_registerEventHandlers();
         $this->_registerCommerceEventListeners();
+
+        if (Craft::$app->getRequest()->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+        }
 
         $this->hasCpSection = $this->getSettings()->hasCpSection;
 
