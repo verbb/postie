@@ -1,11 +1,11 @@
 # Fastway
 In order to use Fastway, you'll need to ensure you are using a valid Australian address as your store location. You'll also need to ensure your Craft Commerce default currency is set to AUD.
 
-### Connect to the Fastway API
+## Connect to the Fastway API
 1. Go to <a href="http://au.api.fastway.org/v2/docs/page/GetAPIKey.html" target="_blank">Fastway Developers Centre</a> and register for API access.
 1. Copy the **API Key** from Fastway and paste in the **API Key** field below.
 
-### Services
+## Services
 The below service are available with Fastway for domestic customer destination addresses.
 
 - Road Parcel (Red)
@@ -20,7 +20,7 @@ The below service are available with Fastway for domestic customer destination a
 - National Network A4 Satchel
 - National Network A5 Satchel
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

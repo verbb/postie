@@ -1,9 +1,8 @@
 # Provider
-
 You can register additional shipping providers to post to by registering your class. Then, you'll need to create your provider class to implement the `ProviderInterface`.
 
 :::tip
-If you're not confident in PHP development, but still looking for provider support, [contact us](/contact) and we'd love to add your provider to Postie.
+If you're not confident in PHP development, but still looking for provider support, [contact us](/contact), and we'd love to add your provider to Postie.
 :::
 
 ## The `registerProviderTypes` event
@@ -112,7 +111,7 @@ class MyProvider extends Provider
 ## Properties and Methods
 
 ### public static function displayName()
-This defines the the name of your shipping provider.
+This defines the name of your shipping provider.
 
 ### public function getSettingsHtml()
 Here you need to define the path and filename to a template file which contains further settings description. If you don't want to provide a description then just create an empty file. You have to place it within the `template` folder of your plugin. This file is where you'll place fields to enter in API settings.
@@ -120,7 +119,7 @@ Here you need to define the path and filename to a template file which contains 
 ### public function getServiceList()
 This function should return an array of the provided services as a key-value pair.
 
-- `key` - defines the handle of the service. Should be unique. Best practice is to prepend your plugin handle seperated by a underline.
+- `key` - defines the handle of the service. Should be unique. Best practice is to prepend your plugin handle seperated by an underline.
 
 - `value` - defines the name of the service. It should be self explaining to avoid confusion on customer side.
 
@@ -132,7 +131,7 @@ return [
 ```
 
 ### public function fetchShippingRates($order)
-The `fetchShippingRates` method is the main function in your class. Its where all the _magic_ happens.
+The `fetchShippingRates` method is the main function in your class. It's where all the _magic_ happens.
 
 #### Parameters
 - `order` - this parameter contains the _Order_ with all relevant order details as address, line items, total dimensions and so on. You will need this information to create the API call.

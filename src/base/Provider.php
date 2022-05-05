@@ -621,6 +621,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         // Update back
         $storeLocation = $fetchRatesEvent->storeLocation;
+        $packedBoxes = $fetchRatesEvent->packedBoxes;
     }
 
     protected function getLineItemDimensions($lineItem): array|bool

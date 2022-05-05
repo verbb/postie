@@ -3,7 +3,7 @@ In order to use Royal Mail, you'll need to ensure you are using a valid United K
 
 Royal Mail do not offer live rates via their API. Prices according to the [2020 price guide](https://www.royalmail.com/sites/royalmail.com/files/2020-02/royal-mail-our-prices-valid-from-23-march-2020.pdf).
 
-### Services
+## Services
 The below service are available with Royal Mail for domestic and international customer destination addresses.
 
 - Domestic
@@ -30,7 +30,7 @@ The below service are available with Royal Mail for domestic and international c
     - Parcelforce Worldwide Global Priority
     - Parcelforce Worldwide Global Value
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

@@ -26,14 +26,14 @@ class SinglePackageProvider extends Provider
         $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
         // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order)->getSerializedPackedBoxList();
+        $packedBoxes = $this->packOrder($order);
 
         // Allow location and packages modification via events
         $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
 
         // Because the API doesn't support multi-boxing, and we might have multiple boxes, we need to
         // make potentially several API requests to fetch the correct total rate.
-        foreach ($packedBoxes as $packedBox) {
+        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
             // For multi-packed requests where we're fetching the exact same package dimensions/weights, we can cache the request.
             // For instance, 5 packages exactly the same don't need 5 API requests, they'll all be the same.
             if ($cachedRate = $this->_getCachedRateForBox($packedBox)) {

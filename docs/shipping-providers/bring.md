@@ -1,12 +1,12 @@
 # Bring
 
-### Connect to the Bring API
+## Connect to the Bring API
 1. Go to <a href="https://www.mybring.com/" target="_blank">Bring</a> and login to your account.
 1. From the **Dashboard** visit the **Settings and API** page and generate your API keys.
 1. Copy the **Username** from Bring and paste in the **Username** field in Postie.
 1. Copy the **API Key** from Bring and paste in the **API Key** field in Postie.
 
-### Services
+## Services
 The below service are available with Bring for domestic and international customer destination addresses.
 
 - Klimanøytral Servicepakke
@@ -35,7 +35,7 @@ The below service are available with Bring for domestic and international custom
 - Bud 6 timer
 - Oil Express
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php

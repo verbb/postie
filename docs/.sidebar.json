@@ -5,7 +5,9 @@
         "children": [
             "get-started/installation-setup",
             "get-started/requirements",
-            "get-started/configuration"
+            "get-started/configuration",
+            "get-started/troubleshooting",
+            "get-started/faqs"
         ]
     },
     {
@@ -47,15 +49,6 @@
         "children": [
             "developers/provider",
             "developers/events"
-        ]
-    },
-    {
-        "title": "Support",
-        "collapsable": false,
-        "children": [
-            "support/troubleshooting",
-            "support/faqs",
-            "support/get-support"
         ]
     }
 ]

@@ -18,6 +18,29 @@
 - `Provider::supportsDynamicServices()` is now a static function.
 - `Provider::getServiceList()` is now a static function.
 
+## 2.4.18 - 2022-04-09
+
+### Fixed
+- Fix an error with `SinglePackageProvider` and `EVENT_BEFORE_FETCH_RATES` incorrectly serializing packed boxes.
+
+## 2.4.17 - 2022-04-07
+
+### Fixed
+- Remove deprecated `dimensions` in `FetchRatesEvent`.
+
+## 2.4.16 - 2022-04-01
+
+### Changed
+- Update Royal Mail pricing to April 2022.
+- Improve memoization implementation for rate-fetching, when `enableCaching` is disabled.
+- Update `EVENT_BEFORE_FETCH_RATES` to use `packedBoxes` instead of `dimensions`. Refer to updated docs.
+
+### Fixed
+- Fix box-packing line items that have no dimensions or weight.
+- Fix order totals used for insurance for multiple providers. Now only uses packed items for the insured total rather than the entire order total.
+- Fix lack of international shipping handling for Canada Post.
+- Fix an error for some providers when a country hasn't been set on the cart.
+
 ## 2.4.15 - 2021-12-31
 
 ### Added

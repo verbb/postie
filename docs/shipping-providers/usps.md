@@ -1,10 +1,10 @@
 # USPS
 
-### Connect to the USPS API
+## Connect to the USPS API
 1. Go to <a href="https://registration.shippingapis.com" target="_blank">USPS Web Tools</a> and register for API access.
 1. Copy the **Username** from USPS and paste in the **Username** field in Postie.
 
-### Services
+## Services
 The below service are available with USPS for domestic and international customer destination addresses.
 
 - Domestic
@@ -76,7 +76,7 @@ The below service are available with USPS for domestic and international custome
     - USPS First-Class Mail International
     - USPS First-Class Package International Service
 
-### Configuration
+## Configuration
 Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
 
 ```php
