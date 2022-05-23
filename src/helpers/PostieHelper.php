@@ -39,6 +39,8 @@ class PostieHelper
             $totalHeight += ($lineItem->qty * $lineItem->height);
         }
 
+        $addressLines = $order->shippingAddress->addressLines ?? [];
+
         $signature = implode('.', [
             $prefix,
             $order->getTotalQty(),
@@ -46,7 +48,7 @@ class PostieHelper
             $totalWidth,
             $totalHeight,
             $totalLength,
-            implode('.', $order->shippingAddress->addressLines),
+            implode('.', $addressLines),
         ]);
 
         return md5($signature);
