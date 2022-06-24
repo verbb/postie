@@ -19,7 +19,7 @@ class Interparcel extends Provider
     public $weightUnit = 'kg';
     public $dimensionUnit = 'cm';
 
-    
+
     // Public Methods
     // =========================================================================
 

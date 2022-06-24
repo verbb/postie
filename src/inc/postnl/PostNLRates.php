@@ -77,7 +77,7 @@ class PostNLRates
                 'length' => 380,
                 'width' => 265,
                 'height' => 32,
-                'weight' => 20, 
+                'weight' => 20,
                 'price' => [
                     self::ZONE_NL => 83,
                 ],
@@ -86,7 +86,7 @@ class PostNLRates
                 'length' => 380,
                 'width' => 265,
                 'height' => 32,
-                'weight' => 50, 
+                'weight' => 50,
                 'price' => [
                     self::ZONE_NL => 166,
                 ],
@@ -103,8 +103,8 @@ class PostNLRates
             'brief-250g' => [
                 'length' => 380,
                 'width' => 265,
-                'height' => 32, 
-                'weight' => 250, 
+                'height' => 32,
+                'weight' => 250,
                 'price' => [
                     self::ZONE_NL => 332,
                 ],
@@ -112,7 +112,7 @@ class PostNLRates
             'brief-2kg' => [
                 'length' => 380,
                 'width' => 265,
-                'height' => 32, 
+                'height' => 32,
                 'weight' => 2000,
                 'price' => [
                     self::ZONE_NL => 415,
@@ -127,7 +127,7 @@ class PostNLRates
             'brievenbuspakje-2kg' => [
                 'length' => 380,
                 'width' => 265,
-                'height' => 32, 
+                'height' => 32,
                 'weight' => 2000,
                 'price' => [
                     self::ZONE_NL => 425,
@@ -166,8 +166,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => 695,
@@ -175,8 +175,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => 1325,
@@ -184,8 +184,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => 1325,
@@ -217,8 +217,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => 860,
@@ -226,8 +226,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => 1490,
@@ -235,8 +235,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => 1490,
@@ -268,8 +268,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => 1445,
@@ -277,8 +277,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => 2075,
@@ -286,8 +286,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => 2075,
@@ -319,8 +319,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => 1835,
@@ -328,8 +328,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => 2320,
@@ -337,8 +337,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1760,
-                'width' => 780, 
-                'height' => 580, 
+                'width' => 780,
+                'height' => 580,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => 2320,
@@ -354,7 +354,7 @@ class PostNLRates
                 'length' => 380,
                 'width' => 265,
                 'height' => 32,
-                'weight' => 20, 
+                'weight' => 20,
                 'price' => [
                     self::ZONE_NL => false,
                     self::ZONE_EU1 => 140,
@@ -367,7 +367,7 @@ class PostNLRates
                 'length' => 380,
                 'width' => 265,
                 'height' => 32,
-                'weight' => 50, 
+                'weight' => 50,
                 'price' => [
                     self::ZONE_NL => false,
                     self::ZONE_EU1 => 280,
@@ -405,7 +405,7 @@ class PostNLRates
             'brief-2000g' => [
                 'length' => 380,
                 'width' => 265,
-                'height' => 32, 
+                'height' => 32,
                 'weight' => 2000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -475,8 +475,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -488,8 +488,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -501,8 +501,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -546,8 +546,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -559,8 +559,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -572,8 +572,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -617,8 +617,8 @@ class PostNLRates
             ],
             'pakket-10kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 10000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -630,8 +630,8 @@ class PostNLRates
             ],
             'pakket-20kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 20000,
                 'price' => [
                     self::ZONE_NL => false,
@@ -643,8 +643,8 @@ class PostNLRates
             ],
             'pakket-30kg' => [
                 'length' => 1000,
-                'width' => 500, 
-                'height' => 500, 
+                'width' => 500,
+                'height' => 500,
                 'weight' => 30000,
                 'price' => [
                     self::ZONE_NL => false,

@@ -22,7 +22,8 @@ class PackedBoxes extends Model
     // Public Methods
     // =========================================================================
 
-    public function __construct($packedBoxList, $weightUnit, $dimensionUnit) {
+    public function __construct($packedBoxList, $weightUnit, $dimensionUnit)
+    {
         $this->packedBoxList = $packedBoxList;
         $this->weightUnit = $weightUnit;
         $this->dimensionUnit = $dimensionUnit;

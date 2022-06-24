@@ -15,7 +15,7 @@ class m201201_000000_new_settings extends Migration
         // Don't make the same config changes twice
         $projectConfig = Craft::$app->getProjectConfig();
         $schemaVersion = $projectConfig->get('plugins.postie.schemaVersion', true);
-        
+
         if (version_compare($schemaVersion, '2.1.0', '>=')) {
             return;
         }

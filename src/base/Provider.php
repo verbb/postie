@@ -308,20 +308,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function getWeightUnitOptions()
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Grams (g)'), 'value' => 'g' ],
-            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
-            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+            ['label' => Craft::t('commerce', 'Grams (g)'), 'value' => 'g'],
+            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
+            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
         ];
     }
 
     public function getDimensionUnitOptions()
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Millimeters (mm)'), 'value' => 'mm' ],
-            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
-            [ 'label' => Craft::t('commerce', 'Meters (m)'), 'value' => 'm' ],
-            [ 'label' => Craft::t('commerce', 'Feet (ft)'), 'value' => 'ft' ],
-            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+            ['label' => Craft::t('commerce', 'Millimeters (mm)'), 'value' => 'mm'],
+            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
+            ['label' => Craft::t('commerce', 'Meters (m)'), 'value' => 'm'],
+            ['label' => Craft::t('commerce', 'Feet (ft)'), 'value' => 'ft'],
+            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
         ];
     }
 
@@ -400,7 +400,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $shippingRates = [];
 
-        if ($settings->enableCaching) {        
+        if ($settings->enableCaching) {
             // Setup some caching mechanism to save API requests
             $signature = PostieHelper::getSignature($order, $this->handle);
             $cacheKey = 'postie-shipment-' . $signature;
@@ -499,31 +499,31 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'boxLength' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Length'),
-                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
                 'thin' => true,
             ],
             'boxWidth' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Width'),
-                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
                 'thin' => true,
             ],
             'boxHeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Height'),
-                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->dimensionUnit ]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
                 'thin' => true,
             ],
             'boxWeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Weight'),
-                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->weightUnit ]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->weightUnit]),
                 'thin' => true,
             ],
             'maxWeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Max Weight'),
-                'placeholder' => Craft::t('postie', '{unit}', [ 'unit' => $this->weightUnit ]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->weightUnit]),
                 'thin' => true,
             ],
             'enabled' => [
@@ -648,10 +648,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $length = (new Length($lineItem->length, $settings->dimensionUnits))->toUnit('mm');
         $width = (new Length($lineItem->width, $settings->dimensionUnits))->toUnit('mm');
         $height = (new Length($lineItem->height, $settings->dimensionUnits))->toUnit('mm');
-        
+
         $dimensions = [
             'length' => $length,
-            'width'  => $width,
+            'width' => $width,
             'height' => $height,
             'weight' => $weight,
         ];
@@ -687,7 +687,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         return [
             'length' => $length,
-            'width'  => $width,
+            'width' => $width,
             'height' => $height,
             'weight' => $weight,
         ];
@@ -813,7 +813,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         if ($this->packingMethod === self::PACKING_PER_ITEM) {
             foreach ($order->getLineItems() as $lineItem) {
                 // Don't forget to factor in quantities
-                for ($i = 0; $i < $lineItem->qty; $i++) { 
+                for ($i = 0; $i < $lineItem->qty; $i++) {
                     // Generate a box for each item. It'll be exactly fitted to the item
                     if ($box = $this->getBoxFromLineItem($lineItem)) {
                         $packer->addBox($box);
@@ -876,7 +876,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 ]);
 
                 $packedItem = new PackedItem($unpackedItem, 0, 0, 0, $unpackedItem->getWidth(), $unpackedItem->getLength(), $unpackedItem->getDepth());
-                
+
                 // Create a packed list
                 $packedItemList = new PackedItemList();
                 $packedItemList->insert($packedItem);

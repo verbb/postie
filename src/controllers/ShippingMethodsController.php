@@ -67,7 +67,7 @@ class ShippingMethodsController extends Controller
 
             // Send the plugin back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                'plugin' => $plugin
+                'plugin' => $plugin,
             ]);
 
             return null;

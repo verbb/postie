@@ -23,7 +23,7 @@ class CanadaPost extends Provider
 
     private $maxWeight = 30000; // 30kg
 
-    
+
     // Public Methods
     // =========================================================================
 
@@ -99,7 +99,7 @@ class CanadaPost extends Provider
         //
 
         // Remove spaces in zip code
-        $originZipCode = str_replace(' ', '', $storeLocation->zipCode); 
+        $originZipCode = str_replace(' ', '', $storeLocation->zipCode);
         $orderZipCode = str_replace(' ', '', $order->shippingAddress->zipCode);
 
         $countryIso = $order->shippingAddress->country->iso ?? '';
@@ -219,7 +219,7 @@ class CanadaPost extends Provider
             $packedBox = $packedBoxes[0];
 
             // Remove spaces in zip code
-            $originZipCode = str_replace(' ', '', $sender->zipCode); 
+            $originZipCode = str_replace(' ', '', $sender->zipCode);
             $orderZipCode = str_replace(' ', '', $recipient->zipCode);
 
             // Create a test payload
@@ -269,12 +269,12 @@ class CanadaPost extends Provider
             $this->_client = Craft::createGuzzleClient([
                 'base_uri' => $baseUri,
                 'auth' => [
-                    $this->getSetting('username'), $this->getSetting('password')
+                    $this->getSetting('username'), $this->getSetting('password'),
                 ],
                 'headers' => [
                     'Content-Type' => 'application/vnd.cpc.ship.rate-v3+xml',
                     'Accept' => 'application/vnd.cpc.ship.rate-v3+xml',
-                ]
+                ],
             ]);
         }
 

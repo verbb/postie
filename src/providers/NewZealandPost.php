@@ -23,7 +23,7 @@ class NewZealandPost extends SinglePackageProvider
     private $maxDomesticWeight = 25000; // 25kg
     private $maxInternationalWeight = 30000; // 30kg
 
-    
+
     // Public Methods
     // =========================================================================
 

@@ -321,16 +321,16 @@ class UPS extends Provider
     public function getWeightUnitOptions()
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg' ],
-            [ 'label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb' ],
+            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
+            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
         ];
     }
 
     public function getDimensionUnitOptions()
     {
         return [
-            [ 'label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm' ],
-            [ 'label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in' ],
+            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
+            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
         ];
     }
 
@@ -380,7 +380,6 @@ class UPS extends Provider
         //
 
 
-
         // Check for using freight, we have to roll our own solution as `gabrielbull/php-ups-api`
         // doesn't support LTL rates. One of the reasons TODO our own client libraries.
         if ($this->getSetting('enableFreight')) {
@@ -404,7 +403,7 @@ class UPS extends Provider
             if ($storeLocation->country) {
                 $countryIso = $storeLocation->country->iso ?? '';
                 $shipFromAddress->setCountryCode($countryIso);
-                
+
                 if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
@@ -513,7 +512,7 @@ class UPS extends Provider
 
             // Check for Sure Post rates - must be a separate request
             $surePost = $this->services['S_SURE_POST']->enabled ?? false;
-            
+
             if ($surePost) {
                 $service = new Service;
                 $service->setCode(Service::S_SURE_POST);
@@ -675,7 +674,7 @@ class UPS extends Provider
             if ($storeLocation->country) {
                 $countryIso = $storeLocation->country->iso ?? '';
                 $shipFrom['Address']['CountryCode'] = $countryIso;
-                
+
                 if (in_array($countryIso, $allowedZipCodeCountries)) {
                     $state = $storeLocation->state->abbreviation ?? '';
 
@@ -716,7 +715,7 @@ class UPS extends Provider
                     ],
                     'Commodity' => [
                         'Description' => 'FRS-Freight',
-                        'Weight' =>  [
+                        'Weight' => [
                             'Value' => round((string)$packedBox['weight'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('weight'),

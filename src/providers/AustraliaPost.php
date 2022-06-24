@@ -56,7 +56,7 @@ class AustraliaPost extends SinglePackageProvider
             'AUS_PARCEL_EXPRESS_SATCHEL_5KG' => 'Australia Post Express Post Large (5Kg) Satchel',
             'AUS_PARCEL_COURIER' => 'Australia Post Courier Post',
             'AUS_PARCEL_COURIER_SATCHEL_MEDIUM' => 'Australia Post Courier Post Assessed Medium Satchel',
-            
+
             // Domestic - Letter
             'AUS_LETTER_REGULAR_SMALL' => 'Australia Post Letter Regular Small',
             'AUS_LETTER_REGULAR_MEDIUM' => 'Australia Post Letter Regular Medium',
@@ -451,7 +451,7 @@ class AustraliaPost extends SinglePackageProvider
                 'base_uri' => 'https://digitalapi.auspost.com.au',
                 'headers' => [
                     'AUTH-KEY' => $this->getSetting('apiKey'),
-                ]
+                ],
             ]);
         }
 
@@ -477,7 +477,7 @@ class AustraliaPost extends SinglePackageProvider
 
             $this->_countryList = Json::decode(file_get_contents($cachePath));
         }
-            
+
         foreach ($this->_countryList['countries']['country'] as $countryListItem) {
             if (strtoupper($country) == $countryListItem['name']) {
                 return $countryListItem['code'];

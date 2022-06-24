@@ -28,7 +28,7 @@ class USPS extends Provider
     private $maxDomesticWeight = 31751.5; // 70lbs
     private $maxInternationalWeight = 9071.85; // 20lbs
 
-    
+
     // Public Methods
     // =========================================================================
 
@@ -41,81 +41,81 @@ class USPS extends Provider
     {
         return [
             // Domestic
-            'PRIORITY_MAIL_EXPRESS_1_DAY'                                                   => 'USPS Priority Mail Express 1-Day',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_HOLD_FOR_PICKUP'                                   => 'USPS Priority Mail Express 1-Day Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_SUNDAY_HOLIDAY_DELIVERY'                           => 'USPS Priority Mail Express 1-Day Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE'                                => 'USPS Priority Mail Express 1-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP'                => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY'        => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE'                          => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP'          => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY'  => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE'                         => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP'         => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_1_DAY' => 'USPS Priority Mail Express 1-Day',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Hold For Pickup',
             'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Sunday/Holiday Delivery',
 
-            'PRIORITY_MAIL_EXPRESS_2_DAY'                                           => 'USPS Priority Mail Express 2-Day',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_HOLD_FOR_PICKUP'                           => 'USPS Priority Mail Express 2-Day Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE'                        => 'USPS Priority Mail Express 2-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP'        => 'USPS Priority Mail Express 2-Day Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE'                  => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP'  => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE'                 => 'USPS Priority Mail Express 2-Day Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_2_DAY' => 'USPS Priority Mail Express 2-Day',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Padded Flat Rate Envelope',
             'PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Padded Flat Rate Envelope Hold For Pickup',
 
-            'PRIORITY_MAIL_1_DAY'                              => 'USPS Priority Mail 1-Day',
-            'PRIORITY_MAIL_1_DAY_LARGE_FLAT_RATE_BOX'          => 'USPS Priority Mail 1-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_MEDIUM_FLAT_RATE_BOX'         => 'USPS Priority Mail 1-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_BOX'          => 'USPS Priority Mail 1-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_FLAT_RATE_ENVELOPE'           => 'USPS Priority Mail 1-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_LEGAL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 1-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_PADDED_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 1-Day Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_1_DAY' => 'USPS Priority Mail 1-Day',
+            'PRIORITY_MAIL_1_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Large Flat Rate Box',
+            'PRIORITY_MAIL_1_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Medium Flat Rate Box',
+            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Small Flat Rate Box',
+            'PRIORITY_MAIL_1_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Flat Rate Envelope',
+            'PRIORITY_MAIL_1_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_1_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Padded Flat Rate Envelope',
             'PRIORITY_MAIL_1_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 1-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_WINDOW_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 1-Day Window Flat Rate Envelope',
+            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Small Flat Rate Envelope',
+            'PRIORITY_MAIL_1_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Window Flat Rate Envelope',
 
-            'PRIORITY_MAIL_2_DAY'                              => 'USPS Priority Mail 2-Day',
-            'PRIORITY_MAIL_2_DAY_LARGE_FLAT_RATE_BOX'          => 'USPS Priority Mail 2-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_MEDIUM_FLAT_RATE_BOX'         => 'USPS Priority Mail 2-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_BOX'          => 'USPS Priority Mail 2-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_FLAT_RATE_ENVELOPE'           => 'USPS Priority Mail 2-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_LEGAL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 2-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_PADDED_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 2-Day Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_2_DAY' => 'USPS Priority Mail 2-Day',
+            'PRIORITY_MAIL_2_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Large Flat Rate Box',
+            'PRIORITY_MAIL_2_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Medium Flat Rate Box',
+            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Small Flat Rate Box',
+            'PRIORITY_MAIL_2_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Flat Rate Envelope',
+            'PRIORITY_MAIL_2_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_2_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Padded Flat Rate Envelope',
             'PRIORITY_MAIL_2_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 2-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_WINDOW_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 2-Day Window Flat Rate Envelope',
+            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Small Flat Rate Envelope',
+            'PRIORITY_MAIL_2_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Window Flat Rate Envelope',
 
-            'PRIORITY_MAIL_3_DAY'                              => 'USPS Priority Mail 3-Day',
-            'PRIORITY_MAIL_3_DAY_LARGE_FLAT_RATE_BOX'          => 'USPS Priority Mail 3-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_MEDIUM_FLAT_RATE_BOX'         => 'USPS Priority Mail 3-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_BOX'          => 'USPS Priority Mail 3-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_FLAT_RATE_ENVELOPE'           => 'USPS Priority Mail 3-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_LEGAL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 3-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_PADDED_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 3-Day Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_3_DAY' => 'USPS Priority Mail 3-Day',
+            'PRIORITY_MAIL_3_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Large Flat Rate Box',
+            'PRIORITY_MAIL_3_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Medium Flat Rate Box',
+            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Small Flat Rate Box',
+            'PRIORITY_MAIL_3_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Flat Rate Envelope',
+            'PRIORITY_MAIL_3_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_3_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Padded Flat Rate Envelope',
             'PRIORITY_MAIL_3_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_ENVELOPE'     => 'USPS Priority Mail 3-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_WINDOW_FLAT_RATE_ENVELOPE'    => 'USPS Priority Mail 3-Day Window Flat Rate Envelope',
+            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Small Flat Rate Envelope',
+            'PRIORITY_MAIL_3_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Window Flat Rate Envelope',
 
-            'FIRST_CLASS_MAIL'                   => 'USPS First-Class Mail',
-            'FIRST_CLASS_MAIL_STAMPED_LETTER'    => 'USPS First-Class Mail Stamped Letter',
-            'FIRST_CLASS_MAIL_METERED_LETTER'    => 'USPS First-Class Mail Metered Letter',
-            'FIRST_CLASS_MAIL_LARGE_ENVELOPE'    => 'USPS First-Class Mail Large Envelope',
-            'FIRST_CLASS_MAIL_POSTCARDS'         => 'USPS First-Class Mail Postcards',
-            'FIRST_CLASS_MAIL_LARGE_POSTCARDS'   => 'USPS First-Class Mail Large Postcards',
+            'FIRST_CLASS_MAIL' => 'USPS First-Class Mail',
+            'FIRST_CLASS_MAIL_STAMPED_LETTER' => 'USPS First-Class Mail Stamped Letter',
+            'FIRST_CLASS_MAIL_METERED_LETTER' => 'USPS First-Class Mail Metered Letter',
+            'FIRST_CLASS_MAIL_LARGE_ENVELOPE' => 'USPS First-Class Mail Large Envelope',
+            'FIRST_CLASS_MAIL_POSTCARDS' => 'USPS First-Class Mail Postcards',
+            'FIRST_CLASS_MAIL_LARGE_POSTCARDS' => 'USPS First-Class Mail Large Postcards',
             'FIRST_CLASS_PACKAGE_SERVICE_RETAIL' => 'USPS First-Class Package Service - Retail',
 
-            'MEDIA_MAIL_PARCEL'   => 'USPS Media Mail Parcel',
+            'MEDIA_MAIL_PARCEL' => 'USPS Media Mail Parcel',
             'LIBRARY_MAIL_PARCEL' => 'USPS Library Mail Parcel',
 
             // International
-            'USPS_GXG_ENVELOPES'                  => 'USPS Global Express Guaranteed Envelopes',
+            'USPS_GXG_ENVELOPES' => 'USPS Global Express Guaranteed Envelopes',
             'PRIORITY_MAIL_EXPRESS_INTERNATIONAL' => 'USPS Priority Mail Express International',
 
-            'PRIORITY_MAIL_INTERNATIONAL'                      => 'USPS Priority Mail International',
-            'PRIORITY_MAIL_INTERNATIONAL_LARGE_FLAT_RATE_BOX'  => 'USPS Priority Mail International Large Flat Rate Box',
+            'PRIORITY_MAIL_INTERNATIONAL' => 'USPS Priority Mail International',
+            'PRIORITY_MAIL_INTERNATIONAL_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail International Large Flat Rate Box',
             'PRIORITY_MAIL_INTERNATIONAL_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail International Medium Flat Rate Box',
 
-            'FIRST_CLASS_MAIL_INTERNATIONAL'            => 'USPS First-Class Mail International',
+            'FIRST_CLASS_MAIL_INTERNATIONAL' => 'USPS First-Class Mail International',
             'FIRST_CLASS_PACKAGE_INTERNATIONAL_SERVICE' => 'USPS First-Class Package International Service',
         ];
     }
@@ -389,7 +389,7 @@ class USPS extends Provider
     {
         if (!$this->_client) {
             $username = $this->getSetting('username');
-            
+
             $this->_client = new Rate($username);
         }
 

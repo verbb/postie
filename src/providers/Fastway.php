@@ -21,7 +21,7 @@ class Fastway extends Provider
 
     private $maxWeight = 5000; // 5kg
 
-    
+
     // Public Methods
     // =========================================================================
 
@@ -134,7 +134,6 @@ class Fastway extends Provider
             }
 
             $this->_rates = $modifyRatesEvent->rates;
-            
         } catch (\Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
                 'message' => $e->getMessage(),
@@ -200,7 +199,7 @@ class Fastway extends Provider
     private function _getServiceHandle($string)
     {
         $string = str_replace('-', '_', $string);
-        
+
         return $string;
     }
 

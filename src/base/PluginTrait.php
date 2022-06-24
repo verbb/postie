@@ -17,9 +17,9 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
-	/**
-	 * @var Postie
-	 */
+    /**
+     * @var Postie
+     */
     public static $plugin;
 
 

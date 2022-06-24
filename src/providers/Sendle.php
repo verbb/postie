@@ -23,7 +23,7 @@ class Sendle extends SinglePackageProvider
     private $maxDomesticWeight = 25000; // 25kg
     private $maxInternationalWeight = 31751.5; // 70lbs
 
-    
+
     // Public Methods
     // =========================================================================
 

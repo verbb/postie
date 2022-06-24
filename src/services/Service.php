@@ -72,13 +72,13 @@ class Service extends Component
                 // Get the current services, and merge in the new changes, retaining existing (other) data
                 $currentServices = $pluginInfo['settings']['providers'][$providerHandle]['services'] ?? [];
                 $services = $provider['services'] ?? [];
-                
+
                 foreach ($services as $serviceHandle => &$service) {
                     $currentService = $currentServices[$serviceHandle] ?? [];
 
                     if ($currentService) {
                         $service = array_merge($currentService, $service);
-                    }                    
+                    }
                 }
 
                 if ($services) {
