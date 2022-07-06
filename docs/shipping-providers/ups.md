@@ -1,12 +1,12 @@
 # UPS
 
-## Connect to the {name} API
-1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">{name} Developer Kit</a> and register for API access.
-1. Copy the **API Key** from {name} and paste in the **API Key** field below.
-1. Copy the **Test API Key** from {name} and paste in the **Test API Key** field below.
-1. Copy the **Username** from {name} and paste in the **Username** field below.
-1. Copy the **Password** from {name} and paste in the **Password** field below.
-1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+## Connect to the UPS API
+1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">UPS Developer Kit</a> and register for API access.
+1. Copy the **API Key** from UPS and paste in the **API Key** field in Postie.
+1. Copy the **Test API Key** from UPS and paste in the **Test API Key** field in Postie.
+1. Copy the **Username** from UPS and paste in the **Username** field in Postie.
+1. Copy the **Password** from UPS and paste in the **Password** field in Postie.
+1. Copy the **Account Number** from UPS and paste in the **Account Number** field in Postie.
 
 ## Services
 The below service are available with UPS for domestic and international customer destination addresses.
