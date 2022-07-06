@@ -6,8 +6,7 @@
     {% set title = craft.postie.getPluginName() | t('postie') %}
 {% endif %}
 
-{% set content %}
-
+{% block content %}
     {% block blockContent %}
 
     {% endblock %}
@@ -35,4 +34,4 @@
             </a>
         </div>
     </div>
-{% endset %}
+{% endblock %}
