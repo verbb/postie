@@ -61,14 +61,14 @@ class Colissimo extends StaticProvider
         // $country = Commerce::getInstance()->countries->getCountryByIso('FR');
 
         // $storeLocation = new craft\elements\Address();
-        // $storeLocation->addressLine1 = 'Place de l\'Hôtel de Ville';
+        // $storeLocation->addressLine1 = 'Place de l‘Hôtel de Ville';
         // $storeLocation->locality = 'Paris';
         // $storeLocation->postalCode = '75004';
         // $storeLocation->countryId = $country->id;
 
         // $country = Commerce::getInstance()->countries->getCountryByIso('FR');
 
-        // $order->shippingAddress->addressLine1 = '5 Rue de l\'Hôtel de ville';
+        // $order->shippingAddress->addressLine1 = '5 Rue de l‘Hôtel de ville';
         // $order->shippingAddress->locality = 'Nice';
         // $order->shippingAddress->postalCode = '06000';
         // $order->shippingAddress->countryId = $country->id;

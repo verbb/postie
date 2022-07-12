@@ -112,13 +112,13 @@ class TestingHelper
             'countryCode' => 'NO',
         ],
         [
-            'addressLine1' => 'Place de l\'Hôtel de Ville',
+            'addressLine1' => 'Place de l‘Hôtel de Ville',
             'locality' => 'Paris',
             'postalCode' => '75004',
             'countryCode' => 'FR',
         ],
         [
-            'addressLine1' => '5 Rue de l\'Hôtel de ville',
+            'addressLine1' => '5 Rue de l‘Hôtel de ville',
             'locality' => 'Nice',
             'postalCode' => '06000',
             'countryCode' => 'FR',

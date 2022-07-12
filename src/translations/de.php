@@ -58,7 +58,7 @@ return [
     "Product Type" => "Produkt Typ",
     "Dimensions" => "Größe",
     "Edit" => "Bearbeiten",
-    "You don\'t have enough permissions to edit this product" => "Du hast nicht die notwendigen rechte um dieses Produkt zu bearbeiten",
+    "You don‘t have enough permissions to edit this product" => "Du hast nicht die notwendigen rechte um dieses Produkt zu bearbeiten",
     "Name" => "Name",
     "Enabled" => "Aktiviert",
     "API Settings" => "API Einstellungen",
