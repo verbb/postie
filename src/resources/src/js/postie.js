@@ -72,26 +72,25 @@ Craft.Postie.ProviderConnection = Garnish.Base.extend({
         // Always delete the cookie
         document.cookie = cookieName + '=;';
 
-        Craft.postActionRequest('postie/providers/check-connection', data, $.proxy(function(response) {
-            this.$refreshBtn.removeClass('vui-loading vui-loading-tiny');
-
-            if (response.success) {
+        Craft.sendActionRequest('POST', 'postie/providers/check-connection', { data })
+            .then((response) => {
                 this.$statusText.html(Craft.t('postie', 'Connected'));
                 this.$status.addClass('on');
 
                 // Save as a cookie for later
                 document.cookie = cookieName + '=true;';
-            }
-
-            if (response.error) {
-                var errorMessage = Craft.t('postie', 'An error occurred.') + '<br><br><code>' + response.error + '</code>';
+            })
+            .catch(({response}) => {
+                var errorMessage = Craft.t('postie', 'An error occurred.') + '<br><br><code>' + response.data.message + '</code>';
 
                 this.$statusText.html(Craft.t('postie', 'Error'));
                 this.$status.addClass('off');
 
                 new Craft.Postie.ProviderConnectionModal(errorMessage);
-            }
-        }, this));
+            })
+            .finally(() => {
+                this.$refreshBtn.removeClass('vui-loading vui-loading-tiny');
+            });        
     },
 });
 
