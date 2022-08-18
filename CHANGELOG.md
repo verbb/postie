@@ -1,22 +1,18 @@
 # Changelog
 
-## 3.0.0-beta.2 - 2022-03-24
+## 3.0.0 - 2022-05-05
 
 ### Changed
+- Now requires PHP `8.0.2+`.
+- Now requires Craft `4.0.0+`.
+- Now requires Craft Commerce `4.0.0+`.
 - Now requires Postie `2.2.7` in order to update from Craft 3.
+- `Provider::supportsDynamicServices()` is now a static function.
+- `Provider::getServiceList()` is now a static function.
 
 ### Fixed
 - Fix Commerce/Craft deprecations.
-- More Commerce `^4.0.0-beta.1` compatibility fixes.
-
-## 3.0.0-beta.1 - 2022-03-10
-
-### Changed
-- Now requires PHP `^8.0.2`.
-- Now requires Craft `^4.0.0-beta.1`.
-- Now requires Craft Commerce `^4.0.0-beta.1`.
-- `Provider::supportsDynamicServices()` is now a static function.
-- `Provider::getServiceList()` is now a static function.
+- More Commerce `^4.0.0` compatibility fixes.
 
 ## 2.4.18 - 2022-04-09
 
