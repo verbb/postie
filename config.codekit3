@@ -1072,8 +1072,8 @@
     "creationDate" : 528723773,
     "displayValue" : "postie",
     "displayValueWasSetByUser" : 0,
-    "iconImageName" : "brackets-forest",
-    "iconImageWasSetByUser" : 0
+    "iconImageName" : "brackets-koamaru",
+    "iconImageWasSetByUser" : 1
   },
   "projectSettings" : {
     "abortBuildOnError" : 1,

@@ -14,6 +14,11 @@
 - Fix Commerce/Craft deprecations.
 - More Commerce `^4.0.0` compatibility fixes.
 
+## 2.4.19 - 2022-05-24
+
+### Fixed
+- Fix an error when trying to determine cached shipping rates.
+
 ## 2.4.18 - 2022-04-09
 
 ### Fixed
