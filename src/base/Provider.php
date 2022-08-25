@@ -233,12 +233,12 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 // Populate the temp provider with some stuff - just don't include services
                 // that'll cause an infinite loop.
                 $tempProvider->enabled = $settings['enabled'] ?? null;
-                $tempProvider->settings = $settings['settings'] ?? null;
+                $tempProvider->settings = $settings['settings'] ?: [];
                 $tempProvider->markUpRate = (float)($settings['markUpRate'] ?? null);
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
-                $tempProvider->restrictServices = $settings['restrictServices'] ?? null;
-                $tempProvider->packingMethod = $settings['packingMethod'] ?? null;
-                $tempProvider->boxSizes = $settings['boxSizes'] ?? null;
+                $tempProvider->restrictServices = $settings['restrictServices'] ?? true;
+                $tempProvider->packingMethod = $settings['packingMethod'] ?? self::PACKING_SINGLE_BOX;
+                $tempProvider->boxSizes = $settings['boxSizes'] ?: [];
 
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
