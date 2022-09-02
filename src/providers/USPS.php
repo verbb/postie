@@ -37,64 +37,40 @@ class USPS extends Provider
         return Craft::t('postie', 'USPS');
     }
 
+    public static function isDomestic($countryCode): bool
+    {
+        $domestic = ['US', 'PR', 'VI', 'MH', 'FM', 'GU', 'MP', 'AS', 'UM'];
+
+        return in_array($countryCode, $domestic);
+    }
+
     public function getServiceList(): array
     {
         return [
             // Domestic
-            'PRIORITY_MAIL_EXPRESS_1_DAY' => 'USPS Priority Mail Express 1-Day',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Flat Rate Envelope Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Legal Flat Rate Envelope Sunday/Holiday Delivery',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_1_DAY_PADDED_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express 1-Day Padded Flat Rate Envelope Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS' => 'USPS Priority Mail Express',
+            'PRIORITY_MAIL_EXPRESS_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express Flat Rate Envelope Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express Legal Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express Legal Flat Rate Envelope Sunday/Holiday Delivery',
+            'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express Padded Flat Rate Envelope Hold For Pickup',
+            'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => 'USPS Priority Mail Express Padded Flat Rate Envelope Sunday/Holiday Delivery',
 
-            'PRIORITY_MAIL_EXPRESS_2_DAY' => 'USPS Priority Mail Express 2-Day',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_LEGAL_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Legal Flat Rate Envelope Hold For Pickup',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Express 2-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_EXPRESS_2_DAY_PADDED_FLAT_RATE_ENVELOPE_HOLD_FOR_PICKUP' => 'USPS Priority Mail Express 2-Day Padded Flat Rate Envelope Hold For Pickup',
-
-            'PRIORITY_MAIL_1_DAY' => 'USPS Priority Mail 1-Day',
-            'PRIORITY_MAIL_1_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 1-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_1_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_1_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 1-Day Window Flat Rate Envelope',
-
-            'PRIORITY_MAIL_2_DAY' => 'USPS Priority Mail 2-Day',
-            'PRIORITY_MAIL_2_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 2-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_2_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_2_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 2-Day Window Flat Rate Envelope',
-
-            'PRIORITY_MAIL_3_DAY' => 'USPS Priority Mail 3-Day',
-            'PRIORITY_MAIL_3_DAY_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Large Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Medium Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail 3-Day Small Flat Rate Box',
-            'PRIORITY_MAIL_3_DAY_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Legal Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Padded Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Gift Card Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Small Flat Rate Envelope',
-            'PRIORITY_MAIL_3_DAY_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail 3-Day Window Flat Rate Envelope',
+            'PRIORITY_MAIL' => 'USPS Priority Mail',
+            'PRIORITY_MAIL_LARGE_FLAT_RATE_BOX' => 'USPS Priority Mail Large Flat Rate Box',
+            'PRIORITY_MAIL_MEDIUM_FLAT_RATE_BOX' => 'USPS Priority Mail Medium Flat Rate Box',
+            'PRIORITY_MAIL_SMALL_FLAT_RATE_BOX' => 'USPS Priority Mail Small Flat Rate Box',
+            'PRIORITY_MAIL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Flat Rate Envelope',
+            'PRIORITY_MAIL_LEGAL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Legal Flat Rate Envelope',
+            'PRIORITY_MAIL_PADDED_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Padded Flat Rate Envelope',
+            'PRIORITY_MAIL_GIFT_CARD_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Gift Card Flat Rate Envelope',
+            'PRIORITY_MAIL_SMALL_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Small Flat Rate Envelope',
+            'PRIORITY_MAIL_WINDOW_FLAT_RATE_ENVELOPE' => 'USPS Priority Mail Window Flat Rate Envelope',
 
             'FIRST_CLASS_MAIL' => 'USPS First-Class Mail',
             'FIRST_CLASS_MAIL_STAMPED_LETTER' => 'USPS First-Class Mail Stamped Letter',
@@ -104,6 +80,7 @@ class USPS extends Provider
             'FIRST_CLASS_MAIL_LARGE_POSTCARDS' => 'USPS First-Class Mail Large Postcards',
             'FIRST_CLASS_PACKAGE_SERVICE_RETAIL' => 'USPS First-Class Package Service - Retail',
 
+            'STANDARD_PARCEL_POST' => 'USPS Standard Parcel Post',
             'MEDIA_MAIL_PARCEL' => 'USPS Media Mail Parcel',
             'LIBRARY_MAIL_PARCEL' => 'USPS Library Mail Parcel',
 
@@ -186,7 +163,7 @@ class USPS extends Provider
         try {
             $countryIso = $order->shippingAddress->country->iso ?? '';
 
-            if ($countryIso == 'US') {
+            if (self::isDomestic($countryIso)) {
                 Provider::log($this, 'Domestic rate service call');
 
                 foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
@@ -265,7 +242,7 @@ class USPS extends Provider
             }
 
             // Responses will be different depending on domestic/international
-            if ($countryIso == 'US') {
+            if (self::isDomestic($countryIso)) {
                 $packages = $response['RateV4Response']['Package'] ?? [];
             } else {
                 $packages = $response['IntlRateV2Response']['Package'] ?? [];
@@ -292,11 +269,10 @@ class USPS extends Provider
                 if ($services && !isset($services[0])) {
                     $services = [$services];
                 }
-
                 foreach ($services as $service) {
-                    // SvcDescription for international, MailService for domestic
-                    $serviceHandleKey = $service['SvcDescription'] ?? $service['MailService'];
-                    $serviceHandle = $this->_getServiceHandle($serviceHandleKey);
+                    // ID for international, CLASSID for domestic
+                    $serviceHandleKey = $service['@attributes']['CLASSID'] ?? $service['@attributes']['ID'] ?? null;
+                    $serviceHandle = $this->_getServiceHandle($serviceHandleKey, $countryIso);
 
                     // The API returns rates for each package in the request, so combine them before reporting back
                     // Postage for international, Rate for domestic
@@ -396,18 +372,57 @@ class USPS extends Provider
         return $this->_client;
     }
 
-    private function _getServiceHandle($string)
+    private function _getServiceHandle($code, $countryIso)
     {
-        $replace = [
-            '&lt;sup&gt;&#8482;&lt;/sup&gt;',
-            '&lt;sup&gt;&#174;&lt;/sup&gt;',
-        ];
+        if (self::isDomestic($countryIso)) {
+            $services = [
+                'PRIORITY_MAIL_EXPRESS' => '3',
+                'PRIORITY_MAIL_EXPRESS_SUNDAY_HOLIDAY_DELIVERY' => '23',
+                'PRIORITY_MAIL_EXPRESS_FLAT_RATE_ENVELOPE' => '13',
+                'PRIORITY_MAIL_EXPRESS_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => '25',
+                'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE' => '30',
+                'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => '32',
+                'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE' => '62',
+                'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE_SUNDAY_HOLIDAY_DELIVERY' => '64',
 
-        $string = str_replace($replace, '', $string);
-        $string = StringHelper::toSnakeCase($string);
-        $string = strtoupper($string);
+                'PRIORITY_MAIL' => '1',
+                'PRIORITY_MAIL_LARGE_FLAT_RATE_BOX' => '22',
+                'PRIORITY_MAIL_MEDIUM_FLAT_RATE_BOX' => '17',
+                'PRIORITY_MAIL_SMALL_FLAT_RATE_BOX' => '28',
+                'PRIORITY_MAIL_FLAT_RATE_ENVELOPE' => '16',
+                'PRIORITY_MAIL_LEGAL_FLAT_RATE_ENVELOPE' => '44',
+                'PRIORITY_MAIL_PADDED_FLAT_RATE_ENVELOPE' => '29',
+                'PRIORITY_MAIL_GIFT_CARD_FLAT_RATE_ENVELOPE' => '38',
+                'PRIORITY_MAIL_SMALL_FLAT_RATE_ENVELOPE' => '42',
+                'PRIORITY_MAIL_WINDOW_FLAT_RATE_ENVELOPE' => '40',
 
-        return $string;
+                'FIRST_CLASS_MAIL' => '0D',
+                'FIRST_CLASS_MAIL_STAMPED_LETTER' => '12',
+                'FIRST_CLASS_MAIL_METERED_LETTER' => '78',
+                'FIRST_CLASS_MAIL_LARGE_ENVELOPE' => '0C',
+                'FIRST_CLASS_MAIL_POSTCARDS' => '0A',
+                'FIRST_CLASS_MAIL_LARGE_POSTCARDS' => '15',
+                'FIRST_CLASS_PACKAGE_SERVICE_RETAIL' => '61',
+
+                'STANDARD_PARCEL_POST' => '4',
+                'MEDIA_MAIL_PARCEL' => '6',
+                'LIBRARY_MAIL_PARCEL' => '7',
+            ];
+        } else {
+            $services = [
+                'USPS_GXG_ENVELOPES' => '12',
+                'PRIORITY_MAIL_EXPRESS_INTERNATIONAL' => '1',
+
+                'PRIORITY_MAIL_INTERNATIONAL' => '2',
+                'PRIORITY_MAIL_INTERNATIONAL_LARGE_FLAT_RATE_BOX' => '18',
+                'PRIORITY_MAIL_INTERNATIONAL_MEDIUM_FLAT_RATE_BOX' => '17',
+
+                'FIRST_CLASS_MAIL_INTERNATIONAL' => '14',
+                'FIRST_CLASS_PACKAGE_INTERNATIONAL_SERVICE' => '15',
+            ];
+        }
+
+        return array_search($code, $services);
     }
 
     private function _parseZipCode($zip)
