@@ -13,6 +13,6 @@ class ModifyPayloadEvent extends Event
     // =========================================================================
 
     public ?Provider $provider = null;
-    public ?array $payload = null;
+    public mixed $payload = null;
     public ?Order $order = null;
 }
