@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.0.1 - 2022-10-24
+
+### Added
+- Add more USPS rates and fix First-Class rates.
+
+### Changed
+- Revamp USPS services to better match their codes and available services.
+- Update some Royal Mail international rates.
+
+### Fixed
+- Fix `ModifyPayloadEvent` typing
+- Fix an error when saving some providers and their `boxSizes` setting
+
 ## 3.0.0 - 2022-08-19
 
 ### Changed
