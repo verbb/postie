@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.20 - 2022-10-24
+
+### Added
+- Add more USPS rates and fix First-Class rates.
+
+### Changed
+- Revamp USPS services to better match their codes and available services.
+- Update some Royal Mail international rates.
+
 ## 2.4.19 - 2022-05-24
 
 ### Fixed
