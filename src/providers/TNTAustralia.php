@@ -100,12 +100,12 @@ class TNTAustralia extends Provider
                 $packagesXml .= '<packageLine>
                     <numberOfPackages>1</numberOfPackages>
                     <dimensions unit="cm">
-                        <length>' . round($packedBox['length']) . '</length>
-                        <width>' . round($packedBox['width']) . '</width>
-                        <height>' . round($packedBox['height']) . '</height>
+                        <length>' . ceil($packedBox['length']) . '</length>
+                        <width>' . ceil($packedBox['width']) . '</width>
+                        <height>' . ceil($packedBox['height']) . '</height>
                     </dimensions>
                     <weight unit="kg">
-                        <weight>' . round($packedBox['weight']) . '</weight>
+                        <weight>' . ceil($packedBox['weight']) . '</weight>
                     </weight>
                 </packageLine>';
             }
