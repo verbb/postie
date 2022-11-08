@@ -91,7 +91,7 @@ class Fastway extends Provider
         //
 
         try {
-            $countryCode = $this->_getCountryCode($order->shippingAddress->country);
+            $countryCode = $this->_getCountryCode($order->shippingAddress->countryCode);
 
             if (!$countryCode) {
                 return null;
@@ -208,21 +208,23 @@ class Fastway extends Provider
         return str_replace('-', '_', $string);
     }
 
-    private function _getCountryCode($country): bool|int
+    private function _getCountryCode($countryCode): bool|int
     {
-        if ($country == 'Australia') {
+        if ($country == 'AU') {
             return 1;
         }
 
-        if ($country == 'New Zealand') {
+        if ($country == 'NZ') {
             return 6;
         }
 
-        if ($country == 'Ireland') {
+        // Ireland
+        if ($country == 'IE') {
             return 11;
         }
 
-        if ($country == 'South Africa') {
+        // South Africa
+        if ($country == 'SA') {
             return 24;
         }
 

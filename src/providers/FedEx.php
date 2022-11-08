@@ -346,7 +346,7 @@ class FedEx extends Provider
         }
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
-        if ($storeLocation->country) {
+        if ($storeLocation->countryCode) {
             $countryCode = $storeLocation->countryCode ?? '';
             $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $countryCode;
 
@@ -356,7 +356,7 @@ class FedEx extends Provider
         }
 
         // Fedex can't handle 3-character states. Ignoring it is valid for international order
-        if ($order->shippingAddress->country) {
+        if ($order->shippingAddress->countryCode) {
             $countryCode = $order->shippingAddress->countryCode ?? '';
             $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryCode;
 
