@@ -368,7 +368,7 @@ class FedEx extends Provider
         // Shipping charges payment
         $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = PaymentType::_SENDER;
         $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $this->getSetting('accountNumber');
-        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->country;
+        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->countryCode;
 
         // Rate request types
         $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
