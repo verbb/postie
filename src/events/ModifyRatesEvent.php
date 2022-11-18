@@ -16,9 +16,9 @@ class ModifyRatesEvent extends Event
     public ?array $rates = [];
 
     /**
-     * @var array|null The raw API response object from the Provider.
+     * @var mixed The raw API response object from the Provider.
      */
-    public ?array $response = [];
+    public mixed $response = [];
 
     /**
      * @var ?Order The order that was used when requesting rates.
