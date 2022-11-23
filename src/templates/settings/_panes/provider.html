@@ -128,7 +128,7 @@
 }) }}
 
 <div id="packing-boxPacking" class="{{ packingMethod != 'boxPacking' ? 'hidden' }}">
-    {{ macros.editableTableField({
+    {{ forms.editableTableField({
         label: 'Box Sizes' | t('postie'),
         instructions: 'Items will be packed into these boxes based on item dimensions and volume. Dimensions will be passed to {name}, and used for packing. Items not fitting into boxes will be packed individually.' | t('postie', { name: provider.displayName() }),
         id: 'boxSizes',

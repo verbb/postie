@@ -9,12 +9,3 @@
     {%- endif -%}
 {%- endmacro %}
 
-
-{% macro editableTableField(config) %}
-    {% import '_includes/forms' as forms %}
-
-    {% set config = config|merge({id: config.id ?? "editabletable#{random()}"}) %}
-    {% set input %}{% include "postie/_macros/_includes/editable-table" with config only %}{% endset %}
-    {{ forms.field(config, input) }}
-{% endmacro %}
-
