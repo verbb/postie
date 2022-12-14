@@ -71,6 +71,20 @@ class TNTAustralia extends Provider
 
     public function fetchShippingRates($order): ?array
     {
+        //
+        // TESTING
+        //
+        // Domestic
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['state' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['state' => 'TAS']);
+
+        // International
+        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['state' => 'CA']);
+        //
+        // 
+        //
+
+
         // If we've locally cached the results, return that
         if ($this->_rates) {
             return $this->_rates;
@@ -96,12 +110,12 @@ class TNTAustralia extends Provider
                 $packagesXml .= '<packageLine>
                     <numberOfPackages>1</numberOfPackages>
                     <dimensions unit="cm">
-                        <length>' . $packedBox['length'] . '</length>
-                        <width>' . $packedBox['width'] . '</width>
-                        <height>' . $packedBox['height'] . '</height>
+                        <length>' . ceil($packedBox['length']) . '</length>
+                        <width>' . ceil($packedBox['width']) . '</width>
+                        <height>' . ceil($packedBox['height']) . '</height>
                     </dimensions>
                     <weight unit="kg">
-                        <weight>' . $packedBox['weight'] . '</weight>
+                        <weight>' . ceil($packedBox['weight']) . '</weight>
                     </weight>
                 </packageLine>';
             }
@@ -146,9 +160,10 @@ class TNTAustralia extends Provider
             $this->beforeSendPayload($this, $payload, $order);
 
             $response = $this->_request('POST', 'Rtt/inputRequest.asp', ['form_params' => $payload]);
+            $response = Json::decode(Json::encode($response));
 
-            if (isset($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'])) {
-                foreach ($response['response']['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'] as $service) {
+            if (isset($response['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'])) {
+                foreach ($response['ratedTransitTimeResponse']['ratedProducts']['ratedProduct'] as $service) {
                     $this->_rates[$service['product']['code']] = [
                         'amount' => (float)($service['quote']['price'] ?? 0),
                         'options' => $service,

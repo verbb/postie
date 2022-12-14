@@ -154,6 +154,13 @@ class Service extends Component
             }
         }
 
+        // Remove our session variable for fetching live rates manually (even if we're not opting to use it)
+        if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
+            if (Craft::$app->getSession()->get('postieManualFetchRates')) {
+                Craft::$app->getSession()->remove('postieManualFetchRates');
+            }
+        }
+
         return $shippingMethods;
     }
 

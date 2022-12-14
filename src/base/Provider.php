@@ -413,13 +413,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $shippingRates = $this->prepareFetchShippingRates($order);
         }
 
-        // Remove our session variable for fetching live rates manually (even if we're not opting to use it)
-        if (!$request->getIsConsoleRequest()) {
-            if (Craft::$app->getSession()->get('postieManualFetchRates')) {
-                Craft::$app->getSession()->remove('postieManualFetchRates');
-            }
-        }
-
         return $shippingRates;
     }
 

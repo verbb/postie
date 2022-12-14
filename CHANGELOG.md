@@ -2,7 +2,12 @@
 
 ## 3.0.2 - 2022-12-15
 
+### Changed
+- Update TNT package dimensions to use `ceil()`.
+
 ### Fixed
+- Fix `manualFetchRates` not working correctly for multiple providers.
+- Fix TNT Australia rates not working correctly.
 - Fix an error with USPS.
 - Fix “Box Sizes” setting for providers not working correctly.
 - Fix `ModifyRatesEvent` response typing.
@@ -34,6 +39,15 @@
 ### Fixed
 - Fix Commerce/Craft deprecations.
 - More Commerce `^4.0.0` compatibility fixes.
+
+## 2.4.21 - 2022-12-15
+
+### Changed
+- Update TNT package dimensions to use `ceil()`.
+
+### Fixed
+- Fix `manualFetchRates` not working correctly for multiple providers.
+- Fix TNT Australia rates not working correctly.
 
 ## 2.4.20 - 2022-10-24
 
