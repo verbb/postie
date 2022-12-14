@@ -151,8 +151,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function __construct($config = [])
     {
         // Set default name and handles
-        $config['name'] = $config['name'] ?? self::displayName();
-        $config['handle'] = $config['handle'] ?? StringHelper::toCamelCase(self::displayName());
+        $config['name'] = $config['name'] ?? $this->name ?? self::displayName();
+        $config['handle'] = $config['handle'] ?? $this->handle ?? StringHelper::toCamelCase(self::displayName());
 
         // Apply here for `getSettings()` at least until a proper refactor of settings
         $this->name = $config['name'];
