@@ -192,7 +192,7 @@ class USPS extends Provider
         try {
             $countryCode = $order->shippingAddress->countryCode ?? '';
 
-            if (self::isDomestic($countryIso)) {
+            if (self::isDomestic($countryCode)) {
                 Provider::log($this, 'Domestic rate service call');
 
                 foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
@@ -271,7 +271,7 @@ class USPS extends Provider
             }
 
             // Responses will be different depending on domestic/international
-            if (self::isDomestic($countryIso)) {
+            if (self::isDomestic($countryCode)) {
                 $packages = $response['RateV4Response']['Package'] ?? [];
             } else {
                 $packages = $response['IntlRateV2Response']['Package'] ?? [];
@@ -304,7 +304,7 @@ class USPS extends Provider
 
                     // ID for international, CLASSID for domestic
                     $serviceHandleKey = $service['@attributes']['CLASSID'] ?? $service['@attributes']['ID'] ?? null;
-                    $serviceHandle = $this->_getServiceHandle($serviceHandleKey, $serviceName, $countryIso);
+                    $serviceHandle = $this->_getServiceHandle($serviceHandleKey, $serviceName, $countryCode);
 
                     // The API returns rates for each package in the request, so combine them before reporting back
                     // Postage for international, Rate for domestic
@@ -403,9 +403,9 @@ class USPS extends Provider
         return $this->_client;
     }
 
-    private function _getServiceHandle($code, $name, $countryIso)
+    private function _getServiceHandle($code, $name, $countryCode)
     {
-        if (self::isDomestic($countryIso)) {
+        if (self::isDomestic($countryCode)) {
             // Some First-Class rates are all 0, which is ambiguous, so use the name
             if ($code == '0') {
                 if ($name === 'First-Class Mail Large Envelope') {
