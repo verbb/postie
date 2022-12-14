@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.2 - 2022-12-15
+
+### Fixed
+- Fix an error with USPS.
+- Fix “Box Sizes” setting for providers not working correctly.
+- Fix `ModifyRatesEvent` response typing.
+- Fix an error with Fastway and FedEx with country code.
+
 ## 3.0.1 - 2022-10-24
 
 ### Added
