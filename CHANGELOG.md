@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.21 - 2022-12-15
+
+### Changed
+- Update TNT package dimensions to use `ceil()`.
+
+### Fixed
+- Fix `manualFetchRates` not working correctly for multiple providers.
+- Fix TNT Australia rates not working correctly.
+
 ## 2.4.20 - 2022-10-24
 
 ### Added
