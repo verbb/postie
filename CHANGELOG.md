@@ -12,6 +12,7 @@
 - Fix “Box Sizes” setting for providers not working correctly.
 - Fix `ModifyRatesEvent` response typing.
 - Fix an error with Fastway and FedEx with country code.
+- Fix an error where some providers weren’t having their config values overridden via config files.
 
 ## 3.0.1 - 2022-10-24
 
