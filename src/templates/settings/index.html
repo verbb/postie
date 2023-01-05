@@ -1,6 +1,8 @@
 {% extends 'postie/_layouts' %}
 {% import '_includes/forms' as forms %}
 
+{% requireAdmin %}
+
 {% set crumbs = [
     { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
     { label: 'Settings' | t('postie'), url: url('postie/settings') },
