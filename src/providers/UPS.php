@@ -716,15 +716,16 @@ class UPS extends Provider
                     'Commodity' => [
                         'Description' => 'FRS-Freight',
                         'Weight' => [
-                            'Value' => round((string)$packedBox['weight'], 2),
+                            'Value' => (string)round((string)$packedBox['weight'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('weight'),
                             ],
                         ],
                         'Dimensions' => [
-                            'Length' => round((string)$packedBox['length'], 2),
-                            'Width' => round((string)$packedBox['width'], 2),
-                            'Height' => round((string)$packedBox['height'], 2),
+                            // UPS is particular about the type - must be a string not an int/float
+                            'Length' => (string)round((string)$packedBox['length'], 2),
+                            'Width' => (string)round((string)$packedBox['width'], 2),
+                            'Height' => (string)round((string)$packedBox['height'], 2),
                             'UnitOfMeasurement' => [
                                 'Code' => $this->_getUnitOfMeasurement('dimension'),
                             ],
