@@ -15,10 +15,16 @@ use yii\base\Event;
 
 class Service extends Component
 {
+    // Constants
+    // =========================================================================
+    
+    public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
+
+
     // Properties
     // =========================================================================
 
-    public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
+    private array $_availableShippingMethods = [];
 
 
     // Public Methods
@@ -166,11 +172,14 @@ class Service extends Component
 
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event): void
     {
-        $shippingMethods = $this->getShippingMethodsForOrder($event->order);
+        // Becuase this function can be called multiple times, save available methods to a local cache
+        if (!$this->_availableShippingMethods) {
+            $this->_availableShippingMethods = $this->getShippingMethodsForOrder($event->order);
+        }
 
         $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([
             'order' => $event->order,
-            'shippingMethods' => $shippingMethods,
+            'shippingMethods' => $this->_availableShippingMethods,
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_REGISTER_SHIPPING_METHODS)) {
