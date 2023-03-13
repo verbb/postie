@@ -20,6 +20,11 @@ class Service extends Component
 
     const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
 
+    // Properties
+    // =========================================================================
+
+    private array $_availableShippingMethods = [];
+
 
     // Public Methods
     // =========================================================================
@@ -163,11 +168,14 @@ class Service extends Component
             return;
         }
 
-        $shippingMethods = $this->getShippingMethodsForOrder($event->order);
+        // Because this function can be called multiple times, save available methods to a local cache
+        if (!$this->_availableShippingMethods) {
+            $this->_availableShippingMethods = $this->getShippingMethodsForOrder($event->order);
+        }
 
         $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([
             'order' => $event->order,
-            'shippingMethods' => $shippingMethods,
+            'shippingMethods' => $this->_availableShippingMethods,
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_REGISTER_SHIPPING_METHODS)) {
