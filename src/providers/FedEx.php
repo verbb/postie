@@ -446,7 +446,7 @@ class FedEx extends Provider
                         $ratedShipmentDetailRates[$key] = $RatedShipmentDetail->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
                     }
 
-                    $rate = min($ratedShipmentDetailRates);
+                    $rate = min(array_filter($ratedShipmentDetailRates));
                 } else {
                     $rate = $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
                 }
