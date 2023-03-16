@@ -791,9 +791,17 @@ class UPS extends Provider
             // Because this isn't known in advanced, and only ever one rate, create the service dynamically
             $shippingMethod = new ShippingMethod();
             $shippingMethod->handle = $handle;
-            $shippingMethod->provider = $this;
             $shippingMethod->name = 'UPS Freight LTL';
             $shippingMethod->enabled = true;
+
+            // Create a temporary provider instance, just to pass to the shipping method
+            // We need to be careful here so as not to cause an infinite loop.
+            $tempProvider = clone $this;
+            $tempProvider->settings = [];
+            $tempProvider->services = [];
+            $tempProvider->enabled = $this->enabled;
+
+            $shippingMethod->provider = $tempProvider;
 
             $this->services[$handle] = $shippingMethod;
         } catch (\Throwable $e) {
