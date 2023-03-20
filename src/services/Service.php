@@ -23,7 +23,7 @@ class Service extends Component
     // Properties
     // =========================================================================
 
-    private array $_availableShippingMethods = [];
+    private $_availableShippingMethods = [];
 
 
     // Public Methods
