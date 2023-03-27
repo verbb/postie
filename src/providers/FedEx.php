@@ -431,7 +431,7 @@ class FedEx extends Provider
 
         $rateServiceRequest = new Request();
 
-        // Check for devMode and set test or production endpoint
+        // Check for test or production endpoint
         if ($this->getSetting('useTestEndpoint')) {
             $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
         } else {

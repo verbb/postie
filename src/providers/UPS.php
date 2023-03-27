@@ -749,7 +749,9 @@ class UPS extends Provider
                 ],
             ];
 
-            if (Craft::$app->getConfig()->getGeneral()->devMode) {
+            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
+
+            if ($useTestEndpoint) {
                 $accessKey = $this->getSetting('testApiKey');
                 $endpoint = 'https://wwwcie.ups.com/ship/v1/freight/rating/ground';
             } else {
@@ -822,7 +824,9 @@ class UPS extends Provider
     private function _getClient()
     {
         if (!$this->_client) {
-            if (Craft::$app->getConfig()->getGeneral()->devMode) {
+            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
+
+            if ($useTestEndpoint) {
                 $accessKey = $this->getSetting('testApiKey');
             } else {
                 $accessKey = $this->getSetting('apiKey');
