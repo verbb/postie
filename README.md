@@ -1,6 +1,6 @@
 # Postie Plugin for Craft Commerce
 
-<img width="500" src="https://verbb.io/uploads/plugins/postie/_800x455_crop_center-center/postie-social-card.png">
+<img width="500" src="https://verbb.imgix.net/plugins/postie/_800x455_crop_center-center/postie-social-card.png">
 
 Postie is a Craft Commerce plugin to provide your customers with real-time shipping costs from your preferred provider.
 
@@ -28,7 +28,7 @@ Postie is a Craft Commerce plugin to provide your customers with real-time shipp
 - UPS
 - USPS
 
-<img width="800" src="https://verbb.io/uploads/plugins/postie/postie.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
+<img width="800" src="https://verbb.imgix.net/plugins/postie/postie.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
  
 ## Documentation
 
