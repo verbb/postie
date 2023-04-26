@@ -777,6 +777,23 @@ class UPS extends Provider
                 'amount' => $json['FreightRateResponse']['TotalShipmentCharge']['MonetaryValue'] ?? '',
             ];
 
+            // Check for negotiates freight rates
+            $freightAltRates = $json['FreightRateResponse']['AlternateRatesResponse']['Rate'] ?? [];
+
+            if ($freightAltRates) {
+                $freightAltDetailRates = [];
+
+                foreach ($freightAltRates as $freightAltRate) {
+                    $freightAltDetailRates[] = $freightAltRate['Factor']['Value'] ?? null;
+                }
+
+                $freightAltRate = min(array_filter($freightAltDetailRates));
+
+                if ($freightAltRate) {
+                    $this->_rates[$handle]['amount'] = $freightAltRate;
+                }
+            }
+
             // Allow rate modification via events
             $modifyRatesEvent = new ModifyRatesEvent([
                 'rates' => $this->_rates,
