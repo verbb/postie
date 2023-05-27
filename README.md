@@ -1,8 +1,7 @@
-# Postie Plugin for Craft Commerce
-
+# Postie plugin for Craft CMS
 <img width="500" src="https://verbb.imgix.net/plugins/postie/postie-social-card.png">
 
-Postie is a Craft Commerce plugin to provide your customers with real-time shipping costs from your preferred provider.
+Postie is a Craft CMS plugin to provide your customers with real-time shipping costs from your preferred provider for Craft Commerce.
 
 ## Features
 - Provide live shipping rates during checkout from a number of providers.
@@ -27,19 +26,15 @@ Postie is a Craft Commerce plugin to provide your customers with real-time shipp
 - TNT Australia
 - UPS
 - USPS
-
-<img width="800" src="https://verbb.imgix.net/plugins/postie/postie.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
  
 ## Documentation
-
 Visit the [Postie Plugin page](https://verbb.io/craft-plugins/postie) for all documentation, guides, pricing and developer resources.
 
 ## Support
-
 Get in touch with us via the [Postie Support page](https://verbb.io/craft-plugins/postie/support) or by [creating a Github issue](https://github.com/verbb/postie/issues)
 
 <h2></h2>
 
 <a href="https://verbb.io" target="_blank">
-  <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
+    <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
 </a>

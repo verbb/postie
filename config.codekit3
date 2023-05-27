@@ -210,58 +210,6 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/docs\/screenshots\/configuration-address.png" : {
-      "ft" : 32768,
-      "iS" : 52313,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/configuration-address.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
-    "\/docs\/screenshots\/configuration-products.png" : {
-      "ft" : 32768,
-      "iS" : 63608,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/configuration-products.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
-    "\/docs\/screenshots\/configuration-provider.png" : {
-      "ft" : 32768,
-      "iS" : 186438,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/configuration-provider.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
-    "\/docs\/screenshots\/shipping-methods.png" : {
-      "ft" : 32768,
-      "iS" : 40378,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/shipping-methods.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
     "\/docs\/setup-configuration\/box-packing.md" : {
       "cB" : 0,
       "cS" : 0,

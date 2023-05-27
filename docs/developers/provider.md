@@ -12,8 +12,8 @@ use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\services\Providers;
 use yii\base\Event;
 
-Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(RegisterProviderTypesEvent $e) {
-    $e->providerTypes[] = MyProvider::class;
+Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(RegisterProviderTypesEvent $event) {
+    $event->providerTypes[] = MyProvider::class;
 });
 ```
 
