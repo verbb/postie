@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.4.22 - 2023-05-27
+
+### Added
+- Add support for UPS negotiated freight rates.
+- Add “Use Test Endpoint” setting for UPS.
+
+### Fixed
+- Fix type check for PHP 7.x.
+- Fix a memory issue with UPS Freight services.
+- Fix FedEx freight not correctly setting 150lb minimum weight.
+- Fix an issue for FedEx freight rates in some cases.
+- Fix an issue where shipping rates weren’t always available in checkout.
+- Fix an error when fetching UPS Freight rates.
+
 ## 2.4.21 - 2022-12-15
 
 ### Changed
