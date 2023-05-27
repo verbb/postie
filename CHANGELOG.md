@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.3 - 2023-05-27
+
+### Changed
+- Only admins are now allowed to access plugin settings
+
+- Fix an error with Royal Mail rates. (thanks @MadMikeyB).
+- Fix an issue for FedEx freight rates in some cases.
+- Fix an issue where shipping rates weren’t always available in checkout.
+- Fix an error when fetching UPS Freight rates.
+
 ## 3.0.2 - 2022-12-15
 
 ### Changed
