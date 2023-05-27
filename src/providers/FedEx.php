@@ -411,10 +411,6 @@ class FedEx extends Provider
                 $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');;
 
                 $lineItems = [];
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');
 
                 // Modify each line item to contain extra required info for freight
                 foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => &$packageLineItem) {
@@ -422,10 +418,10 @@ class FedEx extends Provider
                     $packageLineItem->PhysicalPackaging = 'SKID';
                     $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
 
-            // Modify each line item to contain extra required info for freight
-            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => $packageLineItem) {
-                $packageLineItem->SequenceNumber = $key + 1;
-                $packageLineItem->PhysicalPackaging = 'SKID';
+                    // Create line items for freight
+                    $lineItems[] = [
+                        'Id' => $key + 1,
+                        'FreightClass' => 'CLASS_050',
                         'Packaging' => 'SKID',
                         'Weight' => $packageLineItem->Weight,
                     ];
