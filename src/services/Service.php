@@ -172,6 +172,10 @@ class Service extends Component
 
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event): void
     {
+        if (!$event->order) {
+            return;
+        }
+
         // Because this function can be called multiple times, save available methods to a local cache
         if (!$this->_availableShippingMethods) {
             $this->_availableShippingMethods = $this->getShippingMethodsForOrder($event->order);

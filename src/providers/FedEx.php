@@ -383,48 +383,61 @@ class FedEx extends Provider
         $rateRequest->RequestedShipment->RequestedPackageLineItems = $packageLineItems;
 
         if ($requestType === 'freight') {
-            $rateRequest->CarrierCodes = ['FXFR'];
+            // Only include for shipments over 150lb
+            $totalWeight = 0;
 
-            $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$this->getSetting('freightShipperStreetAddress'), $this->getSetting('freightShipperStreetAddress2')];
-            $rateRequest->RequestedShipment->Shipper->Address->City = $this->getSetting('freightShipperCity');
-            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $this->getSetting('freightShipperZipcode');
-            $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $this->getSetting('freightShipperStateCode');
-            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $this->getSetting('freightShipperCountryCode');
+            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => $packageLineItem) {
+                $totalWeight += $packageLineItem->Weight->Value;
+            }
 
-            $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = 'SENDER';
-            $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->ResponsibleParty->AccountNumber = $this->getSetting('freightAccountNumber');
+            if ($totalWeight > 150) {
+                $rateRequest->CarrierCodes = ['FXFR'];
 
-            $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
-            $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StreetLines = [$this->getSetting('freightBillingStreetAddress'), $this->getSetting('freightBillingStreetAddress2')];
+                $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$this->getSetting('freightShipperStreetAddress'), $this->getSetting('freightShipperStreetAddress2')];
+                $rateRequest->RequestedShipment->Shipper->Address->City = $this->getSetting('freightShipperCity');
+                $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $this->getSetting('freightShipperZipcode');
+                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $this->getSetting('freightShipperStateCode');
+                $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $this->getSetting('freightShipperCountryCode');
+
+                $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = 'SENDER';
+                $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->ResponsibleParty->AccountNumber = $this->getSetting('freightAccountNumber');
+
+                $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StreetLines = [$this->getSetting('freightBillingStreetAddress'), $this->getSetting('freightBillingStreetAddress2')];
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');;
+
+                $lineItems = [];
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
             $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');
 
-            $lineItems = [];
+                // Modify each line item to contain extra required info for freight
+                foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => &$packageLineItem) {
+                    $packageLineItem->SequenceNumber = $key + 1;
+                    $packageLineItem->PhysicalPackaging = 'SKID';
+                    $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
 
             // Modify each line item to contain extra required info for freight
             foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => $packageLineItem) {
                 $packageLineItem->SequenceNumber = $key + 1;
                 $packageLineItem->PhysicalPackaging = 'SKID';
-                $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
+                        'Packaging' => 'SKID',
+                        'Weight' => $packageLineItem->Weight,
+                    ];
+                }
 
-                // Create line items for freight
-                $lineItems[] = [
-                    'Id' => $key + 1,
-                    'FreightClass' => 'CLASS_050',
-                    'Packaging' => 'SKID',
-                    'Weight' => $packageLineItem->Weight,
-                ];
+                $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = $lineItems;
             }
-
-            $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = $lineItems;
         }
 
         $rateServiceRequest = new Request();
 
-        // Check for devMode and set test or production endpoint
+        // Check for test or production endpoint
         if ($this->getSetting('useTestEndpoint')) {
             $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
         } else {

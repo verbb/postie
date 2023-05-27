@@ -693,7 +693,9 @@ class UPS extends Provider
                 ],
             ];
 
-            if (Craft::$app->getConfig()->getGeneral()->devMode) {
+            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
+
+            if ($useTestEndpoint) {
                 $accessKey = $this->getSetting('testApiKey');
                 $endpoint = 'https://wwwcie.ups.com/ship/v1/freight/rating/ground';
             } else {
@@ -719,6 +721,23 @@ class UPS extends Provider
                 'amount' => $json['FreightRateResponse']['TotalShipmentCharge']['MonetaryValue'] ?? '',
             ];
 
+            // Check for negotiates freight rates
+            $freightAltRates = $json['FreightRateResponse']['AlternateRatesResponse']['Rate'] ?? [];
+
+            if ($freightAltRates) {
+                $freightAltDetailRates = [];
+
+                foreach ($freightAltRates as $freightAltRate) {
+                    $freightAltDetailRates[] = $freightAltRate['Factor']['Value'] ?? null;
+                }
+
+                $freightAltRate = min(array_filter($freightAltDetailRates));
+
+                if ($freightAltRate) {
+                    $this->_rates[$handle]['amount'] = $freightAltRate;
+                }
+            }
+
             // Allow rate modification via events
             $modifyRatesEvent = new ModifyRatesEvent([
                 'rates' => $this->_rates,
@@ -735,9 +754,17 @@ class UPS extends Provider
             // Because this isn't known in advanced, and only ever one rate, create the service dynamically
             $shippingMethod = new ShippingMethod();
             $shippingMethod->handle = $handle;
-            $shippingMethod->provider = $this;
             $shippingMethod->name = 'UPS Freight LTL';
             $shippingMethod->enabled = true;
+
+            // Create a temporary provider instance, just to pass to the shipping method
+            // We need to be careful here so as not to cause an infinite loop.
+            $tempProvider = clone $this;
+            $tempProvider->settings = [];
+            $tempProvider->services = [];
+            $tempProvider->enabled = $this->enabled;
+
+            $shippingMethod->provider = $tempProvider;
 
             $this->services[$handle] = $shippingMethod;
         } catch (Throwable $e) {
@@ -817,7 +844,9 @@ class UPS extends Provider
     private function _getClient(): ?Rate
     {
         if (!$this->_client) {
-            if (Craft::$app->getConfig()->getGeneral()->devMode) {
+            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
+
+            if ($useTestEndpoint) {
                 $accessKey = $this->getSetting('testApiKey');
             } else {
                 $accessKey = $this->getSetting('apiKey');

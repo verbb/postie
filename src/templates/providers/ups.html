@@ -70,6 +70,15 @@
 }) }}
 
 {{ forms.lightswitchField({
+    label: 'Use Test Endpoint' | t('postie'),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
+    id: 'useTestEndpoint',
+    name: 'useTestEndpoint',
+    on: provider.settings.useTestEndpoint ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
     label: 'Use Negotiated Rates' | t('postie'),
     instructions: 'Whether to use UPS Negotiated Rates. This must be enabled on your UPS account.' | t('postie'),
     id: 'negotiatedRates',
