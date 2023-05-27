@@ -3790,6 +3790,8 @@ class RoyalMailRates
             return 'EUR_3';
         } else if (in_array($country, self::$euro)) {
             return 'EU';
+        }
+        
         if (in_array($country, self::$worldZone2)) {
             return '2';
         }
