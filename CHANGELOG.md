@@ -2,9 +2,17 @@
 
 ## 3.0.3 - 2023-05-27
 
+### Added
+- Add support for UPS negotiated freight rates.
+- Add “Use Test Endpoint” setting for UPS.
+
 ### Changed
 - Only admins are now allowed to access plugin settings
 
+### Fixed
+- Fix type check for PHP 7.x.
+- Fix a memory issue with UPS Freight services.
+- Fix FedEx freight not correctly setting 150lb minimum weight.
 - Fix an error with Royal Mail rates. (thanks @MadMikeyB).
 - Fix an issue for FedEx freight rates in some cases.
 - Fix an issue where shipping rates weren’t always available in checkout.
