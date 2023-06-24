@@ -1,6 +1,8 @@
 <?php
 namespace verbb\postie\helpers;
 
+use craft\commerce\Plugin as Commerce;
+
 class PostieHelper
 {
     // Public Methods
@@ -33,7 +35,7 @@ class PostieHelper
         $totalWidth = 0;
         $totalHeight = 0;
 
-        foreach ($order->lineItems as $key => $lineItem) {
+        foreach (self::getOrderLineItems($order) as $key => $lineItem) {
             $totalLength += ($lineItem->qty * $lineItem->length);
             $totalWidth += ($lineItem->qty * $lineItem->width);
             $totalHeight += ($lineItem->qty * $lineItem->height);
@@ -52,5 +54,18 @@ class PostieHelper
         ]);
 
         return md5($signature);
+    }
+
+    public static function getOrderLineItems($order)
+    {
+        $items = [];
+
+        foreach ($order->getLineItems() as $item) {
+            if ($item->getPurchasable() && !$item->purchasable->hasFreeShipping() && Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable())) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 }

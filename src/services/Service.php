@@ -201,7 +201,7 @@ class Service extends Component
 
         $freeShippingItems = [];
 
-        foreach ($order->lineItems as $lineItem) {
+        foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
             $freeShippingItems[] = $lineItem->purchasable->hasFreeShipping();
         }
 
