@@ -406,7 +406,7 @@ class FedEx extends Provider
                 $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
                 $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
                 $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');;
+                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');
 
                 $lineItems = [];
 
