@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\helpers;
 
+use craft\helpers\ArrayHelper;
 use craft\commerce\Plugin as Commerce;
 
 class PostieHelper
@@ -59,9 +60,28 @@ class PostieHelper
     public static function getOrderLineItems($order)
     {
         $items = [];
-
+        $discounts = Commerce::getInstance()->getDiscounts()->getAllActiveDiscounts($order);
+        $hasLineItemLevelShippingRelatedDiscounts = (bool)ArrayHelper::firstWhere($discounts, 'hasFreeShippingForMatchingItems', true, false);
         foreach ($order->getLineItems() as $item) {
-            if ($item->getPurchasable() && !$item->purchasable->hasFreeShipping() && Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable())) {
+            $hasFreeShippingFromDiscount = false;
+            if ($hasLineItemLevelShippingRelatedDiscounts) {
+                foreach ($discounts as $discount) {
+                    $matchedLineItem = Commerce::getInstance()->getDiscounts()->matchLineItem($item, $discount, true);
+                    if ($discount->hasFreeShippingForMatchingItems && $matchedLineItem) {
+                        $hasFreeShippingFromDiscount = true;
+                        break;
+                    }
+
+                    if ($matchedLineItem && $discount->stopProcessing) {
+                        break;
+                    }
+                }
+            }
+
+            $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
+            $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
+
+            if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
                 $items[] = $item;
             }
         }
