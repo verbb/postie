@@ -80,7 +80,6 @@ class PostieHelper
 
             $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
             $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
-
             if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
                 $items[] = $item;
             }
