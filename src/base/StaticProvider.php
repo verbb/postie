@@ -2,6 +2,7 @@
 namespace verbb\postie\base;
 
 use verbb\postie\events\PackOrderEvent;
+use verbb\postie\helpers\PostieHelper;
 use verbb\postie\models\Box;
 use verbb\postie\models\PackedBoxes;
 
@@ -102,7 +103,7 @@ class StaticProvider extends Provider
         }
 
         if ($this->packingMethod === Provider::PACKING_SINGLE_BOX || $this->packingMethod === Provider::PACKING_BOX) {
-            foreach ($order->getLineItems() as $lineItem) {
+            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
                 if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }
@@ -111,7 +112,7 @@ class StaticProvider extends Provider
 
         // If packing boxes individually, create boxes exactly the same size as each item
         if ($this->packingMethod === Provider::PACKING_PER_ITEM) {
-            foreach ($order->getLineItems() as $lineItem) {
+            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
                 // Don't forget to factor in quantities
                 for ($i = 0; $i < $lineItem->qty; $i++) {
                     // Add the single item to the single box

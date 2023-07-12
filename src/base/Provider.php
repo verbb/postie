@@ -651,7 +651,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $totalHeight = 0;
 
         // Get box package dimensions based on order line items
-        foreach ($order->lineItems as $key => $lineItem) {
+        foreach (PostieHelper::getOrderLineItems($order) as $key => $lineItem) {
             $maxLength = $maxLength < $lineItem->length ? $maxLength = $lineItem->length : $maxLength;
             $maxWidth = $maxWidth < $lineItem->width ? $maxWidth = $lineItem->width : $maxWidth;
             $totalHeight += ($lineItem->qty * $lineItem->height);
@@ -780,7 +780,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 'maxWeight' => $maxWeight,
             ]));
 
-            foreach ($order->getLineItems() as $lineItem) {
+            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
                 if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }
@@ -789,7 +789,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         // If packing boxes individually, create boxes exactly the same size as each item
         if ($this->packingMethod === self::PACKING_PER_ITEM) {
-            foreach ($order->getLineItems() as $lineItem) {
+            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
                 // Don't forget to factor in quantities
                 for ($i = 0; $i < $lineItem->qty; $i++) {
                     // Generate a box for each item. It'll be exactly fitted to the item
@@ -826,7 +826,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
 
             // For each item in the cart, add them to the packer to figure out the best fit
-            foreach ($order->getLineItems() as $lineItem) {
+            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
                 if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }

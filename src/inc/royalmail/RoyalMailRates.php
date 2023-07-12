@@ -1,6 +1,9 @@
 <?php
 namespace verbb\postie\inc\royalmail;
 
+use verbb\postie\helpers\PostieHelper;
+
+use Craft;
 use craft\helpers\StringHelper;
 
 use craft\commerce\elements\Order;
@@ -3964,7 +3967,7 @@ class RoyalMailRates
         $totalVolumetricWeight = 0;
         $totalValuedItems = self::$order->itemSubtotal;
 
-        foreach (self::$order->lineItems as $item) {
+        foreach (PostieHelper::getOrderLineItems(self::$order) as $item) {
             for ($i = 0; $i < $item->qty; $i++) {
                 $totalActualWeight += $item->weight;
                 $totalVolumetricWeight += self::getVolumetricWeight($item->length, $item->width, $item->height);

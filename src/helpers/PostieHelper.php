@@ -2,6 +2,8 @@
 namespace verbb\postie\helpers;
 
 use Craft;
+use craft\helpers\ArrayHelper;
+use craft\commerce\Plugin as Commerce;
 
 class PostieHelper
 {
@@ -35,7 +37,7 @@ class PostieHelper
         $totalWidth = 0;
         $totalHeight = 0;
 
-        foreach ($order->lineItems as $key => $lineItem) {
+        foreach (self::getOrderLineItems($order) as $key => $lineItem) {
             $totalLength += ($lineItem->qty * $lineItem->length);
             $totalWidth += ($lineItem->qty * $lineItem->width);
             $totalHeight += ($lineItem->qty * $lineItem->height);
@@ -86,5 +88,40 @@ class PostieHelper
         });
 
         return $addressLines;
+    }
+
+    public static function getOrderLineItems($order): array
+    {
+        $items = [];
+        $discounts = Commerce::getInstance()->getDiscounts()->getAllActiveDiscounts($order);
+        $hasLineItemLevelShippingRelatedDiscounts = (bool)ArrayHelper::firstWhere($discounts, 'hasFreeShippingForMatchingItems', true, false);
+
+        foreach ($order->getLineItems() as $item) {
+            $hasFreeShippingFromDiscount = false;
+
+            if ($hasLineItemLevelShippingRelatedDiscounts) {
+                foreach ($discounts as $discount) {
+                    $matchedLineItem = Commerce::getInstance()->getDiscounts()->matchLineItem($item, $discount, true);
+                    
+                    if ($discount->hasFreeShippingForMatchingItems && $matchedLineItem) {
+                        $hasFreeShippingFromDiscount = true;
+                        break;
+                    }
+
+                    if ($matchedLineItem && $discount->stopProcessing) {
+                        break;
+                    }
+                }
+            }
+
+            $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
+            $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
+            
+            if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 }
