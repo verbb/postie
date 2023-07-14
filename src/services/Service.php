@@ -3,6 +3,7 @@ namespace verbb\postie\services;
 
 use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippingMethodsEvent;
+use verbb\postie\helpers\PostieHelper;
 use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
 
