@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.0 - 2023-08-16
+
+### Added
+- Add support for new UPS API.
+- Add support for products marked with “Free Shipping” to be excluded from rates calls.
+
+### Changed
+- Check discounts and free shipping when getting line items used in fetching rates. (thanks @zollf).
+
+### Deprecated
+- Deprecated existing UPS providers to UPS (Legacy).
+
 ## 3.0.3 - 2023-05-27
 
 ### Added
