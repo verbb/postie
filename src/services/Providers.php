@@ -18,6 +18,7 @@ use verbb\postie\providers\RoyalMail;
 use verbb\postie\providers\Sendle;
 use verbb\postie\providers\TNTAustralia;
 use verbb\postie\providers\UPS;
+use verbb\postie\providers\UPSLegacy;
 use verbb\postie\providers\USPS;
 
 use yii\base\Component;
@@ -85,6 +86,7 @@ class Providers extends Component
             // TNT::class,
             TNTAustralia::class,
             UPS::class,
+            UPSLegacy::class,
             USPS::class,
         ];
 

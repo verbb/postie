@@ -27,7 +27,7 @@ class Postie extends Plugin
     // =========================================================================
 
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.1.0';
+    public string $schemaVersion = '2.1.1';
     public string $minVersionRequired = '2.2.7';
 
 
