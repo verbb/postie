@@ -22,10 +22,12 @@ class m230816_000000_ups extends Migration
 
         $providerGroups = $projectConfig->get('plugins.postie.settings.providers');
 
-        foreach ($providerGroups as $providersKey => $providers) {
-            foreach ($providers as $providerKey => $provider) {
-                if (isset($provider[0]) && $provider[0] === 'ups') {
-                    $providerGroups[$providersKey][$providerKey][0] = 'upsLegacy';
+        if (is_array($providerGroups)) {
+            foreach ($providerGroups as $providersKey => $providers) {
+                foreach ($providers as $providerKey => $provider) {
+                    if (isset($provider[0]) && $provider[0] === 'ups') {
+                        $providerGroups[$providersKey][$providerKey][0] = 'upsLegacy';
+                    }
                 }
             }
         }
