@@ -173,7 +173,7 @@ class UPS extends Provider
             'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
         ];
     }
-    
+
 
     // Properties
     // =========================================================================
@@ -393,7 +393,7 @@ class UPS extends Provider
                         'ShipTo' => [
                             'Address' => [
                                 'City' => $order->shippingAddress->locality ?? '',
-                                'StateProvinceCode' => $rder->shippingAddress->administrativeArea ?? '',
+                                'StateProvinceCode' => $order->shippingAddress->administrativeArea ?? '',
                                 'PostalCode' => $order->shippingAddress->postalCode ?? '',
                                 'CountryCode' => $order->shippingAddress->countryCode ?? '',
                             ],
