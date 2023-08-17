@@ -238,7 +238,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
                 $tempProvider->restrictServices = $settings['restrictServices'] ?? true;
                 $tempProvider->packingMethod = $settings['packingMethod'] ?? self::PACKING_SINGLE_BOX;
-                $tempProvider->boxSizes = $settings['boxSizes'] ?: [];
+                $tempProvider->boxSizes = $settings['boxSizes'] ?? [];
+
+                if (!is_array($tempProvider->boxSizes)) {
+                    $tempProvider->boxSizes = [];
+                }
 
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
