@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.1 - 2023-08-17
+
+### Fixed
+- Added “Pickup Type” for UPS, which was previously removed.
+- Fix an error when migrating UPS to new provider.
+
+### Removed
+- Removed “Use Negotiated Rates” for UPS (applied by default).
+
 ## 3.1.0 - 2023-08-16
 
 ### Added
