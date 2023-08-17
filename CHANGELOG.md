@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.23 - 2023-08-18
+
+### Added
+- Add support for products marked with “Free Shipping” to be excluded from rates calls.
+
+### Fixed
+- Check discounts and free shipping when getting line items used in fetching rates.
+
 ## 2.4.22 - 2023-05-27
 
 ### Added
