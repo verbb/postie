@@ -927,6 +927,14 @@
       "oAP" : "\/src\/providers\/UPS.php",
       "oF" : 0
     },
+    "\/src\/providers\/UPSLegacy.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/UPSLegacy.php",
+      "oF" : 0
+    },
     "\/src\/providers\/USPS.php" : {
       "cB" : 0,
       "ft" : 8192,

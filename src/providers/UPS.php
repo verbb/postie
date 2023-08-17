@@ -370,11 +370,15 @@ class UPS extends Provider
             $weightUnit = $storeLocation->countryCode === 'US' ? 'LBS' : 'KGS';
             $dimensionUnit = $storeLocation->countryCode === 'US' ? 'IN' : 'CM';
 
+            $pickupCode = $this->getSetting('pickupType') ?? '01';
+
             $payload = [
                 'RateRequest' => [
+                    'PickupType' => [
+                        'Code' => $pickupCode,
+                    ],
                     'Shipment' => [
                         'Shipper' => [
-                            'ShipperNumber' => $this->getSetting('accountNumber'),
                             'Address' => [
                                 'City' => $storeLocation->locality ?? '',
                                 'StateProvinceCode' => $storeLocation->administrativeArea ?? '',
@@ -403,9 +407,10 @@ class UPS extends Provider
             ];
 
             // Check for negotiated rates
-            if ($this->getSetting('negotiatedRates')) {
+            if ($this->getSetting('accountNumber')) {
+                $payload['RateRequest']['Shipment']['Shipper']['ShipperNumber'] = $this->accountNumber;
+                
                 $payload['RateRequest']['Shipment']['ShipmentRatingOptions'] = [
-                    'TPFCNegotiatedRatesIndicator' => 'Y',
                     'NegotiatedRatesIndicator' => 'Y',
                 ];
 
