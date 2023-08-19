@@ -173,7 +173,7 @@ class UPS extends Provider
             'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
         ];
     }
-
+    
 
     // Properties
     // =========================================================================
