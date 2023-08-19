@@ -409,8 +409,8 @@ class UPS extends Provider
 
             // Check for negotiated rates
             if ($this->getSetting('accountNumber')) {
-                $payload['RateRequest']['Shipment']['Shipper']['ShipperNumber'] = $this->accountNumber;
-
+                $payload['RateRequest']['Shipment']['Shipper']['ShipperNumber'] = $this->accountNumber
+                
                 $payload['RateRequest']['Shipment']['ShipmentRatingOptions'] = [
                     'NegotiatedRatesIndicator' => 'Y',
                 ];
