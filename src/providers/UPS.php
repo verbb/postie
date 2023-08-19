@@ -173,7 +173,7 @@ class UPS extends Provider
             'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
         ];
     }
-    
+
 
     // Properties
     // =========================================================================
@@ -379,6 +379,7 @@ class UPS extends Provider
                     ],
                     'Shipment' => [
                         'Shipper' => [
+                            'ShipperNumber' => $this->getSetting('accountNumber'),
                             'Address' => [
                                 'City' => $storeLocation->locality ?? '',
                                 'StateProvinceCode' => $storeLocation->administrativeArea ?? '',
@@ -409,7 +410,7 @@ class UPS extends Provider
             // Check for negotiated rates
             if ($this->getSetting('accountNumber')) {
                 $payload['RateRequest']['Shipment']['Shipper']['ShipperNumber'] = $this->accountNumber;
-                
+
                 $payload['RateRequest']['Shipment']['ShipmentRatingOptions'] = [
                     'NegotiatedRatesIndicator' => 'Y',
                 ];
