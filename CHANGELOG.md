@@ -1,9 +1,17 @@
 # Changelog
 
-## 3.1.1 - 2023-08-17
+## 3.1.2 - 2023-08-31
 
 ### Fixed
+- Fix UPS and negotiated rates throwing an error.
+- Fix an error for some providers and `boxSizes`.
+
+## 3.1.1 - 2023-08-17
+
+### Added
 - Added “Pickup Type” for UPS, which was previously removed.
+
+### Fixed
 - Fix an error when migrating UPS to new provider.
 
 ### Removed
