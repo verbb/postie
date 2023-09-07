@@ -38,6 +38,7 @@ class RoyalMail extends StaticProvider
             'parcelforce-express-am' => 'Parcelforce Worldwide Express AM',
             'parcelforce-express-24' => 'Parcelforce Worldwide Express 24',
             'parcelforce-express-48' => 'Parcelforce Worldwide Express 48',
+            'parcelforce-express-48-large' => 'Parcelforce Worldwide Express 48 Large',
 
             'tracked-24' => 'Royal Mail Tracked 24',
             'tracked-48' => 'Royal Mail Tracked 48',
