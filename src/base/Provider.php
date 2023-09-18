@@ -163,8 +163,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         // Config normalization
         if (array_key_exists('boxSizes', $config)) {
-            if (is_string($config['boxSizes'])) {
-                $config['boxSizes'] = Json::decodeIfJson($config['boxSizes']);
+            if (!is_array($config['boxSizes'])) {
+                $config['boxSizes'] = [];
             }
         }
 
