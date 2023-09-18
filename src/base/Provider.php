@@ -161,6 +161,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Populate and override provider settings from the plugin settings and config file
         $config = array_merge($config, $this->getSettings());
 
+        // Config normalization
+        if (array_key_exists('boxSizes', $config)) {
+            if (is_string($config['boxSizes'])) {
+                $config['boxSizes'] = Json::decodeIfJson($config['boxSizes']);
+            }
+        }
+
         parent::__construct($config);
     }
 
