@@ -161,13 +161,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Populate and override provider settings from the plugin settings and config file
         $config = array_merge($config, $this->getSettings());
 
-        // Config normalization
-        if (array_key_exists('boxSizes', $config)) {
-            if (!is_array($config['boxSizes'])) {
-                $config['boxSizes'] = [];
-            }
-        }
-
         parent::__construct($config);
     }
 
@@ -245,11 +238,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
                 $tempProvider->restrictServices = $settings['restrictServices'] ?? true;
                 $tempProvider->packingMethod = $settings['packingMethod'] ?? self::PACKING_SINGLE_BOX;
-                $tempProvider->boxSizes = $settings['boxSizes'] ?? [];
+                $boxSizes = $settings['boxSizes'] ?? [];
 
-                if (!is_array($tempProvider->boxSizes)) {
-                    $tempProvider->boxSizes = [];
+                // Protect against boxSizes being a string
+                if (!is_array($boxSizes)) {
+                    $boxSizes = [];
                 }
+
+                $tempProvider->boxSizes = $boxSizes;
 
                 $shippingMethod = new ShippingMethod();
                 $shippingMethod->handle = $handle;
