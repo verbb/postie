@@ -23,6 +23,21 @@ class PackedBoxes extends Model
     {
         parent::__construct();
 
+        // Populate the price of each packed box, now that we know what items are in what box.
+        // It can't realistically be set when the box is created, as items aren't packed yet, otherwise
+        // we could make the price dynamics based on the box contents.
+        if (is_array($packedBoxList)) {
+            foreach ($packedBoxList as $packedBox) {
+                $boxPrice = 0;
+
+                foreach ($packedBox->getItems() as $boxItem) {
+                    $boxPrice += $boxItem->getItem()->getItemValue();
+                }
+
+                $packedBox->getBox()->setPrice($boxPrice);
+            }
+        }
+
         $this->packedBoxList = $packedBoxList;
         $this->weightUnit = $weightUnit;
         $this->dimensionUnit = $dimensionUnit;
