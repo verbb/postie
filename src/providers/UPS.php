@@ -453,6 +453,7 @@ class UPS extends Provider
                         ],
                     ];
                 }
+                
                 $payload['RateRequest']['Shipment']['Package'][] = $newPackage;
             }
 
