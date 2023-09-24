@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.24 - 2023-09-25
+
+### Changed
+- Updated Royal Mail rates.
+
 ## 2.4.23 - 2023-08-18
 
 ### Added
