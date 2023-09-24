@@ -719,7 +719,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             return false;
         }
 
-
         return new Box([
             'reference' => "Box {$lineItem->id}",
             'outerWidth' => $dimensions['width'],
