@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.3 - 2023-09-25
+
+### Added
+- Add Declared Value Option to UPS. (thanks @bryanredeagle).
+- Add support for packed boxes to have their price correctly depending on their packed items.
+
+### Changed
+- Updated Royal Mail rates.
+
+### Fixed
+- Fix an error when migrating from Craft 3.
+
 ## 3.1.2 - 2023-08-31
 
 ### Fixed
