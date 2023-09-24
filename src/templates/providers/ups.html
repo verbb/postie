@@ -64,3 +64,12 @@
     options: provider.getPickupTypeOptions(),
     warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.pickupType', 'postie'),
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Add Declared Value' | t('postie'),
+    instructions: 'Includes the line item prices as a declared value for insurance.' | t('postie', { name: provider.displayName() }),
+    id: 'addDeclaredValue',
+    name: 'addDeclaredValue',
+    on: provider.settings.addDeclaredValue ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.addDeclaredValue', 'postie'),
+}) }}
