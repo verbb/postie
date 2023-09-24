@@ -425,7 +425,7 @@ class UPS extends Provider
             }
 
             foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-                $payload['RateRequest']['Shipment']['Package'][] = [
+                $newPackage = [
                     'PackagingType' => [
                         'Code' => '02',
                     ],
@@ -444,6 +444,16 @@ class UPS extends Provider
                         'Weight' => (string)round($packedBox['weight'], 2),
                     ],
                 ];
+
+                if ($this->getSetting('addDeclaredValue')) {
+                    $newPackage['PackageServiceOptions'] = [
+                        'DeclaredValue' => [
+                            'CurrencyCode' => $order->currency,
+                            'MonetaryValue' => (string)$packedBox['price'],
+                        ],
+                    ];
+                }
+                $payload['RateRequest']['Shipment']['Package'][] = $newPackage;
             }
 
             $this->beforeSendPayload($this, $payload, $order);
