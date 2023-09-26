@@ -135,6 +135,47 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     // Public Methods
     // =========================================================================
 
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = ['boxSizes', 'validateBoxSizes', 'skipOnEmpty' => false, 'skipOnError' => false];
+
+        return $rules;
+    }
+
+    public function validateBoxSizes($attribute, $params, $validator): void
+    {
+        if ($this->packingMethod === self::PACKING_BOX) {
+            if ($this->$attribute) {
+                $enabledBoxes = ArrayHelper::where($this->$attribute, 'enabled');
+
+                if (!$enabledBoxes) {
+                    $this->addError($attribute, Craft::t('postie', 'You must provide at least one enabled box.'));
+                }
+
+                foreach ($enabledBoxes as $k => $box) {
+                    $name = $box['name'] ?? '';
+                    $boxLength = $box['boxLength'] ?? '';
+                    $boxWidth = $box['boxWidth'] ?? '';
+                    $boxHeight = $box['boxHeight'] ?? '';
+                    $boxWeight = $box['boxWeight'] ?? '';
+                    $maxWeight = $box['maxWeight'] ?? '';
+                    $enabled = $box['enabled'] ?? '';
+                    $default = $box['default'] ?? '';
+
+                    if ($name === '' || $boxLength === '' || $boxWidth === '' || $boxHeight === '' || $boxWeight === '' || $maxWeight === '') {
+                        $this->addError($attribute, Craft::t('postie', 'You must provide values for all fields.'));
+
+                        break;
+                    }
+                }
+            } else {
+                $this->addError($attribute, Craft::t('postie', 'You must provide at least one box.'));
+            }
+        }
+    }
+
     public function getEnabled(bool $parse = true): bool|string
     {
         if ($parse) {
