@@ -160,6 +160,17 @@ class Service extends Component
                     Craft::$app->getCache()->set($cacheKey, $this->_availableShippingMethods, 0);
                 }
             } else {
+                // Output info to the debug panel for clarity. Only print it once, as this is called multiple times
+                if ($this->_availableShippingMethods === null) {
+                    foreach ($cachedShippingMethods as $method) {
+                        Postie::debugPaneLog('{provider}: Fetched rate `{rate}` for service `{service}` from cache.', [
+                            'provider' => $method->provider->name,
+                            'service' => $method->handle,
+                            'rate' => $method->rate,
+                        ]);
+                    }
+                }
+
                 $this->_availableShippingMethods = $cachedShippingMethods;
             }
         }
