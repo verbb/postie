@@ -253,11 +253,17 @@ class Providers extends Component
         $handle = $config['handle'] ?? null;
         $settings = $config['settings'] ?? [];
 
-        // Allow config settings to override source settings
+        // Allow config settings to override provider settings
         if ($handle) {
             if ($configOverrides = $this->getProviderOverrides($handle)) {
                 $config['settings'] = array_merge($settings, $configOverrides);
             }
+        }
+
+        // Backward compatibility for pre Postie 4 where settings could be set in config files
+        // Without this, we'd be unable to migrate properly.
+        if (isset($config['settings']['settings'])) {
+            unset($config['settings']['settings']);
         }
 
         try {
