@@ -9,12 +9,13 @@ The below shows the defaults already used by Postie, so you don't need to add th
 return [
     '*' => [
         'pluginName' => 'Postie',
-        'hasCpSection' => false,
         'enableCaching' => true,
-        'displayDebug' => false,
-        'displayErrors' => false,
-        'manualFetchRates' => false,
-        'fetchRatesPostValue' => 'postie-fetch-rates',
+        'enableRouteCheck' => true,
+        'routesChecks' => [
+            '/{cpTrigger}/commerce/orders/\d+',
+            '/checkout/shipping',
+            '/shop/checkout/shipping',
+        ],
         'providers' => [],
     ]
 ];
@@ -22,36 +23,25 @@ return [
 
 ## Configuration options
 - `pluginName` - If you wish to customise the plugin name.
-- `hasCpSection` - Whether to have the plugin pages appear on the main CP sidebar menu.
-- `applyFreeShipping` - Whether to apply free shipping if all items in the cart have been marked with "Free Shipping".
 - `enableCaching` - Whether to enable intelligent caching when fetching rates.
-- `displayDebug` - Whether to display debugging when fetching rates.
-- `displayErrors` - Whether to display errors when fetching rates.
-- `manualFetchRates` - Whether to fetch rates manually. Refer to [Manually Fetching Rates](docs:setup-configuration/manually-fetching-rates).
-- `fetchRatesPostValue` - Specify a POST param value for manually fetching rates. Refer to [Manually Fetching Rates](docs:setup-configuration/manually-fetching-rates).
+- `enableRouteCheck` - Whether to enable route-checking to protect fetching live rates unnecessarily.
+- `routesChecks` - With `enableRouteCheck` enabled, only these routes will trigger fetching rates. Supports Regex and `{cpTrigger}`.
 - `providers` - A collection of options for each provider.
 
 ### Providers
-Supply your client configurations as per the below. Must be keyed with the handle for the provider (camel-cased name).
+Supply your client configurations as per the below. Must be keyed with the handle for the provider.
 
 ```php
 'providers' => [
     'australiaPost' => [
         'name' => 'AusPost',
         'enabled' => true,
+        'isProduction' => false,
+        'apiKey' => '•••••••••••••••••••••••••••••',
 
-        // API Settings
-        'settings'   => [
-            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        ],
-
-        // Mark-Up
+        // Markup
         'markUpRate' => '10',
         'markUpBase' => 'value',
-
-        // Units
-        'weightUnit' => 'g',
-        'dimensionUnit' => 'cm',
 
         // Packing method
         'packingMethod' => 'boxPacking',
@@ -64,49 +54,32 @@ Supply your client configurations as per the below. Must be keyed with the handl
             'AUS_PARCEL_REGULAR_SATCHEL_500G' => 'Parcel Post Small Satchel',
         ],
     ],
-    'fedEx' => [
-        'settings' => [
-            'accountNumber' => 'xxxxxxxxxxxxx',
-            'meterNumber' => 'xxxxxxxxxxxxx',
-            'key' => 'xxxxxxxxxxxxxxxxxxxxx',
-            'password' => 'xxxxxxxxxxxxxxxxxxxxx',
-            'useTestEndpoint' => true,
-        ],
-    ],
-    'usps' => [
-        'settings' => [
-            'username' => 'xxxxxxxxxxxxx',
-        ],
-    ],
-    'ups' => [
-        'settings' => [
-            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxx',
-            'testApiKey' => 'xxxxxxxxxxxxxxxxxxxxx',
-            'username' => 'xxxxxxxxxxxxx',
-            'password' => 'xxxxxxxxxxxxx$',
-        ],
-    ],
-    'canadaPost'  => [
-        'settings' => [
-            'customerNumber' => 'xxxxxxxxxxxxx',
-            'username' => 'xxxxxxxxxxxxxxxxxxxxx',
-            'password' => 'xxxxxxxxxxxxxxxxxxxxx',
-        ],
-    ],
-    'fastway'  => [
-        'settings' => [
-            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        ],
-    ],
 ]
 ```
 
 - `name` - What you wish to call this provider.
 - `enabled` - Whether this provider is enabled.
-- `settings` - Depending on the provider, this will be an array of API settings.
+- `isProduction` - Whether this provider should make calls to the Production API (some providers have testing and production APIs, but not all).
 - `markUpRate` - If specifying a markup amount, provide it here.
 - `markUpBase` - What the markup rate should be. Either `percentage` or `value`.
-- `weightUnit` - What weight unit should rate requests be sent to the provider. Each provider varies, but are typically `g`, `lb`, `kg`.
-- `dimensionUnit` - What dimension unit should rate requests be sent to the provider. Each provider varies, but are typically `mm`, `cm`, `m`, `ft`, `in`.
 - `packingMethod` - The packing method for box-packing calculation. Either `perItem`, `boxPacking` or `singleBox`.
 - `services` - A list of all enabled services, keyed by their service handle, and value of what you'd like to call it. Consult each providers `getServiceList()` function for options.
+
+#### Services
+You can also expand the `services` setting to include additional information.
+
+```php
+'services' => [
+    'AUS_PARCEL_EXPRESS' => [
+        'enabled' => true,
+        'name' => 'Express Post (1-2 Days)',
+        'shippingCategories' => [
+            4 => [
+                'condition' => 'disallow',
+            ],
+        ],
+    ],
+],
+```
+
+Note that the array index `4` in this case refers to your Shipping Category ID, not just the array index.

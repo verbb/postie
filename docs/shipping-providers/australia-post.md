@@ -1,74 +1,27 @@
 # Australia Post
 In order to use Australia Post, you'll need to ensure you are using a valid Australian address as your store location. You'll also need to ensure your Craft Commerce default currency is set to AUD.
 
-## Connect to the Australia Post API
+## Support
+Australia Post supports the following APIs:
+- Rates
+- Tracking
+- Labels
+
+## API Credentials
+In order to use Australia Post, you'll need to connect to their API. There are two different API's to pick from, depending on your requirements.
+
+### Postage Assessment Calculator (Rates only)
+If you want to just fetch rates for shipments, you can use the Postage Assessment Calculator (PAC) API.
+
 1. Go to <a href="https://developers.auspost.com.au/apis/pacpcs-registration" target="_blank">Australia Post Developers website</a> and register for an API Key.
-1. Copy the **API Key** from Australia Post and paste in the **API Key** field in Postie.
+1. Use the **API Key** from Australia Post and paste in the **API Key** field in Postie.
 
-## Services
-The below service are available with Australia Post for domestic and international customer destination addresses.
+### Shipping and Tracking (All)
+A more involved API that handles all features. You will be required to have an Australia Post account.
 
-- Domestic (Parcel)
-    - Parcel Post
-    - Parcel Post Small Satchel
-    - Parcel Post Small Satchel
-    - Parcel Post Small Satchel
-    - Express Post
-    - Express Post Small Satchel
-    - Express Post Medium (3Kg) Satchel
-    - Express Post Large (5Kg) Satchel
-    - Courier Post
-    - Courier Post Assessed Medium Satchel
-- Domestic (Letter)
-    - Letter Regular Small
-    - Letter Regular Medium
-    - Letter Regular Large
-    - Letter Regular Large (125g)
-    - Letter Regular Large (250g)
-    - Letter Regular Large (500g)
-    - Letter Express Small
-    - Letter Express Medium
-    - Letter Express Large
-    - Letter Express Large (125g)
-    - Letter Express Large (250g)
-    - Letter Express Large (500g)
-    - Letter Priority Small
-    - Letter Priority Medium
-    - Letter Priority Large
-    - Letter Priority Large (125g)
-    - Letter Priority Large (250g)
-    - Letter Priority Large (500g)
-- International (Parcel)
-    - International Standard
-    - International Express
-    - International Courier
-    - International Economy Air
-    - International Economy Sea
-- International (Letter)
-    - International Letter DL
-    - International Letter B4
-    - International Letter Express
-    - International Letter Courier
-    - International Letter Air Light
-    - International Letter Air Medium
-    - International Letter Air Heavy
+1. Go to <a href="https://developers.auspost.com.au/apis/st-registration" target="_blank">Australia Post Developers website</a> and register for an API Key.
+1. Provide your Australia Post (eParcel) account number and complete the registration process.
+1. Use the **API Key** from Australia Post and paste in the **API Key** field in Postie.
+1. Use the **Password** from Australia Post and paste in the **Password** field in Postie.
+1. Use the **Account Number** from Australia Post and paste in the **Account Number** field in Postie.
 
-## Configuration
-Add the following code to your configuration file under the `providers` array, as per the below. Note that to disable certain services, simply omit them from the `services` array.
-
-```php
-'providers' => [
-    'australiaPost' => [
-        'name' => 'Australia Post',
-
-        'settings' => [
-            'apiKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        ],
-
-        'services'   => [
-            'AUS_PARCEL_EXPRESS' => 'Express Post',
-            'AUS_PARCEL_REGULAR' => 'Parcel Post',
-        ],
-    ],
-]
-```

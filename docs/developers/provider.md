@@ -1,13 +1,9 @@
 # Provider
-You can register additional shipping providers to post to by registering your class. Then, you'll need to create your provider class to implement the `ProviderInterface`.
-
-:::tip
-If you're not confident in PHP development, but still looking for provider support, [contact us](/contact), and we'd love to add your provider to Postie.
-:::
-
-## The `registerProviderTypes` event
+You can register your own Provider to add support for other carriers, or even extend an existing Provider.
 
 ```php
+use modules\MyProvider;
+
 use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\services\Providers;
 use yii\base\Event;
@@ -17,135 +13,173 @@ Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(R
 });
 ```
 
-## Provider Class
+## Example
+Postie uses the [Shippy](https://github.com/verbb/shippy) package for all provider logic. As such, you should first become familiar with how creating a custom carrier in Shippy works first. Then, you can add support for your Shippy Carrier as a Postie Provider.
+
+For our example, let's use the fictional `Wakanda Post` carrier for the rest of this guide. This provider needs an `apiKey` setting to authenticate with the API. Your provider may have different requirements.
+
+Let's start by creating a very simple Shippy Carrier class. Again, refer to the [Shippy docs](https://github.com/verbb/shippy) for more.
+
+Create the following class in `modules/WakandaPostCarrier.php`.
 
 ```php
-<?php
-namespace myplugin\providers;
+namespace modules;
 
-use verbb\postie\Postie;
-use verbb\postie\base\Provider;
+use verbb\shippy\carriers\AbstractCarrier;
+use verbb\shippy\models\HttpClient;
+use verbb\shippy\models\Rate;
+use verbb\shippy\models\RateResponse;
+use verbb\shippy\models\Request;
+use verbb\shippy\models\Response;
+use verbb\shippy\models\Shipment;
 
-use Craft;
-use craft\helpers\Json;
+use Illuminate\Support\Arr;
 
-use craft\commerce\Plugin as Commerce;
-
-class MyProvider extends Provider
+class WakandaPostCarrier extends AbstractCarrier
 {
-    // Properties
-    // =========================================================================
-
-    public $weightUnit = 'g';
-    public $dimensionUnit = 'cm';
-
-
-    // Public Methods
-    // =========================================================================
-
-    public static function displayName(): string
+    public static function getName(): string
     {
-        return Craft::t('postie', 'My Provider');
+        return 'Wakanda Post';
     }
 
-    public function getSettingsHtml()
+    public static function getWeightUnit(Shipment $shipment): string
     {
-        return Craft::$app->getView()->renderTemplate('plugin-path/provider', ['provider' => $this]);
+        return 'kg';
     }
 
-    public function getIconUrl()
-    {   
-        // Replace with your path, or remove entirely for no icon
-        return Craft::$app->assetManager->getPublishedUrl('@namespace/plugin/resources/dist/img/provider-icon.svg', true);
+    public static function getDimensionUnit(Shipment $shipment): string
+    {
+        return 'cm';
     }
 
-    public function getServiceList(): array
+    public static function getServiceCodes(): array
     {
         return [
-            'SERVICE_HANDLE' => 'Service Name',
-            // ...
+            'PARCEL_REGULAR' => 'Parcel Post',
+            'PARCEL_EXPRESS' => 'Express Post',
         ];
     }
 
-    public function fetchShippingRates($order)
+    protected ?string $apiKey = null;
+
+    public function getApiKey(): ?string
     {
-        // Setup some local, runtime-level caching
-        if ($this->_rates) {
-            return $this->_rates;
+        return $this->apiKey;
+    }
+
+    public function setApiKey(?string $apiKey): WakandaPostCarrier
+    {
+        $this->apiKey = $apiKey;
+        return $this;
+    }
+
+    public function getRates(Shipment $shipment): ?RateResponse
+    {
+        $this->validate('apiKey');
+
+        $payload = [
+            // ... Construct the payload to the sent to the API
+        ];
+
+        // Create a Shippy Rate Request to fetch
+        $request = new Request([
+            'method' => 'POST',
+            'endpoint' => 'rates',
+            'payload' => [
+                'json' => $payload,
+            ],
+        ]);
+
+        // Fetch the raw rates from the API, and parse as JSON
+        $data = $this->fetchRates($request, function(Response $response) {
+            return $response->json();
+        });
+
+        $rates = [];
+
+        // Translate the rate information from the API to Shippt Rates
+        foreach (Arr::get($data, 'services', []) as $service) {
+            $rates[] = new Rate([
+                'carrier' => $this,
+                'response' => $service,
+                'serviceName' => Arr::get($service, 'services_name', ''),
+                'serviceCode' => Arr::get($service, 'services_id', ''),
+                'rate' => Arr::get($service, 'price', 0),
+            ]);
         }
 
-        // Fetch the origin location - to be used to determine where to ship _from_
-        $storeLocation = Commerce::getInstance()->getAddresses()->getStoreLocationAddress();
+        return new RateResponse([
+            'response' => $data,
+            'rates' => $rates,
+        ]);
+    }
 
-        // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order);
-
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
-
-        try {
-
-            //
-            // Implement your fetching rates from the API
-            //
-
-            // Return an array of values, keyed by each available service handle
-            $this->_rates['SERVICE_HANDLE'] = [
-                'amount' => 10.0
-            ];
-            // ...
-
-        } catch (\Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
-        }
-
-        return $this->_rates;
+    public function getHttpClient(): HttpClient
+    {
+        return new HttpClient([
+            'base_uri' => 'https://wakandapost.wk/api/v2/',
+            'headers' => [
+                'API-KEY' => $this->getApiKey(),
+            ],
+        ]);
     }
 }
 ```
 
-## Properties and Methods
+Here, we've created a Shippy Carrier class that uses their (fictional) API endpoint to fetch rates. The logic of this class is up to you to implement the action fetching of the rates.
 
-### public static function displayName()
-This defines the name of your shipping provider.
-
-### public function getSettingsHtml()
-Here you need to define the path and filename to a template file which contains further settings description. If you don't want to provide a description then just create an empty file. You have to place it within the `template` folder of your plugin. This file is where you'll place fields to enter in API settings.
-
-### public function getServiceList()
-This function should return an array of the provided services as a key-value pair.
-
-- `key` - defines the handle of the service. Should be unique. Best practice is to prepend your plugin handle seperated by an underline.
-
-- `value` - defines the name of the service. It should be self explaining to avoid confusion on customer side.
+Next, connect the Shippy Carrier to a new Postie Provider as `modules/WakandaPost.php`
 
 ```php
-return [
-    'MYSHIPPINGPROVIDER_DOMESTIC'      => 'Domestic',
-    'MYSHIPPINGPROVIDER_INTERNATIONAL' => 'International',
-];
+namespace modules;
+
+use verbb\postie\base\Provider;
+use verbb\postie\helpers\TestingHelper;
+
+use Craft;
+use craft\elements\Address;
+use craft\helpers\App;
+use craft\helpers\UrlHelper;
+
+class WakandaPost extends Provider
+{
+    public static function displayName(): string
+    {
+        return Craft::t('postie', 'Wakanda Post');
+    }
+
+    public static function getCarrierClass(): string
+    {
+        return WakandaPostCarrier::class;
+    }
+
+    public ?string $apiKey = null;
+
+    public function getApiKey(): ?string
+    {
+        return App::parseEnv($this->apiKey);
+    }
+
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['apiKey'], 'required', 'when' => function($model) {
+            return $model->enabled;
+        }];
+
+        return $rules;
+    }
+
+    public function getCarrierConfig(): array
+    {
+        $config = parent::getCarrierConfig();
+        $config['apiKey'] = $this->getApiKey();
+
+        return $config;
+    }
+}
 ```
 
-### public function fetchShippingRates($order)
-The `fetchShippingRates` method is the main function in your class. It's where all the _magic_ happens.
-
-#### Parameters
-- `order` - this parameter contains the _Order_ with all relevant order details as address, line items, total dimensions and so on. You will need this information to create the API call.
-
-#### Return
-The `fetchShippingRates` method should return an array of rates, each keyed by their service handle. For example:
-
-```php
-[
-    'MYSHIPPINGPROVIDER_DOMESTIC' => '10.2',
-    'MYSHIPPINGPROVIDER_INTERNATIONAL' => '55.23',
-]
-```
-
-## Logging
-For error catching we scaffolded a try-catch block. Caught errors will be written in the Postie log file. If you want to write errors into your own log file simply replace this log call with your own plugin name.
+You can see the bulk of the logic for fetching rates resides in the `WakandaPostCarrier` class, and the `WakandaPost` class acts as the connector between Postie and Shippy.
 

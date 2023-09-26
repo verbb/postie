@@ -1,49 +1,7 @@
 # Displaying Rates
-There's nothing you need to do to display rates from providers, which means as long as you have the provider enabled, and some shipping methods enabled, they'll appear in checkout.
+Postie hooks into Commerce's `ShippingMethods::EVENT_REGISTER_AVAILABLE_SHIPPING_METHODS` event, ensuring that the rates fetched from providers become Shipping Methods in Commerce that you might be familiar with.
 
-:::tip
-Note that shipping methods will not appear in your control panel under Commerce > Shipping. Refer to [Github issue](https://github.com/craftcms/commerce/issues/730).
-:::
-
-## Template
-You might have something similar to the below in your templates. The below is taken from the default Commerce templates:
-
-```twig
-{% if cart.availableShippingMethodOptions | length %}
-    <form method="POST">
-        <input type="hidden" name="action" value="commerce/cart/update-cart">
-        {{ redirectInput('shop/checkout/payment') }}
-        {{ csrfInput() }}
-
-        {% for handle, method in cart.availableShippingMethodOptions %}
-            <div class="shipping-select">
-                <label>
-
-                    <input type="radio" name="shippingMethodHandle" value="{{ handle }}" {% if handle == cart.shippingMethodHandle %}checked{% endif %} />
-                    <strong>{{ method.name }}</strong>
-
-                    <span class="price">
-                        {{ method.getPrice() | commerceCurrency(cart.currency) }}
-                    </span>
-                </label>
-            </div>
-        {% endfor %}
-
-        <span class="flash">{{ cart.getErrors('shippingMethod')|join }}</span>
-
-        <p><input type="submit" class="button button-primary" value="Select Shipping Method"/></p>
-    </form>
-{% endif %}
-```
-
-Without any further alterations, rates should appear within this loop, alongside any manually-create shipping methods.
-
-:::tip
-Can't see your rates during checkout? Be sure to check the [Troubleshooting guide](docs:get-started/troubleshooting).
-:::
-
-## Rate options
-When fetching rates from providers, Postie not only returns the price amount, but a few other handy options related to the rate. These can be accessed via the shipping method rate. This may be useful to find information about how long a chosen rate may take to ship, etc.
+This means you can loop through all available shipping methods for an order with the default Commerce template. Here's an example that outputs `label` elements for your Commerce shipping methods. This will include any Commerce-defined ones, and any Postie-provided ones.
 
 ```twig
 {% for handle, method in cart.availableShippingMethodOptions %}
@@ -52,17 +10,21 @@ When fetching rates from providers, Postie not only returns the price amount, bu
             <input type="radio" name="shippingMethodHandle" value="{{ handle }}" {% if handle == cart.shippingMethodHandle %}checked{% endif %} />
             <strong>{{ method.name }}</strong>
 
-            {# Get the first shipping rule for this method #}
-            {% set shippingRule = method.getShippingRules()[0] ?? [] %}
-
-            {% if shippingRule %}
-                <code>{{ dump(shippingRule.options) }}</code>
-            {% endif %}
-
-            <span class="price">
-                {{ method.getPrice() | commerceCurrency(cart.currency) }}
-            </span>
+            {{ method.getPrice() | commerceCurrency(cart.currency) }}
         </label>
     </div>
 {% endfor %}
 ```
+
+## Route Check
+One caveat for this approach is that as soon as your cart has a valid address, Commerce will try to provide shipping methods and rules for the customer to choose. What this means for Postie is that this will trigger a request to fetch rates from a provider. This can be from **any** page on your site — which is certainly not ideal!
+
+This can happen if the user is logged in (their address is associated with the current cart), or the user aborts checkout once they have entered a valid address (they may want to explore your shop more). In either scenario, Commerce will tell Postie to fetch live rates.
+
+Instead, we only trigger requests to fetch rates based on the current route. Paired with intelligent caching, we save a lot of requests to providers for fetching rates.
+
+By default Postie will only fetch rates when on the following routes:
+- `/{cpTrigger}/commerce/orders/\d+`
+- `/shop/checkout/shipping`
+
+For this reason, if you have a different URL for your shipping page in your checkout, you'll want to adjust the [configuration](docs:get-started/configuration) settings to include your shipping page. Otherwise, rates won't appear!

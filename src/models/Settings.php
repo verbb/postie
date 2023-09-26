@@ -15,6 +15,7 @@ class Settings extends Model
 
     public array $routesChecks = [
         '/{cpTrigger}/commerce/orders/\d+',
+        '/shop/shipping',
         '/shop/checkout/shipping',
     ];
 
