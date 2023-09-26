@@ -31,8 +31,8 @@ class Sendle extends Provider
     // Properties
     // =========================================================================
 
-    protected ?string $apiKey = null;
-    protected ?string $sendleId = null;
+    public ?string $apiKey = null;
+    public ?string $sendleId = null;
 
     private int $maxDomesticWeight = 25000; // 70lbs
     private float $maxInternationalWeight = 31751.5;
