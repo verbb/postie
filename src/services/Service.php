@@ -41,16 +41,13 @@ class Service extends Component
      */
     public function getShippingMethodsForOrder(Order $order): array
     {
-        $logTarget = (Craft::$app->getLog()->targets['postie'] ?? null);
-
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
+        // Check if this route is enabled to fetch rates on. We're pretty guarded for rate-fetching for good reason.
         if ($settings->enableRouteCheck) {
             if (!$settings->hasMatchedRoute()) {
-                if ($logTarget) {
-                    Postie::debugPaneLog('Route `{route}` did not match required route to fetch rates.', ['route' => Craft::$app->getRequest()->url]);
-                }
+                Postie::debugPaneLog('Route `{route}` did not match required route to fetch rates.', ['route' => Craft::$app->getRequest()->url]);
 
                 return [];
             }
@@ -65,7 +62,7 @@ class Service extends Component
         $storeLocation = Postie::getStoreShippingAddress();
 
         // Set the Shippy logger for consolidated logging with Postie
-        if ($logTarget) {
+        if (($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null))) {
             Shippy::setLogger($logTarget->getLogger());
         }
 
