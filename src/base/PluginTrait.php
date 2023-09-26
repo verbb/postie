@@ -39,6 +39,15 @@ trait PluginTrait
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'postie');
     }
 
+    public static function debugPaneLog(string $message, array $params = []): void
+    {
+        $message = Craft::t('postie', $message, $params);
+
+        if ($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null)) {
+            $logTarget->getLogger()->info($message);
+        }
+    }
+
 
     // Public Methods
     // =========================================================================
