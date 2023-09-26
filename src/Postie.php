@@ -81,6 +81,7 @@ class Postie extends Plugin
         $this->_registerVariables();
         $this->_registerCommerceEventListeners();
         $this->_registerProjectConfigEventListeners();
+        $this->_registerDebugPanels();
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
@@ -187,8 +188,25 @@ class Postie extends Plugin
         });
     }
 
-    private function _registerCommerceEventListeners(): void
+    private function _registerDebugPanels(): void
     {
-        Event::on(ShippingMethods::class, ShippingMethods::EVENT_REGISTER_AVAILABLE_SHIPPING_METHODS, [$this->getService(), 'registerShippingMethods']);
+        Event::on(Application::class, Application::EVENT_BEFORE_REQUEST, static function() {
+            $module = Craft::$app->getModule('debug');
+            $user = Craft::$app->getUser()->getIdentity();
+
+            if (!$module || !$user || !Craft::$app->getConfig()->getGeneral()->devMode) {
+                return;
+            }
+
+            $pref = Craft::$app->getRequest()->getIsCpRequest() ? 'enableDebugToolbarForCp' : 'enableDebugToolbarForSite';
+            if (!$user->getPreference($pref)) {
+                return;
+            }
+
+            $module->panels['postie'] = new PostiePanel([
+                'id' => 'postie',
+                'module' => $module,
+            ]);
+        });
     }
 }
