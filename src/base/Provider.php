@@ -677,4 +677,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         return $packOrderEvent->packedBoxes;
     }
+
+    public function getTestingOriginAddress(): Address
+    {
+        return TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+    }
+
+    public function getTestingDestinationAddress(): Address
+    {
+        return TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
+    }
+
+    public function getTestingPackage(): array
+    {
+        return TestingHelper::getTestPackedBoxes(static::getDimensionUnit(), static::getWeightUnit())[0];
+    }
 }
