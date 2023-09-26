@@ -2,16 +2,14 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\base\Provider;
-use verbb\postie\base\StaticProvider;
-use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\inc\postnl\PostNLRates;
+use verbb\postie\helpers\TestingHelper;
 
 use Craft;
-use craft\helpers\ArrayHelper;
+use craft\elements\Address;
 
-use craft\commerce\Plugin as Commerce;
+use verbb\shippy\carriers\PostNL as PostNLCarrier;
 
-class PostNL extends StaticProvider
+class PostNL extends Provider
 {
     // Static Methods
     // =========================================================================
@@ -21,101 +19,19 @@ class PostNL extends StaticProvider
         return Craft::t('postie', 'PostNL');
     }
 
-    public static function getServiceList(): array
+    public static function getCarrierClass(): string
     {
-        return [
-            'brief' => 'Brief',
-            'brievenbuspakje' => 'Brievenbuspakje',
-            'pakket-no-track-and-trace' => 'Pakket no Track & Trace',
-            'pakket' => 'Pakket',
-            'aangetekend' => 'Aangetekend',
-            'verzekerservice' => 'Verzekerservice',
-            'betaalservice' => 'Betaalservice',
-        ];
+        return PostNLCarrier::class;
     }
-    
 
-    // Properties
-    // =========================================================================
-
-    public ?string $handle = 'postNl';
-    public string $dimensionUnit = 'mm';
-    public string $weightUnit = 'g';
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function fetchShippingRates($order): ?array
+    public function getTestingOriginAddress(): Address
     {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
-        }
+        return TestingHelper::getTestAddress('NO', ['locality' => 'Oslo']);
+    }
 
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        //
-        // TESTING
-        //
-        // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('NL', ['locality' => 'Rotterdam']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('NL', ['locality' => 'Amsterdam'], $order);
-
-        // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
-        //
-        // 
-        //
-
-        // Get all enabled services
-        if ($this->restrictServices) {
-            $services = ArrayHelper::where($this->services, 'enabled', true);
-        } else {
-            $services = self::getServiceList();
-        }
-
-        $allRates = [];
-
-        foreach ($services as $handle => $label) {
-            $countryCode = $order->shippingAddress->countryCode ?? '';
-
-            // Rates contain boxes and prices - everything available for this region
-            $rateAndBoxes = PostNLRates::getRates($countryCode, $handle);
-
-            // Determine the best packages, and calculate the total price
-            $rate = $this->getPackagesAndRates($rateAndBoxes, $handle, $order);
-
-            if ($rate) {
-                $allRates[] = $rate;
-            }
-        }
-
-        // Hopefully we have our rates now, bundle them up!
-        if ($allRates) {
-            foreach ($allRates as $service) {
-                $this->_rates[$service['service']] = [
-                    'amount' => (float)($service['price'] ?? 0),
-                    'options' => $service,
-                ];
-            }
-        } else {
-            Provider::log($this, Craft::t('postie', 'No services found.'));
-        }
-
-        // Allow rate modification via events
-        $modifyRatesEvent = new ModifyRatesEvent([
-            'rates' => $this->_rates,
-            'order' => $order,
-        ]);
-
-        if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-            $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-        }
-
-        $this->_rates = $modifyRatesEvent->rates;
-
-        return $this->_rates;
+    public function getTestingDestinationAddress(): Address
+    {
+        return TestingHelper::getTestAddress('NO', ['locality' => 'Bergen']);
     }
 
 }

@@ -1,36 +1,15 @@
 <?php
 namespace verbb\postie\providers;
 
+use verbb\postie\Postie;
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\helpers\TestingHelper;
-use verbb\postie\models\ShippingMethod;
 
 use Craft;
-use craft\helpers\Json;
+use craft\helpers\App;
 
-use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Order;
 
-use Ups\Rate;
-use Ups\Entity\Address;
-use Ups\Entity\DeliveryConfirmation;
-use Ups\Entity\Dimensions;
-use Ups\Entity\InsuredValue;
-use Ups\Entity\Package;
-use Ups\Entity\PackagingType;
-use Ups\Entity\PackageServiceOptions;
-use Ups\Entity\PaymentInformation;
-use Ups\Entity\PickupType;
-use Ups\Entity\RateInformation;
-use Ups\Entity\RateRequest;
-use Ups\Entity\RateResponse;
-use Ups\Entity\Service;
-use Ups\Entity\ShipFrom;
-use Ups\Entity\Shipment;
-use Ups\Entity\UnitOfMeasurement;
-use Ups\Exception\InvalidResponseException;
-
-use Throwable;
+use verbb\shippy\carriers\UPS as UPSCarrier;
 
 class UPS extends Provider
 {
@@ -40,6 +19,11 @@ class UPS extends Provider
     public static function displayName(): string
     {
         return Craft::t('postie', 'UPS');
+    }
+
+    public static function getCarrierClass(): string
+    {
+        return UPSCarrier::class;
     }
 
     public static function defineDefaultBoxes(): array
@@ -120,114 +104,24 @@ class UPS extends Provider
 
     public static function getServiceList(): array
     {
-        return [
-            // Domestic
-            'S_AIR_1DAYEARLYAM' => 'UPS Next Day Air Early AM',
-            'S_AIR_1DAY' => 'UPS Next Day Air',
-            'S_AIR_1DAYSAVER' => 'Next Day Air Saver',
-            'S_AIR_2DAYAM' => 'UPS Second Day Air AM',
-            'S_AIR_2DAY' => 'UPS Second Day Air',
-            'S_3DAYSELECT' => 'UPS Three-Day Select',
-            'S_GROUND' => 'UPS Ground',
-            'S_SURE_POST' => 'UPS Sure Post',
+        $storeLocation = Postie::getStoreShippingAddress();
 
-            // International
-            'S_STANDARD' => 'UPS Standard',
-            'S_WW_EXPRESS' => 'UPS Worldwide Express',
-            'S_WW_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'S_WW_EXPEDITED' => 'UPS Worldwide Expedited',
-            'S_SAVER' => 'UPS Saver',
-            'S_ACCESS_POINT' => 'UPS Access Point Economy',
+        $allServices = parent::getServiceList();
+        $services = $allServices[$storeLocation->countryCode] ?? $allServices['international'];
 
-            'S_UPSTODAY_STANDARD' => 'UPS Today Standard',
-            'S_UPSTODAY_DEDICATEDCOURIER' => 'UPS Today Dedicated Courier',
-            'S_UPSTODAY_INTERCITY' => 'UPS Today Intercity',
-            'S_UPSTODAY_EXPRESS' => 'UPS Today Express',
-            'S_UPSTODAY_EXPRESSSAVER' => 'UPS Today Express Saver',
-            'S_UPSWW_EXPRESSFREIGHT' => 'UPS Worldwide Express Freight',
-
-            // Time in Transit Response Service Codes: United States Domestic Shipments
-            'TT_S_US_AIR_1DAYAM' => 'UPS Next Day Air Early',
-            'TT_S_US_AIR_1DAY' => 'UPS Next Day Air',
-            'TT_S_US_AIR_SAVER' => 'UPS Next Day Air Saver',
-            'TT_S_US_AIR_2DAYAM' => 'UPS Second Day Air A.M.',
-            'TT_S_US_AIR_2DAY' => 'UPS Second Day Air',
-            'TT_S_US_3DAYSELECT' => 'UPS Three-Day Select',
-            'TT_S_US_GROUND' => 'UPS Ground',
-            'TT_S_US_AIR_1DAYSATAM' => 'UPS Next Day Air Early (Saturday Delivery)',
-            'TT_S_US_AIR_1DAYSAT' => 'UPS Next Day Air (Saturday Delivery)',
-            'TT_S_US_AIR_2DAYSAT' => 'UPS Second Day Air (Saturday Delivery)',
-
-            // Time in Transit Response Service Codes: Other Shipments Originating in US
-            'TT_S_US_INTL_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'TT_S_US_INTL_EXPRESS' => 'UPS Worldwide Express',
-            'TT_S_US_INTL_SAVER' => 'UPS Worldwide Express Saver',
-            'TT_S_US_INTL_STANDARD' => 'UPS Standard',
-            'TT_S_US_INTL_EXPEDITED' => 'UPS Worldwide Expedited',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is WITHIN the Origin Country
-            'TT_S_EU_EXPRESSPLUS' => 'UPS Express Plus',
-            'TT_S_EU_EXPRESS' => 'UPS Express',
-            'TT_S_EU_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_STANDARD' => 'UPS Standard',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is Another EU Country
-            'TT_S_EU_TO_EU_EXPRESSPLUS' => 'UPS Express Plus',
-            'TT_S_EU_TO_EU_EXPRESS' => 'UPS Express',
-            'TT_S_EU_TO_EU_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_TO_EU_STANDARD' => 'UPS Standard',
-
-            // Time in Transit Response Service Codes: Shipments Originating in the EU
-            // Destination is Outside the EU
-            'TT_S_EU_TO_OTHER_EXPRESS_NA1' => 'UPS Express NA 1',
-            'TT_S_EU_TO_OTHER_EXPRESSPLUS' => 'UPS Worldwide Express Plus',
-            'TT_S_EU_TO_OTHER_EXPRESS' => 'UPS Express',
-            'TT_S_EU_TO_OTHER_SAVER' => 'UPS Express Saver',
-            'TT_S_EU_TO_OTHER_EXPEDITED' => 'UPS Expedited',
-            'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
-        ];
+        return $services;
     }
     
 
     // Properties
     // =========================================================================
 
-    public ?string $handle = 'ups';
-    public string $dimensionUnit = 'in';
-    public string $weightUnit = 'lb';
-
-    private array $euCountries = [
-        'AT' => 'Austria',
-        'BE' => 'Belgium',
-        'BG' => 'Bulgaria',
-        'CY' => 'Cyprus',
-        'CZ' => 'Czech Republic',
-        'DE' => 'Germany',
-        'DK' => 'Denmark',
-        'EE' => 'Estonia',
-        'ES' => 'Spain',
-        'FI' => 'Finland',
-        'FR' => 'France',
-        'GB' => 'United Kingdom',
-        'GR' => 'Greece',
-        'HU' => 'Hungary',
-        'HR' => 'Croatia',
-        'IE' => 'Ireland, Republic of (EIRE)',
-        'IT' => 'Italy',
-        'LT' => 'Lithuania',
-        'LU' => 'Luxembourg',
-        'LV' => 'Latvia',
-        'MT' => 'Malta',
-        'NL' => 'Netherlands',
-        'PL' => 'Poland',
-        'PT' => 'Portugal',
-        'RO' => 'Romania',
-        'SE' => 'Sweden',
-        'SI' => 'Slovenia',
-        'SK' => 'Slovakia',
-    ];
+    public ?string $clientId = null;
+    public ?string $clientSecret = null;
+    public ?string $accountNumber = null;
+    public ?string $requireSignature = null;
+    public ?string $pickupType = null;
+    public bool $includeInsurance = false;
 
     private float $maxWeight = 68038.9; // 150lbs
 
@@ -244,6 +138,45 @@ class UPS extends Provider
     // Public Methods
     // =========================================================================
 
+    public function getClientId(): ?string
+    {
+        return App::parseEnv($this->clientId);
+    }
+
+    public function getClientSecret(): ?string
+    {
+        return App::parseEnv($this->clientSecret);
+    }
+
+    public function getAccountNumber(): ?string
+    {
+        return App::parseEnv($this->accountNumber);
+    }
+
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['clientId', 'clientSecret'], 'required', 'when' => function($model) {
+            return $model->enabled;
+        }];
+
+        return $rules;
+    }
+
+    public function getCarrierConfig(): array
+    {
+        $config = parent::getCarrierConfig();
+        $config['clientId'] = $this->getClientId();
+        $config['clientSecret'] = $this->getClientSecret();
+        $config['accountNumber'] = $this->getAccountNumber();
+        $config['requireSignature'] = $this->requireSignature;
+        $config['pickupType'] = $this->pickupType;
+        $config['includeInsurance'] = $this->includeInsurance;
+
+        return $config;
+    }
+
     public function getPickupTypeOptions(): array
     {
         $options = [];
@@ -255,723 +188,8 @@ class UPS extends Provider
         return $options;
     }
 
-    public function getFreightPackingTypeOptions(): array
-    {
-        return [
-            'BAG' => 'Bag',
-            'BAL' => 'Bale',
-            'BAR' => 'Barrel',
-            'BDL' => 'Bundle',
-            'BIN' => 'Bin',
-            'BOX' => 'Box',
-            'BSK' => 'Basket',
-            'BUN' => 'Bunch',
-            'CAB' => 'Cabinet',
-            'CAN' => 'Can',
-            'CAR' => 'Carrier',
-            'CAS' => 'Case',
-            'CBY' => 'CarBoy',
-            'CON' => 'Container',
-            'CRT' => 'Crate',
-            'CSK' => 'Cask',
-            'CTN' => 'Carton',
-            'CYL' => 'Cylinder',
-            'DRM' => 'Drum',
-            'LOO' => 'Loose',
-            'OTH' => 'Other',
-            'PAL' => 'Pail',
-            'PCS' => 'Pieces',
-            'PKG' => 'Package',
-            'PLN' => 'Pipe Line',
-            'PLT' => 'Pallet',
-            'RCK' => 'Rack',
-            'REL' => 'Reel',
-            'ROL' => 'Roll',
-            'SKD' => 'Skid',
-            'SPL' => 'Spool',
-            'TBE' => 'Tube',
-            'TNK' => 'Tank',
-            'UNT' => 'Unit',
-            'VPK' => 'Van Pack',
-            'WRP' => 'Wrapped',
-        ];
-    }
-
-    public function getFreightClassOptions(): array
-    {
-        return [
-            '50' => '50',
-            '55' => '55',
-            '60' => '60',
-            '65' => '65',
-            '70' => '70',
-            '77.5' => '77.5',
-            '85' => '85',
-            '92.5' => '92.5',
-            '100' => '100',
-            '110' => '110',
-            '125' => '125',
-            '150' => '150',
-            '175' => '175',
-            '200' => '200',
-            '250' => '250',
-            '300' => '300',
-            '400' => '400',
-            '500' => '500',
-        ];
-    }
-
-    public function getWeightUnitOptions(): array
-    {
-        return [
-            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
-            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
-        ];
-    }
-
-    public function getDimensionUnitOptions(): array
-    {
-        return [
-            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
-            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
-        ];
-    }
-
-    public function getMaxPackageWeight($order): ?int
+    public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
-    }
-
-    public function fetchShippingRates($order): ?array
-    {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
-        }
-
-        $client = $this->_getClient();
-
-        if (!$client) {
-            Provider::error($this, 'Unable to communicate with API.');
-            return null;
-        }
-
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order);
-
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
-
-        //
-        // TESTING
-        //
-        // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View'], $order);
-
-        // Canada
-        // $storeLocation = TestingHelper::getTestAddress('CA', ['locality' => 'Toronto']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['locality' => 'Montreal'], $order);
-
-        // EU
-        // $storeLocation = TestingHelper::getTestAddress('GB', ['locality' => 'London']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('GB', ['locality' => 'Dunchurch'], $order);
-        //
-        // TESTING
-        //
-
-
-        // Check for using freight, we have to roll our own solution as `gabrielbull/php-ups-api`
-        // doesn't support LTL rates. One of the reasons TODO our own client libraries.
-        if ($this->getSetting('enableFreight')) {
-            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-                return $this->fetchFreightRates($storeLocation, $packedBox, $order);
-            }
-
-            return [];
-        }
-
-        try {
-            $shipment = new Shipment();
-
-            $shipFromAddress = new Address();
-            $shipFromAddress->setPostalCode($storeLocation->postalCode);
-
-            // UPS can't handle 3-character states. Ignoring it is valid for international order
-            // But states are also required for US and Canada
-            $allowedZipCodeCountries = ['US', 'CA'];
-
-            if ($storeLocation->countryCode) {
-                $countryCode = $storeLocation->countryCode ?? '';
-                $shipFromAddress->setCountryCode($countryCode);
-
-                if (in_array($countryCode, $allowedZipCodeCountries)) {
-                    $administrativeArea = $storeLocation->administrativeArea ?? '';
-
-                    $shipFromAddress->setStateProvinceCode($administrativeArea);
-                }
-            }
-
-            $shipFrom = new ShipFrom();
-            $shipFrom->setAddress($shipFromAddress);
-
-            $shipment->setShipFrom($shipFrom);
-
-            $shipTo = $shipment->getShipTo();
-            $shipToAddress = $shipTo->getAddress();
-            $shipToAddress->setPostalCode($order->shippingAddress->postalCode);
-
-            if ($this->getSetting('residentialAddress')) {
-                $shipToAddress->setResidentialAddressIndicator(true);
-            }
-
-            if ($order->shippingAddress->countryCode) {
-                $countryCode = $order->shippingAddress->countryCode ?? '';
-                $shipToAddress->setCountryCode($countryCode);
-
-                if (in_array($countryCode, $allowedZipCodeCountries)) {
-                    $administrativeArea = $order->shippingAddress->administrativeArea ?? '';
-
-                    $shipToAddress->setStateProvinceCode($administrativeArea);
-                }
-            }
-
-            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-                $package = new Package();
-                $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-                $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
-
-                if ($requireSignature = $this->getSetting('requireSignature')) {
-                    $deliveryConfirmation = new DeliveryConfirmation();
-
-                    if ($requireSignature === 'required') {
-                        $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_SIGNATURE_REQUIRED);
-                    } else if ($requireSignature === 'adult') {
-                        $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_ADULT_SIGNATURE_REQUIRED);
-                    }
-
-                    $package->getPackageServiceOptions()->setDeliveryConfirmation($deliveryConfirmation);
-                }
-
-                $weightUnit = new UnitOfMeasurement;
-                $weightUnit->setCode($this->_getUnitOfMeasurement('weight'));
-                $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
-
-                $packageDimensions = new Dimensions();
-                $packageDimensions->setHeight(round($packedBox['height'], 2));
-                $packageDimensions->setWidth(round($packedBox['width'], 2));
-                $packageDimensions->setLength(round($packedBox['length'], 2));
-
-                $unit = new UnitOfMeasurement;
-                $unit->setCode($this->_getUnitOfMeasurement('dimension'));
-
-                $packageDimensions->setUnitOfMeasurement($unit);
-                $package->setDimensions($packageDimensions);
-
-                if ($this->getSetting('includeInsurance')) {
-                    $insuredValue = new InsuredValue();
-                    $insuredValue->setMonetaryValue($packedBoxes->getTotalPrice());
-                    $insuredValue->setCurrencyCode($order->paymentCurrency);
-
-                    $packageServiceOptions = new PackageServiceOptions();
-                    $packageServiceOptions->setInsuredValue($insuredValue);
-
-                    $package->setPackageServiceOptions($packageServiceOptions);
-                }
-
-                $shipment->addPackage($package);
-            }
-
-            // Check for negotiated rates
-            if ($this->getSetting('negotiatedRates') && $accountNumber = $this->getSetting('accountNumber')) {
-                $rateInformation = new RateInformation;
-                $rateInformation->setNegotiatedRatesIndicator(1);
-                $shipment->setRateInformation($rateInformation);
-
-                $shipper = $shipment->getShipper();
-                $shipper->setShipperNumber($accountNumber);
-                $shipment->setPaymentInformation(new PaymentInformation('prepaid', (object)['AccountNumber' => $accountNumber]));
-
-                $shipper->setAddress($shipFromAddress);
-            }
-
-            $rates = new RateResponse();
-
-            $rateRequest = new RateRequest();
-            $rateRequest->setShipment($shipment);
-
-            $pickupCode = $this->getSetting('pickupType') ?? '01';
-
-            $pickupType = new PickupType();
-            $pickupType->setCode($pickupCode);
-            $rateRequest->setPickupType($pickupType);
-
-            $this->beforeSendPayload($this, $rateRequest, $order);
-
-            // Perform the request
-            $rates = $this->_client->shopRates($rateRequest);
-
-            // Check for Sure Post rates - must be a separate request
-            $surePost = $this->services['S_SURE_POST']->enabled ?? false;
-
-            if ($surePost) {
-                $service = new Service;
-                $service->setCode(Service::S_SURE_POST);
-                $service->setDescription($service->getName());
-                $shipment->setService($service);
-
-                // If SurePost shipping dimensions are exceeded, an exception is thrown. We'll catch it, log it,
-                // and make sure SurePost is not a valid shipping method in this situation.
-                $surePostRate = null;
-                try {
-                    $surePostRate = $this->_client->getRate($shipment);
-                } catch (InvalidResponseException $e) {
-                    Provider::error($this, 'SurePost API error: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
-                }
-
-                // Attach Sure Post rates into any other rates
-                if ($surePostRate) {
-                    if (!isset($rates->RatedShipment) || !is_array($rates->RatedShipment)) {
-                        $rates->RatedShipment = [];
-                    }
-
-                    $rates->RatedShipment = array_merge($rates->RatedShipment, $surePostRate->RatedShipment);
-                }
-            }
-
-            foreach ($rates->RatedShipment as $rate) {
-                $serviceHandle = $this->_getServiceHandle($rate->Service->getCode(), $storeLocation, $order->shippingAddress);
-
-                if (!$serviceHandle) {
-                    Provider::error($this, 'Unable to find matching service handle for: `' . $rate->Service->getName() . ':' . '`.');
-
-                    continue;
-                }
-
-                $rateInfo = [
-                    'amount' => $rate->TotalCharges->MonetaryValue ?? '',
-                    'options' => [
-                        'guaranteedDaysToDelivery' => $rate->GuaranteedDaysToDelivery ?? '',
-                        'scheduledDeliveryTime' => $rate->ScheduledDeliveryTime ?? '',
-                        'rateShipmentWarning' => $rate->RateShipmentWarning ?? '',
-                        'surCharges' => $rate->SurCharges ?? '',
-                        'timeInTransit' => $rate->TimeInTransit ?? '',
-                    ],
-                ];
-
-                // If we're using negotiated rates, return that, not the normal values
-                $negotiatedRates = $rate->NegotiatedRates ?? '';
-
-                if ($negotiatedRates) {
-                    $rateInfo['amount'] = $rate->NegotiatedRates->NetSummaryCharges->GrandTotal->MonetaryValue ?? '';
-                }
-
-                $this->_rates[$serviceHandle] = $rateInfo;
-            }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $rates,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
-        }
-
-        return $this->_rates;
-    }
-
-    public function fetchFreightRates($storeLocation, $packedBox, $order): ?array
-    {
-        try {
-            $accountNumber = $this->getSetting('accountNumber');
-            $freightClass = $this->getSetting('freightClass');
-            $freightPackingType = $this->getSetting('freightPackingType');
-
-            // UPS Freight LTL
-            $freightService = '308';
-
-            $shipFrom = [];
-            $shipFrom['Name'] = $this->getSetting('freightShipperName');
-            $shipFrom['EMailAddress'] = $this->getSetting('freightShipperEmail');
-            $shipFrom['Address']['AddressLine'] = $storeLocation->addressLine1;
-            $shipFrom['Address']['City'] = $storeLocation->locality;
-            $shipFrom['Address']['PostalCode'] = $storeLocation->postalCode;
-
-            // UPS can't handle 3-character states. Ignoring it is valid for international order
-            // But states are also required for US and Canada
-            $allowedZipCodeCountries = ['US', 'CA'];
-
-            if ($storeLocation->countryCode) {
-                $countryCode = $storeLocation->countryCode ?? '';
-                $shipFrom['Address']['CountryCode'] = $countryCode;
-
-                if (in_array($countryCode, $allowedZipCodeCountries)) {
-                    $administrativeArea = $storeLocation->administrativeArea ?? '';
-
-                    $shipFrom['Address']['StateProvinceCode'] = $administrativeArea;
-                }
-            }
-
-            $shipTo = [];
-            $shipTo['Address']['City'] = $order->shippingAddress->locality;
-            $shipTo['Address']['PostalCode'] = $order->shippingAddress->postalCode;
-
-            if ($order->shippingAddress->countryCode) {
-                $countryCode = $order->shippingAddress->countryCode ?? '';
-                $shipTo['Address']['CountryCode'] = $countryCode;
-
-                if (in_array($countryCode, $allowedZipCodeCountries)) {
-                    $administrativeArea = $order->shippingAddress->administrativeArea ?? '';
-
-                    $shipTo['Address']['StateProvinceCode'] = $administrativeArea;
-                }
-            }
-
-            $payload = [
-                'FreightRateRequest' => [
-                    'ShipperNumber' => $accountNumber,
-                    'ShipFrom' => $shipFrom,
-                    'ShipTo' => $shipTo,
-                    'PaymentInformation' => [
-                        'Payer' => array_merge($shipFrom, [
-                            'ShipperNumber' => $accountNumber,
-                        ]),
-                        'ShipmentBillingOption' => [
-                            'Code' => '10',
-                        ],
-                    ],
-                    'Service' => [
-                        'Code' => $freightService,
-                    ],
-                    'Commodity' => [
-                        'Description' => 'FRS-Freight',
-                        'Weight' => [
-                            'Value' => (string)round((string)$packedBox['weight'], 2),
-                            'UnitOfMeasurement' => [
-                                'Code' => $this->_getUnitOfMeasurement('weight'),
-                            ],
-                        ],
-                        'Dimensions' => [
-                            // UPS is particular about the type - must be a string not an int/float
-                            'Length' => (string)round((string)$packedBox['length'], 2),
-                            'Width' => (string)round((string)$packedBox['width'], 2),
-                            'Height' => (string)round((string)$packedBox['height'], 2),
-                            'UnitOfMeasurement' => [
-                                'Code' => $this->_getUnitOfMeasurement('dimension'),
-                            ],
-                        ],
-                        'FreightClass' => $freightClass,
-                        'NumberOfPieces' => '1',
-                        'PackagingType' => [
-                            'Code' => $freightPackingType,
-                        ],
-                    ],
-                    'AlternateRateOptions' => [
-                        'Code' => '3',
-                    ],
-                    'PickupRequest' => [
-                        'PickupDate' => date('Ymd'),
-                    ],
-                    'GFPOptions' => [
-                        'GPFAccesorialRateIndicator' => '',
-                    ],
-                    'TimeInTransitIndicator' => '',
-                ],
-            ];
-
-            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
-
-            if ($useTestEndpoint) {
-                $accessKey = $this->getSetting('testApiKey');
-                $endpoint = 'https://wwwcie.ups.com/ship/v1/freight/rating/ground';
-            } else {
-                $accessKey = $this->getSetting('apiKey');
-                $endpoint = 'https://onlinetools.ups.com/ship/v1/freight/rating/ground';
-            }
-
-            $client = Craft::createGuzzleClient([
-                'headers' => [
-                    'AccessLicenseNumber' => $accessKey,
-                    'content-type' => 'application/json',
-                    'password' => $this->getSetting('password'),
-                    'username' => $this->getSetting('username'),
-                ],
-            ]);
-
-            $response = $client->request('POST', $endpoint, ['json' => $payload]);
-            $json = Json::decode((string)$response->getBody());
-
-            $handle = 'freight-' . $freightClass;
-
-            $this->_rates[$handle] = [
-                'amount' => $json['FreightRateResponse']['TotalShipmentCharge']['MonetaryValue'] ?? '',
-            ];
-
-            // Check for negotiates freight rates
-            $freightAltRates = $json['FreightRateResponse']['AlternateRatesResponse']['Rate'] ?? [];
-
-            if ($freightAltRates) {
-                $freightAltDetailRates = [];
-
-                foreach ($freightAltRates as $freightAltRate) {
-                    $freightAltDetailRates[] = $freightAltRate['Factor']['Value'] ?? null;
-                }
-
-                $freightAltRate = min(array_filter($freightAltDetailRates));
-
-                if ($freightAltRate) {
-                    $this->_rates[$handle]['amount'] = $freightAltRate;
-                }
-            }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $json,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
-
-            // Because this isn't known in advanced, and only ever one rate, create the service dynamically
-            $shippingMethod = new ShippingMethod();
-            $shippingMethod->handle = $handle;
-            $shippingMethod->name = 'UPS Freight LTL';
-            $shippingMethod->enabled = true;
-
-            // Create a temporary provider instance, just to pass to the shipping method
-            // We need to be careful here so as not to cause an infinite loop.
-            $tempProvider = clone $this;
-            $tempProvider->settings = [];
-            $tempProvider->services = [];
-            $tempProvider->enabled = $this->enabled;
-
-            $shippingMethod->provider = $tempProvider;
-
-            $this->services[$handle] = $shippingMethod;
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
-        }
-
-        return $this->_rates;
-    }
-
-    protected function fetchConnection(): bool
-    {
-        try {
-            // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
-
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
-            $packedBox = $packedBoxes[0];
-
-            // Create a test payload
-            $shipment = new Shipment();
-            $shipFromAddress = new Address();
-            $shipFromAddress->setPostalCode($sender->postalCode);
-
-            $shipFrom = new ShipFrom();
-            $shipFrom->setAddress($shipFromAddress);
-            $shipment->setShipFrom($shipFrom);
-
-            $shipTo = $shipment->getShipTo();
-            $shipToAddress = $shipTo->getAddress();
-            $shipToAddress->setPostalCode($recipient->postalCode);
-
-            $package = new Package();
-            $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
-            $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
-            $weightUnit = new UnitOfMeasurement;
-            $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
-            $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
-
-            $packageDimensions = new Dimensions();
-            $packageDimensions->setHeight(round($packedBox['height'], 2));
-            $packageDimensions->setWidth(round($packedBox['width'], 2));
-            $packageDimensions->setLength(round($packedBox['length'], 2));
-
-            $unit = new UnitOfMeasurement;
-            $unit->setCode(UnitOfMeasurement::UOM_IN);
-
-            $packageDimensions->setUnitOfMeasurement($unit);
-            $package->setDimensions($packageDimensions);
-            $shipment->addPackage($package);
-
-            $rateRequest = new RateRequest();
-            $rateRequest->setShipment($shipment);
-            $rates = $this->_getClient()->shopRates($rateRequest);
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]), true);
-
-            return false;
-        }
-
-        return true;
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _getClient(): ?Rate
-    {
-        if (!$this->_client) {
-            $useTestEndpoint = $this->getSetting('useTestEndpoint') ?? false;
-
-            if ($useTestEndpoint) {
-                $accessKey = $this->getSetting('testApiKey');
-            } else {
-                $accessKey = $this->getSetting('apiKey');
-            }
-
-            $userId = $this->getSetting('username');
-            $password = $this->getSetting('password');
-
-            $this->_client = new Rate($accessKey, $userId, $password);
-        }
-
-        return $this->_client;
-    }
-
-    private function _inEU($country): bool
-    {
-        return isset($this->euCountries[$countryCode]);
-    }
-
-    private function _getServiceHandle($code, $storeLocation, $shippingAddress): bool|string
-    {
-        // We need some smarts here, because UPS has multiple handles for the same service code, depending on the
-        // origin or destination of the parcel. Do a little more work here...
-        $services = [
-            'S_AIR_1DAYEARLYAM' => '14',
-            'S_AIR_1DAY' => '01',
-            'S_AIR_1DAYSAVER' => '13',
-            'S_AIR_2DAYAM' => '59',
-            'S_AIR_2DAY' => '02',
-            'S_3DAYSELECT' => '12',
-            'S_GROUND' => '03',
-            'S_SURE_POST' => '93',
-
-            // Valid international values
-            'S_STANDARD' => '11',
-            'S_WW_EXPRESS' => '07',
-            'S_WW_EXPRESSPLUS' => '54',
-            'S_WW_EXPEDITED' => '08',
-            'S_SAVER' => '65',
-            'S_ACCESS_POINT' => '70',
-
-            // Valid Poland to Poland same day values
-            'S_UPSTODAY_STANDARD' => '82',
-            'S_UPSTODAY_DEDICATEDCOURIER' => '83',
-            'S_UPSTODAY_INTERCITY' => '84',
-            'S_UPSTODAY_EXPRESS' => '85',
-            'S_UPSTODAY_EXPRESSSAVER' => '86',
-            'S_UPSWW_EXPRESSFREIGHT' => '96',
-
-            // Valid Germany to Germany values
-            'S_UPSEXPRESS_1200' => '74',
-
-            // Time in Transit Response Service Codes: United States Domestic Shipments
-            'TT_S_US_AIR_1DAYAM' => '1DM',
-            'TT_S_US_AIR_1DAY' => '1DA',
-            'TT_S_US_AIR_SAVER' => '1DP',
-            'TT_S_US_AIR_2DAYAM' => '2DM',
-            'TT_S_US_AIR_2DAY' => '2DA',
-            'TT_S_US_3DAYSELECT' => '3DS',
-            'TT_S_US_GROUND' => 'GND',
-            'TT_S_US_AIR_1DAYSATAM' => '1DMS',
-            'TT_S_US_AIR_1DAYSAT' => '1DAS',
-            'TT_S_US_AIR_2DAYSAT' => '2DAS',
-        ];
-
-        // Comment these out until we can figure out a better way to test origin EU addresses
-
-        // $services = [
-        //     // Time in Transit Response Service Codes: Other Shipments Originating in US
-        //     'TT_S_US_INTL_EXPRESSPLUS' => '21',
-        //     'TT_S_US_INTL_EXPRESS' => '01',
-        //     'TT_S_US_INTL_SAVER' => '28',
-        //     'TT_S_US_INTL_STANDARD' => '03',
-        //     'TT_S_US_INTL_EXPEDITED' => '05',
-        // ];
-
-        // $services = [
-        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
-        //     // Destination is WITHIN the Origin Country
-        //     'TT_S_EU_EXPRESSPLUS' => '23',
-        //     'TT_S_EU_EXPRESS' => '24',
-        //     'TT_S_EU_SAVER' => '26',
-        //     'TT_S_EU_STANDARD' => '25',
-        // ];
-
-        // $services = [
-        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
-        //     // Destination is Another EU Country
-        //     'TT_S_EU_TO_EU_EXPRESSPLUS' => '22',
-        //     'TT_S_EU_TO_EU_EXPRESS' => '10',
-        //     'TT_S_EU_TO_EU_SAVER' => '18',
-        //     'TT_S_EU_TO_EU_STANDARD' => '08',
-        // ];
-
-        // $services = [
-        //     // Time in Transit Response Service Codes: Shipments Originating in the EU
-        //     // Destination is Outside the EU
-        //     'TT_S_EU_TO_OTHER_EXPRESS_NA1' => '11',
-        //     'TT_S_EU_TO_OTHER_EXPRESSPLUS' => '21',
-        //     'TT_S_EU_TO_OTHER_EXPRESS' => '01',
-        //     'TT_S_EU_TO_OTHER_SAVER' => '28',
-        //     'TT_S_EU_TO_OTHER_EXPEDITED' => '05',
-        //     'TT_S_EU_TO_OTHER_STANDARD' => '68',
-        // ];
-
-        return array_search($code, $services);
-    }
-
-    private function _getUnitOfMeasurement($type): string
-    {
-        $units = [
-            'lb' => UnitOfMeasurement::UOM_LBS,
-            'kg' => UnitOfMeasurement::UOM_KGS,
-            'in' => UnitOfMeasurement::UOM_IN,
-            'cm' => UnitOfMeasurement::UOM_CM,
-        ];
-
-        if ($type === 'weight') {
-            return $units[$this->weightUnit] ?? UnitOfMeasurement::UOM_LBS;
-        }
-
-        if ($type === 'dimension') {
-            return $units[$this->dimensionUnit] ?? UnitOfMeasurement::UOM_IN;
-        }
-
-        return '';
     }
 }

@@ -7,7 +7,7 @@ use verbb\postie\models\Item;
 use craft\helpers\ArrayHelper;
 use craft\elements\Address;
 
-use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Order;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
@@ -147,7 +147,7 @@ class TestingHelper
     // Static Methods
     // =========================================================================
 
-    public static function getTestAddress($countryCode, $criteria = [], $order = null): Address
+    public static function getTestAddress(string $countryCode, array $criteria = [], Order $order = null): Address
     {
         $filter = array_merge(['countryCode' => $countryCode], $criteria);
 
@@ -165,7 +165,7 @@ class TestingHelper
         return new Address($address);
     }
 
-    public static function getTestPackedBoxes($dimensionUnit, $weightUnit, $qty1 = 1, $qty2 = 1): array
+    public static function getTestPackedBoxes(string $dimensionUnit, string $weightUnit, int $qty1 = 1, int $qty2 = 1): array
     {
         $packer = new Packer();
 

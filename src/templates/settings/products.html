@@ -1,6 +1,13 @@
-{% import '_includes/forms' as forms %}
+{% extends 'postie/_layouts/settings' %}
 
-<p>{{ "This list shows your products (and their variants) without any dimensions or weights set up. Every product you want to ship via Postie needs to have fully populated dimensions and weights. Ensure you've also setup the correct measurement units in your {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/general') ~ '">Commerce Settings</a>' }) | raw }}</p>
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% block content %}
+
+<h2>{{ 'Products' | t('postie') }}</h2>
+
+<p>{{ "This list shows your products (and their variants) without any dimensions or weights set up. Every product you want to ship via Postie needs to have fully populated dimensions and weights. Ensure you've also set up the correct measurement units in your {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/general') ~ '">Commerce Settings</a>' }) | raw }}</p>
 
 <hr />
 
@@ -81,3 +88,5 @@
     </table>
 
 {% endif %}
+
+{% endblock %}

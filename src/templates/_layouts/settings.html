@@ -1,0 +1,44 @@
+{% extends 'postie/_layouts' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% requireAdmin %}
+
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Settings' | t('app'), url: url('postie/settings') },
+] %}
+
+{% set selectedSubnavItem = 'settings' %}
+{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
+
+{% set navItems = {
+    'general': { title: 'General' | t('postie'), badge: craft.postie.getGeneralBadge() },
+    'products': { title: 'Products' | t('postie'), badge: craft.postie.getProductsBadge() },
+    'providers': { title: 'Providers' | t('postie') },
+} %}
+
+{% block sidebar %}
+    <nav class="postie-settings-tabs">
+        <ul>
+            {% for handle, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li>
+                        <a href="{{ url('postie/settings/' ~ handle) }}" {% if handle == selectedTab %}class="sel"{% endif %}>
+                            <span class="label">{{ item.title }}</span>
+
+                            {% if item.badge is defined and item.badge %}
+                                <span class="badge">{{ item.badge }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}

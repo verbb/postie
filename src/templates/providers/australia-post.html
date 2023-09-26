@@ -1,23 +1,54 @@
 {% import '_includes/forms' as forms %}
-{% import 'postie/_macros' as macros %}
+{% import 'verbb-base/_macros' as macros %}
 
-{% set instructions %}
-### Connect to the {name} API
-1. Go to <a href="https://developers.auspost.com.au/apis/pacpcs-registration" target="_blank">{name} Developers website</a> and register for an API Key.
-1. Copy the **API Key** from {name} and paste in the **API Key** field below.
-{% endset %}
-
-<div class="postie-settings-block">
-    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
-</div>
+{{ forms.selectField({
+    label: 'API' | t('postie'),
+    instructions: 'Select which {name} API to use.' | t('postie', { name: provider.displayName() }),
+    name: 'apiType',
+    options: provider.getApiTypeOptions(),
+    value: provider.apiType ?? '',
+    required: true,
+    suggestEnvVars: true,
+    toggle: true,
+    targetPrefix: '.api-type-',
+    warning: macros.configWarning("providers.#{provider.handle}.apiType", 'postie'),
+    errors: provider.getErrors('apiType'),
+}) }}
 
 {{ forms.autosuggestField({
     label: 'API Key' | t('postie'),
     instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
     id: 'apiKey',
     name: 'apiKey',
-    value: provider.settings.apiKey ?? '',
+    value: provider.apiKey ?? '',
     required: true,
     suggestEnvVars: true,
-    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.apiKey', 'postie'),
+    warning: macros.configWarning("providers.#{provider.handle}.apiKey", 'postie'),
+    errors: provider.getErrors('apiKey'),
 }) }}
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Password' | t('postie'),
+        instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+        id: 'password',
+        name: 'password',
+        value: provider.password ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
+        errors: provider.getErrors('password'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Account Number' | t('postie'),
+        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'accountNumber',
+        name: 'accountNumber',
+        value: provider.accountNumber ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+        errors: provider.getErrors('accountNumber'),
+    }) }}
+</div>

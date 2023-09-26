@@ -1,15 +1,16 @@
 <?php
 namespace verbb\postie\events;
 
-use craft\commerce\elements\Order;
+use verbb\postie\base\ProviderInterface;
 
 use yii\base\Event;
 
-class ModifyShippingMethodsEvent extends Event
+class ProviderEvent extends Event
 {
     // Properties
     // =========================================================================
 
-    public ?Order $order = null;
-    public array $shippingMethods = [];
+    public ?ProviderInterface $provider = null;
+    public bool $isNew = false;
+    
 }

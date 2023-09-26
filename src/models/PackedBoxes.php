@@ -33,6 +33,16 @@ class PackedBoxes extends Model
         return $this->packedBoxList;
     }
 
+    public function getWeightUnit(): ?string
+    {
+        return $this->weightUnit;
+    }
+
+    public function getDimensionUnit(): ?string
+    {
+        return $this->dimensionUnit;
+    }
+
     public function getSerializedPackedBoxList(): array
     {
         $list = [];

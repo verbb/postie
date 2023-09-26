@@ -2,32 +2,62 @@
 namespace verbb\postie;
 
 use verbb\postie\base\PluginTrait;
+use verbb\postie\debug\PostiePanel;
+use verbb\postie\events\ModifyShippableVariantsEvent;
+use verbb\postie\helpers\ProjectConfigHelper;
 use verbb\postie\models\Settings;
+use verbb\postie\services\Providers;
 use verbb\postie\variables\PostieVariable;
-use verbb\postie\twigextensions\Extension;
 
 use Craft;
-use craft\base\Model;
 use craft\base\Plugin;
-use craft\events\PluginEvent;
+use craft\elements\Address;
+use craft\events\RebuildConfigEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\Db;
 use craft\helpers\UrlHelper;
-use craft\services\Elements;
-use craft\services\Plugins;
+use craft\services\ProjectConfig;
+use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
+use craft\commerce\Plugin as Commerce;
 use craft\commerce\services\ShippingMethods;
+use craft\commerce\elements\Order;
+use craft\commerce\elements\Variant;
 
 use yii\base\Event;
 
 class Postie extends Plugin
 {
+    // Constants
+    // =========================================================================
+
+    public const EVENT_MODIFY_VARIANT_QUERY = 'modifyVariantQuery';
+
+
+    // Static Methods
+    // =========================================================================
+
+    public static function setOrderShippingAddress(Order $order): void
+    {
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
+    }
+
+    public static function getStoreShippingAddress(): Address
+    {
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
+
+        return $storeLocation;
+    }
+
+
     // Properties
     // =========================================================================
 
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.1.0';
+    public string $schemaVersion = '2.2.3';
     public string $minVersionRequired = '2.2.7';
 
 
@@ -48,19 +78,12 @@ class Postie extends Plugin
 
         $this->_registerComponents();
         $this->_registerLogTarget();
-        $this->_registerTwigExtensions();
         $this->_registerVariables();
-        $this->_registerEventHandlers();
         $this->_registerCommerceEventListeners();
+        $this->_registerProjectConfigEventListeners();
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
-        }
-
-        $this->hasCpSection = $this->getSettings()->hasCpSection;
-
-        if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
-            $this->hasCpSection = false;
         }
     }
 
@@ -82,6 +105,34 @@ class Postie extends Plugin
         return $navItem;
     }
 
+    public function getInvalidVariants(?int $limit = 50): array
+    {
+        $variants = [];
+
+        $query = Variant::find()->limit($limit);
+
+        // Allow plugins to modify the variant query
+        $event = new ModifyShippableVariantsEvent([
+            'query' => $query,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
+            $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
+        }
+
+        foreach (Db::each($event->query) as $variant) {
+            if (!$variant->product->type->hasDimensions) {
+                continue;
+            }
+
+            if ($variant->width == 0 || $variant->height == 0 || $variant->length == 0 || $variant->weight == 0) {
+                $variants[] = $variant;
+            }
+        }
+
+        return $variants;
+    }
+
 
     // Protected Methods
     // =========================================================================
@@ -95,18 +146,17 @@ class Postie extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _registerTwigExtensions(): void
-    {
-        Craft::$app->getView()->registerTwigExtension(new Extension);
-    }
-
     private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
-            $event->rules = array_merge($event->rules, [
-                'postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:{handle}>' => 'postie/shipping-methods/edit',
-                'postie/settings' => 'postie/plugin/settings',
-            ]);
+            $event->rules['postie'] = 'postie/settings';
+            $event->rules['postie/settings'] = 'postie/settings';
+            $event->rules['postie/settings/general'] = 'postie/settings';
+            $event->rules['postie/settings/products'] = 'postie/settings/products';
+            $event->rules['postie/settings/providers'] = 'postie/providers';
+            $event->rules['postie/settings/providers/new'] = 'postie/providers/edit';
+            $event->rules['postie/settings/providers/edit/<providerId:\d+>'] = 'postie/providers/edit';
+            $event->rules['postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:{handle}>'] = 'postie/shipping-methods/edit';
         });
     }
 
@@ -117,19 +167,23 @@ class Postie extends Plugin
         });
     }
 
-    private function _registerEventHandlers(): void
+    private function _registerCommerceEventListeners(): void
     {
-        // Whenever we update the cart, we need to check if manual fetching of rates is set. If it is, we need to check for the
-        // correct POST param, then set a session variable to save it. This is because the fetching of shipping rates isn't done
-        // in the same request as the POST sent to the server. We need to temporarily store a flag is session with the okay to fetch.
-        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveOrder']);
+        Event::on(ShippingMethods::class, ShippingMethods::EVENT_REGISTER_AVAILABLE_SHIPPING_METHODS, [$this->getService(), 'registerShippingMethods']);
+    }
 
-        // Prevent saving _all_ provider information to plugin settings, just the enabled ones. Specifically, weed out services
-        // so we retain at least some info for other providers. Helps keep project config under control.
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS, function(PluginEvent $event) {
-            if ($event->plugin === $this) {
-                $this->getService()->onBeforeSavePluginSettings($event);
-            }
+    private function _registerProjectConfigEventListeners(): void
+    {
+        $projectConfigService = Craft::$app->getProjectConfig();
+
+        $providersService = $this->getProviders();
+        $projectConfigService
+            ->onAdd(Providers::CONFIG_PROVIDERS_KEY . '.{uid}', [$providersService, 'handleChangedProvider'])
+            ->onUpdate(Providers::CONFIG_PROVIDERS_KEY . '.{uid}', [$providersService, 'handleChangedProvider'])
+            ->onRemove(Providers::CONFIG_PROVIDERS_KEY . '.{uid}', [$providersService, 'handleDeletedProvider']);
+
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $event) {
+            $event->config['postie'] = ProjectConfigHelper::rebuildProjectConfig();
         });
     }
 

@@ -2,24 +2,13 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
-use verbb\postie\helpers\TestingHelper;
 
 use Craft;
-use craft\helpers\Json;
+use craft\helpers\App;
 
-use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Order;
 
-use FedEx\RateService\Request;
-use FedEx\RateService\ComplexType\RateRequest;
-use FedEx\RateService\ComplexType\RequestedPackageLineItem;
-use FedEx\RateService\SimpleType\LinearUnits;
-use FedEx\RateService\SimpleType\PaymentType;
-use FedEx\RateService\SimpleType\RateRequestType;
-use FedEx\RateService\SimpleType\ServiceOptionType;
-use FedEx\RateService\SimpleType\WeightUnits;
-
-use Throwable;
+use verbb\shippy\carriers\FedEx as FedExCarrier;
 
 class FedEx extends Provider
 {
@@ -29,6 +18,11 @@ class FedEx extends Provider
     public static function displayName(): string
     {
         return Craft::t('postie', 'FedEx');
+    }
+
+    public static function getCarrierClass(): string
+    {
+        return FedExCarrier::class;
     }
 
     public static function defineDefaultBoxes(): array
@@ -169,54 +163,16 @@ class FedEx extends Provider
 
     public static function getServiceList(): array
     {
-        return [
-            // Domestic
-            'FEDEX_1_DAY_FREIGHT' => 'FedEx 1 Day Freight',
-            'FEDEX_2_DAY' => 'FedEx 2 Day',
-            'FEDEX_2_DAY_AM' => 'FedEx 2 Day AM',
-            'FEDEX_2_DAY_FREIGHT' => 'FedEx 2 DAY Freight',
-            'FEDEX_3_DAY_FREIGHT' => 'FedEx 3 Day Freight',
-            'FEDEX_EXPRESS_SAVER' => 'FedEx Express Saver',
-            'FEDEX_FIRST_FREIGHT' => 'FedEx First Freight',
-            'FEDEX_FREIGHT_ECONOMY' => 'FedEx Freight Economy',
-            'FEDEX_FREIGHT_PRIORITY' => 'FedEx Freight Priority',
-            'FEDEX_GROUND' => 'FedEx Ground',
-            'FIRST_OVERNIGHT' => 'FedEx First Overnight',
-            'PRIORITY_OVERNIGHT' => 'FedEx Priority Overnight',
-            'STANDARD_OVERNIGHT' => 'FedEx Standard Overnight',
-            'GROUND_HOME_DELIVERY' => 'FedEx Ground Home Delivery',
-            'SAME_DAY' => 'FedEx Same Day',
-            'SAME_DAY_CITY' => 'FedEx Same Day City',
-            'SMART_POST' => 'FedEx Smart Post',
-
-            // UK domestic services 
-            'FEDEX_DISTANCE_DEFERRED' => 'FedEx Distance Deferred',
-            'FEDEX_NEXT_DAY_EARLY_MORNING' => 'FedEx Next Day Early Morning',
-            'FEDEX_NEXT_DAY_MID_MORNING' => 'FedEx Next Day Mid Morning',
-            'FEDEX_NEXT_DAY_AFTERNOON' => 'FedEx Next Day Afternoon',
-            'FEDEX_NEXT_DAY_END_OF_DAY' => 'FedEx Next Day End of Day',
-            'FEDEX_NEXT_DAY_FREIGHT' => 'FedEx Next Day Freight',
-
-            // International
-            'INTERNATIONAL_ECONOMY' => 'FedEx International Economy',
-            'INTERNATIONAL_ECONOMY_FREIGHT' => 'FedEx International Economy Freight',
-            'INTERNATIONAL_ECONOMY_DISTRIBUTION' => 'FedEx International Economy Distribution',
-            'INTERNATIONAL_FIRST' => 'FedEx International First',
-            'INTERNATIONAL_PRIORITY' => 'FedEx International Priority',
-            'INTERNATIONAL_PRIORITY_FREIGHT' => 'FedEx International Priority Freight',
-            'INTERNATIONAL_PRIORITY_DISTRIBUTION' => 'FedEx International Priority Distribution',
-            'INTERNATIONAL_PRIORITY_EXPRESS' => 'FedEx International Priority Express',
-            'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'FedEx Europe First International Priority',
-            'INTERNATIONAL_DISTRIBUTION_FREIGHT' => 'FedEx International Distribution',
-        ];
+        return array_merge(...array_values(parent::getServiceList()));
     }
     
 
     // Properties
     // =========================================================================
 
-    public string $dimensionUnit = 'in';
-    public string $weightUnit = 'lb';
+    public ?string $clientId = null;
+    public ?string $clientSecret = null;
+    public ?string $accountNumber = null;
 
     private float $maxWeight = 68038.9; // 150lbs
 
@@ -224,378 +180,44 @@ class FedEx extends Provider
     // Public Methods
     // =========================================================================
 
-    public function __construct()
+    public function getClientId(): ?string
     {
-        parent::__construct();
-
-        // Turn off SOAP wsdl caching
-        ini_set("soap.wsdl_cache_enabled", "0");
+        return App::parseEnv($this->clientId);
     }
 
-    public function getWeightUnitOptions(): array
+    public function getClientSecret(): ?string
     {
-        return [
-            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
-            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
-        ];
+        return App::parseEnv($this->clientSecret);
     }
 
-    public function getDimensionUnitOptions(): array
+    public function getAccountNumber(): ?string
     {
-        return [
-            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
-            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
-        ];
+        return App::parseEnv($this->accountNumber);
     }
 
-    public function getMaxPackageWeight($order): ?int
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['clientId', 'clientSecret', 'accountNumber'], 'required', 'when' => function($model) {
+            return $model->enabled;
+        }];
+
+        return $rules;
+    }
+
+    public function getCarrierConfig(): array
+    {
+        $config = parent::getCarrierConfig();
+        $config['clientId'] = $this->getClientId();
+        $config['clientSecret'] = $this->getClientSecret();
+        $config['accountNumber'] = $this->getAccountNumber();
+
+        return $config;
+    }
+
+    public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
-    }
-
-    public function fetchShippingRates($order): ?array
-    {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
-        }
-
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order);
-
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
-
-        //
-        // TESTING
-        //
-        // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View'], $order);
-
-        // Canada 
-        // $storeLocation = TestingHelper::getTestAddress('CA', ['locality' => 'Toronto']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('CA', ['locality' => 'Montreal'], $order);
-
-        // Freight
-        // $order->currency = 'USD';
-        //
-        //
-        //
-
-        try {
-            // Fetch rates for 'regular' rates (non-freight)
-            $this->fetchShippingRate($order, $storeLocation, $packedBoxes);
-
-            // If enabled, fetch again for freight rates. Only those are returned, so a separate call is needed
-            if ($this->getSetting('enableFreight')) {
-                $this->fetchShippingRate($order, $storeLocation, $packedBoxes, 'freight');
-            }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
-        }
-
-        return $this->_rates;
-    }
-
-    public function fetchShippingRate($order, $storeLocation, $packedBoxes, $requestType = ''): void
-    {
-        $rateRequest = new RateRequest();
-
-        $rateRequest->WebAuthenticationDetail->UserCredential->Key = $this->getSetting('key');
-        $rateRequest->WebAuthenticationDetail->UserCredential->Password = $this->getSetting('password');
-        $rateRequest->ClientDetail->AccountNumber = $this->getSetting('accountNumber');
-        $rateRequest->ClientDetail->MeterNumber = $this->getSetting('meterNumber');
-        $rateRequest->Version->ServiceId = 'crs';
-        $rateRequest->Version->Major = 24;
-        $rateRequest->Version->Minor = 0;
-        $rateRequest->Version->Intermediate = 0;
-        $rateRequest->ReturnTransitAndCommit = true;
-
-        // Shipper
-        $rateRequest->RequestedShipment->PreferredCurrency = $order->currency;
-        $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$storeLocation->addressLine1];
-        $rateRequest->RequestedShipment->Shipper->Address->City = $storeLocation->locality;
-        $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $storeLocation->postalCode;
-
-        // Recipient
-        $rateRequest->RequestedShipment->Recipient->Address->StreetLines = [$order->shippingAddress->addressLine1];
-        $rateRequest->RequestedShipment->Recipient->Address->City = $order->shippingAddress->locality;
-        $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $order->shippingAddress->postalCode;
-
-        if ($this->getSetting('residentialAddress')) {
-            $rateRequest->RequestedShipment->Recipient->Address->Residential = true;
-        }
-
-        // Fedex can't handle 3-character states. Ignoring it is valid for international order
-        if ($storeLocation->countryCode) {
-            $countryCode = $storeLocation->countryCode ?? '';
-            $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $countryCode;
-
-            if ($countryCode == 'US' || $countryCode == 'CA') {
-                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $storeLocation->administrativeArea ?? '';
-            }
-        }
-
-        // Fedex can't handle 3-character states. Ignoring it is valid for international order
-        if ($order->shippingAddress->countryCode) {
-            $countryCode = $order->shippingAddress->countryCode ?? '';
-            $rateRequest->RequestedShipment->Recipient->Address->CountryCode = $countryCode;
-
-            if ($countryCode == 'US' || $countryCode == 'CA') {
-                $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = $order->shippingAddress->administrativeArea ?? '';
-            }
-        }
-
-        // Shipping charges payment
-        $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = PaymentType::_SENDER;
-        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->AccountNumber = $this->getSetting('accountNumber');
-        $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->CountryCode = $storeLocation->countryCode;
-
-        // Rate request types
-        $rateRequest->RequestedShipment->RateRequestTypes = [RateRequestType::_PREFERRED, RateRequestType::_LIST];
-
-        if ($this->getSetting('enableOneRate')) {
-            $rateRequest->RequestedShipment->VariableOptions = [ServiceOptionType::_FEDEX_ONE_RATE];
-        }
-
-        // Create package line items
-        $packageLineItems = $this->_createPackageLineItem($order, $packedBoxes);
-        $rateRequest->RequestedShipment->PackageCount = count($packageLineItems);
-        $rateRequest->RequestedShipment->RequestedPackageLineItems = $packageLineItems;
-
-        if ($requestType === 'freight') {
-            // Only include for shipments over 150lb
-            $totalWeight = 0;
-
-            foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => $packageLineItem) {
-                $totalWeight += $packageLineItem->Weight->Value;
-            }
-
-            if ($totalWeight > 150) {
-                $rateRequest->CarrierCodes = ['FXFR'];
-
-                $rateRequest->RequestedShipment->Shipper->Address->StreetLines = [$this->getSetting('freightShipperStreetAddress'), $this->getSetting('freightShipperStreetAddress2')];
-                $rateRequest->RequestedShipment->Shipper->Address->City = $this->getSetting('freightShipperCity');
-                $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $this->getSetting('freightShipperZipcode');
-                $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = $this->getSetting('freightShipperStateCode');
-                $rateRequest->RequestedShipment->Shipper->Address->CountryCode = $this->getSetting('freightShipperCountryCode');
-
-                $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = 'SENDER';
-                $rateRequest->RequestedShipment->ShippingChargesPayment->Payor->ResponsibleParty->AccountNumber = $this->getSetting('freightAccountNumber');
-
-                $rateRequest->RequestedShipment->FreightShipmentDetail->Role = 'SHIPPER';
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightAccountNumber = $this->getSetting('freightAccountNumber');
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StreetLines = [$this->getSetting('freightBillingStreetAddress'), $this->getSetting('freightBillingStreetAddress2')];
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->City = $this->getSetting('freightBillingCity');
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->PostalCode = $this->getSetting('freightBillingZipcode');
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->StateOrProvinceCode = $this->getSetting('freightBillingStateCode');
-                $rateRequest->RequestedShipment->FreightShipmentDetail->FedExFreightBillingContactAndAddress->Address->CountryCode = $this->getSetting('freightBillingCountryCode');
-
-                $lineItems = [];
-
-                // Modify each line item to contain extra required info for freight
-                foreach ($rateRequest->RequestedShipment->RequestedPackageLineItems as $key => &$packageLineItem) {
-                    $packageLineItem->SequenceNumber = $key + 1;
-                    $packageLineItem->PhysicalPackaging = 'SKID';
-                    $packageLineItem->AssociatedFreightLineItems = [['Id' => $key + 1]];
-
-                    // Create line items for freight
-                    $lineItems[] = [
-                        'Id' => $key + 1,
-                        'FreightClass' => 'CLASS_050',
-                        'Packaging' => 'SKID',
-                        'Weight' => $packageLineItem->Weight,
-                    ];
-                }
-
-                $rateRequest->RequestedShipment->FreightShipmentDetail->LineItems = $lineItems;
-            }
-        }
-
-        $rateServiceRequest = new Request();
-
-        // Check for test or production endpoint
-        if ($this->getSetting('useTestEndpoint')) {
-            $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
-        } else {
-            $rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL);
-        }
-
-        $this->beforeSendPayload($this, $rateRequest, $order);
-
-        // FedEx API rate service call
-        $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
-
-        if (isset($rateReply->RateReplyDetails)) {
-            foreach ($rateReply->RateReplyDetails as $rateReplyDetails) {
-                if (is_array($rateReplyDetails->RatedShipmentDetails)) {
-                    // Find the lowest rate (for negotiated rates)
-                    $ratedShipmentDetailRates = [];
-
-                    foreach ($rateReplyDetails->RatedShipmentDetails as $key => $RatedShipmentDetail) {
-                        $key = $RatedShipmentDetail->ShipmentRateDetail->RateType;
-
-                        $ratedShipmentDetailRates[$key] = $RatedShipmentDetail->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
-                    }
-
-                    // Some rates are null, which are _technically_ the minimum
-                    $rate = min(array_filter($ratedShipmentDetailRates));
-                } else {
-                    $rate = $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetChargeWithDutiesAndTaxes->Amount;
-                }
-
-                if (!$rateReplyDetails->ServiceType) {
-                    Provider::error($this, 'Service Type is not defined');
-                    continue;
-                }
-
-                if (!$rate) {
-                    Provider::error($this, 'No rate for ' . $rateReplyDetails->ServiceType);
-                    continue;
-                }
-
-                $this->_rates[$rateReplyDetails->ServiceType] = [
-                    'amount' => $rate,
-                    'options' => [
-                        'ServiceType' => $rateReplyDetails->ServiceType,
-                        'ServiceDescription' => $rateReplyDetails->ServiceDescription->Description ?? '',
-                        'packagingType' => $rateReplyDetails->PackagingType ?? '',
-                        'deliveryStation' => $rateReplyDetails->DeliveryStation ?? '',
-                        'deliveryDayOfWeek' => $rateReplyDetails->DeliveryDayOfWeek ?? '',
-                        'deliveryTimestamp' => $rateReplyDetails->DeliveryTimestamp ?? '',
-                        'transitTime' => $rateReplyDetails->TransitTime ?? '',
-                        'destinationAirportId' => $rateReplyDetails->DestinationAirportId ?? '',
-                        'ineligibleForMoneyBackGuarantee' => $rateReplyDetails->IneligibleForMoneyBackGuarantee ?? false,
-                        'originServiceArea' => $rateReplyDetails->OriginServiceArea ?? '',
-                        'destinationServiceArea' => $rateReplyDetails->DestinationServiceArea ?? '',
-                    ],
-                ];
-            }
-        } else if (isset($rateReply->Notifications)) {
-            foreach ($rateReply->Notifications as $message) {
-                Provider::error($this, 'Rate Error: ' . $message->Message);
-            }
-        } else {
-            Provider::error($this, Craft::t('postie', 'Unable to fetch rates: `{json}`.', [
-                'json' => Json::encode($rateReply),
-            ]));
-        }
-    }
-
-    protected function fetchConnection(): bool
-    {
-        try {
-            // Create test addresses
-            $sender = TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
-            $recipient = TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
-
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
-            $packedBox = $packedBoxes[0];
-
-            // Create a test payload
-            $rateRequest = new RateRequest();
-            $rateRequest->WebAuthenticationDetail->UserCredential->Key = $this->getSetting('key');
-            $rateRequest->WebAuthenticationDetail->UserCredential->Password = $this->getSetting('password');
-            $rateRequest->ClientDetail->AccountNumber = $this->getSetting('accountNumber');
-            $rateRequest->ClientDetail->MeterNumber = $this->getSetting('meterNumber');
-            $rateRequest->Version->ServiceId = 'crs';
-            $rateRequest->Version->Major = 24;
-            $rateRequest->Version->Minor = 0;
-            $rateRequest->Version->Intermediate = 0;
-            $rateRequest->ReturnTransitAndCommit = true;
-            $rateRequest->RequestedShipment->Shipper->Address->City = $sender->locality;
-            $rateRequest->RequestedShipment->Shipper->Address->PostalCode = $sender->postalCode;
-            $rateRequest->RequestedShipment->Recipient->Address->City = $recipient->locality;
-            $rateRequest->RequestedShipment->Recipient->Address->PostalCode = $recipient->postalCode;
-
-            $rateServiceRequest = new Request();
-            $rateServiceRequest->getSoapClient()->__setLocation(Request::TESTING_URL);
-            $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest);
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]), true);
-
-            return false;
-        }
-
-        return true;
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _createPackageLineItem($order, $packedBoxes): array
-    {
-        $packages = [];
-
-        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-            // Assuming we pack all order line items into one package to save shipping costs we created just one package line item
-            $packageLineItem = new RequestedPackageLineItem();
-
-            // Weight
-            $packageLineItem->Weight->Units = $this->_getUnitOfMeasurement('weight');
-            $packageLineItem->Weight->Value = $packedBox['weight'];
-
-            // Dimensions
-            $packageLineItem->Dimensions->Units = $this->_getUnitOfMeasurement('dimension');
-            $packageLineItem->Dimensions->Length = $packedBox['length'];
-            $packageLineItem->Dimensions->Width = $packedBox['width'];
-            $packageLineItem->Dimensions->Height = $packedBox['height'];
-
-            $packageLineItem->GroupPackageCount = 1;
-
-            if ($this->getSetting('includeInsurance')) {
-                $packageLineItem->InsuredValue->Currency = $order->paymentCurrency;
-                $packageLineItem->InsuredValue->Amount = $packedBoxes->getTotalPrice();
-            }
-
-            $packages[] = $packageLineItem;
-        }
-
-        return $packages;
-    }
-
-    private function _getUnitOfMeasurement($type): string
-    {
-        $units = [
-            'lb' => WeightUnits::_LB,
-            'kg' => WeightUnits::_KG,
-            'in' => LinearUnits::_IN,
-            'cm' => LinearUnits::_CM,
-        ];
-
-        if ($type === 'weight') {
-            return $units[$this->weightUnit] ?? WeightUnits::_LB;
-        }
-
-        if ($type === 'dimension') {
-            return $units[$this->dimensionUnit] ?? LinearUnits::_IN;
-        }
-
-        return '';
     }
 }

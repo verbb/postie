@@ -2,42 +2,24 @@
 namespace verbb\postie\helpers;
 
 use Craft;
+use craft\elements\Address;
 use craft\helpers\ArrayHelper;
+
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Order;
 
 class PostieHelper
 {
     // Static Methods
     // =========================================================================
 
-    public static function getValueByKey(array $array, $key, $default = null)
-    {
-        if (is_null($key)) {
-            return $array;
-        }
-
-        if (isset($array[$key])) {
-            return $array[$key];
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (!is_array($array) || !array_key_exists($segment, $array)) {
-                return $default;
-            }
-
-            $array = $array[$segment];
-        }
-
-        return $array;
-    }
-
-    public static function getSignature($order, $prefix = ''): string
+    public static function getSignature(Order $order, string $prefix = ''): string
     {
         $totalLength = 0;
         $totalWidth = 0;
         $totalHeight = 0;
 
-        foreach (self::getOrderLineItems($order) as $key => $lineItem) {
+        foreach (self::getOrderLineItems($order) as $lineItem) {
             $totalLength += ($lineItem->qty * $lineItem->length);
             $totalWidth += ($lineItem->qty * $lineItem->width);
             $totalHeight += ($lineItem->qty * $lineItem->height);
@@ -56,7 +38,7 @@ class PostieHelper
         return md5($signature);
     }
 
-    public static function getAddressLines($address = null): array
+    public static function getAddressLines(Address $address = null): array
     {
         if (!$address) {
             return [];
@@ -90,7 +72,7 @@ class PostieHelper
         return $addressLines;
     }
 
-    public static function getOrderLineItems($order): array
+    public static function getOrderLineItems(Order $order): array
     {
         $items = [];
         $discounts = Commerce::getInstance()->getDiscounts()->getAllActiveDiscounts($order);

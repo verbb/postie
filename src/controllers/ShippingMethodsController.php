@@ -7,6 +7,7 @@ use Craft;
 use craft\web\Controller;
 
 use craft\commerce\records\ShippingRuleCategory;
+
 use yii\web\Response;
 
 class ShippingMethodsController extends Controller
@@ -14,11 +15,11 @@ class ShippingMethodsController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionEdit($providerHandle, $serviceHandle): Response
+    public function actionEdit(string $providerHandle, string $serviceHandle): Response
     {
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
-        $shippingMethod = $provider->getShippingMethodByHandle($serviceHandle);
+        $shippingMethod = Postie::$plugin->getProviders()->getShippingMethodForService($provider, $serviceHandle);
 
         $categoryShippingOptions = [
             ['label' => Craft::t('commerce', 'Allow'), 'value' => ShippingRuleCategory::CONDITION_ALLOW],
@@ -26,7 +27,7 @@ class ShippingMethodsController extends Controller
             ['label' => Craft::t('commerce', 'Require'), 'value' => ShippingRuleCategory::CONDITION_REQUIRE],
         ];
 
-        return $this->renderTemplate('postie/settings/shipping-methods/_edit', [
+        return $this->renderTemplate('postie/shipping-methods/_edit', [
             'provider' => $provider,
             'serviceHandle' => $serviceHandle,
             'shippingMethod' => $shippingMethod,
@@ -37,41 +38,29 @@ class ShippingMethodsController extends Controller
     public function actionSave(): ?Response
     {
         $this->requirePostRequest();
-        $request = Craft::$app->getRequest();
 
-        $pluginHandle = 'postie';
-        $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
+        $providerHandle = $this->request->getRequiredParam('providerHandle');
+        $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
 
-        $providerHandle = $request->getBodyParam('providerHandle');
-        $name = $request->getBodyParam('name');
-        $handle = $request->getBodyParam('handle');
-        $enabled = $request->getBodyParam('enabled');
-        $shippingCategories = $request->getBodyParam('shippingCategories');
+        $name = $this->request->getParam('name');
+        $handle = $this->request->getParam('handle');
+        $enabled = $this->request->getBodyParam('enabled');
+        $shippingCategories = $this->request->getParam('shippingCategories');
 
-        $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
-        $providerSettings = $pluginInfo['settings']['providers'][$providerHandle]['services'][$handle] ?? [];
+        $serviceSettings = $provider->services[$handle] ?? [];
 
-        $newSettings = array_merge($providerSettings, [
+        $provider->services[$handle] = array_merge($serviceSettings, [
             'name' => $name,
             'handle' => $handle,
             'enabled' => $enabled,
             'shippingCategories' => $shippingCategories,
         ]);
 
-        $pluginInfo['settings']['providers'][$providerHandle]['services'][$handle] = $newSettings;
-
-        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginInfo['settings'])) {
-            Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));
-
-            // Send the plugin back to the template
-            Craft::$app->getUrlManager()->setRouteParams([
-                'plugin' => $plugin,
-            ]);
+        if (!Postie::$plugin->getProviders()->saveProvider($provider)) {
+            $this->setFailFlash(Craft::t('postie', 'Couldn’t save shipping method.'));
 
             return null;
         }
-
-        Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
 
         return $this->redirectToPostedUrl();
     }

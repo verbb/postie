@@ -30,88 +30,45 @@ $(function() {
     });
 });
 
-Craft.Postie.ProviderConnection = Garnish.Base.extend({
-    init(providerHandle) {
-        this.providerHandle = providerHandle;
+Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
+    init() {
+        this.$result = $('.js-postie-rates-test-results')
+        this.$testBtn = $('.js-postie-rates-test-btn')
 
-        this.$container = $('#settings-providers-' + this.providerHandle + '-js-postie-connection');
-        this.$status = this.$container.find('.js-status')
-        this.$statusText = this.$container.find('.js-status-text')
-        this.$refreshBtn = this.$container.find('.js-btn-refresh')
-
-        this.addListener(this.$refreshBtn, 'click', 'onRefresh');
+        this.addListener(this.$testBtn, 'click', 'runTest');
     },
 
-    onRefresh(e) {
+    runTest(e) {
         e.preventDefault();
 
-        var providerSettings = {};
+        var data = $('#main-form').serialize();
 
-        this.$form = $('#tab-' + this.providerHandle);
+        this.$testBtn.addClass('vui-loading');
+        this.$result.html('');
 
-        if (this.$form) {
-            var postData = Garnish.getPostData(this.$form);
-            var params = Craft.expandPostArray(postData);
-
-            if (params && params.settings && params.settings.providers && params.settings.providers[this.providerHandle]) {
-                providerSettings = params.settings.providers[this.providerHandle];
-            }
-        }
-
-        var data = {
-            providerHandle: this.providerHandle,
-            settings: providerSettings,
-        };
-
-        this.$refreshBtn.addClass('vui-loading vui-loading-tiny');
-        this.$statusText.html(Craft.t('postie', 'Connecting...'));
-        this.$status.removeClass('on off');
-
-        var cookieName = 'postie-' + this.providerHandle + '-connect';
-
-        // Always delete the cookie
-        document.cookie = cookieName + '=;';
-
-        Craft.sendActionRequest('POST', 'postie/providers/check-connection', { data })
+        Craft.sendActionRequest('POST', 'postie/providers/test-rates', { data })
             .then((response) => {
-                this.$statusText.html(Craft.t('postie', 'Connected'));
-                this.$status.addClass('on');
+                if (response.data.errors.length) {
+                    throw new Error({ response: { data: JSON.stringify(response.data.errors) } });
+                }
 
-                // Save as a cookie for later
-                document.cookie = cookieName + '=true;';
+                var $table = $('<div class="postie-rates-tester-table"></div>');
+                var $ul = $('<ul></ul').appendTo($table);
+
+                $.each(response.data.rates, function(index, item) {
+                    $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">$' + item.rate + '</span></li>').appendTo($ul);
+                })
+
+                this.$result.html($table);
             })
             .catch(({response}) => {
-                var errorMessage = Craft.t('postie', 'An error occurred.') + '<br><br><code>' + response.data.message + '</code>';
+                var errorMessage = '<br><code>' + response.data.message + '</code>';
 
-                this.$statusText.html(Craft.t('postie', 'Error'));
-                this.$status.addClass('off');
-
-                new Craft.Postie.ProviderConnectionModal(errorMessage);
+                this.$result.html('<span class="error">' + errorMessage + '</span>');
             })
             .finally(() => {
-                this.$refreshBtn.removeClass('vui-loading vui-loading-tiny');
+                this.$testBtn.removeClass('vui-loading');
             });        
-    },
-});
-
-Craft.Postie.ProviderConnectionModal = Garnish.Modal.extend({
-    init(errorMessage) {
-        this.$form = $('<form class="modal vui-connection-error-modal" method="post" accept-charset="UTF-8"/>').appendTo(Garnish.$bod);
-        this.$body = $('<div class="body"></div>').appendTo(this.$form);
-        this.$cancelBtn = $('<div class="vui-dialog-close"></div>').appendTo(this.$body);
-        this.$pane = $('<div class="vui-error-pane error"></div>').appendTo(this.$body);
-        this.$content = $('<div class="vui-error-content"></div>').appendTo(this.$pane);
-        this.$alert = $('<span data-icon="alert"></span>').appendTo(this.$content);
-        this.$errorMsg = $('<span class="error">' + errorMessage + '</span>').appendTo(this.$content);
-
-        this.addListener(this.$cancelBtn, 'click', 'onFadeOut');
-
-        this.base(this.$form);
-    },
-
-    onFadeOut() {
-        this.$form.remove();
-        this.$shade.remove();
     },
 });
 

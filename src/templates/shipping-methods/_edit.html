@@ -4,7 +4,7 @@
 {% set crumbs = [
     { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
     { label: 'Settings' | t('postie'), url: url('postie/settings') },
-    { label: provider.name | t('postie'), url: url('postie/settings#tab-' ~ provider.handle) },
+    { label: provider.name | t('postie'), url: url('postie/settings/providers/edit/' ~ provider.id) },
 ] %}
 
 {% set fullPageForm = true %}
@@ -28,8 +28,8 @@
 
         {{ forms.textField({
             first: true,
-            label: "Handle" | t('commerce'),
-            instructions: "How this shipping method will be referred to in templates and forms." | t('commerce'),
+            label: 'Handle' | t('commerce'),
+            instructions: 'How this shipping method will be referred to in templates and forms.' | t('commerce'),
             id: 'handle',
             class: 'code',
             name: 'handle',

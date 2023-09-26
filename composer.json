@@ -33,18 +33,14 @@
         "php": "^8.0.2",
         "craftcms/cms": "^4.0.0",
         "craftcms/commerce": "^4.0.0",
-        "verbb/base": "^2.0.0",
-        "cakephp/core": "^3.5",
-        "jeremy-dunn/php-fedex-api-wrapper": "^4.0",
-        "vinceg/usps-php-api": "^1.0.0",
-        "gabrielbull/ups-api": "^1.0.0",
+        "dvdoug/boxpacker": "^3.0",
         "php-units-of-measure/php-units-of-measure": "^2.1",
-        "cakephp/utility": "^3.8",
-        "dvdoug/boxpacker": "^3.0"
+        "verbb/base": "^2.0.0",
+        "verbb/shippy": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
-          "verbb\\postie\\": "src/"
+            "verbb\\postie\\": "src/"
         }
     },
     "extra": {

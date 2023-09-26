@@ -2,6 +2,7 @@
 namespace verbb\postie\models;
 
 use verbb\postie\base\Provider;
+use verbb\postie\base\ProviderInterface;
 
 use craft\commerce\models\ShippingRule as BaseShippingRule;
 
@@ -10,7 +11,7 @@ class ShippingRule extends BaseShippingRule
     // Properties
     // =========================================================================
 
-    public ?Provider $provider = null;
+    public ?ProviderInterface $provider = null;
     public mixed $shippingMethod = null;
     public array $options = [];
 

@@ -1,31 +1,14 @@
 <?php
 namespace verbb\postie\migrations;
 
-use Craft;
 use craft\db\Migration;
 
-class Install extends Migration
+class m230813_000000_providers extends Migration
 {
     // Public Methods
     // =========================================================================
 
     public function safeUp(): bool
-    {
-        $this->createTables();
-        $this->createIndexes();
-
-        return true;
-    }
-
-    public function safeDown(): bool
-    {
-        $this->removeTables();
-        $this->dropProjectConfig();
-
-        return true;
-    }
-
-    public function createTables(): void
     {
         $this->archiveTableIfExists('{{%postie_providers}}');
         $this->createTable('{{%postie_providers}}', [
@@ -48,20 +31,15 @@ class Install extends Migration
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid(),
         ]);
-    }
 
-    public function createIndexes(): void
-    {
         $this->createIndex(null, '{{%postie_providers}}', 'handle', true);
+
+        return true;
     }
 
-    public function removeTables(): void
+    public function safeDown(): bool
     {
-        $this->dropTableIfExists('{{%postie_providers}}');
-    }
-
-    public function dropProjectConfig(): void
-    {
-        Craft::$app->getProjectConfig()->remove('postie');
+        echo "m230813_000000_providers cannot be reverted.\n";
+        return false;
     }
 }
