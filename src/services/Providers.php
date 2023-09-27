@@ -71,6 +71,7 @@ class Providers extends Component
             registeredproviders\Sendle::class,
             registeredproviders\TNTAustralia::class,
             registeredproviders\UPS::class,
+            registeredproviders\UPSFreight::class,
             registeredproviders\USPS::class,
         ];
 
