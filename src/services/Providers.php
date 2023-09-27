@@ -60,6 +60,7 @@ class Providers extends Component
             registeredproviders\Bring::class,
             registeredproviders\CanadaPost::class,
             registeredproviders\Colissimo::class,
+            registeredproviders\DHLExpress::class,
             registeredproviders\Fastway::class,
             registeredproviders\FedEx::class,
             registeredproviders\FedExFreight::class,
