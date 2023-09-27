@@ -10,14 +10,13 @@
         ]
     },
     {
-        "title": "Setup & Configuration",
+        "title": "Feature Tour",
         "collapsable": false,
         "children": [
-            "setup-configuration/products",
-            "setup-configuration/providers",
-            "setup-configuration/shipping-methods",
-            "setup-configuration/displaying-rates",
-            "setup-configuration/box-packing"
+            "feature-tour/displaying-rates",
+            "feature-tour/tracking-status",
+            "feature-tour/providers",
+            "feature-tour/box-packing"
         ]
     },
     {
@@ -31,6 +30,7 @@
             "shipping-providers/dhl-express",
             "shipping-providers/fastway",
             "shipping-providers/fed-ex",
+            "shipping-providers/fed-ex-freight",
             "shipping-providers/interparcel",
             "shipping-providers/new-zealand-post",
             "shipping-providers/post-nl",
@@ -38,6 +38,7 @@
             "shipping-providers/sendle",
             "shipping-providers/tnt-australia",
             "shipping-providers/ups",
+            "shipping-providers/ups-freight",
             "shipping-providers/usps"
         ]
     },

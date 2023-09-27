@@ -394,6 +394,25 @@ class Providers extends Component
         return $shippingMethod;
     }
 
+    public function getTrackingStatus(string $handle, array $trackingNumbers): array
+    {
+        $trackingStatus = [];
+
+        $provider = $this->getProviderByHandle($handle);
+
+        if ($provider) {
+            $trackingResponse = $provider->getCarrier()->getTrackingStatus($trackingNumbers);
+
+            if ($trackingResponse->errors) {
+                Postie::error($provider->name . ': Unable to fetch tracking: ' . Json::encode($trackingResponse->errors));
+            }
+
+            $trackingStatus = $trackingResponse->tracking;
+        }
+
+        return $trackingStatus;
+    }
+
 
     // Private Methods
     // =========================================================================

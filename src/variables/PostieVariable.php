@@ -26,4 +26,9 @@ class PostieVariable
     {
         return count(Postie::$plugin->getInvalidVariants());
     }
+
+    public function getTrackingStatus(string $handle, array $trackingNumbers): array
+    {
+        return Postie::$plugin->getProviders()->getTrackingStatus($handle, $trackingNumbers);
+    }
 }
