@@ -5,6 +5,7 @@ use verbb\postie\base\PluginTrait;
 use verbb\postie\debug\PostiePanel;
 use verbb\postie\events\ModifyShippableVariantsEvent;
 use verbb\postie\helpers\ProjectConfigHelper;
+use verbb\postie\helpers\TestingHelper;
 use verbb\postie\models\Settings;
 use verbb\postie\services\Providers;
 use verbb\postie\variables\PostieVariable;

@@ -336,7 +336,7 @@
                                 name: 'width',
                                 required: true,
                                 placeholder: provider.dimensionUnit,
-                                value: package.width,
+                                value: package.width | number_format(2),
                             }) }}
 
                             {{ forms.textField({
@@ -344,7 +344,7 @@
                                 name: 'length',
                                 required: true,
                                 placeholder: provider.dimensionUnit,
-                                value: package.length,
+                                value: package.length | number_format(2),
                             }) }}
 
                             {{ forms.textField({
@@ -352,7 +352,7 @@
                                 name: 'height',
                                 required: true,
                                 placeholder: provider.dimensionUnit,
-                                value: package.height,
+                                value: package.height | number_format(2),
                             }) }}
 
                             {{ forms.textField({
@@ -360,7 +360,7 @@
                                 name: 'weight',
                                 required: true,
                                 placeholder: provider.weightUnit,
-                                value: package.weight,
+                                value: package.weight | number_format(2),
                             }) }}
                         </div>
                     </fieldset>

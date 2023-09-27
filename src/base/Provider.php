@@ -418,6 +418,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'height' => $payload['height'],
             'weight' => $payload['weight'],
             'price' => '',
+            'dimensionUnit' => $this->dimensionUnit,
+            'weightUnit' => $this->weightUnit,
         ]));
 
         return $shipment->getRates();
