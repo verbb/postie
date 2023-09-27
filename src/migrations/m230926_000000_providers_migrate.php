@@ -88,7 +88,6 @@ class m230926_000000_providers_migrate extends Migration
                     $freight = ArrayHelper::remove($settings, 'enableFreight');
                     $freightAccountNumber = ArrayHelper::remove($settings, 'freightAccountNumber');
                     $freightBillingStreetAddress = ArrayHelper::remove($settings, 'freightBillingStreetAddress');
-                    $freightBillingStreetAddress = ArrayHelper::remove($settings, 'freightBillingStreetAddress');
                     $freightBillingStreetAddress2 = ArrayHelper::remove($settings, 'freightBillingStreetAddress2');
                     $freightBillingCity = ArrayHelper::remove($settings, 'freightBillingCity');
                     $freightBillingZipcode = ArrayHelper::remove($settings, 'freightBillingZipcode');
@@ -100,6 +99,37 @@ class m230926_000000_providers_migrate extends Migration
                     $freightShipperZipcode = ArrayHelper::remove($settings, 'freightShipperZipcode');
                     $freightShipperStateCode = ArrayHelper::remove($settings, 'freightShipperStateCode');
                     $freightShipperCountryCode = ArrayHelper::remove($settings, 'freightShipperCountryCode');
+
+                    // Create the freight provider as well, if required
+                    if ($freight) {
+                        $freightProvider = new providers\FedExFreight(array_merge([
+                            'name' => $name . ' Freight',
+                            'handle' => $handle . 'Freight',
+                            'enabled' => $enabled,
+                            'markUpRate' => $markUpRate,
+                            'markUpBase' => $markUpBase,
+                            'packingMethod' => $packingMethod,
+                            'boxSizes' => $boxSizes,
+                            'restrictServices' => $restrictServices,
+                            'services' => $services,
+                            'freightAccountNumber' => $freightAccountNumber,
+                            'freightBillingStreetAddress' => $freightBillingStreetAddress,
+                            'freightBillingStreetAddress2' => $freightBillingStreetAddress2,
+                            'freightBillingCity' => $freightBillingCity,
+                            'freightBillingZipcode' => $freightBillingZipcode,
+                            'freightBillingStateCode' => $freightBillingStateCode,
+                            'freightBillingCountryCode' => $freightBillingCountryCode,
+                            'freightShipperStreetAddress' => $freightShipperStreetAddress,
+                            'freightShipperStreetAddress2' => $freightShipperStreetAddress2,
+                            'freightShipperCity' => $freightShipperCity,
+                            'freightShipperZipcode' => $freightShipperZipcode,
+                            'freightShipperStateCode' => $freightShipperStateCode,
+                            'freightShipperCountryCode' => $freightShipperCountryCode,
+                        ], $settings));
+
+                        // Validate the provider and save. We have to remove everything from PC first before adding new stuff
+                        Postie::$plugin->getProviders()->saveProvider($freightProvider);
+                    }
                 }
 
                 if ($handle === 'newZealandPost') {
@@ -131,6 +161,26 @@ class m230926_000000_providers_migrate extends Migration
                     $freightClass = ArrayHelper::remove($settings, 'freightClass');
                     $freightShipperName = ArrayHelper::remove($settings, 'freightShipperName');
                     $freightShipperEmail = ArrayHelper::remove($settings, 'freightShipperEmail');
+
+                    // Create the freight provider as well, if required
+                    if ($freight) {
+                        $freightProvider = new providers\UPSFreight(array_merge([
+                            'name' => $name . ' Freight',
+                            'handle' => $handle . 'Freight',
+                            'enabled' => $enabled,
+                            'markUpRate' => $markUpRate,
+                            'markUpBase' => $markUpBase,
+                            'packingMethod' => $packingMethod,
+                            'boxSizes' => $boxSizes,
+                            'restrictServices' => $restrictServices,
+                            'services' => $services,
+                            'freightPackingType' => $freightPackingType,
+                            'freightClass' => $freightClass,
+                        ], $settings));
+
+                        // Validate the provider and save. We have to remove everything from PC first before adding new stuff
+                        Postie::$plugin->getProviders()->saveProvider($freightProvider);
+                    }
                 }
 
                 if ($handle === 'usps') {
