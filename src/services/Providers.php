@@ -2,7 +2,6 @@
 namespace verbb\postie\services;
 
 use verbb\postie\Postie;
-use verbb\postie\base\Provider;
 use verbb\postie\base\ProviderInterface;
 use verbb\postie\events\ProviderEvent;
 use verbb\postie\events\RegisterProviderTypesEvent;

@@ -2,24 +2,30 @@
 namespace verbb\postie;
 
 use verbb\postie\base\PluginTrait;
+use verbb\postie\behaviors\OrderShipmentsBehavior;
 use verbb\postie\debug\PostiePanel;
 use verbb\postie\events\ModifyShippableVariantsEvent;
 use verbb\postie\helpers\ProjectConfigHelper;
-use verbb\postie\helpers\TestingHelper;
 use verbb\postie\models\Settings;
 use verbb\postie\services\Providers;
 use verbb\postie\variables\PostieVariable;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Address;
+use craft\events\DefineBehaviorsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\events\RegisterUserPermissionsEvent;
+use craft\events\TemplateEvent;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 use craft\services\ProjectConfig;
+use craft\services\UserPermissions;
 use craft\web\Application;
 use craft\web\UrlManager;
+use craft\web\View;
 use craft\web\twig\variables\CraftVariable;
 
 use craft\commerce\Plugin as Commerce;
@@ -48,7 +54,7 @@ class Postie extends Plugin
     public static function getStoreShippingAddress(): Address
     {
         $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
 
         return $storeLocation;
     }
@@ -58,7 +64,7 @@ class Postie extends Plugin
     // =========================================================================
 
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.2.3';
+    public string $schemaVersion = '2.2.5';
     public string $minVersionRequired = '2.2.7';
 
 
@@ -80,8 +86,9 @@ class Postie extends Plugin
         $this->_registerComponents();
         $this->_registerLogTarget();
         $this->_registerVariables();
-        $this->_registerCommerceEventListeners();
+        $this->_registerEventHandlers();
         $this->_registerProjectConfigEventListeners();
+        $this->_registerPermissions();
         $this->_registerDebugPanels();
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
@@ -169,9 +176,54 @@ class Postie extends Plugin
         });
     }
 
-    private function _registerCommerceEventListeners(): void
+    private function _registerEventHandlers(): void
     {
+        // Register shipping methods with Commerce
         Event::on(ShippingMethods::class, ShippingMethods::EVENT_REGISTER_AVAILABLE_SHIPPING_METHODS, [$this->getService(), 'registerShippingMethods']);
+
+        // Store the chosen rate when the order is complete, so we have more information. We also need to cache any chosen
+        // rate picked during checkout, so we can pick up once completed
+        Event::on(Order::class, Order::EVENT_AFTER_COMPLETE_ORDER, [$this->getRates(), 'handleCompletedOrder']);
+        Event::on(Order::class, Order::EVENT_AFTER_SAVE, [$this->getRates(), 'handleOrderSave']);
+
+        // Add shipments tab to order edit page.
+        Event::on(View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) {
+            $userService = Craft::$app->getUser();
+
+            if ($userService->checkPermission('postie-viewShipments') || $userService->checkPermission('postie-createShipments')) {
+                if ($event->template === 'commerce/orders/_edit') {
+                    $event->variables['tabs']['order-shipments'] = [
+                        'label' => 'Shipments',
+                        'url' => '#shipmentsTab',
+                        'class' => null,
+                    ];
+                }
+            }
+        });
+
+        // Uses order edit template hook to inject order shipments.
+        Craft::$app->getView()->hook('cp.commerce.order.content', function(&$context) {
+            return Craft::$app->getView()->renderTemplate('postie/shipments', $context);
+        });
+
+        // Add shipments behavior to access shipments like $order->shipments.
+        Event::on(Order::class, Model::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
+            $event->behaviors[] = OrderShipmentsBehavior::class;
+        });
+    }
+
+    private function _registerPermissions(): void
+    {
+        Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
+            $event->permissions[] = [
+                'heading' => Craft::t('postie', $this->getSettings()->pluginName),
+                'permissions' => [
+                    'postie-viewShipments' => ['label' => Craft::t('postie', 'View order shipments')],
+                    'postie-createShipments' => ['label' => Craft::t('postie', 'Create order shipments')],
+                    // 'postie-deleteShipments' => ['label' => Craft::t('postie', 'Delete order shipments')],
+                ],
+            ];
+        });
     }
 
     private function _registerProjectConfigEventListeners(): void

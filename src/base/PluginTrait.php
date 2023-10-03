@@ -3,7 +3,9 @@ namespace verbb\postie\base;
 
 use verbb\postie\Postie;
 use verbb\postie\services\Providers;
+use verbb\postie\services\Rates;
 use verbb\postie\services\Service;
+use verbb\postie\services\Shipments;
 use verbb\base\BaseHelper;
 
 use Craft;
@@ -57,9 +59,19 @@ trait PluginTrait
         return $this->get('providers');
     }
 
+    public function getRates(): Rates
+    {
+        return $this->get('rates');
+    }
+
     public function getService(): Service
     {
         return $this->get('service');
+    }
+
+    public function getShipments(): Shipments
+    {
+        return $this->get('shipments');
     }
 
 
@@ -70,7 +82,9 @@ trait PluginTrait
     {
         $this->setComponents([
             'providers' => Providers::class,
+            'rates' => Rates::class,
             'service' => Service::class,
+            'shipments' => Shipments::class,
         ]);
 
         BaseHelper::registerModule();
@@ -85,7 +99,9 @@ trait PluginTrait
 
         // Push a new handler to the regular target to keep track of current-requests
         if ($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null)) {
-            $logTarget->getLogger()->pushHandler(new TestHandler());
+            if ($logger = $logTarget->getLogger()) {
+                $logger->pushHandler(new TestHandler());
+            }
         }
     }
 

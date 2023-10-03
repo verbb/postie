@@ -23,7 +23,7 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
-    public function hasMatchedRoute()
+    public function hasMatchedRoute(): bool
     {
         foreach ($this->routesChecks as $url) {
             $url = str_replace(['{cpTrigger}'], [Craft::$app->getConfig()->getGeneral()->cpTrigger], $url);

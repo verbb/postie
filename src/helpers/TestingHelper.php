@@ -161,6 +161,11 @@ class TestingHelper
             $address['ownerId'] = $order->id;
         }
 
+        // Add some additional properties
+        $address['firstName'] = 'Testing';
+        $address['lastName'] = 'Name';
+        $address['organization'] = 'Test Company';
+
         // Create a new address element, even if empty
         return new Address($address);
     }

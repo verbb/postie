@@ -7,8 +7,8 @@ A **Provider** is a shipping provider used for shipping your packages. Depending
 - [Colissimo →](docs:shipping-providers/colissimo)
 - [DHL Express →](docs:shipping-providers/dhl-express)
 - [Fastway →](docs:shipping-providers/fastway)
-- [FedEx →](docs:shipping-providers/fedex)
-- [FedEx Freight →](docs:shipping-providers/fedex-freight)
+- [FedEx →](docs:shipping-providers/fed-ex)
+- [FedEx Freight →](docs:shipping-providers/fed-ex-freight)
 - [Interparcel →](docs:shipping-providers/interparcel)
 - [New Zealand Post →](docs:shipping-providers/new-zealand-post)
 - [PostNL →](docs:shipping-providers/post-nl)
@@ -16,6 +16,7 @@ A **Provider** is a shipping provider used for shipping your packages. Depending
 - [Sendle →](docs:shipping-providers/sendle)
 - [TNT Australia →](docs:shipping-providers/tnt-australia)
 - [UPS →](docs:shipping-providers/ups)
+- [UPS Freight →](docs:shipping-providers/ups-freight)
 - [USPS →](docs:shipping-providers/usps)
 
 :::tip

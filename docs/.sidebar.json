@@ -15,6 +15,7 @@
         "children": [
             "feature-tour/displaying-rates",
             "feature-tour/tracking-status",
+            "feature-tour/shipments",
             "feature-tour/providers",
             "feature-tour/box-packing"
         ]

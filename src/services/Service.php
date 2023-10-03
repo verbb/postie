@@ -16,7 +16,6 @@ use craft\commerce\events\RegisterAvailableShippingMethodsEvent;
 use yii\base\Component;
 
 use verbb\shippy\Shippy;
-use verbb\shippy\models\Package;
 use verbb\shippy\models\Shipment;
 
 class Service extends Component
@@ -35,6 +34,27 @@ class Service extends Component
 
     // Public Methods
     // =========================================================================
+
+    public function getShippyShipmentForOrder(Order $order): Shipment
+    {
+        // Allow easy-testing of addresses at the plugin level
+        $storeLocation = Postie::getStoreShippingAddress();
+
+        // Allow easy-testing of addresses at the plugin level
+        Postie::setOrderShippingAddress($order);
+
+        // Set the Shippy logger for consolidated logging with Postie
+        if (($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null))) {
+            Shippy::setLogger($logTarget->getLogger());
+        }
+
+        // Create a Shippy shipment first for the origin/destination
+        return new Shipment([
+            'currency' => $order->currency,
+            'from' => ShippyHelper::toAddress($order, $storeLocation),
+            'to' => ShippyHelper::toAddress($order, $order->shippingAddress),
+        ]);
+    }
 
     /**
      * @return ShippingMethod[]
@@ -58,47 +78,18 @@ class Service extends Component
         $providersService = Postie::$plugin->getProviders();
         $providers = $providersService->getAllEnabledProviders();
 
-        // Allow easy-testing of addresses at the plugin level
-        $storeLocation = Postie::getStoreShippingAddress();
-
-        // Set the Shippy logger for consolidated logging with Postie
-        if (($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null))) {
-            Shippy::setLogger($logTarget->getLogger());
-        }
-
-        // Create a Shippy shipment first for the origin/destination
-        $shipment = new Shipment([
-            'currency' => $order->currency,
-            'from' => ShippyHelper::toAddress($order, $storeLocation),
-            'to' => ShippyHelper::toAddress($order, $order->shippingAddress),
-        ]);
+        // Create a Shippy shipment to start getting rates for
+        $shipment = $this->getShippyShipmentForOrder($order);
 
         foreach ($providers as $provider) {
-            $carrier = $provider->getCarrier();
+            // Prepare the shipment based on the provider
+            $provider->prepareForShippy($shipment, $order);
 
-            // Add all the carriers we want to fetch rates for
-            $shipment->addCarrier($carrier);
+            $carrier = $provider->getCarrier();
 
             // Attach event handlers for Craft
             $carrier->on($carrier::EVENT_BEFORE_FETCH_RATES, [$provider, 'beforeFetchRates']);
             $carrier->on($carrier::EVENT_AFTER_FETCH_RATES, [$provider, 'afterFetchRates']);
-
-            // Allow providers to pack the order, if they have specific boxes or just using the line items
-            $packedBoxes = $provider->packOrder($order);
-
-            // Convert Postie packed boxes to Shippy packages
-            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-                $shipment->addPackage(new Package([
-                    'length' => $packedBox['length'],
-                    'width' => $packedBox['width'],
-                    'height' => $packedBox['height'],
-                    'weight' => $packedBox['weight'],
-                    'price' => $packedBox['price'],
-                    'packageType' => $packedBox['type'],
-                    'dimensionUnit' => $packedBoxes->getDimensionUnit(),
-                    'weightUnit' => $packedBoxes->getWeightUnit(),
-                ]));
-            }
         }
 
         // Actually fetch the rates
@@ -113,6 +104,10 @@ class Service extends Component
             $shippingMethod = $providersService->getShippingMethodForService($provider, $rate->getServiceCode());
             $shippingMethod->rate = $rate->getRate();
             $shippingMethod->rateOptions = $rate->getResponse();
+
+            if (!$shippingMethod->name) {
+                $shippingMethod->name = $rate->getServiceName();
+            }
 
             $shippingMethods[] = $shippingMethod;
         }

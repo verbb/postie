@@ -96,6 +96,101 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/docs\/feature-tour\/box-packing.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/feature-tour\/box-packing.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/feature-tour\/displaying-rates.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/feature-tour\/displaying-rates.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/feature-tour\/providers.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/feature-tour\/providers.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/feature-tour\/shipments.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/feature-tour\/shipments.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/feature-tour\/tracking-status.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/feature-tour\/tracking-status.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
     "\/docs\/get-started\/configuration.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -107,25 +202,6 @@
       "hM" : 0,
       "oA" : 1,
       "oAP" : "\/docs\/get-started\/configuration.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/get-started\/faqs.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/get-started\/faqs.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -172,7 +248,7 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/docs\/get-started\/troubleshooting.md" : {
+    "\/docs\/get-started\/upgrading-from-v3.md" : {
       "cB" : 0,
       "cS" : 0,
       "eF" : 1,
@@ -182,7 +258,7 @@
       "ft" : 4096,
       "hM" : 0,
       "oA" : 1,
-      "oAP" : "\/docs\/get-started\/troubleshooting.html",
+      "oAP" : "\/docs\/get-started\/upgrading-from-v3.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -202,120 +278,6 @@
       "hM" : 0,
       "oA" : 1,
       "oAP" : "\/docs\/README.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/box-packing.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/box-packing.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/displaying-rates.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/displaying-rates.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/manual-fetch.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/manual-fetch.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/products.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/products.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/providers.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/providers.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/setup-configuration\/shipping-methods.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/setup-configuration\/shipping-methods.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -438,7 +400,7 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/docs\/shipping-providers\/fedex.md" : {
+    "\/docs\/shipping-providers\/fed-ex-freight.md" : {
       "cB" : 0,
       "cS" : 0,
       "eF" : 1,
@@ -448,7 +410,26 @@
       "ft" : 4096,
       "hM" : 0,
       "oA" : 1,
-      "oAP" : "\/docs\/shipping-providers\/fedex.html",
+      "oAP" : "\/docs\/shipping-providers\/fed-ex-freight.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/shipping-providers\/fed-ex.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/shipping-providers\/fed-ex.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -571,6 +552,25 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/docs\/shipping-providers\/ups-freight.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/shipping-providers\/ups-freight.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
     "\/docs\/shipping-providers\/ups.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -659,10 +659,26 @@
       "oAP" : "\/src\/base",
       "oF" : 0
     },
+    "\/src\/behaviors\/OrderShipmentsBehavior.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/behaviors\/OrderShipmentsBehavior.php",
+      "oF" : 0
+    },
     "\/src\/controllers" : {
       "ft" : 65536,
       "oA" : 1,
       "oAP" : "\/src\/controllers",
+      "oF" : 0
+    },
+    "\/src\/debug\/PostiePanel.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/debug\/PostiePanel.php",
       "oF" : 0
     },
     "\/src\/events\/FetchRatesEvent.php" : {
@@ -671,22 +687,6 @@
       "hM" : 0,
       "oA" : 2,
       "oAP" : "\/src\/events\/FetchRatesEvent.php",
-      "oF" : 0
-    },
-    "\/src\/events\/ModifyPayloadEvent.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/events\/ModifyPayloadEvent.php",
-      "oF" : 0
-    },
-    "\/src\/events\/ModifyRatesEvent.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/events\/ModifyRatesEvent.php",
       "oF" : 0
     },
     "\/src\/events\/ModifyShippableVariantsEvent.php" : {
@@ -721,12 +721,36 @@
       "oAP" : "\/src\/events\/PackOrderEvent.php",
       "oF" : 0
     },
+    "\/src\/events\/ProviderEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/ProviderEvent.php",
+      "oF" : 0
+    },
+    "\/src\/events\/RateEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/RateEvent.php",
+      "oF" : 0
+    },
     "\/src\/events\/RegisterProviderTypesEvent.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
       "oAP" : "\/src\/events\/RegisterProviderTypesEvent.php",
+      "oF" : 0
+    },
+    "\/src\/events\/ShipmentEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/ShipmentEvent.php",
       "oF" : 0
     },
     "\/src\/helpers" : {
@@ -754,38 +778,6 @@
       "opt" : 0,
       "plM" : 3758088159,
       "prP" : 0
-    },
-    "\/src\/inc\/australia-post\/countries.json" : {
-      "ft" : 524288,
-      "oA" : 1,
-      "oAP" : "\/src\/inc\/australia-post\/countries-min.json",
-      "oF" : 0,
-      "oO" : 0,
-      "oS" : 1
-    },
-    "\/src\/inc\/colissimo\/ColissimoRates.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/inc\/colissimo\/ColissimoRates.php",
-      "oF" : 0
-    },
-    "\/src\/inc\/postnl\/PostNLRates.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/inc\/postnl\/PostNLRates.php",
-      "oF" : 0
-    },
-    "\/src\/inc\/royalmail\/RoyalMailRates.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/inc\/royalmail\/RoyalMailRates.php",
-      "oF" : 0
     },
     "\/src\/migrations" : {
       "ft" : 65536,
@@ -863,6 +855,14 @@
       "oAP" : "\/src\/providers\/FedEx.php",
       "oF" : 0
     },
+    "\/src\/providers\/FedExFreight.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/FedExFreight.php",
+      "oF" : 0
+    },
     "\/src\/providers\/Interparcel.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -903,14 +903,6 @@
       "oAP" : "\/src\/providers\/Sendle.php",
       "oF" : 0
     },
-    "\/src\/providers\/TNT.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/providers\/TNT.php",
-      "oF" : 0
-    },
     "\/src\/providers\/TNTAustralia.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -927,12 +919,26 @@
       "oAP" : "\/src\/providers\/UPS.php",
       "oF" : 0
     },
+    "\/src\/providers\/UPSFreight.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/UPSFreight.php",
+      "oF" : 0
+    },
     "\/src\/providers\/USPS.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
       "oAP" : "\/src\/providers\/USPS.php",
+      "oF" : 0
+    },
+    "\/src\/records" : {
+      "ft" : 65536,
+      "oA" : 1,
+      "oAP" : "\/src\/records",
       "oF" : 0
     },
     "\/src\/resources\/dist" : {
@@ -979,14 +985,6 @@
       "oAP" : "\/src\/templates",
       "oF" : 0
     },
-    "\/src\/translations\/de.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/translations\/de.php",
-      "oF" : 0
-    },
     "\/src\/translations\/en\/postie.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -995,18 +993,26 @@
       "oAP" : "\/src\/translations\/en\/postie.php",
       "oF" : 0
     },
-    "\/src\/twigextensions\/Extension.php" : {
-      "cB" : 0,
-      "ft" : 8192,
-      "hM" : 0,
-      "oA" : 2,
-      "oAP" : "\/src\/twigextensions\/Extension.php",
-      "oF" : 0
-    },
     "\/src\/variables" : {
       "ft" : 65536,
       "oA" : 1,
       "oAP" : "\/src\/variables",
+      "oF" : 0
+    },
+    "\/src\/views\/debug\/detail.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/views\/debug\/detail.php",
+      "oF" : 0
+    },
+    "\/src\/views\/debug\/summary.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/views\/debug\/summary.php",
       "oF" : 0
     }
   },
@@ -1018,7 +1024,7 @@
   },
   "projectAttributes" : {
     "creationDate" : 528723773,
-    "displayValue" : "postie",
+    "displayValue" : "postie-next",
     "displayValueWasSetByUser" : 0,
     "iconImageName" : "brackets-koamaru",
     "iconImageWasSetByUser" : 1

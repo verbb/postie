@@ -153,6 +153,105 @@
 }   
 
 
+
+// ==========================================================================
+// Postie Shipments
+// ==========================================================================
+
+.create-shipment-modal {
+    max-width: 800px;
+}
+
+.create-shipment-modal .body {
+    height: calc(100% - 50px);
+    overflow: auto;
+}
+
+.postie-shipments-pane-header {
+    padding: 12px 16px;
+    border-bottom: 1px #dfe4ea solid;
+}
+
+.postie-shipments-pane-header-wrap {
+    display: flex;
+    flex: 1;
+
+    .postie-provider-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 10px;
+        border-radius: 6px;
+    }
+
+    h3 {
+        margin-bottom: 0;
+    }
+
+    small {
+        color: #8b9aaa;
+    }
+}
+
+.postie-shipments-pane-body {
+    padding: 16px;
+    background: #fff;
+}
+
+.postie-shipments-pane {
+    padding: 0;
+
+    hr {
+        margin: 16px -16px;
+    }
+
+    table {
+        table-layout: fixed;
+        margin: 0 -16px;
+        width: calc(100% + 32px);
+
+        &.data td,
+        &.data th {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        &.data thead th:not(.orderable) {
+            padding-top: 0;
+            padding-bottom: 7px;
+            background: none;
+        }
+    }
+}
+
+.postie-shipments-buckets {
+    display: flex;
+    justify-content: space-between;
+}
+
+.postie-shipments-bucket-label {
+    color: #8b9aaa;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.postie-shipments-bucket-value {
+    font-weight: bold;
+    font-size: 16px;
+
+    code {
+        padding: 2px 5px;
+        font-size: 13px !important;
+        background-color: #f1f5fd;
+        border: 1px solid #D7DFE9;
+        border-radius: 3px;
+        white-space: pre;
+        margin-top: -2px;
+        display: table;
+    }
+}
+
+
+
 // ==========================================================================
 // Loading
 // ==========================================================================

@@ -35,7 +35,9 @@ use verbb\shippy\Shippy;
 use verbb\shippy\carriers\CarrierInterface;
 use verbb\shippy\events\RateEvent;
 use verbb\shippy\models\Address as ShippyAddress;
+use verbb\shippy\models\LabelResponse;
 use verbb\shippy\models\Package;
+use verbb\shippy\models\Rate;
 use verbb\shippy\models\RateResponse;
 use verbb\shippy\models\Shipment;
 
@@ -134,6 +136,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     // Public Methods
     // =========================================================================
+
+    public function __toString(): string
+    {
+        return (string)$this->name;
+    }
 
     public function defineRules(): array
     {
@@ -270,6 +277,53 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 'provider' => $this,
             ],
         ];
+    }
+
+    public function prepareForShippy(Shipment $shipment, Order $order): void
+    {
+        // Add the carrier we want to fetch rates for
+        $shipment->addCarrier($this->getCarrier());
+
+        // Allow providers to pack the order, if they have specific boxes or just using the line items
+        $packedBoxes = $this->packOrder($order);
+
+        // Convert Postie packed boxes to Shippy packages
+        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
+            $shipment->addPackage(new Package([
+                'length' => $packedBox['length'],
+                'width' => $packedBox['width'],
+                'height' => $packedBox['height'],
+                'weight' => $packedBox['weight'],
+                'price' => $packedBox['price'],
+                'packageType' => $packedBox['type'],
+                'dimensionUnit' => $packedBoxes->getDimensionUnit(),
+                'weightUnit' => $packedBoxes->getWeightUnit(),
+            ]));
+        }
+    }
+
+    public function getLabels(Order $order, string $serviceCode): ?LabelResponse
+    {
+        // Create a Shippy shipment to get labels for
+        $shipment = Postie::$plugin->getService()->getShippyShipmentForOrder($order);
+
+        // Prepare the shipment based on the provider
+        $this->prepareForShippy($shipment, $order);
+
+        $carrier = $this->getCarrier();
+
+        // Attach event handlers for Craft
+        $carrier->on($carrier::EVENT_BEFORE_FETCH_LABELS, [$this, 'beforeFetchLabels']);
+        $carrier->on($carrier::EVENT_AFTER_FETCH_LABELS, [$this, 'afterFetchLabels']);
+
+        // Create a new rate with the supplied service. No need to re-fetch the rate
+        $rate = new Rate([
+            'carrier' => $carrier,
+            'serviceCode' => $serviceCode,
+        ]);
+
+        // Fetch the labels and shipping info
+        return $shipment->getLabels($rate);
     }
 
     public function getMaxPackageWeight(Order $order): ?int
