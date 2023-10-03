@@ -1,9 +1,6 @@
 <?php
 namespace verbb\postie\providers;
 
-use verbb\postie\Postie;
-use verbb\postie\base\Provider;
-
 use Craft;
 use craft\helpers\App;
 
@@ -32,6 +29,8 @@ class UPSFreight extends UPS
 
     public ?string $freightClass = null;
     public ?string $freightPackingType = null;
+
+    private float $maxWeight = 68038.9; // 150lbs
 
 
     // Public Methods
