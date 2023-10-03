@@ -1,6 +1,6 @@
 {
     "name": "verbb/postie",
-    "description": "Provide live shipping rates during checkout from Australia Post, UPS, Fedex, and more.",
+    "description": "Get shipping rates, tracking status and print labels with Australia Post, UPS, USPS, FedEx, DHL Express, and more.",
     "type": "craft-plugin",
     "version": "3.0.3",
     "keywords": [
