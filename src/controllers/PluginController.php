@@ -37,7 +37,7 @@ class PluginController extends Controller
 
         $variants = [];
 
-        $query = Variant::find();
+        $query = Variant::find()->limit(100);
 
         // Allow plugins to modify the variant query
         $event = new ModifyShippableVariantsEvent([
