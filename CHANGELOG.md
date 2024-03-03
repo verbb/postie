@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.5 - 2024-03-04
+
+### Changed
+- The variants-shippable check now only queries 100 variants by default.
+
 ## 3.1.4 - 2023-10-25
 
 ### Changed
