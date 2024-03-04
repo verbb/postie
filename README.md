@@ -1,5 +1,5 @@
-# Postie plugin for Craft CMS
-<img width="500" src="https://verbb.imgix.net/plugins/postie/postie-social-card.png?v=2">
+<p align="center"><img src="https://verbb.imgix.net/plugins/postie/postie-icon.svg" width="100" height="100" alt="Postie icon"></p>
+<h1 align="center">Postie for Craft CMS</h1>
 
 Postie is a Craft CMS plugin to provide your customers with real-time shipping costs from your preferred provider for Craft Commerce.
 
