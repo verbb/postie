@@ -67,17 +67,12 @@ class DHLExpress extends Provider
         //
         // TESTING
         //
-        // $country = Commerce::getInstance()->countries->getCountryByIso('DE');
-        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'DE');
-
-        // $storeLocation = new craft\elements\Address();
-        // $storeLocation->locality = 'Berlin';
-        // $storeLocation->postalCode = '12345';
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->locality = 'Berlin';
-        // $order->shippingAddress->postalCode = '12345';
-        // $order->shippingAddress->countryId = $country->id;
+        // $storeLocation = TestingHelper::getTestAddress('DE', ['locality' => 'Berlin']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('DE', ['locality' => 'München'], $order);
+        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
+        // $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+        // $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
 
         // $country = Commerce::getInstance()->countries->getCountryByIso('US');
         // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'CA');
