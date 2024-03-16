@@ -86,15 +86,8 @@ class Bring extends Provider
         //
         // TESTING
         //
-        // $country = Commerce::getInstance()->countries->getCountryByIso('NO');
-
-        // $storeLocation = new craft\elements\Address();
-        // $storeLocation->postalCode = '0470';
-        // $storeLocation->countryId = $country->id;
-
-        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'NO');
-        // $order->shippingAddress->postalCode = '0151';
-        // $order->shippingAddress->countryId = $country->id;
+        // $storeLocation = TestingHelper::getTestAddress('NO', ['locality' => 'Oslo']);
+        // $order->shippingAddress = TestingHelper::getTestAddress('NO', ['locality' => 'Bergen'], $order);
         //
         // 
         //
@@ -103,28 +96,42 @@ class Bring extends Provider
             $response = [];
 
             $payload = [
-                'frompostalcode' => $storeLocation->postalCode ?? '',
-                'fromcountry' => $storeLocation->countryCode ?? '',
-                'topostalcode' => $order->shippingAddress->postalCode ?? '',
-                'tocountry' => $order->shippingAddress->countryCode ?? '',
-                'weight' => $packedBoxes->getTotalWeight(),
+                'consignments' => [
+                    [
+                        'id' => '1',
+                        'fromCountryCode' => $storeLocation->countryCode ?? '',
+                        'fromPostalCode' => $storeLocation->postalCode ?? '',
+                        'toCountryCode' => $order->shippingAddress->countryCode ?? '',
+                        'toPostalCode' => $order->shippingAddress->postalCode ?? '',
+                        'packages' => [
+                            [
+                                'grossWeight' => $packedBoxes->getTotalWeight(),
+                                'id' => '1',
+                            ],
+                        ],
+                    ],
+                ],
 
                 // Tells whether the parcel is delivered at a post office when it is shipped.
                 // A surcharge will be applied for SERVICEPAKKE and BPAKKE_DOR-DOR
-                'postingatpostoffice' => 'false',
+                'postingAtPostoffice' => false,
             ];
 
             // Restrict the services we fetch, is enabled
             if ($this->restrictServices) {
-                $payload['product'] = array_keys(ArrayHelper::where($this->services, 'enabled', true));
+                $payload['consignments'][0]['products'] = array_map(function($item) {
+                    return ['id' => $item];
+                }, array_keys(ArrayHelper::where($this->services, 'enabled', true)));
             } else {
-                $payload['product'] = array_keys(self::getServiceList());
+                $payload['consignments'][0]['products'] = array_map(function($item) {
+                    return ['id' => $item];
+                }, array_keys(self::getServiceList()));
             }
 
             $this->beforeSendPayload($this, $payload, $order);
 
-            $response = $this->_request('GET', 'products', [
-                'query' => $payload,
+            $response = $this->_request('POST', 'products', [
+                'json' => $payload,
             ]);
 
             $services = $response['consignments'][0]['products'] ?? [];
@@ -198,17 +205,32 @@ class Bring extends Provider
 
             // Create a test payload
             $payload = [
-                'frompostalcode' => $sender->postalCode ?? '',
-                'fromcountry' => $sender->countryCode ?? '',
-                'topostalcode' => $recipient->postalCode ?? '',
-                'tocountry' => $recipient->countryCode ?? '',
-                'postingatpostoffice' => 'false',
-                'weight' => $packedBox['weight'],
-                'product' => ['PA_DOREN'],
+                'consignments' => [
+                    [
+                        'id' => '1',
+                        'fromCountryCode' => $sender->countryCode ?? '',
+                        'fromPostalCode' => $sender->postalCode ?? '',
+                        'toCountryCode' => $recipient->countryCode ?? '',
+                        'toPostalCode' => $recipient->postalCode ?? '',
+                        'packages' => [
+                            [
+                                'grossWeight' => $packedBox['weight'],
+                                'id' => '1',
+                            ],
+                        ],
+                        'products' => [
+                            ['id' => 'PA_DOREN'],
+                        ]
+                    ],
+                ],
+
+                // Tells whether the parcel is delivered at a post office when it is shipped.
+                // A surcharge will be applied for SERVICEPAKKE and BPAKKE_DOR-DOR
+                'postingAtPostoffice' => false,
             ];
 
-            $response = $this->_request('GET', 'products', [
-                'query' => $payload,
+            $response = $this->_request('POST', 'products', [
+                'json' => $payload,
             ]);
         } catch (Throwable $e) {
             Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
