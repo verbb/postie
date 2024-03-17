@@ -766,6 +766,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PACK_ORDER)) {
             $this->trigger(self::EVENT_BEFORE_PACK_ORDER, $packOrderEvent);
+
+            // Allow event hander to override $packer
+            $packer = $packOrderEvent->packer;
         }
 
         if ($this->packingMethod === self::PACKING_SINGLE_BOX) {
