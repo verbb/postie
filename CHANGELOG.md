@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.6 - 2024-03-18
+
+### Changed
+- Update Bring API compatibility.
+- Allow `Provider::EVENT_BEFORE_PACK_ORDER` to override the box packing provider.
+
+### Fixed
+- Fix an error with New Zealand post settings.
+
 ## 3.1.5 - 2024-03-04
 
 ### Changed
