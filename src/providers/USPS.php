@@ -493,8 +493,6 @@ class USPS extends Provider
         }
 
         return array_search($code, $services);
-        $string = StringHelper::toSnakeCase($string);
-        return strtoupper($string);
     }
 
     private function _parseZipCode($zip): string
