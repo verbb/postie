@@ -29,31 +29,51 @@ class Bring extends Provider
     public static function getServiceList(): array
     {
         return [
-            'SERVICEPAKKE' => 'Klimanøytral Servicepakke',
-            'PA_DOREN' => 'På Døren',
-            'BPAKKE_DOR-DOR' => 'Bedriftspakke',
-            'EKSPRESS09' => 'Bedriftspakke Ekspress-Over natten',
-            'MINIPAKKE' => 'Minipakke',
+            // https://developer.bring.com/files/Labelspecifications_for_Bring_v_4_991.pdf
+            // Bring Parcels AB
+            '0330' => 'Business Parcel',
+            '0331' => 'Business Parcel Return',
+            '0332' => 'Business Parcel Bulk',
+            '0333' => 'Business Parcel Return Bulk',
+            '0334' => 'Express Nordic 0900 Bulk',
+            '0335' => 'Express Nordic 0900',
+            '0336' => 'Business Pallet',
+            '0339' => 'Express Nordic 0900 Pallet',
+            '0340' => 'PickUp Parcel',
+            '0341' => 'PickUp Parcel Return',
+            '0342' => 'PickUp Parcel Bulk',
+            '0343' => 'PickUp Parcel Return Bulk',
+            '0345' => 'Home Delivery Mailbox',
+            '0348' => 'Home Delivery Parcel Return',
+            '0349' => 'Home Delivery Parcel',
+            
+            // Parcel Domestic
+            '1000' => 'Bedriftspakke',
+            '1002' => 'Bedriftspakke Ekspress-Over natten',
+            '1020' => 'Postens pallelaster',
+            '1202' => 'Klimanøytral Servicepakke',
+            '1206' => 'Bedriftspakke postkontor',
+            '1312' => 'På Døren Prosjekt',
+            '1736' => 'På Døren',
+            '1885' => 'Abonnementstransport',
+            '1988' => 'Bedriftspakke Flerkolli',
+            '3110' => 'Minipakke',
+
+            '3570' => 'Pakke i postkassen',
+            '3584' => 'Pakke i postkassen (sporbar)',
+            '4850' => 'Ekspress neste dag',
+            '5000' => 'Pakke til bedrift',
+            '5100' => 'Stykkgods til bedrift',
+            '5300' => 'Partigods til bedrift',
+            '5400' => 'Pall til bedrift',
+            '5600' => 'Pakke levert hjem',
+            '5800' => 'Pakke til hentested',
+            '9000' => 'Retur pakke fra bedrift',
+            '9100' => 'Retur stykkgods fra bedrift',
+            '9300' => 'Retur fra hentested',
+            '9600' => 'Returekspress',
             'MAIL' => 'Brev',
-            'A-POST' => 'A-Prioritert',
-            'B-POST' => 'B-Økonomi',
-            'SMAAPAKKER_A-POST' => 'Småpakker A-Post',
-            'SMAAPAKKER_B-POST' => 'Småpakker B-Post',
-            'QUICKPACK_SAMEDAY' => 'QuickPack SameDay',
-            'QUICKPACK_OVER_NIGHT_0900' => 'Quickpack Over Night 0900',
-            'QUICKPACK_OVER_NIGHT_1200' => 'Quickpack Over Night 1200',
-            'QUICKPACK_DAY_CERTAIN' => 'Quickpack Day Certain',
-            'QUICKPACK_EXPRESS_ECONOMY' => 'Quickpack Express Economy',
-            'CARGO_GROUPAGE' => 'Cargo',
-            'CARRYON_BUSINESS' => 'CarryOn Business',
-            'CARRYON_HOMESHOPPING' => 'CarryOn HomeShopping',
-            'HOMEDELIVERY_CURBSIDE_DAG' => 'HomeDelivery Curb Side',
-            'COURIER_VIP' => 'Bud VIP',
-            'COURIER_1H' => 'Bud 1 time',
-            'COURIER_2H' => 'Bud 2 timer',
-            'COURIER_4H' => 'Bud 4 timer',
-            'COURIER_6H' => 'Bud 6 timer',
-            'OX' => 'Oil Express',
+            'VIP25' => 'Budbil VIP',
         ];
     }
 
@@ -120,11 +140,11 @@ class Bring extends Provider
             // Restrict the services we fetch, is enabled
             if ($this->restrictServices) {
                 $payload['consignments'][0]['products'] = array_map(function($item) {
-                    return ['id' => $item];
+                    return ['id' => (string)$item];
                 }, array_keys(ArrayHelper::where($this->services, 'enabled', true)));
             } else {
                 $payload['consignments'][0]['products'] = array_map(function($item) {
-                    return ['id' => $item];
+                    return ['id' => (string)$item];
                 }, array_keys(self::getServiceList()));
             }
 
