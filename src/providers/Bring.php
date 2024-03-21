@@ -114,6 +114,17 @@ class Bring extends Provider
 
         try {
             $response = [];
+            $packages = [];
+
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $index => $packedBox) {
+                $packages[] = [
+                    'grossWeight' => $packedBox['weight'],
+                    'height' => $packedBox['height'],
+                    'width' => $packedBox['width'],
+                    'length' => $packedBox['length'],
+                    'id' => $index + 1,
+                ];
+            }
 
             $payload = [
                 'consignments' => [
@@ -123,12 +134,7 @@ class Bring extends Provider
                         'fromPostalCode' => $storeLocation->postalCode ?? '',
                         'toCountryCode' => $order->shippingAddress->countryCode ?? '',
                         'toPostalCode' => $order->shippingAddress->postalCode ?? '',
-                        'packages' => [
-                            [
-                                'grossWeight' => $packedBoxes->getTotalWeight(),
-                                'id' => '1',
-                            ],
-                        ],
+                        'packages' => $packages,
                     ],
                 ],
 
