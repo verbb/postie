@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.7 - 2024-04-10
+
+### Added
+- Add dimensions to packages for Bring.
+
+### Changed
+- Update Bring services to latest available (2023+).
+- Change minimum packed box weight to 1 gram (converted to the providers weight unit).
+
+### Fixed
+- Fix an error with USPS international shipments.
+
 ## 3.1.6 - 2024-03-18
 
 ### Changed
