@@ -74,6 +74,15 @@ class USPS extends Provider
             'FIRST_CLASS_MAIL_LARGE_POSTCARDS' => 'USPS First-Class Mail Large Postcards',
             'FIRST_CLASS_PACKAGE_SERVICE_RETAIL' => 'USPS First-Class Package Service - Retail',
 
+            'GROUND_ADVANTAGE' => 'USPS Ground Advantage',
+            'GROUND_ADVANTAGE_CUBIC' => 'USPS Ground Advantage Cubic',
+            'GROUND_ADVANTAGE_HOLD_FOR_PICKUP' => 'USPS Ground Advantage Hold For Pickup',
+            'GROUND_ADVANTAGE_CUBIC_HOLD_FOR_PICKUP' => 'USPS Ground Advantage Cubic Hold For Pickup',
+            'GROUND_ADVANTAGE_HAZMAT' => 'USPS Ground Advantage HAZMAT',
+            'GROUND_ADVANTAGE_CUBIC_HAZMAT' => 'USPS Ground Advantage Cubic HAZMAT',
+            'GROUND_ADVANTAGE_PARCEL_LOCKER' => 'USPS Ground Advantage Parcel Locker',
+            'GROUND_ADVANTAGE_CUBIC_PARCEL_LOCKER' => 'USPS Ground Advantage Cubic Parcel Locker',
+
             'STANDARD_PARCEL_POST' => 'USPS Standard Parcel Post',
             'MEDIA_MAIL_PARCEL' => 'USPS Media Mail Parcel',
             'LIBRARY_MAIL_PARCEL' => 'USPS Library Mail Parcel',
@@ -446,6 +455,15 @@ class USPS extends Provider
                 'FIRST_CLASS_MAIL_POSTCARDS' => '0D',
                 'FIRST_CLASS_MAIL_LARGE_POSTCARDS' => '15',
                 'FIRST_CLASS_PACKAGE_SERVICE_RETAIL' => '61',
+
+                'GROUND_ADVANTAGE' => '1058',
+                'GROUND_ADVANTAGE_CUBIC' => '1096',
+                'GROUND_ADVANTAGE_HOLD_FOR_PICKUP' => '2058',
+                'GROUND_ADVANTAGE_CUBIC_HOLD_FOR_PICKUP' => '2096',
+                'GROUND_ADVANTAGE_HAZMAT' => '4058',
+                'GROUND_ADVANTAGE_CUBIC_HAZMAT' => '4096',
+                'GROUND_ADVANTAGE_PARCEL_LOCKER' => '6058',
+                'GROUND_ADVANTAGE_CUBIC_PARCEL_LOCKER' => '6096',
 
                 'STANDARD_PARCEL_POST' => '4',
                 'MEDIA_MAIL_PARCEL' => '6',
