@@ -2,8 +2,9 @@
 You can register your own Provider to add support for other carriers, or even extend an existing Provider.
 
 ```php
-use modules\MyProvider;
+namespace modules\sitemodule;
 
+use modules\sitemodule\MyProvider;
 use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\services\Providers;
 use yii\base\Event;
@@ -23,7 +24,7 @@ Let's start by creating a very simple Shippy Carrier class. Again, refer to the 
 Create the following class in `modules/WakandaPostCarrier.php`.
 
 ```php
-namespace modules;
+namespace modules\sitemodule;
 
 use verbb\shippy\carriers\AbstractCarrier;
 use verbb\shippy\models\HttpClient;
@@ -131,7 +132,7 @@ Here, we've created a Shippy Carrier class that uses their (fictional) API endpo
 Next, connect the Shippy Carrier to a new Postie Provider as `modules/WakandaPost.php`
 
 ```php
-namespace modules;
+namespace modules\sitemodule;
 
 use verbb\postie\base\Provider;
 use verbb\postie\helpers\TestingHelper;
