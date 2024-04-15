@@ -49,7 +49,13 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
         Craft.sendActionRequest('POST', 'postie/providers/test-rates', { data })
             .then((response) => {
                 if (response.data.errors.length) {
-                    throw new Error({ response: { data: JSON.stringify(response.data.errors) } });
+                    throw {
+                        response: {
+                            data: {
+                                message: JSON.stringify(response.data.errors),
+                            },
+                        },
+                    };
                 }
 
                 var $table = $('<div class="postie-rates-tester-table"></div>');
@@ -103,7 +109,7 @@ Craft.Postie.OrderShipmentModal = Garnish.Modal.extend({
         this.$footerSpinner = $('<div class="spinner right hidden"/>').appendTo(this.$footer);
         this.$buttons = $('<div class="buttons right"/>').appendTo(this.$footer);
         this.$cancelBtn = $('<input type="button" class="btn" value="' + Craft.t('postie', 'Cancel') + '" />').appendTo(this.$buttons);
-        this.$createButton = $('<input type="button" class="btn submit" value="' + Craft.t('postie', 'Create Shipment') + '" />').appendTo(this.$buttons);
+        this.$createButton = $('<input type="submit" class="btn submit" value="' + Craft.t('postie', 'Create Shipment') + '" />').appendTo(this.$buttons);
 
         this.addListener(this.$cancelBtn, 'click', 'hide');
         this.addListener(this.$createButton, 'click', 'onSubmit');

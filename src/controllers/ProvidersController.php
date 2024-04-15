@@ -208,7 +208,16 @@ class ProvidersController extends Controller
 
         try {
             // Check to see if it's valid. Exceptions help to provide errors nicely
-            return $this->asJson($provider->getTestRates($payload));
+            $rates = $provider->getTestRates($payload);
+
+            // Format any errors better, as these are assumed to be for multi-carriers
+            if ($rates->getErrors()) {
+                foreach ($rates->getErrors() as $error) {
+                    $rates->setErrors($error);
+                }
+            }
+
+            return $this->asJson($rates);
         } catch (Exception $e) {
             return $this->asFailure($e->getMessage());
         }
