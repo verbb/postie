@@ -26,7 +26,7 @@ class PostieVariable
     {
         $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
-        return $storeLocation ? '1' : null;
+        return $storeLocation ? null : '1';
     }
 
     public function getProductsBadge(): ?string
