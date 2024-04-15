@@ -22,6 +22,30 @@
         {% else %}
             <p class="success"><span data-icon="check"></span> {{ 'Store location is configured.' | t('postie') }}</p>
         {% endif %}
+
+        <hr>
+
+        <h3>{{ 'Shipments' | t('commerce') }}</h3>
+
+        {{ forms.selectField({
+            label: 'Shipped Order Status' | t('postie'),
+            instructions: 'Select which Order Status should be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.' | t('postie'),
+            name: 'shippedOrderStatus',
+            options: settings.getOrderStatusOptions(),
+            value: settings.shippedOrderStatus,
+            warning: macros.configWarning('shippedOrderStatus', 'postie'),
+            errors: settings.getErrors('shippedOrderStatus'),
+        }) }}
+
+        {{ forms.selectField({
+            label: 'Partially Shipped Order Status' | t('postie'),
+            instructions: 'Select which Order Status should be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.' | t('postie'),
+            name: 'partiallyShippedOrderStatus',
+            options: settings.getOrderStatusOptions(),
+            value: settings.partiallyShippedOrderStatus,
+            warning: macros.configWarning('partiallyShippedOrderStatus', 'postie'),
+            errors: settings.getErrors('partiallyShippedOrderStatus'),
+        }) }}
     {% endnamespace %}
 
     <hr>

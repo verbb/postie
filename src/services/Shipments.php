@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\services;
 
+use verbb\postie\Postie;
 use verbb\postie\events\ShipmentEvent;
 use verbb\postie\models\Rate;
 use verbb\postie\models\Shipment;
@@ -162,9 +163,9 @@ class Shipments extends Component
 
         // Move the order to either "Shipped" or "Partially Shipped"
         if (!$this->getUnshippedLineItems($order)) {
-            $orderStatus = Commerce::getInstance()->getOrderStatuses()->getOrderStatusByHandle('shipped');
+            $orderStatus = Postie::$plugin->getSettings()->getShippedOrderStatus();
         } else {
-            $orderStatus = Commerce::getInstance()->getOrderStatuses()->getOrderStatusByHandle('partiallyShipped');
+            $orderStatus = Postie::$plugin->getSettings()->getPartiallyShippedOrderStatus();
         }
 
         if ($orderStatus) {
