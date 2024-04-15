@@ -1,5 +1,5 @@
 # Events
-Postie provides a collection of events for extending its functionality. Modules and plugins can register event listeners, typically in their `init()` methods, to modify Postie’s behavior.
+Postie provides a collection of events for extending its functionality. Modules and plugins can register event listeners, typically in their `init()` methods, to modify Postie’s behaviour.
 
 ## Plugin Events
 
@@ -32,13 +32,13 @@ Event::on(USPS::class, USPS::EVENT_BEFORE_FETCH_RATES, function(FetchRatesEvent 
     // This will return a `verbb\shippy\models\Request` instance
     $request = $event->request;
 
-    // Fetch the HTTP client, method, enspoint and payload
+    // Fetch the HTTP client, method, endpoint and payload
     $httpClient = $request->getHttpClient();
     $method = $request->getMethod();
     $endpoint = $request->getEndpoint();
     $payload = $request->getPayload();
 
-    // Modify the raw payload before it hits the providers API
+    // Modify the raw payload before it hits the provider API
     $payload['query']['from_postcode'] = '9999';
     $event->request->payload = $payload;
 

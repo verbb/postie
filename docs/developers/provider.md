@@ -15,7 +15,7 @@ Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(R
 ```
 
 ## Example
-Postie uses the [Shippy](https://github.com/verbb/shippy) package for all provider logic. As such, you should first become familiar with how creating a custom carrier in Shippy works first. Then, you can add support for your Shippy Carrier as a Postie Provider.
+Postie uses the [Shippy](https://github.com/verbb/shippy) package for all provider logic. As such, you should first become familiar with how creating a custom carrier in Shippy works. Then, you can add support for your Shippy Carrier as a Postie Provider.
 
 For our example, let's use the fictional `Wakanda Post` carrier for the rest of this guide. This provider needs an `apiKey` setting to authenticate with the API. Your provider may have different requirements.
 

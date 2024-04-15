@@ -1,5 +1,5 @@
 # Tracking Status
-Given a tracking number, you can use Postie to fetch the status and summary of its journey. This can be a nice touch for customers in their order page to keep track of their shipment.
+Given a tracking number, you can use Postie to fetch the status and summary of its journey. This can be a nice touch for customers on their order page to keep track of their shipments.
 
 :::tip
 Not all providers support fetching tracking status. Be sure to check each [Shipping Provider](docs:shipping-providers) for more details.

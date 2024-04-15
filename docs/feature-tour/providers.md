@@ -1,5 +1,5 @@
 # Providers
-A **Provider** is a shipping provider used for shipping your packages. Depending on your shipping needs will determine which service you'd like to use, and currently Postie supports the following providers:
+A **Provider** is a shipping provider used for shipping your packages. Depending on your shipping needs will determine which service you'd like to use, and currently, Postie supports the following providers:
 
 - [Australia Post →](docs:shipping-providers/australia-post)
 - [Bring →](docs:shipping-providers/bring)
@@ -31,5 +31,5 @@ Every provider will require different API settings, so this section will change 
 ## Markup
 You can set up a markup for every provider, which is useful to cover packing costs or other incidental costs. You can select this value to be either a **Percentage** or **Value**.
 
-- **Percentage** — Add a markup based of the total order price. Add a markup rate between 1 and 100 to calculate a percentage.
-- **Value** — Add just a pure value at top of the total order price. For example, "5" for $5 dollars.
+- **Percentage** — Add a markup based on the total order price. Add a markup rate between 1 and 100 to calculate a percentage.
+- **Value** — Add just a pure value on top of the total order price. For example, "5" for $5.

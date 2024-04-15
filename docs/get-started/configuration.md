@@ -27,8 +27,8 @@ return [
 - `pluginName` - If you wish to customise the plugin name.
 - `enableCaching` - Whether to enable intelligent caching when fetching rates.
 - `enableRouteCheck` - Whether to enable route-checking to protect fetching live rates unnecessarily.
-- `shippedOrderStatus` - Select which Order Status should be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.
-- `partiallyShippedOrderStatus` - Select which Order Status should be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.
+- `shippedOrderStatus` - The Order Status handle to be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.
+- `partiallyShippedOrderStatus` - The Order Status handle to be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.
 - `routesChecks` - With `enableRouteCheck` enabled, only these routes will trigger fetching rates. Supports Regex and `{cpTrigger}`.
 - `providers` - A collection of options for each provider.
 
