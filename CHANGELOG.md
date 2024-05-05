@@ -1,5 +1,27 @@
 # Changelog
 
+## 4.0.0 - 2024-05-06
+> {note} This is a major update with some breaking changes. Review [what's changed](https://verbb.io/craft-plugins/postie/docs/get-started/upgrading-from-v3).
+
+### Added
+- Add shipments and labels functionality.
+- Add support for multiple providers for a carrier.
+- Add debug pane to the Yii debug toolbar for better debugging.
+- Add rate test functionality to providers from the control panel.
+- Add compulsary route checks for fetching rates.
+- Add plugin settings for the `shipped` and `partiallyShipped` order statuses.
+
+### Changed
+- Refactor to use `verbb\shippy` for providers rates.
+
+### Fixed
+- Fix lack of boxSize validation.
+
+### Removed
+- Removed Plugin Name setting (no longer used).
+- Removed Enabled CP Section setting (no longer used).
+- Removed Apply Free Shipping setting (no longer used).
+
 ## 3.0.3 - 2023-05-27
 
 ### Added
