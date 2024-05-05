@@ -927,6 +927,14 @@
       "oAP" : "\/src\/providers\/UPSFreight.php",
       "oF" : 0
     },
+    "\/src\/providers\/UPSLegacy.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/UPSLegacy.php",
+      "oF" : 0
+    },
     "\/src\/providers\/USPS.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -985,6 +993,14 @@
       "oAP" : "\/src\/templates",
       "oF" : 0
     },
+    "\/src\/translations\/de\/postie.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/translations\/de\/postie.php",
+      "oF" : 0
+    },
     "\/src\/translations\/en\/postie.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -1024,7 +1040,7 @@
   },
   "projectAttributes" : {
     "creationDate" : 528723773,
-    "displayValue" : "postie-next",
+    "displayValue" : "postie",
     "displayValueWasSetByUser" : 0,
     "iconImageName" : "brackets-koamaru",
     "iconImageWasSetByUser" : 1

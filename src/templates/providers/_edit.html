@@ -75,23 +75,20 @@
 
     {% for providerType in providerTypes %}
         {% set isCurrent = (providerType == className(provider)) %}
+        {% set currentProvider = isCurrent ? provider : providerInstances[providerType] %}
 
         <div class="carrier-settings-{{ providerType | id }} {% if not isCurrent %}hidden{% endif %}">
             <div class="postie-settings-block">
-                {% set url = '{name} provider guide' | t('postie', { name: provider.displayName() }) %}
+                {% set url = '{name} provider guide' | t('postie', { name: currentProvider.displayName() }) %}
 
                 {{ 'To connect to {name}, follow our {url}.' | t('postie', {
-                    name: provider.displayName(),
-                    url: '<a href="https://verbb.io/craft-plugins/postie/docs/providers/' ~ (provider.displayName() | kebab) ~ '" target="_blank" rel="noopener">' ~ url ~ '</a>',
+                    name: currentProvider.displayName(),
+                    url: '<a href="https://verbb.io/craft-plugins/postie/docs/providers/' ~ (currentProvider.displayName() | kebab) ~ '" target="_blank" rel="noopener">' ~ url ~ '</a>',
                 }) | raw }}
             </div>
 
             {% namespace 'types[' ~ providerType ~ ']' %}
-                {% if isCurrent %}
-                    {{ provider.getSettingsHtml() | raw }}
-                {% else %}
-                    {{ providerInstances[providerType].getSettingsHtml() | raw }}
-                {% endif %}
+                {{ currentProvider.getSettingsHtml() | raw }}
             {% endnamespace %}
         </div>
     {% endfor %}
