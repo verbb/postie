@@ -101,7 +101,7 @@ class Sendle extends SinglePackageProvider
                     ]);
                 }
             } else {
-                Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
+                Provider::info($this, Craft::t('postie', 'No services found: `{json}`.', [
                     'json' => Json::encode($response),
                 ]));
             }

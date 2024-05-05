@@ -184,7 +184,7 @@
                     {% set service = provider.services[handle] ?? [] %}
                     {% set enabled = service.enabled ?? false %}
                     {% set name = service.name ?? serviceName ?? '' %}
-                    {% set cpEditUrl = service.cpEditUrl ?? '' %}
+                    {% set cpEditUrl = service.getCpEditUrl() ?? '' %}
 
                     <tr>
                         <td width="45%">

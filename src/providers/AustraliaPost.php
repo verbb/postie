@@ -307,7 +307,7 @@ class AustraliaPost extends SinglePackageProvider
             $countryCode = $order->shippingAddress->countryCode ?? '';
 
             if ($countryCode === 'AU') {
-                Provider::log($this, 'Domestic API call');
+                Provider::info($this, 'Domestic API call');
 
                 $payload = [
                     'from_postcode' => $storeLocation->postalCode,
@@ -331,7 +331,7 @@ class AustraliaPost extends SinglePackageProvider
                     'query' => $payload,
                 ]);
             } else {
-                Provider::log($this, 'International API call');
+                Provider::info($this, 'International API call');
 
                 // Get match country code from Aus Pos country list
                 $countryCode = $this->_getCountryCode($order->shippingAddress->country);

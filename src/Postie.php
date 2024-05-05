@@ -46,9 +46,6 @@ class Postie extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
-        $this->_registerTwigExtensions();
         $this->_registerVariables();
         $this->_registerEventHandlers();
         $this->_registerCommerceEventListeners();
@@ -76,10 +73,17 @@ class Postie extends Plugin
 
     public function getCpNavItem(): ?array
     {
-        $navItem = parent::getCpNavItem();
-        $navItem['label'] = $this->getPluginName();
+        $nav = parent::getCpNavItem();
+        $nav['label'] = $this->getPluginName();
 
-        return $navItem;
+        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $nav['subnav']['settings'] = [
+                'label' => Craft::t('postie', 'Settings'),
+                'url' => 'postie/settings',
+            ];
+        }
+
+        return $nav;
     }
 
 
@@ -94,11 +98,6 @@ class Postie extends Plugin
 
     // Private Methods
     // =========================================================================
-
-    private function _registerTwigExtensions(): void
-    {
-        Craft::$app->getView()->registerTwigExtension(new Extension);
-    }
 
     private function _registerCpRoutes(): void
     {

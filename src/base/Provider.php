@@ -100,7 +100,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             throw new Exception($message);
         }
 
-        Postie::log($message);
+        Postie::info($message);
     }
 
     public static function error($provider, $message, $throwError = false): void
@@ -380,19 +380,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $request = Craft::$app->getRequest();
 
         if (!$order) {
-            Provider::log($this, 'Missing required order variable.');
+            Provider::info($this, 'Missing required order variable.');
 
             return null;
         }
 
         if (!$order->getLineItems()) {
-            Provider::log($this, 'No line items for order.');
+            Provider::info($this, 'No line items for order.');
 
             return null;
         }
 
         if (!$order->shippingAddress && !$order->estimatedShippingAddress) {
-            Provider::log($this, 'No shipping address for order.');
+            Provider::info($this, 'No shipping address for order.');
 
             return null;
         }
@@ -440,7 +440,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
                 // For CP requests, don't rely on the POST param and continue as normal
                 if ($request->getIsSiteRequest()) {
-                    Provider::log($this, 'Postie set to manually fetch rates. Required POST param not provided.');
+                    Provider::info($this, 'Postie set to manually fetch rates. Required POST param not provided.');
 
                     return [];
                 }
@@ -602,7 +602,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Apply the amended payload
         $payload = $event->payload;
 
-        self::log($this, Craft::t('postie', 'Sending payload: `{json}`.', [
+        self::info($this, Craft::t('postie', 'Sending payload: `{json}`.', [
             'json' => Json::encode($payload),
         ]));
     }

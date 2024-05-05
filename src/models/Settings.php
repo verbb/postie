@@ -27,15 +27,6 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
-    public function defineRules(): array
-    {
-        $rules = parent::defineRules();
-
-        $rules[] = [['providers'], 'validateProviders'];
-
-        return $rules;
-    }
-
     public function validateProviders(): void
     {
         foreach ($this->providers as $key => $provider) {
@@ -79,5 +70,18 @@ class Settings extends Model
                 }
             }
         }
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['providers'], 'validateProviders'];
+
+        return $rules;
     }
 }

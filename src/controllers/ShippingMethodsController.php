@@ -37,16 +37,15 @@ class ShippingMethodsController extends Controller
     public function actionSave(): ?Response
     {
         $this->requirePostRequest();
-        $request = Craft::$app->getRequest();
 
         $pluginHandle = 'postie';
         $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
 
-        $providerHandle = $request->getBodyParam('providerHandle');
-        $name = $request->getBodyParam('name');
-        $handle = $request->getBodyParam('handle');
-        $enabled = $request->getBodyParam('enabled');
-        $shippingCategories = $request->getBodyParam('shippingCategories');
+        $providerHandle = $this->request->getBodyParam('providerHandle');
+        $name = $this->request->getBodyParam('name');
+        $handle = $this->request->getBodyParam('handle');
+        $enabled = $this->request->getBodyParam('enabled');
+        $shippingCategories = $this->request->getBodyParam('shippingCategories');
 
         $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
         $providerSettings = $pluginInfo['settings']['providers'][$providerHandle]['services'][$handle] ?? [];

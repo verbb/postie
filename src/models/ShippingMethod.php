@@ -81,7 +81,7 @@ class ShippingMethod extends BaseShippingMethod
         return $this->enabled && isset($this->rate);
     }
 
-    public function getCpEditUrl(): string
+    public function getCpEditUrl(): ?string
     {
         return UrlHelper::cpUrl('postie/settings/shipping-methods/' . $this->provider->handle . '/' . $this->getHandle());
     }

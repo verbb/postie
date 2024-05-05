@@ -100,7 +100,7 @@ class PostNL extends StaticProvider
                 ];
             }
         } else {
-            Provider::log($this, Craft::t('postie', 'No services found.'));
+            Provider::info($this, Craft::t('postie', 'No services found.'));
         }
 
         // Allow rate modification via events

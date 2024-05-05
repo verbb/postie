@@ -193,7 +193,7 @@ class USPS extends Provider
             $countryCode = $order->shippingAddress->countryCode ?? '';
 
             if (self::isDomestic($countryCode)) {
-                Provider::log($this, 'Domestic rate service call');
+                Provider::info($this, 'Domestic rate service call');
 
                 foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
                     // Create new package object and assign the properties
@@ -218,7 +218,7 @@ class USPS extends Provider
                     $client->addPackage($package);
                 }
             } else {
-                Provider::log($this, 'International rate service call');
+                Provider::info($this, 'International rate service call');
 
                 // Set international flag
                 $client->setInternationalCall(true);

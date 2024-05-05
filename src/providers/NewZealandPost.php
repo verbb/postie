@@ -91,7 +91,7 @@ class NewZealandPost extends SinglePackageProvider
             $countryCode = $order->shippingAddress->countryCode ?? '';
 
             if ($countryCode == 'NZ') {
-                Provider::log($this, 'Domestic API call');
+                Provider::info($this, 'Domestic API call');
 
                 $payload = [
                     'pickup_city' => $storeLocation->locality ?? '',
@@ -127,12 +127,12 @@ class NewZealandPost extends SinglePackageProvider
                         ]);
                     }
                 } else {
-                    Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
+                    Provider::info($this, Craft::t('postie', 'No services found: `{json}`.', [
                         'json' => Json::encode($response),
                     ]));
                 }
             } else {
-                Provider::log($this, 'International API call');
+                Provider::info($this, 'International API call');
 
                 $payload = [
                     'country_code' => $order->shippingAddress->countryCode ?? '',
@@ -166,7 +166,7 @@ class NewZealandPost extends SinglePackageProvider
                         ]);
                     }
                 } else {
-                    Provider::log($this, Craft::t('postie', 'No services found: `{json}`.', [
+                    Provider::info($this, Craft::t('postie', 'No services found: `{json}`.', [
                         'json' => Json::encode($response),
                     ]));
                 }
