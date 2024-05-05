@@ -54,7 +54,7 @@ class Postie extends Plugin
 
     public static function getStoreShippingAddress(): Address
     {
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
         // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
 
         return $storeLocation;
