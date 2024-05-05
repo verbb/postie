@@ -123,7 +123,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public ?string $uid = null;
     public ?float $markUpRate = null;
     public ?string $markUpBase = null;
-    public bool $restrictServices = true;
+    public bool $restrictServices = false;
     public array $services = [];
     public string $packingMethod = self::PACKING_SINGLE_BOX;
     public array $boxSizes = [];
