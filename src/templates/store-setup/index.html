@@ -48,13 +48,16 @@
         <tbody>
 
         {% for variant in variants %}
-            {% set productType = variant.getProduct().getType() %}
+            {% set product = variant.getProduct() %}
+            {% set productType = product.getType() %}
 
             <tr>
                 <td>
-                    <a href="{{ variant.getUrl() }}" target="_blank">{{ variant.title }}</a>
+                    <a href="{{ product.getCpEditUrl() }}" target="_blank">{{ variant.title }}</a>
                 </td>
+
                 <td>{{ productType.name }}</td>
+
                 <td>
                     {% if variant.length %}
                         {{ variant.length | number }}
@@ -90,8 +93,8 @@
                     <span class="label light">{{ craft.commerce.settings.weightUnits }}</span>
                 </td>
                 <td>
-                    {% if variant.canSave(currentUser) %}
-                        <a href="{{ variant.getCpEditUrl() }}">
+                    {% if product.canSave(currentUser) %}
+                        <a href="{{ product.getCpEditUrl() }}">
                             <span class="icon"><span data-icon="edit"></span></span>
                         </a>
                     {% else %}
