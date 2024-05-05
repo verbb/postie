@@ -141,6 +141,18 @@ class TestingHelper
             'postalCode' => '1012 RJ',
             'countryCode' => 'NL',
         ],
+        [
+            'addressLine1' => 'Kurfürstendamm 26',
+            'locality' => 'Berlin',
+            'postalCode' => '10719',
+            'countryCode' => 'DE',
+        ],
+        [
+            'addressLine1' => 'Rosenstraße 1',
+            'locality' => 'München',
+            'postalCode' => '80331',
+            'countryCode' => 'DE',
+        ],
     ];
 
 

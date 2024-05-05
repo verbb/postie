@@ -77,6 +77,16 @@ Event::on(USPS::class, USPS::EVENT_BEFORE_PACK_ORDER, function(PackOrderEvent $e
 });
 ```
 
+It is also possible to override `packer` with your own class that extends `DVDoug\BoxPacker\Packer`.
+
+```
+Event::on(USPS::class, Provider::EVENT_BEFORE_PACK_ORDER, function (PackOrderEvent $event) {
+    // Use your own custom packer class
+    $event->packer = new CustomPacker();
+});
+```
+
+
 ### The `afterPackOrder` event
 The event that is triggered after the order contents are packed in boxes.
 

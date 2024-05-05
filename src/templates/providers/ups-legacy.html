@@ -1,0 +1,186 @@
+{% import '_includes/forms' as forms %}
+{% import 'postie/_macros' as macros %}
+
+{% set instructions %}
+### Connect to the {name} API
+1. Go to <a href="https://www.ups.com/upsdeveloperkit?loc=en_US" target="_blank">{name} Developer Kit</a> and register for API access.
+1. Copy the **API Key** from {name} and paste in the **API Key** field below.
+1. Copy the **Test API Key** from {name} and paste in the **Test API Key** field below.
+1. Copy the **Username** from {name} and paste in the **Username** field below.
+1. Copy the **Password** from {name} and paste in the **Password** field below.
+1. Copy the **Account Number** from {name} and paste in the **Account Number** field below.
+{% endset %}
+
+<div class="postie-settings-block">
+    {{ instructions | t('postie', { name: provider.displayName() }) | md }}
+</div>
+
+{{ forms.autosuggestField({
+    label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
+    id: 'apiKey',
+    name: 'apiKey',
+    value: provider.settings.apiKey ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.apiKey', 'postie'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Test API Key' | t('postie'),
+    instructions: 'Enter your {name} Test API Key here.' | t('postie', { name: provider.displayName() }),
+    id: 'testApiKey',
+    name: 'testApiKey',
+    value: provider.settings.testApiKey ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.testApiKey', 'postie'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+    id: 'username',
+    name: 'username',
+    value: provider.settings.username ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.username', 'postie'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+    id: 'password',
+    name: 'password',
+    value: provider.settings.password ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.password', 'postie'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    suggestEnvVars: true,
+    value: provider.settings.accountNumber ?? '',
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.accountNumber', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Use Test Endpoint' | t('postie'),
+    instructions: 'Whether to use the {name} testing endpoint.' | t('postie', { name: provider.displayName() }),
+    id: 'useTestEndpoint',
+    name: 'useTestEndpoint',
+    on: provider.settings.useTestEndpoint ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.useTestEndpoint', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Use Negotiated Rates' | t('postie'),
+    instructions: 'Whether to use UPS Negotiated Rates. This must be enabled on your UPS account.' | t('postie'),
+    id: 'negotiatedRates',
+    name: 'negotiatedRates',
+    on: provider.settings.negotiatedRates ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.negotiatedRates', 'postie'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Require Signature' | t('postie'),
+    instructions: 'Whether parcels require a signature from the receiver. This will effect rates.' | t('postie'),
+    id: 'requireSignature',
+    name: 'requireSignature',
+    value: provider.settings.requireSignature ?? '',
+    options: [
+        { label: 'None' | t('postie'), value: '' },
+        { label: 'Required' | t('postie'), value: 'required' },
+        { label: 'Adult Required' | t('postie'), value: 'adult' },
+    ],
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.requireSignature', 'postie'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Pickup Type' | t('postie'),
+    instructions: 'Select what type of pickup to use. This will effect rates.' | t('postie'),
+    id: 'pickupType',
+    name: 'pickupType',
+    value: provider.settings.pickupType ?? '',
+    options: provider.getPickupTypeOptions(),
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.pickupType', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Residential Address' | t('postie'),
+    instructions: 'Whether to flag customer‘s address is a residential address.' | t('postie'),
+    id: 'residentialAddress',
+    name: 'residentialAddress',
+    on: provider.settings.residentialAddress ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.residentialAddress', 'postie'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Include Insurance' | t('postie'),
+    instructions: 'Whether to include insurance for rates.' | t('postie'),
+    id: 'includeInsurance',
+    name: 'includeInsurance',
+    on: provider.settings.includeInsurance ?? false,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.includeInsurance', 'postie'),
+}) }}
+
+{% set enableFreight = provider.settings.enableFreight ?? false %}
+
+{{ forms.lightswitchField({
+    label: 'Enable Freight' | t('postie'),
+    instructions: 'Whether to enable UPS Freight LTL Rates. The origin and destination for the shipment must be the US, along with the store currency set to USD.' | t('postie'),
+    id: 'enableFreight',
+    name: 'enableFreight',
+    on: enableFreight,
+    warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.enableFreight', 'postie'),
+    toggle: 'ups-freight',
+}) }}
+
+<div id="ups-freight" class="{{ not enableFreight ? 'hidden' }}">
+    {{ forms.selectField({
+        label: 'Freight Packing Type' | t('postie'),
+        instructions: 'Select the {name} Freight Packing Type.' | t('postie', { name: provider.displayName() }),
+        id: 'freightPackingType',
+        name: 'freightPackingType',
+        value: provider.settings.freightPackingType ?? '',
+        options: provider.getFreightPackingTypeOptions(),
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightPackingType', 'postie'),
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Freight Class' | t('postie'),
+        instructions: 'Select the {name} Freight Class.' | t('postie', { name: provider.displayName() }),
+        id: 'freightClass',
+        name: 'freightClass',
+        value: provider.settings.freightClass ?? '',
+        options: provider.getFreightClassOptions(),
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightClass', 'postie'),
+    }) }}
+
+    <h3>{{ 'Freight Shipper' | t('formie') }}</h3>
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Name' | t('postie'),
+        instructions: 'Enter your {name} Freight Name here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperName',
+        name: 'freightShipperName',
+        value: provider.settings.freightShipperName ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperName', 'postie'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Freight Shipper Email' | t('postie'),
+        instructions: 'Enter your {name} Freight Email here.' | t('postie', { name: provider.displayName() }),
+        id: 'freightShipperEmail',
+        name: 'freightShipperEmail',
+        value: provider.settings.freightShipperEmail ?? '',
+        suggestEnvVars: true,
+        warning: macros.configWarning('providers.' ~ provider.handle ~ '.settings.freightShipperEmail', 'postie'),
+    }) }}
+</div>

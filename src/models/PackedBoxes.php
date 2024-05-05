@@ -23,6 +23,21 @@ class PackedBoxes extends Model
     {
         parent::__construct();
 
+        // Populate the price of each packed box, now that we know what items are in what box.
+        // It can't realistically be set when the box is created, as items aren't packed yet, otherwise
+        // we could make the price dynamics based on the box contents.
+        if (is_array($packedBoxList)) {
+            foreach ($packedBoxList as $packedBox) {
+                $boxPrice = 0;
+
+                foreach ($packedBox->getItems() as $boxItem) {
+                    $boxPrice += $boxItem->getItem()->getItemValue();
+                }
+
+                $packedBox->getBox()->setPrice($boxPrice);
+            }
+        }
+
         $this->packedBoxList = $packedBoxList;
         $this->weightUnit = $weightUnit;
         $this->dimensionUnit = $dimensionUnit;
@@ -63,7 +78,8 @@ class PackedBoxes extends Model
             // Just in case there's a 0 weight item, we want to set a min weight. This can happen due to how the 
             // box-packer only handles integers. https://github.com/dvdoug/BoxPacker/discussions/241
             if ($weight == 0) {
-                $weight = 0.01;
+                // Set minimum weight to 1g, but convert that to the provider units.
+                $weight = (new Mass(1, 'g'))->toUnit($this->weightUnit);
             }
 
             $list[] = [

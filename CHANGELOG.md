@@ -22,6 +22,78 @@
 - Removed Enabled CP Section setting (no longer used).
 - Removed Apply Free Shipping setting (no longer used).
 
+## 3.1.7 - 2024-04-10
+
+### Added
+- Add dimensions to packages for Bring.
+
+### Changed
+- Update Bring services to latest available (2023+).
+- Change minimum packed box weight to 1 gram (converted to the providers weight unit).
+
+### Fixed
+- Fix an error with USPS international shipments.
+
+## 3.1.6 - 2024-03-18
+
+### Changed
+- Update Bring API compatibility.
+- Allow `Provider::EVENT_BEFORE_PACK_ORDER` to override the box packing provider.
+
+### Fixed
+- Fix an error with New Zealand post settings.
+
+## 3.1.5 - 2024-03-04
+
+### Changed
+- The variants-shippable check now only queries 100 variants by default.
+
+## 3.1.4 - 2023-10-25
+
+### Changed
+- Updated Royal Mail rates.
+
+## 3.1.3 - 2023-09-25
+
+### Added
+- Add Declared Value Option to UPS. (thanks @bryanredeagle).
+- Add support for packed boxes to have their price correctly depending on their packed items.
+
+### Changed
+- Updated Royal Mail rates.
+
+### Fixed
+- Fix an error when migrating from Craft 3.
+
+## 3.1.2 - 2023-08-31
+
+### Fixed
+- Fix UPS and negotiated rates throwing an error.
+- Fix an error for some providers and `boxSizes`.
+
+## 3.1.1 - 2023-08-17
+
+### Added
+- Added “Pickup Type” for UPS, which was previously removed.
+
+### Fixed
+- Fix an error when migrating UPS to new provider.
+
+### Removed
+- Removed “Use Negotiated Rates” for UPS (applied by default).
+
+## 3.1.0 - 2023-08-16
+
+### Added
+- Add support for new UPS API.
+- Add support for products marked with “Free Shipping” to be excluded from rates calls.
+
+### Changed
+- Check discounts and free shipping when getting line items used in fetching rates. (thanks @zollf).
+
+### Deprecated
+- Deprecated existing UPS providers to UPS (Legacy).
+
 ## 3.0.3 - 2023-05-27
 
 ### Added
