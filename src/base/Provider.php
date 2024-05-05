@@ -142,6 +142,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return (string)$this->name;
     }
 
+    public static function className(): string
+    {
+        $classNameParts = explode('\\', static::class);
+
+        return array_pop($classNameParts);
+    }
+
     public function defineRules(): array
     {
         $rules = parent::defineRules();
@@ -219,7 +226,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function getIconUrl(): string
     {
         try {
-            $handle = StringHelper::toKebabCase(self::displayName());
+            $handle = StringHelper::toKebabCase(self::className());
 
             return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
         } catch (Throwable $e) {
@@ -229,7 +236,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getSettingsHtml(): ?string
     {
-        $handle = StringHelper::toKebabCase(self::displayName());
+        $handle = StringHelper::toKebabCase(self::className());
 
         return Craft::$app->getView()->renderTemplate("postie/providers/_includes/$handle", [
             'provider' => $this,

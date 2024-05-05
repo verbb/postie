@@ -37,8 +37,8 @@ class DHLExpress extends Provider
     public ?string $username = null;
     public ?string $password = null;
     public ?string $accountNumber = null;
-    public ?string $shipDate = null;
-    public ?string $shipTime = null;
+    public string|array|null $shipDate = null;
+    public string|array|null $shipTime = null;
 
     private int $maxWeight = 70000; // 70kg
 
