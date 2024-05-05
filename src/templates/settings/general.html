@@ -13,20 +13,17 @@
     {{ csrfInput() }}
 
     {% namespace 'settings' %}
-        <h3>{{ 'Store Location' | t('commerce') }}</h3>
-
-        <p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/store-settings/location') ~ '">Commerce Settings</a>' }) | raw }}</p>
-
-        {% if not storeLocation.addressLine1 %}
-            <p class="warning with-icon">{{ 'Store location not configured.' | t('postie') }}</p>
-        {% else %}
-            <p class="success"><span data-icon="check"></span> {{ 'Store location is configured.' | t('postie') }}</p>
-        {% endif %}
-
-        <hr>
-
-        <h3>{{ 'Shipments' | t('commerce') }}</h3>
-
+        {{ forms.textField({
+            first: true,
+            label: 'Plugin Name' | t('postie'),
+            instructions: 'Plugin name for the end user.' | t('postie'),
+            id: 'pluginName',
+            name: 'pluginName',
+            value: settings.pluginName,
+            autofocus: true,
+            warning: macros.configWarning('pluginName', 'postie'),
+        }) }}
+        
         {{ forms.selectField({
             label: 'Shipped Order Status' | t('postie'),
             instructions: 'Select which Order Status should be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.' | t('postie'),

@@ -142,11 +142,6 @@ Old | What to do instead
 | `username` | Use `clientId` and `clientSecret` for OAuth authentication.
 | `password` | Use `clientId` and `clientSecret` for OAuth authentication.
 
-## Control Panel Page
-We now no longer show the Postie settings in the control panel navigation. This is because all Postie settings are "settings" and cannot be configured on a production environment where `allowAdminChanges = false`. As such, there's no need to show a page that users won't be able to access.
-
-Postie settings can be managed via Settings > Postie as normal.
-
 ## Events
 The following events have been removed as they are no longer applicable.
 
@@ -163,7 +158,6 @@ The following plugin settings have changed.
 
 Old | What to do instead
 --- | ---
-| `hasCpSection` | No configurable settings are available on non-development environments.
 | `applyFreeShipping` | Free shipping is always applied is applicable.
 | `displayDebug` | Use the new Postie Yii Debug pane.
 | `displayErrors` | Use the new Postie Yii Debug pane.

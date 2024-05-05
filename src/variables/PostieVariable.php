@@ -22,18 +22,6 @@ class PostieVariable
         return Postie::$plugin->getPluginName();
     }
 
-    public function getGeneralBadge(): ?string
-    {
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        return $storeLocation ? null : '1';
-    }
-
-    public function getProductsBadge(): ?string
-    {
-        return count(Postie::$plugin->getInvalidVariants());
-    }
-
     public function getTrackingStatus(string $handle, array $trackingNumbers): array
     {
         return Postie::$plugin->getProviders()->getTrackingStatus($handle, $trackingNumbers);

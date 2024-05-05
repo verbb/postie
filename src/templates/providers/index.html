@@ -1,10 +1,24 @@
-{% extends 'postie/_layouts/settings' %}
+{% extends 'postie/_layouts' %}
+
+{% set isReadOnly = not craft.app.config.general.allowAdminChanges %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
+] %}
+
+{% set title = 'Providers' | t('postie') %}
+{% set selectedSubnavItem = 'providers' %}
+
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
 
 {% block actionButton %}
-    <a href="{{ url("postie/settings/providers/new") }}" class="btn submit add icon">{{ 'New Provider' | t('postie') }}</a>
+    {% if not isReadOnly %}
+        <a href="{{ url("postie/providers/new") }}" class="btn submit add icon">{{ 'New Provider' | t('postie') }}</a>
+    {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block blockContent %}
     <div id="providers-vue-admin-table"></div>
 {% endblock %}
 
@@ -67,7 +81,7 @@ new Craft.VueAdminTable({
     emptyMessage: Craft.t('postie', 'No providers exist yet.'),
     tableData: {{ tableData | json_encode | raw }},
 
-    {% if craft.app.config.general.allowAdminChanges %}
+    {% if not isReadOnly %}
         deleteAction: 'postie/providers/delete',
         reorderAction: '{{ providers | length > 1 ? 'postie/providers/reorder' : ''}}',
     {% endif %}

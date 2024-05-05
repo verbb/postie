@@ -1,13 +1,33 @@
-{% extends 'postie/_layouts/settings' %}
+{% extends 'postie/_layouts' %}
 
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
 
-{% block content %}
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Store Setup' | t('postie'), url: url('postie/store-setup') },
+] %}
+
+{% set title = 'Store Setup' | t('postie') %}
+{% set selectedSubnavItem = 'store-setup' %}
+
+{% block blockContent %}
+
+<h2>{{ 'Store Location' | t('commerce') }}</h2>
+
+<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/store-settings/store') ~ '">Commerce Store Settings</a>' }) | raw }}</p>
+
+{% if not storeLocation.addressLine1 %}
+    <p class="warning with-icon">{{ 'Store location not configured.' | t('postie') }}</p>
+{% else %}
+    <p class="success"><span data-icon="check"></span> {{ 'Store location is configured.' | t('postie') }}</p>
+{% endif %}
+
+<hr>
 
 <h2>{{ 'Products' | t('postie') }}</h2>
 
-<p>{{ "This list shows your products (and their variants) without any dimensions or weights set up. Every product you want to ship via Postie needs to have fully populated dimensions and weights. Ensure you've also set up the correct measurement units in your {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/general') ~ '">Commerce Settings</a>' }) | raw }}</p>
+<p>{{ "This list shows your products (and their variants) without any dimensions or weights set up. Every product you want to ship via Postie needs to have fully populated dimensions and weights. Ensure you've also set up the correct measurement units in your {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/general') ~ '">Commerce System Settings</a>' }) | raw }}</p>
 
 <hr />
 

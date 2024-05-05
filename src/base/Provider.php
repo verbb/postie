@@ -231,14 +231,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $handle = StringHelper::toKebabCase(self::displayName());
 
-        return Craft::$app->getView()->renderTemplate("postie/providers/$handle", [
+        return Craft::$app->getView()->renderTemplate("postie/providers/_includes/$handle", [
             'provider' => $this,
         ]);
     }
 
     public function getCpEditUrl(): string
     {
-        return UrlHelper::cpUrl('postie/settings/providers/edit/' . $this->id);
+        return UrlHelper::cpUrl('postie/providers/edit/' . $this->id);
     }
 
     public function getMarkUpBaseOptions(): array

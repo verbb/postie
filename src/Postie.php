@@ -6,6 +6,7 @@ use verbb\postie\behaviors\OrderShipmentsBehavior;
 use verbb\postie\debug\PostiePanel;
 use verbb\postie\events\ModifyShippableVariantsEvent;
 use verbb\postie\helpers\ProjectConfigHelper;
+use verbb\postie\helpers\TestingHelper;
 use verbb\postie\models\Settings;
 use verbb\postie\services\Providers;
 use verbb\postie\variables\PostieVariable;
@@ -63,6 +64,7 @@ class Postie extends Plugin
     // Properties
     // =========================================================================
 
+    public bool $hasCpSection = true;
     public bool $hasCpSettings = true;
     public string $schemaVersion = '2.2.5';
     public string $minVersionRequired = '2.2.7';
@@ -108,10 +110,37 @@ class Postie extends Plugin
 
     public function getCpNavItem(): ?array
     {
-        $navItem = parent::getCpNavItem();
-        $navItem['label'] = $this->getPluginName();
+        $nav = parent::getCpNavItem();
 
-        return $navItem;
+        $nav['label'] = $this->getPluginName();
+
+        $nav['subnav']['providers'] = [
+            'label' => Craft::t('postie', 'Providers'),
+            'url' => 'postie/providers',
+        ];
+
+        $count = count(Postie::$plugin->getInvalidVariants());
+
+        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+
+        if (!$storeLocation) {
+            $count++;
+        }
+
+        $nav['subnav']['store-setup'] = [
+            'label' => Craft::t('postie', 'Store Setup'),
+            'url' => 'postie/store-setup',
+            'badgeCount' => $count,
+        ];
+
+        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $nav['subnav']['settings'] = [
+                'label' => Craft::t('postie', 'Settings'),
+                'url' => 'postie/settings',
+            ];
+        }
+
+        return $nav;
     }
 
     public function getInvalidVariants(?int $limit = 50): array
@@ -158,13 +187,13 @@ class Postie extends Plugin
     private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
-            $event->rules['postie'] = 'postie/settings';
+            $event->rules['postie'] = 'postie/providers';
+            $event->rules['postie/providers'] = 'postie/providers';
+            $event->rules['postie/providers/new'] = 'postie/providers/edit';
+            $event->rules['postie/providers/edit/<providerId:\d+>'] = 'postie/providers/edit';
+            $event->rules['postie/store-setup'] = 'postie/store-setup';
             $event->rules['postie/settings'] = 'postie/settings';
             $event->rules['postie/settings/general'] = 'postie/settings';
-            $event->rules['postie/settings/products'] = 'postie/settings/products';
-            $event->rules['postie/settings/providers'] = 'postie/providers';
-            $event->rules['postie/settings/providers/new'] = 'postie/providers/edit';
-            $event->rules['postie/settings/providers/edit/<providerId:\d+>'] = 'postie/providers/edit';
             $event->rules['postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:{handle}>'] = 'postie/shipping-methods/edit';
         });
     }

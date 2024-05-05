@@ -21,22 +21,8 @@ class SettingsController extends Controller
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
         return $this->renderTemplate('postie/settings/general', [
             'settings' => $settings,
-            'storeLocation' => $storeLocation,
-        ]);
-    }
-
-    public function actionProducts(): Response
-    {
-        /* @var Settings $settings */
-        $settings = Postie::$plugin->getSettings();
-
-        return $this->renderTemplate('postie/settings/products', [
-            'settings' => $settings,
-            'variants' => Postie::$plugin->getInvalidVariants(),
         ]);
     }
 

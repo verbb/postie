@@ -41,7 +41,8 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
     runTest(e) {
         e.preventDefault();
 
-        var data = $('#main-form').serialize();
+        // Don't use `#main-form` as it won't exist for a read-only page
+        var data = $('#main-content').find('select, textarea, input').serialize();
 
         this.$testBtn.addClass('vui-loading');
         this.$result.html('');

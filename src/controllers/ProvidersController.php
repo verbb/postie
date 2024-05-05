@@ -27,7 +27,7 @@ class ProvidersController extends Controller
     {
         $providers = Postie::$plugin->getProviders()->getAllProviders();
 
-        return $this->renderTemplate('postie/settings/providers', compact('providers'));
+        return $this->renderTemplate('postie/providers', compact('providers'));
     }
 
     public function actionEdit(int $providerId = null, ProviderInterface $provider = null): Response
@@ -85,11 +85,11 @@ class ProvidersController extends Controller
             $title = trim($provider->name) ?: Craft::t('postie', 'Edit provider');
         }
 
-        $baseUrl = 'postie/settings/providers';
-        $continueEditingUrl = 'postie/settings/providers/edit/{id}';
+        $baseUrl = 'postie/providers';
+        $continueEditingUrl = 'postie/providers/edit/{id}';
         $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
-        return $this->renderTemplate('postie/settings/providers/_edit', [
+        return $this->renderTemplate('postie/providers/_edit', [
             'provider' => $provider,
             'isNewProvider' => $isNewProvider,
             'providerTypes' => $registeredProviders,

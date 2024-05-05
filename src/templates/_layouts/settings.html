@@ -5,8 +5,6 @@
 
 {% requireAdmin %}
 
-{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
-
 {% set crumbs = [
     { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
     { label: 'Settings' | t('app'), url: url('postie/settings') },
@@ -16,9 +14,7 @@
 {% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
 
 {% set navItems = {
-    'general': { title: 'General' | t('postie'), badge: craft.postie.getGeneralBadge() },
-    'products': { title: 'Products' | t('postie'), badge: craft.postie.getProductsBadge() },
-    'providers': { title: 'Providers' | t('postie') },
+    'general': { title: 'General Settings' | t('postie') },
 } %}
 
 {% block sidebar %}

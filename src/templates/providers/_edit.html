@@ -2,14 +2,15 @@
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
 
+{% set isReadOnly = not craft.app.config.general.allowAdminChanges %}
+
 {% set crumbs = [
     { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
-    { label: 'Settings' | t('app'), url: url('postie/settings') },
-    { label: 'Providers' | t('postie'), url: url('postie/settings/providers') },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
 ] %}
 
 {% set bodyClass = 'providers-settings' %}
-{% set fullPageForm = true %}
+{% set fullPageForm = not isReadOnly %}
 {% set saveShortcutRedirect = continueEditingUrl %}
 
 {% set formActions = [
@@ -36,7 +37,7 @@
     testing: { label: 'Rates Testing' | t('postie'), url: '#testing' },
 } %}
 
-{% block content %}
+{% block blockContent %}
 
 <input type="hidden" name="action" value="postie/providers/save">
 {% if provider.id %}<input type="hidden" name="id" value="{{ provider.id }}">{% endif %}
