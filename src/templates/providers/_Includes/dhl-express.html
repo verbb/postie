@@ -1,0 +1,95 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.selectField({
+    label: 'API' | t('postie'),
+    instructions: 'Select which {name} API to use.' | t('postie', { name: provider.displayName() }),
+    name: 'apiType',
+    options: provider.getApiTypeOptions(),
+    value: provider.apiType ?? '',
+    required: true,
+    suggestEnvVars: true,
+    toggle: true,
+    targetPrefix: '.api-type-',
+    warning: macros.configWarning("providers.#{provider.handle}.apiType", 'postie'),
+    errors: provider.getErrors('apiType'),
+}) }}
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Account Number' | t('postie'),
+        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'accountNumber',
+        name: 'accountNumber',
+        value: provider.accountNumber ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+        errors: provider.getErrors('accountNumber'),
+    }) }}
+</div>
+
+<div class="api-type-rates api-type-shipping {% if provider.apiType == 'tracking' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Username' | t('postie'),
+        instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+        id: 'username',
+        name: 'username',
+        value: provider.username ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.username", 'postie'),
+        errors: provider.getErrors('username'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Password' | t('postie'),
+        instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+        id: 'password',
+        name: 'password',
+        value: provider.password ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
+        errors: provider.getErrors('password'),
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Ship Date' | t('postie'),
+        instructions: 'Select what date the shipment should be lodged.' | t('postie'),
+        id: 'shipDate',
+        name: 'shipDate',
+        value: provider.shipDate ?? '',
+        options: [
+            { label: 'Same Day' | t('postie'), value: '' },
+            { label: 'Next Day' | t('postie'), value: 'nextDay' },
+            { label: 'Next Business Day' | t('postie'), value: 'nextBusinessDay' },
+        ],
+        warning: macros.configWarning("providers.#{provider.handle}.shipDate", 'postie'),
+        errors: provider.getErrors('shipDate'),
+    }) }}
+
+    {{ forms.timeField({
+        label: 'Ship Time' | t('postie'),
+        instructions: 'Select what time the shipment should be lodged.' | t('postie'),
+        id: 'shipTime',
+        name: 'shipTime',
+        value: provider.shipTime.time ?? '',
+        warning: macros.configWarning("providers.#{provider.handle}.shipTime", 'postie'),
+        errors: provider.getErrors('shipTime'),
+    }) }}
+</div>
+
+<div class="api-type-tracking {% if provider.apiType != 'tracking' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Client ID' | t('postie'),
+        instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
+        id: 'clientId',
+        name: 'clientId',
+        value: provider.clientId ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.clientId", 'postie'),
+        errors: provider.getErrors('clientId'),
+    }) }}
+</div>

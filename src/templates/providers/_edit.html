@@ -1,0 +1,441 @@
+{% extends 'postie/_layouts' %}
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set isReadOnly = not craft.app.config.general.allowAdminChanges %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
+] %}
+
+{% set bodyClass = 'providers-settings' %}
+{% set fullPageForm = not isReadOnly %}
+{% set saveShortcutRedirect = continueEditingUrl %}
+
+{% set formActions = [
+    {
+        label: 'Save and continue editing' | t('app'),
+        redirect: continueEditingUrl | hash,
+        shortcut: true,
+        retainScroll: true,
+    },
+    not isNewProvider ? {
+        destructive: true,
+        label: 'Delete provider' | t('postie'),
+        action: 'postie/providers/delete',
+        redirect: baseUrl | hash,
+        confirm: 'Are you sure you want to delete this provider?' | t('postie'),
+    }
+] | filter %}
+
+{% set tabs = {
+    provider: { label: 'Provider' | t('postie'), url: '#provider' },
+    carrier: { label: 'Carrier' | t('postie'), url: '#carrier' },
+    packing: { label: 'Packing' | t('postie'), url: '#packing' },
+    services: { label: 'Services' | t('postie'), url: '#services' },
+    testing: { label: 'Rates Testing' | t('postie'), url: '#testing' },
+} %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="postie/providers/save">
+{% if provider.id %}<input type="hidden" name="id" value="{{ provider.id }}">{% endif %}
+{{ redirectInput(baseUrl) }}
+
+<div id="provider">
+    {{ forms.textField({
+        first: true,
+        label: 'Name' | t('postie'),
+        instructions: 'What this provider will be called in the control panel.' | t('postie'),
+        id: 'name',
+        name: 'name',
+        value: (provider is defined ? provider.name : null),
+        errors: (provider is defined ? provider.getErrors('name') : null),
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: 'Handle' | t('postie'),
+        instructions: 'How you’ll refer to this provider in the templates.' | t('postie'),
+        id: 'handle',
+        name: 'handle',
+        class: 'code',
+        autocorrect: false,
+        autocapitalize: false,
+        value: (provider is defined ? provider.handle : null),
+        errors: (provider is defined ? provider.getErrors('handle') : null),
+        required: true,
+    }) }}
+</div>
+
+<div id="carrier" class="hidden">
+    {{ missingProviderPlaceholder | raw }}
+
+    {% for providerType in providerTypes %}
+        {% set isCurrent = (providerType == className(provider)) %}
+        {% set currentProvider = isCurrent ? provider : providerInstances[providerType] %}
+
+        <div class="carrier-settings-{{ providerType | id }} {% if not isCurrent %}hidden{% endif %}">
+            <div class="postie-settings-block">
+                {% set url = '{name} provider guide' | t('postie', { name: currentProvider.displayName() }) %}
+
+                {{ 'To connect to {name}, follow our {url}.' | t('postie', {
+                    name: currentProvider.displayName(),
+                    url: '<a href="https://verbb.io/craft-plugins/postie/docs/providers/' ~ (currentProvider.displayName() | kebab) ~ '" target="_blank" rel="noopener">' ~ url ~ '</a>',
+                }) | raw }}
+            </div>
+
+            {% namespace 'types[' ~ providerType ~ ']' %}
+                {{ currentProvider.getSettingsHtml() | raw }}
+            {% endnamespace %}
+        </div>
+    {% endfor %}
+</div>
+
+<div id="packing" class="hidden">
+    <div class="vui-row" style="margin-bottom: 24px;">
+        <div class="vui-col vui-col-6">
+            {{ forms.textField({
+                label: 'Markup Rate' | t('postie'),
+                instructions: 'Shipping costs added to the order as a whole. Leave it blank to disable this rate.' | t('postie'),
+                id: 'markUpRate',
+                name: 'markUpRate',
+                value: provider.markUpRate,
+                errors: provider.getErrors('markUpRate'),
+                warning: macros.configWarning("providers.#{provider.handle}.markUpRate", 'postie'),
+            }) }}
+        </div>
+            
+        <div class="vui-col vui-col-6">
+            {{ forms.selectField({
+                label: 'Markup Base' | t('postie'),
+                instructions: 'Add percentage between 1 and 100 or pure value. Can be ignored when rate is empty.' | t('postie'),
+                id: 'markUpBase',
+                name: 'markUpBase',
+                options: provider.getMarkUpBaseOptions(),
+                value: provider.markUpBase,
+                errors: provider.getErrors('markUpBase'),
+                warning: macros.configWarning("providers.#{provider.handle}.markUpBase", 'postie'),
+            }) }}
+        </div>
+    </div>
+
+    {% set packingMethod = provider.packingMethod ?? 'perItem' %}
+
+    {{ forms.selectField({
+        label: 'Packing Method' | t('postie'),
+        instructions: 'Select how order items should be packed into boxes.' | t('postie'),
+        id: 'packingMethod',
+        name: 'packingMethod',
+        options: [
+            { label: 'Pack items individually' | t('postie'), value: 'perItem' },
+            { label: 'Pack items into boxes' | t('postie'), value: 'boxPacking' },
+            { label: 'Pack items into a single box' | t('postie'), value: 'singleBox' },
+        ],
+        value: packingMethod,
+        toggle: true,
+        targetPrefix: 'packing-',
+        errors: provider.getErrors('packingMethod'),
+        warning: macros.configWarning("providers.#{provider.handle}.packingMethod", 'postie'),
+    }) }}
+
+    <div id="packing-boxPacking" class="{{ packingMethod != 'boxPacking' ? 'hidden' }}">
+        {% for providerType in providerTypes %}
+            {% set isCurrent = (providerType == className(provider)) %}
+
+            <div class="carrier-settings-{{ providerType | id }} {% if not isCurrent %}hidden{% endif %}">
+                {% namespace 'types[' ~ providerType ~ ']' %}
+                    {% set pickedProvider = isCurrent ? provider : providerInstances[providerType] %}
+
+                    {{ forms.editableTableField({
+                        label: 'Box Sizes' | t('postie'),
+                        instructions: 'Items will be packed into these boxes based on item dimensions and volume. Dimensions will be passed to {name}, and used for packing. Items not fitting into boxes will be packed individually.' | t('postie', { name: pickedProvider.displayName() }),
+                        id: 'boxSizes',
+                        name: 'boxSizes',
+                        cols: pickedProvider.getBoxSizesSettings(),
+                        rows: pickedProvider.getBoxSizesRows(),
+                        errors: pickedProvider.getErrors('boxSizes'),
+                        warning: macros.configWarning("providers.#{pickedProvider.handle}.boxSizes", 'postie'),
+                        allowAdd: true,
+                        allowDelete: true,
+                        allowReorder: true,
+                    }) }}
+                {% endnamespace %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="services" class="hidden">
+    {{ forms.lightswitchField({
+        label: 'Restrict Shipping Methods' | t('postie'),
+        instructions: 'Whether to restrict the services returned from the provider, or allow all.' | t('postie'),
+        id: 'restrictServices',
+        name: 'restrictServices',
+        on: provider.restrictServices,
+        errors: provider.getErrors('restrictServices'),
+        warning: macros.configWarning("providers.#{provider.handle}.restrictServices", 'postie'),
+        toggle: 'fields',
+    }) }}
+
+    {% for providerType in providerTypes %}
+        {% set isCurrent = (providerType == className(provider)) %}
+
+        <div class="carrier-settings-{{ providerType | id }} {% if not isCurrent %}hidden{% endif %}">
+            {% set pickedProvider = isCurrent ? provider : providerInstances[providerType] %}
+
+            <table id="fields" class="data fullwidth collapsible">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ "Name" | t('postie') }}</th>
+                        <th scope="col">{{ "Handle" | t('postie') }}</th>
+                        <th scope="col">
+                            <div class="provider-shipping-methods-all-switch">
+                                {{ forms.lightswitchField({
+                                    id: 'allShippingMethods',
+                                    small: true,
+                                }) }}
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="provider-shipping-methods" id="shippingMethods">
+                    {% for handle, serviceName in pickedProvider.getServiceList() %}
+                        {% namespace 'types[' ~ providerType ~ '][services][' ~ handle ~ ']' %}
+                            {% set warning = macros.configWarning("providers.#{pickedProvider.handle}.services.#{handle}", 'postie') %}
+
+                            {% set service = pickedProvider.services[handle] ?? [] %}
+                            {% set enabled = service.enabled ?? false %}
+                            {% set name = service.name ?? serviceName ?? '' %}
+                            {% set cpEditUrl = pickedProvider.handle ? cpUrl("postie/settings/shipping-methods/#{pickedProvider.handle}/#{handle}") : '' %}
+
+                            <tr>
+                                <td width="45%">
+                                    <div class="field">
+                                        {%- apply spaceless %}
+                                            {% if cpEditUrl %}
+                                                <a href="{{ cpEditUrl }}">
+                                                    <span class="status {% if enabled %}green{% endif %}"></span>
+                                                    <strong>{{ name }}</strong>
+                                                </a>
+                                            {% else %}
+                                                <span class="status {% if enabled %}green{% endif %}"></span>
+                                                <strong>{{ name }}</strong>
+                                            {% endif %}
+                                        {% endapply -%}
+                                    </div>
+                                </td>
+
+                                <td width="45%">
+                                    {% if warning %}
+                                        <span class="warning" data-icon="alert"></span>
+                                    {% endif %}
+
+                                    <input type="hidden" name="name" value="{{ name }}">
+                                    <input type="hidden" name="enabled" value="0">
+
+                                    <code style="font-size: 11px !important;">{{ handle }}</code>
+                                </td>
+
+                                <td class="nowrap" width="10%">
+                                    {{ forms.lightswitchField({
+                                        name: 'enabled',
+                                        value: 1,
+                                        on: enabled,
+                                        small: true,
+                                    }) }}
+                                </td>
+                            </tr>
+                        {% endnamespace  %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+
+<div id="testing" class="hidden">
+    {% if isNewProvider %}
+        <p class="warning with-icon">{{ 'Save this provider before testing for rates.' | t('postie') }}</p>
+    {% else %}
+        {% namespace 'rateTest' %}
+            <div class="postie-rates-tester">
+                <div class="postie-address-cards">
+                    {% for i in 1..2 %}
+                        <fieldset class="postie-address-card">
+                            {% if loop.first %}
+                                {% set modelName = 'from' %}
+                                {% set model = provider.getTestingOriginAddress() %}
+
+                                <legend>{{ 'Origin' | t('postie') }}</legend>
+                            {% else %}
+                                {% set modelName = 'to' %}
+                                {% set model = provider.getTestingDestinationAddress() %}
+
+                                <legend>{{ 'Destination' | t('postie') }}</legend>
+                            {% endif %}
+
+                            <div class="postie-address-card-row">
+                                {{ forms.textField({
+                                    label: 'Address Line 1' | t('postie'),
+                                    name: "#{modelName}[addressLine1]",
+                                    value: model.addressLine1 ?? '',
+                                    required: true,
+                                }) }}
+                            </div>
+
+                            <div class="postie-address-card-row">
+                                {{ forms.textField({
+                                    label: 'City' | t('postie'),
+                                    name: "#{modelName}[locality]",
+                                    value: model.locality ?? '',
+                                    required: true,
+                                }) }}
+
+                                {{ forms.textField({
+                                    label: 'Postal Code' | t('postie'),
+                                    name: "#{modelName}[postalCode]",
+                                    value: model.postalCode ?? '',
+                                    required: true,
+                                }) }}
+                            </div>
+
+                            <div class="postie-address-card-row">
+                                {{ forms.textField({
+                                    label: 'State or Province' | t('postie'),
+                                    name: "#{modelName}[administrativeArea]",
+                                    value: model.administrativeArea ?? '',
+                                    required: true,
+                                }) }}
+
+                                {{ forms.textField({
+                                    label: 'Country Code' | t('postie'),
+                                    name: "#{modelName}[countryCode]",
+                                    value: model.countryCode ?? '',
+                                    required: true,
+                                }) }}
+                            </div>
+                        </fieldset>
+                    {% endfor %}
+                </div>
+
+                <div class="postie-address-cards">
+                    <fieldset class="postie-address-card">
+                        <legend>{{ 'Package' | t('postie') }}</legend>
+
+                        {% set package = provider.getTestingPackage() %}
+
+                        <div class="postie-address-card-row">
+                            {{ forms.textField({
+                                label: 'Width ({unit})' | t('postie', { unit: provider.dimensionUnit }),
+                                name: 'width',
+                                required: true,
+                                placeholder: provider.dimensionUnit,
+                                value: package.width | number_format(2),
+                            }) }}
+
+                            {{ forms.textField({
+                                label: 'Length ({unit})' | t('postie', { unit: provider.dimensionUnit }),
+                                name: 'length',
+                                required: true,
+                                placeholder: provider.dimensionUnit,
+                                value: package.length | number_format(2),
+                            }) }}
+
+                            {{ forms.textField({
+                                label: 'Height ({unit})' | t('postie', { unit: provider.dimensionUnit }),
+                                name: 'height',
+                                required: true,
+                                placeholder: provider.dimensionUnit,
+                                value: package.height | number_format(2),
+                            }) }}
+
+                            {{ forms.textField({
+                                label: 'Weight ({unit})' | t('postie', { unit: provider.weightUnit }),
+                                name: 'weight',
+                                required: true,
+                                placeholder: provider.weightUnit,
+                                value: package.weight | number_format(2),
+                            }) }}
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <hr>
+
+            <button class="btn submit js-postie-rates-test-btn">{{ 'Test Rates' | t('postie') }}</button>
+
+            <div class="js-postie-rates-test-results"></div>
+
+            {% js %}
+                new Craft.Postie.ProviderRatesTest();
+            {% endjs %}
+        {% endnamespace %}
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block details %}
+
+<div class="meta">
+    {% if providerTypeOptions | length %}
+        {{ forms.selectField({
+            label: 'Carrier' | t('postie'),
+            name: 'type',
+            options: providerTypeOptions,
+            value: className(provider),
+            toggle: true,
+            targetPrefix: '.carrier-settings-',
+            required: true,
+        }) }}
+    {% endif %}
+
+    {{ forms.lightswitchField({
+        label: 'Enabled' | t('postie'),
+        name: 'enabled',
+        on: provider.enabled,
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Use Production API' | t('postie'),
+        name: 'isProduction',
+        info: 'test',
+        on: provider.isProduction,
+    }) }}
+</div>
+
+{% if not isNewProvider %}
+    <hr>
+
+    <div class="meta read-only">
+        <div class="data">
+            <h5 class="heading">{{ 'ID' | t('app') }}</h5>
+            <div class="value">{{ provider.id }}</div>
+        </div>
+
+        <div class="data">
+            <h5 class="heading">{{ 'Date Created' | t('app') }}</h5>
+            <div class="value">{{ provider.dateCreated | date('short') }} {{ provider.dateCreated | time('short') }}</div>
+        </div>
+
+        <div class="data">
+            <h5 class="heading">{{ 'Date Updated' | t('app') }}</h5>
+            <div class="value">{{ provider.dateUpdated | date('short') }} {{ provider.dateUpdated | time('short') }}</div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% js %}
+
+{% if provider is not defined or not provider.handle %}
+    new Craft.HandleGenerator('#name', '#handle');
+{% endif %}
+
+{% endjs %}

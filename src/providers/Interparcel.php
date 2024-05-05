@@ -2,17 +2,13 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 
 use Craft;
-use craft\helpers\Json;
+use craft\elements\Address;
+use craft\helpers\App;
 
-use craft\commerce\Plugin as Commerce;
-
-use GuzzleHttp\Client;
-
-use Throwable;
+use verbb\shippy\carriers\Interparcel as InterparcelCarrier;
 
 class Interparcel extends Provider
 {
@@ -24,224 +20,59 @@ class Interparcel extends Provider
         return Craft::t('postie', 'Interparcel');
     }
 
-    public static function supportsDynamicServices(): bool
+    public static function getCarrierClass(): string
     {
-        return true;
+        return InterparcelCarrier::class;
     }
 
 
     // Properties
     // =========================================================================
 
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg';
+    public ?string $apiKey = null;
+    public array $carriers = [];
+    public array $serviceLevels = [];
+    public array $pickupTypes = [];
 
 
     // Public Methods
     // =========================================================================
 
-    public function fetchShippingRates($order): ?array
+    public function getApiKey(): ?string
     {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
-        }
-
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order);
-
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
-
-        //
-        // TESTING
-        //
-        // Domestic
-        // $storeLocation = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
-        // $order->shippingAddress = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS'], $order);
-
-        // International
-        // $order->shippingAddress = TestingHelper::getTestAddress('US', ['administrativeArea' => 'CA'], $order);
-        //
-        // 
-        //
-
-        try {
-            $response = [];
-
-            $payload = [
-                'collection' => [
-                    'city' => $storeLocation->locality ?? '',
-                    'postcode' => $storeLocation->postalCode ?? '',
-                    'state' => $storeLocation->administrativeArea ?? '',
-                    'country' => $storeLocation->countryCode ?? '',
-                ],
-                'delivery' => [
-                    'city' => $order->shippingAddress->locality ?? '',
-                    'postcode' => $order->shippingAddress->postalCode ?? '',
-                    'state' => $order->shippingAddress->administrativeArea ?? '',
-                    'country' => $order->shippingAddress->countryCode ?? '',
-                ],
-                'parcels' => [],
-            ];
-
-            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-                $payload['parcels'][] = [
-                    'weight' => $packedBox['weight'],
-                    'length' => $packedBox['length'],
-                    'width' => $packedBox['width'],
-                    'height' => $packedBox['height'],
-                ];
-            }
-
-            $carriers = $this->getSetting('carriers');
-            $serviceLevels = $this->getSetting('serviceLevels');
-            $pickupTypes = $this->getSetting('pickupTypes');
-
-            if ($carriers && $carriers !== '*') {
-                $payload['filter']['carriers'] = $carriers;
-            }
-
-            if ($serviceLevels && $serviceLevels !== '*') {
-                $payload['filter']['serviceLevel'] = $serviceLevels;
-            }
-
-            if ($pickupTypes && $pickupTypes !== '*') {
-                $payload['filter']['pickupType'] = $pickupTypes;
-            }
-
-            $this->beforeSendPayload($this, $payload, $order);
-
-            $response = $this->_request('POST', 'quote/v2', [
-                'json' => ['shipment' => $payload],
-            ]);
-
-            $services = $response['services'] ?? [];
-
-            if ($services) {
-                foreach ($services as $service) {
-                    $this->_rates[$service['service']] = [
-                        'amount' => (float)($service['price'] ?? 0),
-                        'options' => $service,
-                    ];
-                }
-            } else {
-                Provider::info($this, Craft::t('postie', 'No services found: `{json}`.', [
-                    'json' => Json::encode($response),
-                ]));
-            }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $response,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
-        } catch (Throwable $e) {
-            if (method_exists($e, 'hasResponse')) {
-                $data = Json::decode((string)$e->getResponse()->getBody());
-                $message = $data['error']['errorMessage'] ?? $e->getMessage();
-
-                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                    'message' => $message,
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]));
-            } else {
-                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]));
-            }
-        }
-
-        return $this->_rates;
+        return App::parseEnv($this->apiKey);
     }
 
-    protected function fetchConnection(): bool
+    public function defineRules(): array
     {
-        try {
-            // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
+        $rules = parent::defineRules();
 
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
-            $packedBox = $packedBoxes[0];
+        $rules[] = [['apiKey'], 'required', 'when' => function($model) {
+            return $model->enabled;
+        }];
 
-            // Create a test payload
-            $payload = [
-                'collection' => [
-                    'city' => $sender->locality ?? '',
-                    'postcode' => $sender->postalCode ?? '',
-                    'state' => $sender->administrativeArea ?? '',
-                    'country' => $sender->countryCode ?? '',
-                ],
-                'delivery' => [
-                    'city' => $recipient->locality ?? '',
-                    'postcode' => $recipient->postalCode ?? '',
-                    'state' => $recipient->administrativeArea ?? '',
-                    'country' => $recipient->countryCode ?? '',
-                ],
-                'parcels' => [
-                    [
-                        'weight' => $packedBox['weight'],
-                        'length' => $packedBox['length'],
-                        'width' => $packedBox['width'],
-                        'height' => $packedBox['height'],
-                    ],
-                ],
-            ];
-
-            $response = $this->_request('POST', 'quote/v2', [
-                'json' => ['shipment' => $payload],
-            ]);
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]), true);
-
-            return false;
-        }
-
-        return true;
+        return $rules;
     }
 
-
-    // Private Methods
-    // =========================================================================
-
-    private function _getClient(): Client
+    public function getCarrierConfig(): array
     {
-        if ($this->_client) {
-            return $this->_client;
-        }
+        $config = parent::getCarrierConfig();
+        $config['apiKey'] = $this->getApiKey();
+        $config['carriers'] = $this->carriers;
+        $config['serviceLevels'] = $this->serviceLevels;
+        $config['pickupTypes'] = $this->pickupTypes;
 
-        return $this->_client = Craft::createGuzzleClient([
-            'base_uri' => 'https://api.au.interparcel.com/',
-            'headers' => [
-                'X-Interparcel-Auth' => $this->getSetting('apiKey'),
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        return $config;
     }
 
-    private function _request(string $method, string $uri, array $options = [])
+    public function getTestingOriginAddress(): Address
     {
-        $response = $this->_getClient()->request($method, ltrim($uri, '/'), $options);
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
+    }
 
-        return Json::decode((string)$response->getBody());
+    public function getTestingDestinationAddress(): Address
+    {
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
     }
 
 }

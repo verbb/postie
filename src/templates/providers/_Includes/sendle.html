@@ -1,0 +1,27 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Sendle ID' | t('postie'),
+    instructions: 'Enter your {name} Sendle ID here.' | t('postie', { name: provider.displayName() }),
+    id: 'sendleId',
+    name: 'sendleId',
+    value: provider.sendleId ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.sendleId", 'postie'),
+    errors: provider.getErrors('sendleId'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
+    id: 'apiKey',
+    name: 'apiKey',
+    value: provider.apiKey ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.apiKey", 'postie'),
+    errors: provider.getErrors('apiKey'),
+}) }}
+

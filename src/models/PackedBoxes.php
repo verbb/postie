@@ -48,6 +48,16 @@ class PackedBoxes extends Model
         return $this->packedBoxList;
     }
 
+    public function getWeightUnit(): ?string
+    {
+        return $this->weightUnit;
+    }
+
+    public function getDimensionUnit(): ?string
+    {
+        return $this->dimensionUnit;
+    }
+
     public function getSerializedPackedBoxList(): array
     {
         $list = [];
@@ -68,7 +78,8 @@ class PackedBoxes extends Model
             // Just in case there's a 0 weight item, we want to set a min weight. This can happen due to how the 
             // box-packer only handles integers. https://github.com/dvdoug/BoxPacker/discussions/241
             if ($weight == 0) {
-                $weight = 0.01;
+                // Set minimum weight to 1g, but convert that to the provider units.
+                $weight = (new Mass(1, 'g'))->toUnit($this->weightUnit);
             }
 
             $list[] = [

@@ -1,0 +1,53 @@
+{% extends 'postie/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% block content %}
+
+<h2>{{ 'General Settings' | t('postie') }}</h2>
+
+<form action="" method="post" accept-charset="UTF-8" data-saveshortcut>
+    <input type="hidden" name="action" value="postie/settings/save-settings">
+    {{ redirectInput('postie/settings/general') }}
+    {{ csrfInput() }}
+
+    {% namespace 'settings' %}
+        {{ forms.textField({
+            first: true,
+            label: 'Plugin Name' | t('postie'),
+            instructions: 'Plugin name for the end user.' | t('postie'),
+            id: 'pluginName',
+            name: 'pluginName',
+            value: settings.pluginName,
+            autofocus: true,
+            warning: macros.configWarning('pluginName', 'postie'),
+        }) }}
+        
+        {{ forms.selectField({
+            label: 'Shipped Order Status' | t('postie'),
+            instructions: 'Select which Order Status should be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.' | t('postie'),
+            name: 'shippedOrderStatus',
+            options: settings.getOrderStatusOptions(),
+            value: settings.shippedOrderStatus,
+            warning: macros.configWarning('shippedOrderStatus', 'postie'),
+            errors: settings.getErrors('shippedOrderStatus'),
+        }) }}
+
+        {{ forms.selectField({
+            label: 'Partially Shipped Order Status' | t('postie'),
+            instructions: 'Select which Order Status should be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.' | t('postie'),
+            name: 'partiallyShippedOrderStatus',
+            options: settings.getOrderStatusOptions(),
+            value: settings.partiallyShippedOrderStatus,
+            warning: macros.configWarning('partiallyShippedOrderStatus', 'postie'),
+            errors: settings.getErrors('partiallyShippedOrderStatus'),
+        }) }}
+    {% endnamespace %}
+
+    <hr>
+
+    <input type="submit" class="btn submit" value="{{ 'Save' | t('postie') }}">
+</form>
+
+{% endblock %}

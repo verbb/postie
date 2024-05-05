@@ -1,11 +1,10 @@
 <?php
 namespace verbb\postie\models;
 
-use verbb\postie\base\Provider;
-
 use Craft;
 use craft\base\Model;
-use craft\helpers\ArrayHelper;
+
+use craft\commerce\Plugin as Commerce;
 
 class Settings extends Model
 {
@@ -13,75 +12,62 @@ class Settings extends Model
     // =========================================================================
 
     public string $pluginName = 'Postie';
-    public bool $hasCpSection = false;
-    public bool $applyFreeShipping = false;
     public bool $enableCaching = true;
-    public bool $displayDebug = false;
-    public bool $displayErrors = false;
-    public bool $displayFlashErrors = false;
-    public bool $manualFetchRates = false;
-    public string $fetchRatesPostValue = 'postie-fetch-rates';
-    public array $providers = [];
+    public bool $enableRouteCheck = true;
+    public ?string $shippedOrderStatus = 'shipped';
+    public ?string $partiallyShippedOrderStatus = 'partiallyShipped';
+
+    public array $routesChecks = [
+        '/{cpTrigger}/commerce/orders/\d+',
+        '/shop/shipping',
+        '/shop/checkout/shipping',
+    ];
 
 
     // Public Methods
     // =========================================================================
 
-    public function validateProviders(): void
+    public function hasMatchedRoute(): bool
     {
-        foreach ($this->providers as $key => $provider) {
-            if (!$provider['enabled']) {
-                continue;
-            }
+        foreach ($this->routesChecks as $url) {
+            $url = str_replace(['{cpTrigger}'], [Craft::$app->getConfig()->getGeneral()->cpTrigger], $url);
+            $url = str_replace('/', '\/', $url);
+            $path = explode('?', Craft::$app->getRequest()->url)[0];
 
-            if ($provider['packingMethod'] === Provider::PACKING_BOX) {
-                if (!$provider['boxSizes'] || !is_array($provider['boxSizes'])) {
-                    $this->addError("providers.{$key}.settings.boxSizes", Craft::t('postie', 'You must provide at least one box.'));
-                }
-
-                if (is_array($provider['boxSizes'])) {
-                    $enabledBoxes = ArrayHelper::where($provider['boxSizes'], 'enabled');
-
-                    if (!$enabledBoxes) {
-                        $this->addError("providers.{$key}.settings.boxSizes", Craft::t('postie', 'You must provide at least one enabled box.'));
-                    }
-
-                    foreach ($enabledBoxes as $k => $box) {
-                        $name = $box['name'] ?? '';
-                        $boxLength = $box['boxLength'] ?? '';
-                        $boxWidth = $box['boxWidth'] ?? '';
-                        $boxHeight = $box['boxHeight'] ?? '';
-                        $boxWeight = $box['boxWeight'] ?? '';
-                        $maxWeight = $box['maxWeight'] ?? '';
-                        $enabled = $box['enabled'] ?? '';
-                        $default = $box['default'] ?? '';
-
-                        // Bypass validation if a default row - always just the enabled state
-                        if ($default) {
-                            continue;
-                        }
-
-                        if ($name === '' || $boxLength === '' || $boxWidth === '' || $boxHeight === '' || $boxWeight === '' || $maxWeight === '') {
-                            $this->addError("providers.{$key}.settings.boxSizes", Craft::t('postie', 'You must provide values for all fields.'));
-
-                            break;
-                        }
-                    }
-                }
+            if (preg_match('/^' . $url . '$/', $path, $matches)) {
+                return true;
             }
         }
+
+        return false;
     }
 
-
-    // Protected Methods
-    // =========================================================================
-
-    protected function defineRules(): array
+    public function getShippedOrderStatus()
     {
-        $rules = parent::defineRules();
-
-        $rules[] = [['providers'], 'validateProviders'];
-
-        return $rules;
+        return Commerce::getInstance()->getOrderStatuses()->getOrderStatusByHandle($this->shippedOrderStatus);
     }
+
+    public function getPartiallyShippedOrderStatus()
+    {
+        return Commerce::getInstance()->getOrderStatuses()->getOrderStatusByHandle($this->partiallyShippedOrderStatus);
+    }
+
+    public function getOrderStatusOptions(): array
+    {
+        $statuses = [
+            [
+                'label' => Craft::t('postie', 'Select an option'),
+                'value' => '',
+            ],
+        ];
+
+        $orderStatus = Commerce::getInstance()->getOrderStatuses()->getAllOrderStatuses();
+
+        foreach ($orderStatus as $orderStatus) {
+            $statuses[] = ['label' => $orderStatus->name, 'value' => $orderStatus->handle];
+        }
+
+        return $statuses;
+    }
+
 }

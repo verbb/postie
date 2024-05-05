@@ -1,7 +1,7 @@
 <?php
 namespace verbb\postie\models;
 
-use verbb\postie\base\Provider;
+use verbb\postie\base\ProviderInterface;
 use verbb\postie\events\ModifyShippingRuleEvent;
 
 use craft\helpers\UrlHelper;
@@ -19,7 +19,7 @@ class ShippingMethod extends BaseShippingMethod
     // Properties
     // =========================================================================
 
-    public ?Provider $provider = null;
+    public ?ProviderInterface $provider = null;
     public ?float $rate = null;
     public ?array $rateOptions = null;
     public mixed $shippingMethodCategories = null;

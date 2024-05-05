@@ -1,0 +1,77 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
+    id: 'apiKey',
+    name: 'apiKey',
+    value: provider.apiKey ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.apiKey", 'postie'),
+    errors: provider.getErrors('apiKey'),
+}) }}
+
+{{ forms.checkboxSelectField({
+    label: 'Carriers' | t('postie'),
+    instructions: 'Which carriers should be returned.' | t('postie'),
+    id: 'carriers',
+    name: 'carriers',
+    showAllOption: true,
+    values: provider.carriers ?? '*',
+    required: true,
+    options: [
+        { label: 'TNT Express' | t('postie'), value: 'TNT' },
+        { label: 'UPS' | t('postie'), value: 'UPS' },
+        { label: 'Fedex' | t('postie'), value: 'Fedex' },
+        { label: 'StarTrack' | t('postie'), value: 'StarTrack' },
+        { label: 'Couriers Please' | t('postie'), value: 'Couriers Please' },
+        { label: 'Allied Express' | t('postie'), value: 'Allied' },
+        { label: 'Fastway' | t('postie'), value: 'Fastway' },
+        { label: 'Direct Couriers' | t('postie'), value: 'Direct Couriers' },
+        { label: 'DHL' | t('postie'), value: 'DHL' },
+        { label: 'Bonds' | t('postie'), value: 'Bonds' },
+        { label: 'ParcelPoint' | t('postie'), value: 'ParcelPoint' },
+        { label: 'Northline' | t('postie'), value: 'Northline' },
+        { label: 'Hunter Express' | t('postie'), value: 'Hunter Express' },
+        { label: 'Interparcel (other)' | t('postie'), value: 'Interparcel' },
+    ],
+    warning: macros.configWarning("providers.#{provider.handle}.carriers", 'postie'),
+    errors: provider.getErrors('carriers'),
+}) }}
+
+{{ forms.checkboxSelectField({
+    label: 'Service Levels' | t('postie'),
+    instructions: 'Which service levels should be returned.' | t('postie'),
+    id: 'serviceLevels',
+    name: 'serviceLevels',
+    showAllOption: true,
+    values: provider.serviceLevels ?? '*',
+    required: true,
+    options: [
+        { label: 'Express' | t('postie'), value: 'express' },
+        { label: 'Standard' | t('postie'), value: 'standard' },
+        { label: 'Timed' | t('postie'), value: 'timed' },
+        { label: 'Same Day' | t('postie'), value: 'sameDay' },
+        { label: 'Pallet' | t('postie'), value: 'pallet' },
+    ],
+    warning: macros.configWarning("providers.#{provider.handle}.serviceLevels", 'postie'),
+    errors: provider.getErrors('serviceLevels'),
+}) }}
+
+{{ forms.checkboxSelectField({
+    label: 'Pickup Tyoe' | t('postie'),
+    instructions: 'Which pickup type should be returned.' | t('postie'),
+    id: 'pickupTypes',
+    name: 'pickupTypes',
+    showAllOption: true,
+    values: provider.pickupTypes ?? '*',
+    required: true,
+    options: [
+        { label: 'Collection' | t('postie'), value: 'collection' },
+        { label: 'Dropoff' | t('postie'), value: 'dropoff' },
+    ],
+    warning: macros.configWarning("providers.#{provider.handle}.pickupTypes", 'postie'),
+    errors: provider.getErrors('pickupTypes'),
+}) }}

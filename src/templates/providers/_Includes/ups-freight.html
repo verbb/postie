@@ -1,0 +1,26 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% include 'postie/providers/_includes/ups' %}
+
+{{ forms.selectField({
+    label: 'Freight Packing Type' | t('postie'),
+    instructions: 'Select the {name} Freight Packing Type.' | t('postie', { name: provider.displayName() }),
+    id: 'freightPackingType',
+    name: 'freightPackingType',
+    value: provider.freightPackingType ?? '',
+    options: provider.getFreightPackingTypeOptions(),
+    warning: macros.configWarning("providers.#{provider.handle}.freightPackingType", 'postie'),
+    errors: provider.getErrors('freightPackingType'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Freight Class' | t('postie'),
+    instructions: 'Select the {name} Freight Class.' | t('postie', { name: provider.displayName() }),
+    id: 'freightClass',
+    name: 'freightClass',
+    value: provider.freightClass ?? '',
+    options: provider.getFreightClassOptions(),
+    warning: macros.configWarning("providers.#{provider.handle}.freightClass", 'postie'),
+    errors: provider.getErrors('freightClass'),
+}) }}

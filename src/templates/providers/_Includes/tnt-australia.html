@@ -1,0 +1,39 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    value: provider.accountNumber ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+    errors: provider.getErrors('accountNumber'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+    id: 'username',
+    name: 'username',
+    value: provider.username ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.username", 'postie'),
+    errors: provider.getErrors('username'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+    id: 'password',
+    name: 'password',
+    value: provider.password ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
+    errors: provider.getErrors('password'),
+}) }}
+

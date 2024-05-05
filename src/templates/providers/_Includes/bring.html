@@ -1,0 +1,54 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.selectField({
+    label: 'API' | t('postie'),
+    instructions: 'Select which {name} API to use.' | t('postie', { name: provider.displayName() }),
+    name: 'apiType',
+    options: provider.getApiTypeOptions(),
+    value: provider.apiType ?? '',
+    required: true,
+    suggestEnvVars: true,
+    toggle: true,
+    targetPrefix: '.api-type-',
+    warning: macros.configWarning("providers.#{provider.handle}.apiType", 'postie'),
+    errors: provider.getErrors('apiType'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+    id: 'username',
+    name: 'username',
+    value: provider.username ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.username", 'postie'),
+    errors: provider.getErrors('username'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'API Key' | t('postie'),
+    instructions: 'Enter your {name} API Key here.' | t('postie', { name: provider.displayName() }),
+    id: 'apiKey',
+    name: 'apiKey',
+    value: provider.apiKey ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.apiKey", 'postie'),
+    errors: provider.getErrors('apiKey'),
+}) }}
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Username' | t('postie'),
+        instructions: 'Enter your {name} Customer Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'customerNumber',
+        name: 'customerNumber',
+        value: provider.customerNumber ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.customerNumber", 'postie'),
+        errors: provider.getErrors('customerNumber'),
+    }) }}
+</div>

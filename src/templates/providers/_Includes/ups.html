@@ -1,0 +1,73 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Client ID' | t('postie'),
+    instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientId',
+    name: 'clientId',
+    value: provider.clientId ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientId", 'postie'),
+    errors: provider.getErrors('clientId'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Client Secret' | t('postie'),
+    instructions: 'Enter your {name} Client Secret here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientSecret',
+    name: 'clientSecret',
+    value: provider.clientSecret ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientSecret", 'postie'),
+    errors: provider.getErrors('clientSecret'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    suggestEnvVars: true,
+    value: provider.accountNumber ?? '',
+    warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+    errors: provider.getErrors('accountNumber'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Require Signature' | t('postie'),
+    instructions: 'Whether parcels require a signature from the receiver. This will effect rates.' | t('postie'),
+    id: 'requireSignature',
+    name: 'requireSignature',
+    value: provider.requireSignature ?? '',
+    options: [
+        { label: 'None' | t('postie'), value: '' },
+        { label: 'Required' | t('postie'), value: 'required' },
+        { label: 'Adult Required' | t('postie'), value: 'adult' },
+    ],
+    warning: macros.configWarning("providers.#{provider.handle}.requireSignature", 'postie'),
+    errors: provider.getErrors('requireSignature'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Pickup Type' | t('postie'),
+    instructions: 'Select what type of pickup to use. This will affect rates.' | t('postie'),
+    id: 'pickupType',
+    name: 'pickupType',
+    value: provider.pickupType ?? '',
+    options: provider.getPickupTypeOptions(),
+    warning: macros.configWarning("providers.#{provider.handle}.pickupType", 'postie'),
+    errors: provider.getErrors('pickupType'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Include Insurance' | t('postie'),
+    instructions: 'Whether to include insurance for rates.' | t('postie'),
+    id: 'includeInsurance',
+    name: 'includeInsurance',
+    on: provider.includeInsurance ?? false,
+    warning: macros.configWarning("providers.#{provider.handle}.includeInsurance", 'postie'),
+    errors: provider.getErrors('includeInsurance'),
+}) }}

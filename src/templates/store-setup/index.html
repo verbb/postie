@@ -1,0 +1,115 @@
+{% extends 'postie/_layouts' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Store Setup' | t('postie'), url: url('postie/store-setup') },
+] %}
+
+{% set title = 'Store Setup' | t('postie') %}
+{% set selectedSubnavItem = 'store-setup' %}
+
+{% block blockContent %}
+
+<h2>{{ 'Store Location' | t('commerce') }}</h2>
+
+<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/store-settings/store') ~ '">Commerce Store Settings</a>' }) | raw }}</p>
+
+{% if not storeLocation.addressLine1 %}
+    <p class="warning with-icon">{{ 'Store location not configured.' | t('postie') }}</p>
+{% else %}
+    <p class="success"><span data-icon="check"></span> {{ 'Store location is configured.' | t('postie') }}</p>
+{% endif %}
+
+<hr>
+
+<h2>{{ 'Products' | t('postie') }}</h2>
+
+<p>{{ "This list shows your products (and their variants) without any dimensions or weights set up. Every product you want to ship via Postie needs to have fully populated dimensions and weights. Ensure you've also set up the correct measurement units in your {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/general') ~ '">Commerce System Settings</a>' }) | raw }}</p>
+
+<hr />
+
+{% if variants | length == 0 %}
+
+    <p>{{ "Perfect! You don't need to update any products." | t('postie') }}</p>
+
+{% else %}
+
+    <table class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">{{ "Product" | t('postie') }}</th>
+            <th scope="col">{{ "Product Type" | t('postie') }}</th>
+            <th scope="col">{{ "Dimensions" | t('postie') }}</th>
+            <th scope="col">{{ "Weight" | t('postie') }}</th>
+            <th scope="col">{{ "Edit" | t('postie') }}</th>
+        </thead>
+        <tbody>
+
+        {% for variant in variants %}
+            {% set product = variant.getProduct() %}
+            {% set productType = product.getType() %}
+
+            <tr>
+                <td>
+                    <a href="{{ product.getCpEditUrl() }}" target="_blank">{{ variant.title }}</a>
+                </td>
+
+                <td>{{ productType.name }}</td>
+
+                <td>
+                    {% if variant.length %}
+                        {{ variant.length | number }}
+                    {% else %}
+                        <span class="error">0</span>
+                    {% endif %}
+
+                    <span class="label light">/</span>
+
+                    {% if variant.width %}
+                        {{ variant.width | number }}
+                    {% else %}
+                        <span class="error">0</span>
+                    {% endif %}
+
+                    <span class="label light">/</span>
+
+                    {% if variant.height %}
+                        {{ variant.height | number }}
+                    {% else %}
+                        <span class="error">0</span>
+                    {% endif %}
+
+                    <span class="label light">{{ craft.commerce.settings.dimensionUnits }}</span>
+                </td>
+                <td>
+                    {% if variant.weight %}
+                        {{ variant.weight | number }}
+                    {% else %}
+                        <span class="error">0</span>
+                    {% endif %}
+
+                    <span class="label light">{{ craft.commerce.settings.weightUnits }}</span>
+                </td>
+                <td>
+                    {% if product.canSave(currentUser) %}
+                        <a href="{{ product.getCpEditUrl() }}">
+                            <span class="icon"><span data-icon="edit"></span></span>
+                        </a>
+                    {% else %}
+                        <span class="icon" title="{{ 'You don‘t have enough permissions to edit this product' | t('postie') }}">
+                            <span data-icon="edit"></span>
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endif %}
+
+{% endblock %}

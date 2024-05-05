@@ -1,0 +1,90 @@
+{% extends 'postie/_layouts' %}
+
+{% set isReadOnly = not craft.app.config.general.allowAdminChanges %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
+] %}
+
+{% set title = 'Providers' | t('postie') %}
+{% set selectedSubnavItem = 'providers' %}
+
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
+
+{% block actionButton %}
+    {% if not isReadOnly %}
+        <a href="{{ url("postie/providers/new") }}" class="btn submit add icon">{{ 'New Provider' | t('postie') }}</a>
+    {% endif %}
+{% endblock %}
+
+{% block blockContent %}
+    <div id="providers-vue-admin-table"></div>
+{% endblock %}
+
+{% set tableData = [] %}
+{% for provider in providers %}
+    {% set providerIsMissing = false %}
+
+    {% if provider is missing %}
+        {% set providerIsMissing = true %}
+    {% endif %}
+
+    {% set tableData = tableData | merge([{
+        id: provider.id,
+        title: provider.name | t('postie'),
+        url: provider.cpEditUrl,
+        name: provider.name | t('postie') | e,
+        handle: provider.handle,
+        enabled: provider.getEnabled(),
+        carrier: {
+            isMissing: providerIsMissing,
+            label: providerIsMissing ? provider.expectedType : provider.displayName(),
+            icon: providerIsMissing ? '' : provider.getIconUrl(),
+        },
+    }]) %}
+{% endfor %}
+
+{% js %}
+
+var columns = [
+    { name: '__slot:title', title: Craft.t('app', 'Name') },
+    { name: '__slot:handle', title: Craft.t('app', 'Handle') },
+    { name: 'carrier', title: Craft.t('app', 'Carrier'), callback: function(provider) {
+        let $icon = '';
+
+        if (provider.isMissing) {
+            return '<span class="error">' + provider.label + '</span>';
+        }
+
+        if (provider.icon) {
+            $icon = '<img class="postie-provider-icon" src="' + provider.icon + '">';
+        }
+
+        return '<div class="postie-provider">' +
+            $icon +
+            '<span class="postie-provider-label">' + provider.label + '</span>' +
+        '</div>';
+    } },
+    { name: 'enabled', title: Craft.t('postie', 'Enabled'), callback: function(value) {
+        if (value) {
+            return '<span class="status on"></span>' + Craft.t('postie', 'Enabled');
+        } else {
+            return '<span class="status"></span>' + Craft.t('postie', 'Disabled');
+        }
+    } },
+];
+
+new Craft.VueAdminTable({
+    columns: columns,
+    container: '#providers-vue-admin-table',
+    emptyMessage: Craft.t('postie', 'No providers exist yet.'),
+    tableData: {{ tableData | json_encode | raw }},
+
+    {% if not isReadOnly %}
+        deleteAction: 'postie/providers/delete',
+        reorderAction: '{{ providers | length > 1 ? 'postie/providers/reorder' : ''}}',
+    {% endif %}
+});
+
+{% endjs %}

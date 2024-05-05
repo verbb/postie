@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="544.2px" height="544.2px" viewBox="0 0 544.2 544.2" style="enable-background:new 0 0 544.2 544.2;" xml:space="preserve"
-	>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px"
+	 width="544.2px" height="544.2px" viewBox="0 0 544.2 544.2" style="enable-background:new 0 0 544.2 544.2;"
+	 xml:space="preserve"
+>
 <style type="text/css">
 	.st0{fill:#2F527A;}
 	.st1{fill:#FFFFFF;}
 </style>
-<g>
-	<path class="st0" d="M272.1,0C2.1,0,0,121.8,0,272.1s2.1,272.1,272.1,272.1s272.1-121.8,272.1-272.1S542.1,0,272.1,0z"/>
 	<g>
+	<path class="st0"
+		  d="M272.1,0C2.1,0,0,121.8,0,272.1s2.1,272.1,272.1,272.1s272.1-121.8,272.1-272.1S542.1,0,272.1,0z"/>
+		<g>
 		<path class="st1" d="M405.4,183l-5.4-2.4c-0.2-0.1-0.4-0.2-0.6-0.3l-16.1-7.1c-0.2-0.1-0.3-0.1-0.5-0.2l-0.6-0.3l-0.1,0
 			c-2.5-0.7-5.8-0.6-8,0.4l-138,60c-2.5,1.1-4.6,4.2-4.6,7v10.9v5.8v23c0,2.8-2,4.1-4.6,2.9l-35.7-16.2c-2.5-1.1-4.6-4.3-4.6-7.1
 			v-5.5v-12.5v-11.1v-5.2V225c0-2.8,2-6,4.5-7.1l137.6-64.7c0.5-0.2,1-0.4,1.6-0.5l2.9-1.6l-49.2-21.9c-6.6-2.9-17.4-2.9-24,0

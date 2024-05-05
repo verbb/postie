@@ -1,0 +1,118 @@
+{% import '_includes/forms' as forms -%}
+
+{% do view.registerAssetBundle('verbb\\postie\\assetbundles\\PostieAsset') %}
+
+{% set rate = craft.postie.getRateByOrder(order) %}
+
+<div id="shipmentsTab" class="hidden">
+    {% if rate %}
+        {% for shipment in order.shipments %}
+            <div class="pane postie-shipments-pane">
+                <div class="flex flex-nowrap postie-shipments-pane-header">
+                    <div class="postie-shipments-pane-header-wrap">
+                        <img class="postie-provider-icon" src="{{ shipment.provider.getIconUrl() }}">
+
+                        <div>
+                            <h3>{{ '{provider} Shipment #{index}' | t('postie', { provider: shipment.provider, index: loop.index }) }}</h3>
+                            <small>Created: {{ shipment.dateCreated | datetime('short') }}</small>
+                        </div>
+                    </div>
+
+                    {# {% if currentUser.can('postie-deleteShipments') %}
+                        <form method="post">
+                            {{ csrfInput() }}
+                            <a class="small btn submit formsubmit"
+                               data-action="postie/shipments/delete-shipment"
+                               data-confirm="{{ 'Are you sure you want to delete this shipment?' | t('postie') }}"
+                               data-redirect="{{ order.cpEditUrl | hash }}"
+                               data-param="id"
+                               data-value="{{ shipment.id }}">{{ 'Delete' | t('postie') }}</a>
+                        </form>
+                    {% endif %} #}
+                </div>
+
+                <div class="postie-shipments-pane-body">
+                    <table class="data fullwidth">
+                        <thead>
+                            <tr>
+                                <th scope="col">{{ 'Item' | t('postie') }}</th>
+                                <th scope="col">{{ 'Quantity' | t('postie') }}</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for lineItemId, lineItemQty in shipment.lineItems %}
+                                {% set lineItem = craft.commerce.lineItems.getLineItemById(lineItemId) %}
+
+                                {% if lineItemQty %}
+                                    <tr class="infoRow">
+                                        <td data-title="{{ 'Item' | t('postie') }}">
+                                            {% if lineItem.purchasable %}
+                                                <a class="purchasable-link" href="{{ lineItem.purchasable.cpEditUrl }}">{{ lineItem.getDescription() }}</a>
+                                            {% else %}
+                                                <span class="purchasable-link">{{ lineItem.getDescription() }}</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td data-title="{{ 'Quantity' | t('postie') }}">
+                                            {{ lineItemQty }} of {{ lineItem.qty }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <hr />
+
+                    <div class="postie-shipments-buckets">
+                        <div class="postie-shipments-bucket">
+                            <div class="postie-shipments-bucket-label">{{ 'Tracking Number' | t('postie') }}</div>
+                            <div class="postie-shipments-bucket-value">{{ shipment.trackingNumber ?: 'NA' }}</div>
+                        </div>
+
+                        <div class="postie-shipments-bucket">
+                            <div class="postie-shipments-bucket-label">{{ 'Shipment ID' | t('postie') }}</div>
+                            <div class="postie-shipments-bucket-value"><code>{{ shipment.labelId ?: 'NA' }}</code></div>
+                        </div>
+
+                        {% if shipment.trackingUrl %}
+                            <div class="postie-shipments-bucket">
+                                <div class="postie-shipments-bucket-label">{{ 'Tracking URL' | t('postie') }}</div>
+
+                                <a href="{{ shipment.trackingUrl }}" target="_blank" rel="noopener">{{ shipment.carrier }} &nbsp;<span data-icon="external"></span></a>
+                            </div>
+                        {% endif %}
+
+                        {% if shipment.labels %}
+                            <div class="postie-shipments-bucket">
+                                <div class="postie-shipments-bucket-label">{{ 'Labels' | t('postie') }}</div>
+
+                                <a href="{{ actionUrl('postie/shipments/download-labels', { shipment: shipment.uid }) }}">{{ 'Download Labels' | t('postie') }}</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% set hasUnshipped = craft.postie.plugin.shipments.getUnshippedLineItems(order) %}
+
+        {% if currentUser.can('postie-createShipments') and hasUnshipped %}
+            <div class="btn js-postie-new-shipment icon add">{{ 'New shipment' | t('postie') }}</div>
+        {% endif %}
+
+        {% if order.lineItems | length == 0 %}
+            <p>{{ 'There are no line items to fulfill.' | t('postie') }}</p>
+        {% endif %}
+
+        {% js %}
+            new Craft.Postie.OrderShipments({
+                orderId: {{ order.id | e('js') }},
+                rateId: {{ rate.id | e('js') }},
+            });
+        {% endjs %}
+    {% else %}
+        <p class="error">{{ 'Unable to find Postie stored rate for order.' | t('postie') }}</p>
+    {% endif %}
+</div>

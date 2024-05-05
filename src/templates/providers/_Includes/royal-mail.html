@@ -1,0 +1,63 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.selectField({
+    label: 'API' | t('postie'),
+    instructions: 'Select which {name} API to use.' | t('postie', { name: provider.displayName() }),
+    name: 'apiType',
+    options: provider.getApiTypeOptions(),
+    value: provider.apiType ?? '',
+    required: true,
+    suggestEnvVars: true,
+    toggle: true,
+    targetPrefix: '.api-type-',
+    warning: macros.configWarning("providers.#{provider.handle}.apiType", 'postie'),
+    errors: provider.getErrors('apiType'),
+}) }}
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Client ID' | t('postie'),
+        instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
+        id: 'clientId',
+        name: 'clientId',
+        value: provider.clientId ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.clientId", 'postie'),
+        errors: provider.getErrors('clientId'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Client Secret' | t('postie'),
+        instructions: 'Enter your {name} Client Secret here.' | t('postie', { name: provider.displayName() }),
+        id: 'clientSecret',
+        name: 'clientSecret',
+        value: provider.clientSecret ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.clientSecret", 'postie'),
+        errors: provider.getErrors('clientSecret'),
+    }) }}
+</div>
+
+{{ forms.lightswitchField({
+    label: 'Check Compensation' | t('postie'),
+    instructions: 'Whether to return rates where the order amount is greater than what will be compensated.' | t('postie'),
+    id: 'checkCompensation',
+    name: 'checkCompensation',
+    on: provider.checkCompensation ?? false,
+    warning: macros.configWarning("providers.#{provider.handle}.checkCompensation", 'postie'),
+    errors: provider.getErrors('checkCompensation'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Include VAT' | t('postie'),
+    instructions: 'Whether to return rates with VAT included.' | t('postie'),
+    id: 'includeVat',
+    name: 'includeVat',
+    on: provider.includeVat ?? false,
+    warning: macros.configWarning("providers.#{provider.handle}.includeVat", 'postie'),
+    errors: provider.getErrors('includeVat'),
+}) }}
+

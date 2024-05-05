@@ -1,0 +1,66 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Client ID' | t('postie'),
+    instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientId',
+    name: 'clientId',
+    value: provider.clientId ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientId", 'postie'),
+    errors: provider.getErrors('clientId'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Client Secret' | t('postie'),
+    instructions: 'Enter your {name} Client Secret here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientSecret',
+    name: 'clientSecret',
+    value: provider.clientSecret ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientSecret", 'postie'),
+    errors: provider.getErrors('clientSecret'),
+}) }}
+
+<div class="api-type-rates api-type-shipping {% if provider.apiType == 'tracking' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Account Number' | t('postie'),
+        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'accountNumber',
+        name: 'accountNumber',
+        value: provider.accountNumber ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+        errors: provider.getErrors('accountNumber'),
+    }) }}
+</div>
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Customer Registration ID' | t('postie'),
+        instructions: 'Enter your {name} Customer Registration ID (CRID) here.' | t('postie', { name: provider.displayName() }),
+        id: 'customerRegistrationId',
+        name: 'customerRegistrationId',
+        value: provider.customerRegistrationId ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.customerRegistrationId", 'postie'),
+        errors: provider.getErrors('customerRegistrationId'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Mailer ID' | t('postie'),
+        instructions: 'Enter your {name} Mailer ID (MID) here.' | t('postie', { name: provider.displayName() }),
+        id: 'mailerId',
+        name: 'mailerId',
+        value: provider.mailerId ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.mailerId", 'postie'),
+        errors: provider.getErrors('mailerId'),
+    }) }}
+</div>

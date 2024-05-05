@@ -2,18 +2,17 @@
 namespace verbb\postie\providers;
 
 use verbb\postie\base\Provider;
-use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 
 use Craft;
-use craft\helpers\Json;
+use craft\elements\Address;
+use craft\helpers\App;
 
-use craft\commerce\Plugin as Commerce;
-
-use GuzzleHttp\Client;
+use craft\commerce\elements\Order;
 
 use DateTime;
-use Throwable;
+
+use verbb\shippy\carriers\DHLExpress as DHLExpressCarrier;
 
 class DHLExpress extends Provider
 {
@@ -25,18 +24,21 @@ class DHLExpress extends Provider
         return Craft::t('postie', 'DHL Express');
     }
 
-    public static function supportsDynamicServices(): bool
+    public static function getCarrierClass(): string
     {
-        return true;
+        return DHLExpressCarrier::class;
     }
 
 
     // Properties
     // =========================================================================
 
-    public ?string $handle = 'dhlExpress';
-    public string $dimensionUnit = 'cm';
-    public string $weightUnit = 'kg';
+    public ?string $clientId = null;
+    public ?string $username = null;
+    public ?string $password = null;
+    public ?string $accountNumber = null;
+    public string|array|null $shipDate = null;
+    public string|array|null $shipTime = null;
 
     private int $maxWeight = 70000; // 70kg
 
@@ -44,279 +46,96 @@ class DHLExpress extends Provider
     // Public Methods
     // =========================================================================
 
-    public function getMaxPackageWeight($order): ?int
+    public function getClientId(): ?string
+    {
+        return App::parseEnv($this->clientId);
+    }
+
+    public function getUsername(): ?string
+    {
+        return App::parseEnv($this->username);
+    }
+
+    public function getPassword(): ?string
+    {
+        return App::parseEnv($this->password);
+    }
+
+    public function getAccountNumber(): ?string
+    {
+        return App::parseEnv($this->accountNumber);
+    }
+
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['username', 'password'], 'required', 'when' => function($model) {
+            return $model->enabled && $model->getApiType() !== self::API_TRACKING;
+        }];
+
+        $rules[] = [['clientId'], 'required', 'when' => function($model) {
+            return $model->enabled && $model->getApiType() === self::API_TRACKING;
+        }];
+
+        $rules[] = [['accountNumber'], 'required', 'when' => function($model) {
+            return $model->enabled && $model->getApiType() === self::API_SHIPPING;
+        }];
+
+        return $rules;
+    }
+
+    public function getCarrierConfig(): array
+    {
+        $config = parent::getCarrierConfig();
+
+        $shipDate = new DateTime($this->shipTime);
+
+        if ($this->shipDate === 'nextDay') {
+            $shipDate = $shipDate->modify('+1 day');
+        }
+
+        if ($this->shipDate === 'nextBusinessDay') {
+            $shipDate = $shipDate->modify('+1 weekday');
+        }
+
+        $config['shipDateTime'] = $shipDate;
+
+        if ($this->getApiType() === self::API_TRACKING) {
+            $config['clientId'] = $this->getClientId();
+        } else {
+            $config['username'] = $this->getUsername();
+            $config['password'] = $this->getPassword();
+        }
+
+        if ($this->getApiType() === self::API_SHIPPING) {
+            $config['accountNumber'] = $this->getAccountNumber();
+        }
+
+        return $config;
+    }
+
+    public function getApiTypeOptions(): array
+    {
+        return [
+            ['label' => Craft::t('postie', 'Rates Only'), 'value' => self::API_RATES],
+            ['label' => Craft::t('postie', 'Tracking Only'), 'value' => self::API_TRACKING],
+            ['label' => Craft::t('postie', 'All'), 'value' => self::API_SHIPPING],
+        ];
+    }
+
+    public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
     }
 
-    public function fetchShippingRates($order): ?array
+    public function getTestingOriginAddress(): Address
     {
-        // If we've locally cached the results, return that
-        if ($this->_rates) {
-            return $this->_rates;
-        }
-
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
-
-        // Pack the content of the order into boxes
-        $packedBoxes = $this->packOrder($order);
-
-        // Allow location and dimensions modification via events
-        $this->beforeFetchRates($storeLocation, $packedBoxes, $order);
-
-        //
-        // TESTING
-        //
-        // $country = Commerce::getInstance()->countries->getCountryByIso('DE');
-        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'DE');
-
-        // $storeLocation = new craft\elements\Address();
-        // $storeLocation->locality = 'Berlin';
-        // $storeLocation->postalCode = '12345';
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->locality = 'Berlin';
-        // $order->shippingAddress->postalCode = '12345';
-        // $order->shippingAddress->countryId = $country->id;
-
-        // $country = Commerce::getInstance()->countries->getCountryByIso('US');
-        // $administrativeArea = Commerce::getInstance()->administrativeAreas->getadministrativeAreaByAbbreviation($country->id, 'CA');
-
-        // $storeLocation = new craft\elements\Address();
-        // $storeLocation->addressLine1 = 'One Infinite Loop';
-        // $storeLocation->locality = 'Cupertino';
-        // $storeLocation->postalCode = '95014';
-        // $storeLocation->administrativeAreaId = $administrativeArea->id;
-        // $storeLocation->countryId = $country->id;
-
-        // $order->shippingAddress->addressLine1 = '1600 Amphitheatre Parkway';
-        // $order->shippingAddress->locality = 'Mountain View';
-        // $order->shippingAddress->postalCode = '94043';
-        // $order->shippingAddress->administrativeAreaId = $administrativeArea->id;
-        // $order->shippingAddress->countryId = $country->id;
-        //
-        // 
-        //
-
-        try {
-            $response = [];
-
-            // Set the ship date/time
-            $shipDate = $this->getSetting('shipDate');
-            $shipTime = $this->getSetting('shipTime.time');
-
-            if ($shipDate === 'nextDay') {
-                $shipDate = (new DateTime())->modify('+1 day')->format('Y-m-d');
-            }
-
-            if ($shipDate === 'nextBusinessDay') {
-                $shipDate = (new DateTime())->modify('+1 weekday')->format('Y-m-d');
-            }
-
-            $shipTimestamp = (new DateTime($shipDate . ' ' . $shipTime))->format('Y-m-d\TH:i:s \G\M\TP');
-
-            $payload = [
-                'RateRequest' => [
-                    'ClientDetails' => '',
-                    'RequestedShipment' => [
-                        'DropOffType' => 'REGULAR_PICKUP',
-                        'ShipTimestamp' => $shipTimestamp,
-                        'UnitOfMeasurement' => 'SI',
-                        'Content' => 'NON_DOCUMENTS',
-                        'DeclaredValue' => $packedBoxes->getTotalPrice(),
-                        'DeclaredValueCurrecyCode' => $order->currency,
-                        'PaymentInfo' => 'DAP',
-                        'Account' => $this->getSetting('account'),
-
-                        'Ship' => [
-                            'Shipper' => [
-                                'City' => $storeLocation->locality ?? '',
-                                'PostalCode' => $storeLocation->postalCode ?? '',
-                                'CountryCode' => $storeLocation->countryCode ?? '',
-                            ],
-                            'Recipient' => [
-                                'City' => $order->shippingAddress->locality ?? '',
-                                'PostalCode' => $order->shippingAddress->postalCode ?? '',
-                                'CountryCode' => $order->shippingAddress->countryCode ?? '',
-                            ],
-                        ],
-                        'Packages' => [],
-                    ],
-                ],
-            ];
-
-            foreach ($packedBoxes->getSerializedPackedBoxList() as $i => $packedBox) {
-                $payload['RateRequest']['RequestedShipment']['Packages']['RequestedPackages'][] = [
-                    '@number' => ($i + 1),
-                    'Weight' => [
-                        'Value' => $packedBox['weight'],
-                    ],
-                    'Dimensions' => [
-                        'Length' => $packedBox['length'],
-                        'Width' => $packedBox['width'],
-                        'Height' => $packedBox['height'],
-                    ],
-                ];
-            }
-
-            $this->beforeSendPayload($this, $payload, $order);
-
-            $response = $this->_request('POST', 'RateRequest', [
-                'json' => $payload,
-            ]);
-
-            $services = $response['RateResponse']['Provider'][0]['Service'] ?? [];
-
-            // Check this is a correct array
-            if (!isset($services[0])) {
-                $services = [$services];
-            }
-
-            foreach ($services as $service) {
-                $name = $service['Charges']['Charge'][0]['ChargeType'] ?? 'GENERAL';
-                $amount = (float)($service['TotalNet']['Amount'] ?? 0);
-
-                if ($amount) {
-                    $this->_rates[$name] = [
-                        'amount' => $amount,
-                        'options' => $service,
-                    ];
-                }
-            }
-
-            // Allow rate modification via events
-            $modifyRatesEvent = new ModifyRatesEvent([
-                'rates' => $this->_rates,
-                'response' => $response,
-                'order' => $order,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_RATES)) {
-                $this->trigger(self::EVENT_MODIFY_RATES, $modifyRatesEvent);
-            }
-
-            $this->_rates = $modifyRatesEvent->rates;
-
-            if (!$this->_rates) {
-                Provider::error($this, Craft::t('postie', 'No available rates: `{json}`.', [
-                    'json' => Json::encode($response),
-                ]));
-            }
-        } catch (Throwable $e) {
-            if (method_exists($e, 'hasResponse')) {
-                $data = Json::decode((string)$e->getResponse()->getBody());
-                $message = $data['error']['errorMessage'] ?? $e->getMessage();
-
-                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                    'message' => $message,
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]));
-            } else {
-                Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]));
-            }
-        }
-
-        return $this->_rates;
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
     }
 
-    protected function fetchConnection(): bool
+    public function getTestingDestinationAddress(): Address
     {
-        try {
-            // Create test addresses
-            $sender = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
-            $recipient = TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
-
-            // Create a test package
-            $packedBoxes = TestingHelper::getTestPackedBoxes($this->dimensionUnit, $this->weightUnit);
-            $packedBox = $packedBoxes[0];
-
-            // Create a test payload
-            $payload = [
-                'RateRequest' => [
-                    'ClientDetails' => '',
-                    'RequestedShipment' => [
-                        'DropOffType' => 'REGULAR_PICKUP',
-                        'UnitOfMeasurement' => 'SI',
-                        'Content' => 'NON_DOCUMENTS',
-                        'PaymentInfo' => 'DAP',
-                        'Ship' => [
-                            'Shipper' => [
-                                'City' => $sender->locality ?? '',
-                                'PostalCode' => $sender->postalCode ?? '',
-                                'CountryCode' => $sender->countryCode ?? '',
-                            ],
-                            'Recipient' => [
-                                'City' => $recipient->locality ?? '',
-                                'PostalCode' => $recipient->postalCode ?? '',
-                                'CountryCode' => $recipient->countryCode ?? '',
-                            ],
-                        ],
-                        'Packages' => [
-                            'RequestedPackages' => [
-                                '@number' => 1,
-                                'Weight' => [
-                                    'Value' => $packedBox['weight'],
-                                ],
-                                'Dimensions' => [
-                                    'Length' => $packedBox['length'],
-                                    'Width' => $packedBox['width'],
-                                    'Height' => $packedBox['height'],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ];
-
-            $response = $this->_request('POST', 'RateRequest', [
-                'json' => $payload,
-            ]);
-        } catch (Throwable $e) {
-            Provider::error($this, Craft::t('postie', 'API error: “{message}” {file}:{line}', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]), true);
-
-            return false;
-        }
-
-        return true;
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _getClient(): Client
-    {
-        if ($this->_client) {
-            return $this->_client;
-        }
-
-        $url = 'https://wsbexpress.dhl.com/rest/gbl/';
-
-        if ($this->getSetting('useTestEndpoint')) {
-            $url = 'https://wsbexpress.dhl.com/rest/sndpt/';
-        }
-
-        return $this->_client = Craft::createGuzzleClient([
-            'base_uri' => $url,
-            'auth' => [
-                $this->getSetting('username'), $this->getSetting('password'),
-            ],
-        ]);
-    }
-
-    private function _request(string $method, string $uri, array $options = [])
-    {
-        $response = $this->_getClient()->request($method, $uri, $options);
-
-        return Json::decode((string)$response->getBody());
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
     }
 }

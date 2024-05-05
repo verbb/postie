@@ -1,5 +1,58 @@
 # Changelog
 
+## 4.0.0 - 2024-05-06
+> {note} This is a major update with some breaking changes. Review [what's changed](https://verbb.io/craft-plugins/postie/docs/get-started/upgrading-from-v3).
+
+### Added
+- Add shipments and labels functionality.
+- Add support for multiple providers for a carrier.
+- Add debug pane to the Yii debug toolbar for better debugging.
+- Add rate test functionality to providers from the control panel.
+- Add compulsary route checks for fetching rates.
+- Add plugin settings for the `shipped` and `partiallyShipped` order statuses.
+
+### Changed
+- Refactor to use `verbb\shippy` for providers rates.
+
+### Fixed
+- Fix lack of boxSize validation.
+
+### Removed
+- Removed Plugin Name setting (no longer used).
+- Removed Enabled CP Section setting (no longer used).
+- Removed Apply Free Shipping setting (no longer used).
+
+## 3.1.7 - 2024-04-10
+
+### Added
+- Add dimensions to packages for Bring.
+
+### Changed
+- Update Bring services to latest available (2023+).
+- Change minimum packed box weight to 1 gram (converted to the providers weight unit).
+
+### Fixed
+- Fix an error with USPS international shipments.
+
+## 3.1.6 - 2024-03-18
+
+### Changed
+- Update Bring API compatibility.
+- Allow `Provider::EVENT_BEFORE_PACK_ORDER` to override the box packing provider.
+
+### Fixed
+- Fix an error with New Zealand post settings.
+
+## 3.1.5 - 2024-03-04
+
+### Changed
+- The variants-shippable check now only queries 100 variants by default.
+
+## 3.1.4 - 2023-10-25
+
+### Changed
+- Updated Royal Mail rates.
+
 ## 3.1.3 - 2023-09-25
 
 ### Added

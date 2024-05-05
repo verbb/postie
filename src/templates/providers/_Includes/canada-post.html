@@ -1,0 +1,83 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.selectField({
+    label: 'API' | t('postie'),
+    instructions: 'Select which {name} API to use.' | t('postie', { name: provider.displayName() }),
+    name: 'apiType',
+    options: provider.getApiTypeOptions(),
+    value: provider.apiType ?? '',
+    required: true,
+    suggestEnvVars: true,
+    toggle: true,
+    targetPrefix: '.api-type-',
+    warning: macros.configWarning("providers.#{provider.handle}.apiType", 'postie'),
+    errors: provider.getErrors('apiType'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Customer Number' | t('postie'),
+    instructions: 'Enter your {name} Customer Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'customerNumber',
+    name: 'customerNumber',
+    value: provider.customerNumber ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.customerNumber", 'postie'),
+    errors: provider.getErrors('customerNumber'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+    id: 'username',
+    name: 'username',
+    value: provider.username ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.username", 'postie'),
+    errors: provider.getErrors('username'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+    id: 'password',
+    name: 'password',
+    value: provider.password ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
+    errors: provider.getErrors('password'),
+}) }}
+
+{{ forms.checkboxSelectField({
+    label: 'Additional Options' | t('postie'),
+    instructions: 'Select any additional options for rate requests.' | t('postie'),
+    id: 'additionalOptions',
+    name: 'additionalOptions',
+    values: provider.additionalOptions ?? '',
+    options: [
+        { label: 'Coverage' | t('postie'), value: 'COV' },
+        { label: 'Proof of Age Required' | t('postie'), value: 'PA18' },
+        { label: 'Signature' | t('postie'), value: 'SO' },
+        { label: 'Mailing Tube' | t('postie'), value: 'CYL' },
+    ],
+    warning: macros.configWarning("providers.#{provider.handle}.additionalOptions", 'postie'),
+    errors: provider.getErrors('additionalOptions'),
+}) }}
+
+<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.autosuggestField({
+        label: 'Contract ID' | t('postie'),
+        instructions: 'Enter your {name} Contract ID here.' | t('postie', { name: provider.displayName() }),
+        id: 'contractId',
+        name: 'contractId',
+        value: provider.contractId ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.contractId", 'postie'),
+        errors: provider.getErrors('contractId'),
+    }) }}
+</div>
+

@@ -1,0 +1,49 @@
+<div class="content">
+    <input type="hidden" name="orderId" value="{{ order.id }}" />
+    <input type="hidden" name="rateId" value="{{ rate.id }}" />
+
+    <h2 class="first">{{ 'New Shipment' | t('postie') }}</h2>
+    <p>{{ 'Configure which line items to add to the shipment.' | t('postie') }}</p>
+
+    {% if lineItems %}
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'Item' | t('postie') }}</th>
+                    <th scope="col">{{ 'Quantity' | t('postie') }}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for lineItem in lineItems %}
+                    <tr class="infoRow">
+                        <td data-title="{{ 'Item' | t('postie') }}">{{ lineItem.title }}</td>
+
+                        <td data-title="{{ 'Quantity' | t('postie') }}">
+                            <div class="flex">
+                                <input class="text last" type="number" size="4" name="lineItems[{{ lineItem.id }}]" value="{{ lineItem.qty }}" autocomplete="off" min="0" max="{{ lineItem.maxQty }}" />
+
+                                <span class="flex-grow">
+                                    {{ 'of {number}' | t('postie', { number: lineItem.maxQty }) }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>  
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <hr>
+
+    <h2 class="first">{{ 'Shipment Summary' | t('postie') }}</h2>
+
+    {{ 'You are about to create a shipment with **{provider}** for the service **`{service}`**.' | t('postie', {
+        provider: rate.provider.name,
+        service: rate.service,
+    }) | md }}
+
+    {{ '**This will incur charges on your {provider} account.**' | t('postie', {
+        provider: rate.provider.name,
+    }) | md }}
+ </div>

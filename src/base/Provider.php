@@ -3,25 +3,25 @@ namespace verbb\postie\base;
 
 use verbb\postie\Postie;
 use verbb\postie\events\FetchRatesEvent;
-use verbb\postie\events\ModifyPayloadEvent;
-use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\events\PackOrderEvent;
 use verbb\postie\helpers\PostieHelper;
+use verbb\postie\helpers\ShippyHelper;
+use verbb\postie\helpers\TestingHelper;
 use verbb\postie\models\Box;
 use verbb\postie\models\Item;
 use verbb\postie\models\PackedBoxes;
-use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\base\SavableComponent;
+use craft\elements\Address;
 use craft\helpers\App;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Json;
 use craft\helpers\StringHelper;
+use craft\helpers\UrlHelper;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
-use craft\commerce\records\ShippingRuleCategory;
+use craft\commerce\models\LineItem;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
@@ -31,16 +31,26 @@ use DVDoug\BoxPacker\PackedBox;
 use DVDoug\BoxPacker\PackedItem;
 use DVDoug\BoxPacker\PackedItemList;
 
-use Cake\Utility\Hash;
+use verbb\shippy\Shippy;
+use verbb\shippy\carriers\CarrierInterface;
+use verbb\shippy\events\RateEvent;
+use verbb\shippy\models\Address as ShippyAddress;
+use verbb\shippy\models\LabelResponse;
+use verbb\shippy\models\Package;
+use verbb\shippy\models\Rate;
+use verbb\shippy\models\RateResponse;
+use verbb\shippy\models\Shipment;
 
-use Exception;
 use Throwable;
-use verbb\postie\models\Settings;
 
 abstract class Provider extends SavableComponent implements ProviderInterface
 {
     // Constants
     // =========================================================================
+
+    public const API_RATES = 'rates';
+    public const API_TRACKING = 'tracking';
+    public const API_SHIPPING = 'shipping';
 
     public const PERCENTAGE = 'percentage';
     public const VALUE = 'value';
@@ -49,12 +59,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public const PACKING_BOX = 'boxPacking';
     public const PACKING_SINGLE_BOX = 'singleBox';
 
-    public const EVENT_MODIFY_RATES = 'modifyRates';
-    public const EVENT_MODIFY_PAYLOAD = 'modifyPayload';
     public const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
+    public const EVENT_AFTER_FETCH_RATES = 'afterFetchRates';
     public const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
     public const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
-    public const EVENT_MODIFY_SHIPPING_METHODS = 'modifyShippingMethods';
 
 
     // Static Methods
@@ -65,63 +73,45 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return [];
     }
 
-    public static function supportsConnection(): bool
-    {
-        return true;
-    }
-
-    public static function supportsDynamicServices(): bool
-    {
-        return false;
-    }
-
     public static function getServiceList(): array
     {
-        return [];
+        return static::getCarrierClass()::getServiceCodes();
     }
 
-    public static function getClass(): string
+    public static function getWeightUnit(): string
     {
-        $nsClass = self::class;
+        // Use a fake shipment to resolve the correct country for units
+        $storeLocation = Postie::getStoreShippingAddress();
 
-        return substr($nsClass, strrpos($nsClass, "\\") + 1);
+        $shipment = new Shipment([
+            'from' => new ShippyAddress([
+                'countryCode' => $storeLocation->countryCode,
+            ]),
+        ]);
+
+        return static::getCarrierClass()::getWeightUnit($shipment);
     }
 
-    public static function log($provider, $message, $throwError = false): void
+    public static function getDimensionUnit(): string
     {
-        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
-        $message = $provider->name . ': ' . $message;
+        // Use a fake shipment to resolve the correct country for units
+        $storeLocation = Postie::getStoreShippingAddress();
 
-        if (Postie::$plugin->getSettings()->displayDebug && $isSiteRequest) {
-            Craft::dump($message);
-        }
+        $shipment = new Shipment([
+            'from' => new ShippyAddress([
+                'countryCode' => $storeLocation->countryCode,
+            ]),
+        ]);
 
-        if ($throwError) {
-            throw new Exception($message);
-        }
-
-        Postie::info($message);
+        return static::getCarrierClass()::getDimensionUnit($shipment);
     }
 
-    public static function error($provider, $message, $throwError = false): void
-    {
-        $isSiteRequest = Craft::$app->getRequest()->getIsSiteRequest();
-        $message = $provider->name . ': ' . $message;
 
-        if (Postie::$plugin->getSettings()->displayErrors && $isSiteRequest) {
-            Craft::dump($message);
-        }
 
-        if (Postie::$plugin->getSettings()->displayFlashErrors && $isSiteRequest) {
-            Craft::$app->getSession()->setError($message);
-        }
-
-        if ($throwError) {
-            throw new Exception($message);
-        }
-
-        Postie::error($message);
-    }
+    // Abstract Methods
+    // =========================================================================
+    
+    abstract public static function getCarrierClass(): string;
 
 
     // Properties
@@ -129,60 +119,114 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public ?string $name = null;
     public ?string $handle = null;
-    public ?bool $enabled = null;
-    public array $settings = [];
+    public ?int $sortOrder = null;
+    public ?string $uid = null;
     public ?float $markUpRate = null;
     public ?string $markUpBase = null;
-    public array $services = [];
     public bool $restrictServices = true;
+    public array $services = [];
     public string $packingMethod = self::PACKING_SINGLE_BOX;
     public array $boxSizes = [];
-    public string $weightUnit = 'kg';
-    public string $dimensionUnit = 'cm';
+    public ?string $apiType = null;
 
-    protected mixed $_client = null;
-    protected ?array $_rates = null;
-    protected ?array $_cachedRates = null;
+    private bool|string $_enabled = true;
+    private bool|string $_isProduction = false;
+    private CarrierInterface|null $_carrier = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function __construct($config = [])
-    {
-        // Set default name and handles
-        $config['name'] = $config['name'] ?? $this->name ?? self::displayName();
-        $config['handle'] = $config['handle'] ?? $this->handle ?? StringHelper::toCamelCase(self::displayName());
-
-        // Apply here for `getSettings()` at least until a proper refactor of settings
-        $this->name = $config['name'];
-        $this->handle = $config['handle'];
-
-        // Populate and override provider settings from the plugin settings and config file
-        $config = array_merge($config, $this->getSettings());
-
-        parent::__construct($config);
-    }
-
     public function __toString(): string
     {
-        return (string)$this->getName();
+        return (string)$this->name;
     }
 
-    public function getName(): ?string
+    public static function className(): string
     {
-        return $this->name;
+        $classNameParts = explode('\\', static::class);
+
+        return array_pop($classNameParts);
     }
 
-    public function getHandle(): ?string
+    public function defineRules(): array
     {
-        return $this->handle;
+        $rules = parent::defineRules();
+
+        $rules[] = ['boxSizes', 'validateBoxSizes', 'skipOnEmpty' => false, 'skipOnError' => false];
+
+        return $rules;
+    }
+
+    public function validateBoxSizes($attribute, $params, $validator): void
+    {
+        if ($this->packingMethod === self::PACKING_BOX) {
+            if ($this->$attribute) {
+                $enabledBoxes = ArrayHelper::where($this->$attribute, 'enabled');
+
+                if (!$enabledBoxes) {
+                    $this->addError($attribute, Craft::t('postie', 'You must provide at least one enabled box.'));
+                }
+
+                foreach ($enabledBoxes as $k => $box) {
+                    $name = $box['name'] ?? '';
+                    $boxLength = $box['boxLength'] ?? '';
+                    $boxWidth = $box['boxWidth'] ?? '';
+                    $boxHeight = $box['boxHeight'] ?? '';
+                    $boxWeight = $box['boxWeight'] ?? '';
+                    $maxWeight = $box['maxWeight'] ?? '';
+                    $enabled = $box['enabled'] ?? '';
+                    $default = $box['default'] ?? '';
+
+                    if ($name === '' || $boxLength === '' || $boxWidth === '' || $boxHeight === '' || $boxWeight === '' || $maxWeight === '') {
+                        $this->addError($attribute, Craft::t('postie', 'You must provide values for all fields.'));
+
+                        break;
+                    }
+                }
+            } else {
+                $this->addError($attribute, Craft::t('postie', 'You must provide at least one box.'));
+            }
+        }
+    }
+
+    public function getEnabled(bool $parse = true): bool|string
+    {
+        if ($parse) {
+            return App::parseBooleanEnv($this->_enabled) ?? true;
+        }
+
+        return $this->_enabled;
+    }
+
+    public function setEnabled(bool|string $name): void
+    {
+        $this->_enabled = $name;
+    }
+
+    public function isProduction(bool $parse = true): bool|string
+    {
+        if ($parse) {
+            return App::parseBooleanEnv($this->_isProduction) ?? true;
+        }
+
+        return $this->_isProduction;
+    }
+
+    public function setIsProduction(bool|string $name): void
+    {
+        $this->_isProduction = $name;
+    }
+
+    public function getApiType(): ?string
+    {
+        return App::parseEnv($this->apiType);
     }
 
     public function getIconUrl(): string
     {
         try {
-            $handle = StringHelper::toKebabCase(self::displayName());
+            $handle = StringHelper::toKebabCase(self::className());
 
             return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
         } catch (Throwable $e) {
@@ -192,107 +236,16 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getSettingsHtml(): ?string
     {
-        $handle = StringHelper::toKebabCase(self::displayName());
+        $handle = StringHelper::toKebabCase(self::className());
 
-        return Craft::$app->getView()->renderTemplate("postie/providers/$handle", [
+        return Craft::$app->getView()->renderTemplate("postie/providers/_includes/$handle", [
             'provider' => $this,
         ]);
     }
 
-    public function getSettings(): array
+    public function getCpEditUrl(): string
     {
-        // Get settings from the Class, Plugin Settings and Config file
-        $settings = parent::getSettings();
-        $config = Craft::$app->config->getConfigFromFile('postie');
-        $pluginInfo = Craft::$app->plugins->getStoredPluginInfo('postie');
-
-        $providerSettings = $pluginInfo['settings']['providers'][$this->handle] ?? [];
-        $configSettings = $config['providers'][$this->handle] ?? [];
-
-        $settings = array_merge(
-            $settings,
-            $providerSettings,
-            $configSettings
-        );
-
-        // Ensure settings (settings) can be mixed in config and CP. This isn't automatically done becuase
-        // they're nested array in the provider, so do them separately.
-        $providerSettingsSettings = $providerSettings['settings'] ?? [];
-        $configSettingsSettings = $configSettings['settings'] ?? [];
-
-        $settings['settings'] = array_merge($providerSettingsSettings, $configSettingsSettings);
-
-        // Special-case for services - these should be converted form key-value into ShippingMethods
-        // Also helps with backwards compatibility and how services are stored in config files
-        if (isset($settings['services'])) {
-            foreach ($settings['services'] as $handle => $info) {
-                // Create a temporary provider instance, just to pass to the shipping method
-                // We need to be careful here so as not to cause an infinite loop.
-                $tempProvider = clone $this;
-
-                // Populate the temp provider with some stuff - just don't include services
-                // that'll cause an infinite loop.
-                $tempProvider->enabled = $settings['enabled'] ?? null;
-                $tempProvider->settings = $settings['settings'] ?: [];
-                $tempProvider->markUpRate = (float)($settings['markUpRate'] ?? null);
-                $tempProvider->markUpBase = $settings['markUpBase'] ?? null;
-                $tempProvider->restrictServices = $settings['restrictServices'] ?? true;
-                $tempProvider->packingMethod = $settings['packingMethod'] ?? self::PACKING_SINGLE_BOX;
-                $boxSizes = $settings['boxSizes'] ?? [];
-
-                // Protect against boxSizes being a string
-                if (!is_array($boxSizes)) {
-                    $boxSizes = [];
-                }
-
-                $tempProvider->boxSizes = $boxSizes;
-
-                $shippingMethod = new ShippingMethod();
-                $shippingMethod->handle = $handle;
-                $shippingMethod->provider = $tempProvider;
-
-                // Stored in plugin settings as an array, config file as just the name
-                if (is_array($info)) {
-                    $shippingMethod->name = $info['name'] ?? self::getServiceList()[$handle] ?? '';
-                    $shippingMethod->enabled = $info['enabled'] ?? '';
-
-                    // Also sort out saved shipping categories
-                    if (isset($info['shippingCategories'])) {
-                        $ruleCategories = [];
-
-                        foreach ($info['shippingCategories'] as $key => $ruleCategory) {
-                            $ruleCategories[$key] = new ShippingRuleCategory($ruleCategory);
-                            $ruleCategories[$key]->shippingCategoryId = $key;
-                        }
-
-                        $shippingMethod->shippingMethodCategories = $ruleCategories;
-                    }
-                } else {
-                    $shippingMethod->name = $info;
-                    $shippingMethod->enabled = true;
-                }
-
-                $settings['services'][$handle] = $shippingMethod;
-            }
-        }
-
-        // Add in any validation errors on the settings model, add them in
-        if ($errors = Postie::$plugin->getSettings()->getErrors()) {
-            $providerErrors = ArrayHelper::getValue(Hash::expand($errors), "providers.{$this->handle}.settings");
-
-            if ($providerErrors) {
-                $this->addErrors($providerErrors);
-
-                // Ensure we return the in-memory version to retain the values we've entered
-                $providerData = Postie::$plugin->getSettings()->providers[$this->handle] ?? [];
-
-                // This is a bit horrendous. Refactor at a later stage to proper models.
-                // Basically just add back in whatever we're validation (not much).
-                $settings['boxSizes'] = $providerData['boxSizes'] ?? [];
-            }
-        }
-
-        return $settings;
+        return UrlHelper::cpUrl('postie/providers/edit/' . $this->id);
     }
 
     public function getMarkUpBaseOptions(): array
@@ -303,172 +256,89 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function getWeightUnitOptions(): array
+    public function getCarrier(): CarrierInterface
     {
-        return [
-            ['label' => Craft::t('commerce', 'Grams (g)'), 'value' => 'g'],
-            ['label' => Craft::t('commerce', 'Kilograms (kg)'), 'value' => 'kg'],
-            ['label' => Craft::t('commerce', 'Pounds (lb)'), 'value' => 'lb'],
-        ];
-    }
-
-    public function getDimensionUnitOptions(): array
-    {
-        return [
-            ['label' => Craft::t('commerce', 'Millimeters (mm)'), 'value' => 'mm'],
-            ['label' => Craft::t('commerce', 'Centimeters (cm)'), 'value' => 'cm'],
-            ['label' => Craft::t('commerce', 'Meters (m)'), 'value' => 'm'],
-            ['label' => Craft::t('commerce', 'Feet (ft)'), 'value' => 'ft'],
-            ['label' => Craft::t('commerce', 'Inches (in)'), 'value' => 'in'],
-        ];
-    }
-
-    public function getShippingMethods($order)
-    {
-        $shippingMethods = [];
-
-        if ($this::supportsDynamicServices()) {
-            $shippingRates = $this->getShippingRates($order) ?? [];
-
-            foreach (array_keys($shippingRates) as $key => $handle) {
-                $shippingMethod = new ShippingMethod();
-                $shippingMethod->handle = $handle;
-                $shippingMethod->provider = $this;
-                $shippingMethod->name = StringHelper::toTitleCase($handle);
-                $shippingMethod->enabled = true;
-
-                $shippingMethods[$handle] = $shippingMethod;
-            }
-        } else {
-            foreach ($this->services as $handle => $shippingMethod) {
-                if ($shippingMethod->enabled) {
-                    $shippingMethods[$handle] = $shippingMethod;
-                }
-
-                // Force all to be enabled if not restricting
-                if (!$this->restrictServices) {
-                    $shippingMethod->enabled = true;
-
-                    $shippingMethods[$handle] = $shippingMethod;
-                }
-            }
+        if ($this->_carrier !== null) {
+            return $this->_carrier;
         }
 
-        // Allow plugins to modify the shipping methods.
-        $event = new ModifyShippingMethodsEvent([
-            'provider' => $this,
-            'order' => $order,
-            'shippingMethods' => $shippingMethods,
+        $className = static::getCarrierClass();
+
+        return $this->_carrier = new $className($this->getCarrierConfig());
+    }
+
+    public function getCarrierConfig(): array
+    {
+        $services = [];
+
+        if ($this->restrictServices) {
+            $services = array_filter($this->services, function($service) {
+                return $service['enabled'];
+            });
+        }
+
+        return [
+            'isProduction' => false,
+            'allowedServiceCodes' => array_keys($services),
+            'settings' => [
+                'provider' => $this,
+            ],
+        ];
+    }
+
+    public function prepareForShippy(Shipment $shipment, Order $order): void
+    {
+        // Add the carrier we want to fetch rates for
+        $shipment->addCarrier($this->getCarrier());
+
+        // Allow providers to pack the order, if they have specific boxes or just using the line items
+        $packedBoxes = $this->packOrder($order);
+
+        // Convert Postie packed boxes to Shippy packages
+        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
+            $shipment->addPackage(new Package([
+                'length' => $packedBox['length'],
+                'width' => $packedBox['width'],
+                'height' => $packedBox['height'],
+                'weight' => $packedBox['weight'],
+                'price' => $packedBox['price'],
+                'packageType' => $packedBox['type'],
+                'dimensionUnit' => $packedBoxes->getDimensionUnit(),
+                'weightUnit' => $packedBoxes->getWeightUnit(),
+            ]));
+        }
+    }
+
+    public function getLabels(Order $order, string $serviceCode): ?LabelResponse
+    {
+        // Create a Shippy shipment to get labels for
+        $shipment = Postie::$plugin->getService()->getShippyShipmentForOrder($order);
+
+        // Prepare the shipment based on the provider
+        $this->prepareForShippy($shipment, $order);
+
+        $carrier = $this->getCarrier();
+
+        // Attach event handlers for Craft
+        $carrier->on($carrier::EVENT_BEFORE_FETCH_LABELS, [$this, 'beforeFetchLabels']);
+        $carrier->on($carrier::EVENT_AFTER_FETCH_LABELS, [$this, 'afterFetchLabels']);
+
+        // Create a new rate with the supplied service. No need to re-fetch the rate
+        $rate = new Rate([
+            'carrier' => $carrier,
+            'serviceCode' => $serviceCode,
         ]);
 
-        if ($this->hasEventHandlers(self::EVENT_MODIFY_SHIPPING_METHODS)) {
-            $this->trigger(self::EVENT_MODIFY_SHIPPING_METHODS, $event);
-        }
-
-        return $event->shippingMethods;
+        // Fetch the labels and shipping info
+        return $shipment->getLabels($rate);
     }
 
-    public function getShippingMethodByHandle($handle)
-    {
-        return $this->services[$handle] ?? [];
-    }
-
-    public function getShippingRates($order): ?array
-    {
-        /* @var Settings $settings */
-        $settings = Postie::$plugin->getSettings();
-        $request = Craft::$app->getRequest();
-
-        if (!$order) {
-            Provider::info($this, 'Missing required order variable.');
-
-            return null;
-        }
-
-        if (!$order->getLineItems()) {
-            Provider::info($this, 'No line items for order.');
-
-            return null;
-        }
-
-        if (!$order->shippingAddress && !$order->estimatedShippingAddress) {
-            Provider::info($this, 'No shipping address for order.');
-
-            return null;
-        }
-
-        $shippingRates = [];
-
-        if ($settings->enableCaching) {
-            // Setup some caching mechanism to save API requests
-            $signature = PostieHelper::getSignature($order, $this->handle);
-            $cacheKey = 'postie-shipment-' . $signature;
-
-            // Get the rate from the cache (if any)
-            $shippingRates = Craft::$app->cache->get($cacheKey);
-
-            // If is it not in the cache get rate via API
-            if ($shippingRates === false) {
-                $shippingRates = $this->prepareFetchShippingRates($order);
-
-                // Set this in our cache for the next request to be much quicker
-                if ($shippingRates) {
-                    Craft::$app->cache->set($cacheKey, $shippingRates, 0);
-                }
-            }
-        } else {
-            $shippingRates = $this->prepareFetchShippingRates($order);
-        }
-
-        return $shippingRates;
-    }
-
-    public function prepareFetchShippingRates($order)
-    {
-        /* @var Settings $settings */
-        $settings = Postie::$plugin->getSettings();
-        $request = Craft::$app->getRequest();
-
-        // Try and fetch rates based on the order signature right now.
-        // This happens regardless of our global cache settings, because it's an in-memory, memoization
-        // cache, but greatly improves performance, even when cache is turned off.
-        $signature = PostieHelper::getSignature($order, $this->handle);
-        $cachedRates = Postie::$plugin->getProviderCache()->getRates($signature);
-
-        if ($cachedRates === null) {
-            // Check if we're manually fetching rates, only proceed if we are
-            if ($settings->manualFetchRates && !Craft::$app->getSession()->get('postieManualFetchRates')) {
-                // For CP requests, don't rely on the POST param and continue as normal
-                if ($request->getIsSiteRequest()) {
-                    Provider::info($this, 'Postie set to manually fetch rates. Required POST param not provided.');
-
-                    return [];
-                }
-            }
-
-            // Fetch the rates
-            $cachedRates = $this->fetchShippingRates($order);
-
-            // If there are no rates returned, still cache the response, otherwise we likely hit API limits
-            // repeatedly trying to fetch rates, when we know we won't get any, several times during checkout.
-            // Ensure our falsy values are any empty array for our specific checks.
-            if (!$cachedRates) {
-                $cachedRates = [];
-            }
-
-            // Save the rates, globally for the entire request, not just this provider instance
-            Postie::$plugin->getProviderCache()->setRates($signature, $cachedRates);
-        }
-
-        return $cachedRates;
-    }
-
-    public function getMaxPackageWeight($order): ?int
+    public function getMaxPackageWeight(Order $order): ?int
     {
         return null;
     }
 
-    public function getIsInternational($order): bool
+    public function getIsInternational(Order $order): bool
     {
         $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
 
@@ -476,6 +346,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $destinationCountry = $order->shippingAddress->countryCode ?? '';
 
         return $storeLocation !== $destinationCountry;
+    }
+
+    public function getApiTypeOptions(): array
+    {
+        return [
+            ['label' => Craft::t('postie', 'Rates Only'), 'value' => self::API_RATES],
+            ['label' => Craft::t('postie', 'All'), 'value' => self::API_SHIPPING],
+        ];
     }
 
     public function getBoxSizesSettings(): array
@@ -488,31 +366,31 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'boxLength' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Length'),
-                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => static::getDimensionUnit()]),
                 'thin' => true,
             ],
             'boxWidth' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Width'),
-                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => static::getDimensionUnit()]),
                 'thin' => true,
             ],
             'boxHeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Height'),
-                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->dimensionUnit]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => static::getDimensionUnit()]),
                 'thin' => true,
             ],
             'boxWeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Box Weight'),
-                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->weightUnit]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => static::getWeightUnit()]),
                 'thin' => true,
             ],
             'maxWeight' => [
                 'type' => 'singleline',
                 'heading' => Craft::t('postie', 'Max Weight'),
-                'placeholder' => Craft::t('postie', '{unit}', ['unit' => $this->weightUnit]),
+                'placeholder' => Craft::t('postie', '{unit}', ['unit' => static::getWeightUnit()]),
                 'thin' => true,
             ],
             'enabled' => [
@@ -561,70 +439,86 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return array_merge($defaultBoxes, $this->boxSizes);
     }
 
-    public function checkConnection($useCache = true): bool
+    public function getTestRates(array $payload): RateResponse
     {
-        return $this->fetchConnection();
-    }
-
-    public function getIsConnected(): bool
-    {
-        $isConnected = $_COOKIE["postie-{$this->handle}-connect"] ?? null;
-
-        return (bool)$isConnected;
-    }
-
-    public function getSetting($key)
-    {
-        $value = ArrayHelper::getValue($this->settings, $key);
-
-        if (!is_array($value)) {
-            return App::parseEnv($value);
+        // Set the Shippy logger for consolidated logging with Postie
+        if ($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null)) {
+            Shippy::setLogger($logTarget->getLogger());
         }
 
-        return $value;
-    }
-
-
-    // Protected Methods
-    // =========================================================================
-
-    protected function beforeSendPayload($provider, &$payload, $order): void
-    {
-        $event = new ModifyPayloadEvent([
-            'provider' => $provider,
-            'payload' => $payload,
+        $order = new Order([
+            'currency' => 'USD',
+            'email' => 'test@test.com',
         ]);
 
-        if ($this->hasEventHandlers(self::EVENT_MODIFY_PAYLOAD)) {
-            $this->trigger(self::EVENT_MODIFY_PAYLOAD, $event);
-        }
+        $from = new Address(array_merge([
+            'firstName' => 'Testing',
+            'lastName' => 'Sender',
+            'organization' => 'Test Company',
+        ], $payload['from']));
 
-        // Apply the amended payload
-        $payload = $event->payload;
+        $to = new Address(array_merge([
+            'firstName' => 'Testing',
+            'lastName' => 'Recipient',
+            'organization' => 'Test Company',
+        ], $payload['to']));
 
-        self::info($this, Craft::t('postie', 'Sending payload: `{json}`.', [
-            'json' => Json::encode($payload),
+        // Create a Shippy shipment first for the origin/destination
+        $shipment = new Shipment([
+            'currency' => $order->currency,
+            'from' => ShippyHelper::toAddress($order, $from),
+            'to' => ShippyHelper::toAddress($order, $to),
+        ]);
+
+        // Add all the carriers we want to fetch rates for
+        $shipment->addCarrier($this->getCarrier());
+
+        $shipment->addPackage(new Package([
+            'length' => $payload['length'],
+            'width' => $payload['width'],
+            'height' => $payload['height'],
+            'weight' => $payload['weight'],
+            'price' => '',
+            'dimensionUnit' => $this->dimensionUnit,
+            'weightUnit' => $this->weightUnit,
         ]));
+
+        return $shipment->getRates();
     }
 
-    protected function beforeFetchRates(&$storeLocation, &$packedBoxes, $order): void
+    public function beforeFetchRates(RateEvent $event): void
     {
         $fetchRatesEvent = new FetchRatesEvent([
-            'storeLocation' => $storeLocation,
-            'order' => $order,
-            'packedBoxes' => $packedBoxes,
+            'request' => $event->getRequest(),
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_RATES)) {
             $this->trigger(self::EVENT_BEFORE_FETCH_RATES, $fetchRatesEvent);
         }
 
-        // Update back
-        $storeLocation = $fetchRatesEvent->storeLocation;
-        $packedBoxes = $fetchRatesEvent->packedBoxes;
+        $event->setRequest($fetchRatesEvent->request);
     }
 
-    protected function getLineItemDimensions($lineItem): array|bool
+    public function afterFetchRates(RateEvent $event): void
+    {
+        $fetchRatesEvent = new FetchRatesEvent([
+            'request' => $event->getRequest(),
+            'response' => $event->getData(),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_AFTER_FETCH_RATES)) {
+            $this->trigger(self::EVENT_AFTER_FETCH_RATES, $fetchRatesEvent);
+        }
+
+        $event->setRequest($fetchRatesEvent->request);
+        $event->setData($fetchRatesEvent->response);
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function getLineItemDimensions(LineItem $lineItem): array|bool
     {
         $settings = Commerce::getInstance()->getSettings();
 
@@ -649,7 +543,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $dimensions;
     }
 
-    protected function getOrderDimensions($order, $weightUnit, $dimensionUnit): array
+    protected function getOrderDimensions(Order $order, string $weightUnit, string $dimensionUnit): array
     {
         $settings = Commerce::getInstance()->getSettings();
 
@@ -678,7 +572,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    protected function getBoxItemFromLineItem($lineItem): bool|Item
+    protected function getBoxItemFromLineItem(LineItem $lineItem): bool|Item
     {
         $product = $lineItem->getPurchasable();
 
@@ -704,7 +598,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ]);
     }
 
-    protected function getBoxFromLineItem($lineItem): bool|Box
+    protected function getBoxFromLineItem(LineItem $lineItem): bool|Box
     {
         $product = $lineItem->getPurchasable();
 
@@ -743,11 +637,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 continue;
             }
 
-            $boxInfo['maxWeight'] = (new Mass($boxInfo['maxWeight'], $this->weightUnit))->toUnit('g');
-            $boxInfo['boxWeight'] = (new Mass($boxInfo['boxWeight'], $this->weightUnit))->toUnit('g');
-            $boxInfo['boxLength'] = (new Length($boxInfo['boxLength'], $this->dimensionUnit))->toUnit('mm');
-            $boxInfo['boxWidth'] = (new Length($boxInfo['boxWidth'], $this->dimensionUnit))->toUnit('mm');
-            $boxInfo['boxHeight'] = (new Length($boxInfo['boxHeight'], $this->dimensionUnit))->toUnit('mm');
+            $boxInfo['maxWeight'] = (new Mass($boxInfo['maxWeight'], static::getWeightUnit()))->toUnit('g');
+            $boxInfo['boxWeight'] = (new Mass($boxInfo['boxWeight'], static::getWeightUnit()))->toUnit('g');
+            $boxInfo['boxLength'] = (new Length($boxInfo['boxLength'], static::getDimensionUnit()))->toUnit('mm');
+            $boxInfo['boxWidth'] = (new Length($boxInfo['boxWidth'], static::getDimensionUnit()))->toUnit('mm');
+            $boxInfo['boxHeight'] = (new Length($boxInfo['boxHeight'], static::getDimensionUnit()))->toUnit('mm');
 
             $boxes[] = $boxInfo;
         }
@@ -755,7 +649,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $boxes;
     }
 
-    protected function packOrder(Order $order)
+    public function packOrder(Order $order)
     {
         $packer = new InfalliblePacker();
 
@@ -766,10 +660,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PACK_ORDER)) {
             $this->trigger(self::EVENT_BEFORE_PACK_ORDER, $packOrderEvent);
+
+            // Allow event hander to override $packer
+            $packer = $packOrderEvent->packer;
         }
 
         if ($this->packingMethod === self::PACKING_SINGLE_BOX) {
-            $dimensions = $this->getOrderDimensions($order, $this->weightUnit, $this->dimensionUnit);
+            $dimensions = $this->getOrderDimensions($order, static::getWeightUnit(), static::getDimensionUnit());
 
             // Let providers define the max weight for boxes
             $maxWeight = $this->getMaxPackageWeight($order) ?? $dimensions['weight'];
@@ -873,11 +770,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
         }
 
-        if (!$packedBoxes) {
-            self::error($this, Craft::t('postie', 'Unable to pack order for “{pack}”.', ['pack' => $this->packingMethod]));
-        }
-
-        $packedBoxes = new PackedBoxes($packedBoxes, $this->weightUnit, $this->dimensionUnit);
+        $packedBoxes = new PackedBoxes($packedBoxes, static::getWeightUnit(), static::getDimensionUnit());
 
         $packOrderEvent = new PackOrderEvent([
             'packer' => $packer,
@@ -890,5 +783,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         return $packOrderEvent->packedBoxes;
+    }
+
+    public function getTestingOriginAddress(): Address
+    {
+        return TestingHelper::getTestAddress('US', ['locality' => 'Cupertino']);
+    }
+
+    public function getTestingDestinationAddress(): Address
+    {
+        return TestingHelper::getTestAddress('US', ['locality' => 'Mountain View']);
+    }
+
+    public function getTestingPackage(): array
+    {
+        return TestingHelper::getTestPackedBoxes(static::getDimensionUnit(), static::getWeightUnit())[0];
     }
 }

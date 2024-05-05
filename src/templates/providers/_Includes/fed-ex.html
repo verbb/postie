@@ -1,0 +1,38 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Client ID' | t('postie'),
+    instructions: 'Enter your {name} Client ID here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientId',
+    name: 'clientId',
+    value: provider.clientId ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientId", 'postie'),
+    errors: provider.getErrors('clientId'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Client Secret' | t('postie'),
+    instructions: 'Enter your {name} Client Secret here.' | t('postie', { name: provider.displayName() }),
+    id: 'clientSecret',
+    name: 'clientSecret',
+    value: provider.clientSecret ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.clientSecret", 'postie'),
+    errors: provider.getErrors('clientSecret'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    value: provider.accountNumber ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+    errors: provider.getErrors('accountNumber'),
+}) }}
