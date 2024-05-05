@@ -37,6 +37,13 @@ trait PluginTrait
     {
         Plugin::bootstrapPlugin('postie');
 
+        // Push a new handler to the regular target to keep track of current-requests
+        if ($logTarget = (Craft::$app->getLog()->targets['verbb\postie\*'] ?? null)) {
+            if ($logger = $logTarget->getLogger()) {
+                $logger->pushHandler(new TestHandler());
+            }
+        }
+
         return [
             'components' => [
                 'providers' => Providers::class,
@@ -45,6 +52,15 @@ trait PluginTrait
                 'shipments' => Shipments::class,
             ],
         ];
+    }
+
+    public static function debugPaneLog(string $message, array $params = []): void
+    {
+        $message = Craft::t('postie', $message, $params);
+
+        if ($logTarget = (Craft::$app->getLog()->targets['verbb\postie\*'] ?? null)) {
+            $logTarget->getLogger()->info($message);
+        }
     }
 
 

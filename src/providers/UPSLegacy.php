@@ -356,7 +356,7 @@ class UPSLegacy extends Provider
             return null;
         }
 
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
         // Pack the content of the order into boxes
         $packedBoxes = $this->packOrder($order);

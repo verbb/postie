@@ -21,7 +21,7 @@ class StoreSetupController extends Controller
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
         return $this->renderTemplate('postie/store-setup', [
             'settings' => $settings,

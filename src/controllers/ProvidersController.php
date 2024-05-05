@@ -87,7 +87,7 @@ class ProvidersController extends Controller
 
         $baseUrl = 'postie/providers';
         $continueEditingUrl = 'postie/providers/edit/{id}';
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
         return $this->renderTemplate('postie/providers/_edit', [
             'provider' => $provider,

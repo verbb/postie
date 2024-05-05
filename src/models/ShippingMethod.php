@@ -8,6 +8,8 @@ use craft\helpers\UrlHelper;
 
 use craft\commerce\base\ShippingMethod as BaseShippingMethod;
 
+use Illuminate\Support\Collection;
+
 class ShippingMethod extends BaseShippingMethod
 {
     // Constants
@@ -48,7 +50,7 @@ class ShippingMethod extends BaseShippingMethod
         return (string)$this->handle;
     }
 
-    public function getShippingRules(): array
+    public function getShippingRules(): Collection
     {
         $shippingRule = new ShippingRule();
         $shippingRule->description = $this->name;
@@ -73,7 +75,7 @@ class ShippingMethod extends BaseShippingMethod
             $this->trigger(self::EVENT_MODIFY_SHIPPING_RULE, $modifyRuleEvent);
         }
 
-        return [$modifyRuleEvent->shippingRule];
+        return collect([$modifyRuleEvent->shippingRule]);
     }
 
     public function getIsEnabled(): bool
@@ -81,7 +83,7 @@ class ShippingMethod extends BaseShippingMethod
         return $this->enabled && isset($this->rate);
     }
 
-    public function getCpEditUrl(): ?string
+    public function getCpEditUrl(): string
     {
         return UrlHelper::cpUrl('postie/settings/shipping-methods/' . $this->provider->handle . '/' . $this->getHandle());
     }

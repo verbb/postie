@@ -144,7 +144,7 @@ class Providers extends Component
         }
 
         if ($runValidation && !$provider->validate()) {
-            Postie::log('Provider not saved due to validation error.');
+            Postie::info('Provider not saved due to validation error.');
 
             return false;
         }

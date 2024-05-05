@@ -15,7 +15,7 @@
 
 <h2>{{ 'Store Location' | t('commerce') }}</h2>
 
-<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/store-settings/store') ~ '">Commerce Store Settings</a>' }) | raw }}</p>
+<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/stores') ~ '">Commerce Store Settings</a>' }) | raw }}</p>
 
 {% if not storeLocation.addressLine1 %}
     <p class="warning with-icon">{{ 'Store location not configured.' | t('postie') }}</p>

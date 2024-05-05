@@ -9,7 +9,9 @@ use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
+use craft\elements\Address;
 
+use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
 use craft\commerce\events\RegisterAvailableShippingMethodsEvent;
 
@@ -34,6 +36,11 @@ class Service extends Component
 
     // Public Methods
     // =========================================================================
+
+    public function getPrimaryStoreLocation(): ?Address
+    {
+        return Commerce::getInstance()->getStores()->getCurrentStore()->getSettings()->getLocationAddress() ?? null;
+    }
 
     public function getShippyShipmentForOrder(Order $order): Shipment
     {
@@ -127,7 +134,7 @@ class Service extends Component
         Postie::setOrderShippingAddress($order);
 
         if (!$order->shippingAddress && !$order->estimatedShippingAddress) {
-            Postie::log('No shipping address for order.');
+            Postie::info('No shipping address for order.');
 
             return;
         }

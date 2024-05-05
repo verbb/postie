@@ -85,8 +85,6 @@ class Postie extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
         $this->_registerVariables();
         $this->_registerEventHandlers();
         $this->_registerProjectConfigEventListeners();
@@ -121,7 +119,7 @@ class Postie extends Plugin
 
         $count = count(Postie::$plugin->getInvalidVariants());
 
-        $storeLocation = Commerce::getInstance()->getStore()->getStore()->getLocationAddress();
+        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
         if (!$storeLocation) {
             $count++;

@@ -35,7 +35,7 @@ class PostiePanel extends Panel
     {
         $logs = [];
 
-        if ($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null)) {
+        if ($logTarget = (Craft::$app->getLog()->targets['verbb\postie\*'] ?? null)) {
             if ($logger = $logTarget->getLogger()) {
                 foreach ($logger->getHandlers() as $handler) {
                     if ($handler instanceof TestHandler) {
