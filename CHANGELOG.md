@@ -15,7 +15,7 @@
 - Add support for multiple providers for a carrier.
 - Add debug pane to the Yii debug toolbar for better debugging.
 - Add rate test functionality to providers from the control panel.
-- Add compulsary route checks for fetching rates.
+- Add compulsory route checks for fetching rates.
 - Add plugin settings for the `shipped` and `partiallyShipped` order statuses.
 
 ### Changed
