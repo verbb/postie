@@ -140,6 +140,10 @@ class Install extends Migration
 
     protected function dropForeignKeys(): void
     {
+        if ($this->db->tableExists('{{%postie_providers}}')) {
+            $this->dropAllForeignKeysToTable('{{%postie_providers}}');
+        }
+
         if ($this->db->tableExists('{{%postie_shipments}}')) {
             $this->dropAllForeignKeysToTable('{{%postie_shipments}}');
         }
