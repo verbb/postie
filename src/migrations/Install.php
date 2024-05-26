@@ -108,6 +108,7 @@ class Install extends Migration
     public function insertDefaultData(): void
     {
         $orderStatusService = Commerce::getInstance()->getOrderStatuses();
+        $storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
         
         $statuses = [
             new OrderStatus([
@@ -115,12 +116,14 @@ class Install extends Migration
                 'handle' => 'shipped',
                 'color' => 'blue',
                 'default' => false,
+                'storeId' => $storeId,
             ]),
             new OrderStatus([
                 'name' => 'Partially Shipped',
                 'handle' => 'partiallyShipped',
                 'color' => 'yellow',
-                'default' => false
+                'default' => false,
+                'storeId' => $storeId,
             ]),
         ];
 
