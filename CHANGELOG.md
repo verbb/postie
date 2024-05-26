@@ -1,6 +1,13 @@
 # Changelog
 
-## 4.0.0 - 2024-05-06
+## 5.0.0 - 2024-05-26
+
+### Changed
+- Now requires PHP `8.2.0+`.
+- Now requires Craft `5.0.0+`.
+- Now requires Craft Commerce `5.0.0+`.
+
+## 4.0.0 - 2024-05-26
 > {note} This is a major update with some breaking changes. Review [what's changed](https://verbb.io/craft-plugins/postie/docs/get-started/upgrading-from-v3).
 
 ### Added
@@ -12,7 +19,7 @@
 - Add plugin settings for the `shipped` and `partiallyShipped` order statuses.
 
 ### Changed
-- Refactor to use `verbb\shippy` for providers rates.
+- Refactor to use `verbb/shippy` for providers rates.
 
 ### Fixed
 - Fix lack of boxSize validation.
@@ -21,6 +28,7 @@
 - Removed Plugin Name setting (no longer used).
 - Removed Enabled CP Section setting (no longer used).
 - Removed Apply Free Shipping setting (no longer used).
+- Removed deprecated shipping provider libraries.
 
 ## 3.1.7 - 2024-04-10
 
