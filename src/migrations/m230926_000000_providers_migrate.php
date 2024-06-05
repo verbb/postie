@@ -39,7 +39,7 @@ class m230926_000000_providers_migrate extends Migration
                 $markUpBase = $provider['markUpBase'] ?? null;
                 $packingMethod = $provider['packingMethod'] ?? null;
                 $boxSizes = $provider['boxSizes'] ?? null;
-                $restrictServices = $provider['restrictServices'] ?? null;
+                $restrictServices = StringHelper::toBoolean(($provider['restrictServices'] ?? ''));
                 $services = $provider['services'] ?? null;
                 $settings = $provider['settings'] ?? [];
 
