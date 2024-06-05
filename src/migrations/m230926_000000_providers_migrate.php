@@ -186,6 +186,7 @@ class m230926_000000_providers_migrate extends Migration
                 if ($handle === 'usps') {
                     $settings['clientId'] = 'tbc';
                     $settings['clientSecret'] = 'tbc';
+                    $settings['accountNumber'] = 'tbc';
                     ArrayHelper::remove($settings, 'username');
                 }
 
