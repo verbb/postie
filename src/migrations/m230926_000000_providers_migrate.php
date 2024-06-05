@@ -141,14 +141,11 @@ class m230926_000000_providers_migrate extends Migration
                     $settings['isProduction'] = !ArrayHelper::remove($settings, 'useSandbox');
                 }
 
-                if ($handle === 'ups') {
-                    $settings['isProduction'] = !ArrayHelper::remove($settings, 'useTestEndpoint');
-                }
-
-                if ($handle === 'upsLegacy') {
+                if ($handle === 'upsLegacy' || $handle === 'ups') {
                     $settings['isProduction'] = !ArrayHelper::remove($settings, 'useTestEndpoint');
                     $settings['clientId'] = 'tbc';
                     $settings['clientSecret'] = 'tbc';
+                    $settings['accountNumber'] = 'tbc';
                     ArrayHelper::remove($settings, 'apiKey');
                     ArrayHelper::remove($settings, 'testApiKey');
                     ArrayHelper::remove($settings, 'username');
