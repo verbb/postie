@@ -133,6 +133,7 @@ class m230926_000000_providers_migrate extends Migration
                 }
 
                 if ($handle === 'newZealandPost') {
+                    $settings['accountNumber'] = ($settings['accountNumber'] ?? 'tbc') ?: 'tbc';
                     $settings['isProduction'] = !ArrayHelper::remove($settings, 'useTestEndpoint');
                     ArrayHelper::remove($settings, 'siteCode');
                 }
