@@ -235,6 +235,10 @@ class ProvidersController extends Controller
         $services = ArrayHelper::remove($settings, 'services') ?? [];
         $boxSizes = ArrayHelper::remove($settings, 'boxSizes') ?? [];
 
+        // Normalize the settings a bit more
+        $services = $services === '' ? [] : $services;
+        $boxSizes = $boxSizes === '' ? [] : $boxSizes;
+
         return [
             'id' => $providerId ?: null,
             'name' => $this->request->getParam('name'),
