@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1 - 2024-06-08
+
+### Fixed
+- Fix an error when testing rates.
+- Fix case-insensitivity for provider templates.
+
 ## 5.0.0 - 2024-05-26
 
 ### Changed
