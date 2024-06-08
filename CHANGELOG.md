@@ -7,6 +7,20 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.2 - 2024-06-08
+
+### Fixed
+- Fix an error when testing rates.
+- Fix case-insensitivity for provider templates.
+
+## 4.0.1 - 2024-06-05
+
+### Fixed
+- Fix `restrictServices` migration error from Postie 3.
+- Fix New Zealand Post migration error from Postie 3.
+- Fix UPS migration error from Postie 3.
+- Fix USPS migration error from Postie 3.
+
 ## 4.0.0 - 2024-05-26
 > {note} This is a major update with some breaking changes. Review [what's changed](https://verbb.io/craft-plugins/postie/docs/get-started/upgrading-from-v3).
 
