@@ -16,7 +16,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
-use Exception;
+use Throwable;
 
 class ProvidersController extends Controller
 {
@@ -218,8 +218,15 @@ class ProvidersController extends Controller
             }
 
             return $this->asJson($rates);
-        } catch (Exception $e) {
-            return $this->asFailure($e->getMessage());
+        } catch (Throwable $e) {
+            $error = Craft::t('app', '{message}<br>{trace}', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => nl2br($e->getTraceAsString()),
+            ]);
+
+            return $this->asFailure($error);
         }
     }
 
