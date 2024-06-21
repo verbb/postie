@@ -14,6 +14,7 @@ use verbb\postie\models\PackedBoxes;
 use Craft;
 use craft\base\SavableComponent;
 use craft\elements\Address;
+use craft\elements\User;
 use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\helpers\StringHelper;
@@ -448,7 +449,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $order = new Order([
             'currency' => 'USD',
-            'email' => 'test@test.com',
+            'customer' => new User([
+                'email' => 'test@test.com',
+            ]),
         ]);
 
         $from = new Address(array_merge([
