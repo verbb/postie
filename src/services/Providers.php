@@ -7,6 +7,7 @@ use verbb\postie\events\ProviderEvent;
 use verbb\postie\events\RegisterProviderTypesEvent;
 use verbb\postie\providers as registeredproviders;
 use verbb\postie\models\MissingProvider;
+use verbb\postie\models\ShippingMethod;
 use verbb\postie\records\Provider as ProviderRecord;
 
 use Craft;
@@ -21,12 +22,13 @@ use craft\helpers\Json;
 use craft\helpers\ProjectConfig as ProjectConfigHelper;
 use craft\helpers\StringHelper;
 
+use craft\commerce\Plugin as Commerce;
+use craft\commerce\records\ShippingRuleCategory;
+
 use yii\base\Component;
 use yii\base\UnknownPropertyException;
 
 use Throwable;
-use craft\commerce\records\ShippingRuleCategory;
-use verbb\postie\models\ShippingMethod;
 
 class Providers extends Component
 {
@@ -373,6 +375,7 @@ class Providers extends Component
         $overrides = $provider->services[$handle] ?? [];
 
         $shippingMethod = new ShippingMethod();
+        $shippingMethod->storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
         $shippingMethod->handle = $handle;
         $shippingMethod->provider = $provider;
         $shippingMethod->name = $overrides['name'] ?? '';

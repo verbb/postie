@@ -190,6 +190,11 @@ class Service extends Component
         }
 
         foreach ($modifyShippingMethodsEvent->shippingMethods as $shippingMethod) {
+            // Ensure that the shipping method has `storeId` set, otherwise a fatal error will be thrown.
+            // This can be removed at the next breakpoint, as it's already done when creating a new `ShippingMethod` but
+            // because these objects are cached, this won't be populated, so it's set here for safety for everyone.
+            $shippingMethod->storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
+
             $event->shippingMethods[] = $shippingMethod;
         }
     }

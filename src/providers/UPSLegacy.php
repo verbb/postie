@@ -753,6 +753,7 @@ class UPSLegacy extends Provider
 
             // Because this isn't known in advanced, and only ever one rate, create the service dynamically
             $shippingMethod = new ShippingMethod();
+            $shippingMethod->storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
             $shippingMethod->handle = $handle;
             $shippingMethod->name = 'UPS Freight LTL';
             $shippingMethod->enabled = true;
