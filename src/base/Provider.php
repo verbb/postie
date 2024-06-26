@@ -2,6 +2,7 @@
 namespace verbb\postie\base;
 
 use verbb\postie\Postie;
+use verbb\postie\events\FetchLabelsEvent;
 use verbb\postie\events\FetchRatesEvent;
 use verbb\postie\events\PackOrderEvent;
 use verbb\postie\helpers\PostieHelper;
@@ -34,6 +35,7 @@ use DVDoug\BoxPacker\PackedItemList;
 
 use verbb\shippy\Shippy;
 use verbb\shippy\carriers\CarrierInterface;
+use verbb\shippy\events\LabelEvent;
 use verbb\shippy\events\RateEvent;
 use verbb\shippy\models\Address as ShippyAddress;
 use verbb\shippy\models\LabelResponse;
@@ -62,6 +64,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
     public const EVENT_AFTER_FETCH_RATES = 'afterFetchRates';
+    public const EVENT_BEFORE_FETCH_LABELS = 'beforeFetchLabels';
+    public const EVENT_AFTER_FETCH_LABELS = 'afterFetchLabels';
     public const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
     public const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
 
@@ -515,6 +519,34 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $event->setRequest($fetchRatesEvent->request);
         $event->setData($fetchRatesEvent->response);
+    }
+
+    public function beforeFetchLabels(LabelEvent $event): void
+    {
+        $fetchLabelsEvent = new FetchLabelsEvent([
+            'request' => $event->getRequest(),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_LABELS)) {
+            $this->trigger(self::EVENT_BEFORE_FETCH_LABELS, $fetchLabelsEvent);
+        }
+
+        $event->setRequest($fetchLabelsEvent->request);
+    }
+
+    public function afterFetchLabels(LabelEvent $event): void
+    {
+        $fetchLabelsEvent = new FetchLabelsEvent([
+            'request' => $event->getRequest(),
+            'response' => $event->getData(),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_AFTER_FETCH_LABELS)) {
+            $this->trigger(self::EVENT_AFTER_FETCH_LABELS, $fetchLabelsEvent);
+        }
+
+        $event->setRequest($fetchLabelsEvent->request);
+        $event->setData($fetchLabelsEvent->response);
     }
 
 
