@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.0.3 - 2024-06-26
+
+### Fixed
+- Fix shipment and label lodgement not factoring in the chosen line items when fetching rates.
+- Fix an error generating origin address for store, for some providers where name is required.
+- Fix lack of error-handling when creating shipments.
+- Fix missing before/after label creation events.
+- Improve error feedback when testing rates from the control panel.
+- Fix deprecation warning when testing rates from the control panel.
+
 ## 4.0.2 - 2024-06-08
 
 ### Fixed
