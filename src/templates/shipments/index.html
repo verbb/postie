@@ -44,7 +44,7 @@
                             {% for lineItemId, lineItemQty in shipment.lineItems %}
                                 {% set lineItem = craft.commerce.lineItems.getLineItemById(lineItemId) %}
 
-                                {% if lineItemQty %}
+                                {% if lineItem and lineItemQty %}
                                     <tr class="infoRow">
                                         <td data-title="{{ 'Item' | t('postie') }}">
                                             {% if lineItem.purchasable %}
