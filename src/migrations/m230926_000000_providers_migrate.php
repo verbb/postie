@@ -144,9 +144,9 @@ class m230926_000000_providers_migrate extends Migration
 
                 if ($handle === 'upsLegacy' || $handle === 'ups') {
                     $settings['isProduction'] = !ArrayHelper::remove($settings, 'useTestEndpoint');
-                    $settings['clientId'] = 'tbc';
-                    $settings['clientSecret'] = 'tbc';
-                    $settings['accountNumber'] = 'tbc';
+                    $settings['clientId'] = $settings['clientId'] ?? 'tbc';
+                    $settings['clientSecret'] = $settings['clientSecret'] ?? 'tbc';
+                    $settings['accountNumber'] = $settings['accountNumber'] ?? 'tbc';
                     ArrayHelper::remove($settings, 'apiKey');
                     ArrayHelper::remove($settings, 'testApiKey');
                     ArrayHelper::remove($settings, 'username');
