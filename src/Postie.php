@@ -66,7 +66,7 @@ class Postie extends Plugin
 
     public bool $hasCpSection = true;
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.2.5';
+    public string $schemaVersion = '2.2.6';
     public string $minVersionRequired = '2.2.7';
 
 
