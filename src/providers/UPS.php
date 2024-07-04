@@ -7,9 +7,13 @@ use verbb\postie\base\Provider;
 use Craft;
 use craft\helpers\App;
 
+use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
 
 use verbb\shippy\carriers\UPS as UPSCarrier;
+use verbb\shippy\events\RateEvent;
+
+use Throwable;
 
 class UPS extends Provider
 {
@@ -121,6 +125,7 @@ class UPS extends Provider
     public ?string $accountNumber = null;
     public ?string $requireSignature = null;
     public ?string $pickupType = null;
+    public ?string $phoneField = null;
     public bool $includeInsurance = false;
 
     private float $maxWeight = 68038.9; // 150lbs
@@ -188,8 +193,43 @@ class UPS extends Provider
         return $options;
     }
 
+    public function getPhoneFieldOptions(): array
+    {
+        $options = [];
+
+        $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
+
+        if ($fieldLayout) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
+                $options[] = ['label' => $field->name, 'value' => $field->handle];
+            }
+        }
+
+        return $options;
+    }
+
     public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
+    }
+
+    public function beforeFetchRates(RateEvent $event): void
+    {
+        // Add in the phone number for the recipient, which isn't included in an order address, but is required for international rates
+        if ($this->phoneField) {
+            try {
+                $cart = Commerce::getInstance()->getCarts()->getCart();
+                $phoneValue = $cart->{$this->phoneField};
+
+                if ($phoneValue) {
+                    $payload = $event->getRequest()->getPayload();
+                    $payload['json']['RateRequest']['Shipment']['ShipTo']['Phone']['Number'] = $phoneValue;;
+
+                    $event->getRequest()->setPayload($payload);
+                }
+            } catch (Throwable $e) {
+
+            }
+        }
     }
 }

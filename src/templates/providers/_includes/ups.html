@@ -71,3 +71,14 @@
     warning: macros.configWarning("providers.#{provider.handle}.includeInsurance", 'postie'),
     errors: provider.getErrors('includeInsurance'),
 }) }}
+
+{{ forms.selectField({
+    label: 'Phone Number Field' | t('postie'),
+    instructions: 'Select the custom field used for the phone number of the destination (customer) address. This should be a custom field on your order. Required for international rates.' | t('postie'),
+    id: 'phoneField',
+    name: 'phoneField',
+    value: provider.phoneField ?? '',
+    options: provider.getPhoneFieldOptions(),
+    warning: macros.configWarning("providers.#{provider.handle}.phoneField", 'postie'),
+    errors: provider.getErrors('phoneField'),
+}) }}
