@@ -278,7 +278,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if ($this->restrictServices) {
             $services = array_filter($this->services, function($service) {
-                return $service['enabled'];
+                return $service['enabled'] ?? false;
             });
         }
 
