@@ -36,7 +36,7 @@
         "dvdoug/boxpacker": "^3.0",
         "php-units-of-measure/php-units-of-measure": "^2.1",
         "verbb/base": "^2.0.0",
-        "verbb/shippy": "^1.0.0"
+        "verbb/shippy": "^1.0.1"
     },
     "autoload": {
         "psr-4": {
