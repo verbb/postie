@@ -278,7 +278,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         return [
-            'isProduction' => false,
+            'isProduction' => $this->isProduction(),
             'allowedServiceCodes' => array_keys($services),
             'settings' => [
                 'provider' => $this,
