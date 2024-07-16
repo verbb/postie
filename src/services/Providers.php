@@ -55,6 +55,8 @@ class Providers extends Component
     public function getRegisteredProviders(): array
     {
         $providerTypes = [
+            registeredproviders\Aramex::class,
+            registeredproviders\AramexAustralia::class,
             registeredproviders\AustraliaPost::class,
             registeredproviders\Bring::class,
             registeredproviders\CanadaPost::class,

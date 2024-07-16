@@ -1,0 +1,98 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{{ forms.autosuggestField({
+    label: 'Username' | t('postie'),
+    instructions: 'Enter your {name} Username here.' | t('postie', { name: provider.displayName() }),
+    id: 'username',
+    name: 'username',
+    value: provider.username ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.username", 'postie'),
+    errors: provider.getErrors('username'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Password' | t('postie'),
+    instructions: 'Enter your {name} Password here.' | t('postie', { name: provider.displayName() }),
+    id: 'password',
+    name: 'password',
+    value: provider.password ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
+    errors: provider.getErrors('password'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Version' | t('postie'),
+    instructions: 'Enter your {name} Version here.' | t('postie', { name: provider.displayName() }),
+    id: 'version',
+    name: 'version',
+    value: provider.version ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.version", 'postie'),
+    errors: provider.getErrors('version'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Number' | t('postie'),
+    instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountNumber',
+    name: 'accountNumber',
+    value: provider.accountNumber ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+    errors: provider.getErrors('accountNumber'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Pin' | t('postie'),
+    instructions: 'Enter your {name} Account Pin here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountPin',
+    name: 'accountPin',
+    value: provider.accountPin ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountPin", 'postie'),
+    errors: provider.getErrors('accountPin'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Entity' | t('postie'),
+    instructions: 'Enter your {name} Account Entity here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountEntity',
+    name: 'accountEntity',
+    value: provider.accountEntity ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountEntity", 'postie'),
+    errors: provider.getErrors('accountEntity'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Account Country Code' | t('postie'),
+    instructions: 'Enter your {name} Account Country Code here.' | t('postie', { name: provider.displayName() }),
+    id: 'accountCountryCode',
+    name: 'accountCountryCode',
+    value: provider.accountCountryCode ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.accountCountryCode", 'postie'),
+    errors: provider.getErrors('accountCountryCode'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Source' | t('postie'),
+    instructions: 'Enter your {name} Source here.' | t('postie', { name: provider.displayName() }),
+    id: 'source',
+    name: 'source',
+    value: provider.source ?? '',
+    required: true,
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.source", 'postie'),
+    errors: provider.getErrors('source'),
+}) }}

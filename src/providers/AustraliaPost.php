@@ -277,6 +277,7 @@ class AustraliaPost extends Provider
 
         // Add the new column, but before the enabled lightswitch
         $index = array_search('enabled', array_keys($sizes));
+        
         return array_merge(array_slice($sizes, 0, $index), $newCols, array_slice($sizes, $index));
     }
 
