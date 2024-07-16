@@ -1,6 +1,8 @@
 # Providers
 A **Provider** is a shipping provider used for shipping your packages. Depending on your shipping needs will determine which service you'd like to use, and currently, Postie supports the following providers:
 
+- [Aramex →](docs:shipping-providers/aramex)
+- [Aramex Australia →](docs:shipping-providers/aramex-australia)
 - [Australia Post →](docs:shipping-providers/australia-post)
 - [Bring →](docs:shipping-providers/bring)
 - [Canada Post →](docs:shipping-providers/canada-post)
