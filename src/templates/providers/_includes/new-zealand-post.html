@@ -36,3 +36,14 @@
     warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
     errors: provider.getErrors('accountNumber'),
 }) }}
+
+{{ forms.autosuggestField({
+    label: 'Site Code' | t('postie'),
+    instructions: 'Enter your {name} Site Code here.' | t('postie', { name: provider.displayName() }),
+    id: 'siteCode',
+    name: 'siteCode',
+    value: provider.siteCode ?? '',
+    suggestEnvVars: true,
+    warning: macros.configWarning("providers.#{provider.handle}.siteCode", 'postie'),
+    errors: provider.getErrors('siteCode'),
+}) }}

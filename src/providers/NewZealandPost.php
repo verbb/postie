@@ -34,6 +34,7 @@ class NewZealandPost extends Provider
     public ?string $clientId = null;
     public ?string $clientSecret = null;
     public ?string $accountNumber = null;
+    public ?string $siteCode = null;
 
     private int $maxDomesticWeight = 25000; // 30kg
     private int $maxInternationalWeight = 30000;
@@ -57,6 +58,11 @@ class NewZealandPost extends Provider
         return App::parseEnv($this->accountNumber);
     }
 
+    public function getSiteCode(): ?string
+    {
+        return App::parseEnv($this->siteCode);
+    }
+
     public function defineRules(): array
     {
         $rules = parent::defineRules();
@@ -74,6 +80,7 @@ class NewZealandPost extends Provider
         $config['clientId'] = $this->getClientId();
         $config['clientSecret'] = $this->getClientSecret();
         $config['accountNumber'] = $this->getAccountNumber();
+        $config['siteCode'] = $this->getSiteCode();
 
         return $config;
     }
