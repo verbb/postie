@@ -57,6 +57,7 @@ class Providers extends Component
         $providerTypes = [
             registeredproviders\Aramex::class,
             registeredproviders\AramexAustralia::class,
+            registeredproviders\AramexNewZealand::class,
             registeredproviders\AustraliaPost::class,
             registeredproviders\Bring::class,
             registeredproviders\CanadaPost::class,
