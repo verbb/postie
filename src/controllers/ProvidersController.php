@@ -269,13 +269,11 @@ class ProvidersController extends Controller
             'from.addressLine1',
             'from.locality',
             'from.postalCode',
-            'from.administrativeArea',
             'from.countryCode',
 
             'to.addressLine1',
             'to.locality',
             'to.postalCode',
-            'to.administrativeArea',
             'to.countryCode',
 
             'width',
