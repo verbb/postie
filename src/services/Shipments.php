@@ -137,7 +137,7 @@ class Shipments extends Component
             return false;
         }
 
-        $labelResponse = $provider->getLabels($order, $rate->service);
+        $labelResponse = $provider->getLabels($order, $rate->service, $shipment->lineItems);
 
         if ($labelResponse->errors) {
             $shipment->addErrors($labelResponse->errors);

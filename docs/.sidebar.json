@@ -24,6 +24,8 @@
         "title": "Shipping Providers",
         "collapsable": false,
         "children": [
+            "shipping-providers/aramex",
+            "shipping-providers/aramex-australia",
             "shipping-providers/australia-post",
             "shipping-providers/bring",
             "shipping-providers/canada-post",

@@ -14,9 +14,12 @@ class ShippyHelper
 
     public static function toAddress(Order $order, Address $address): ShippyAddress
     {
+        // For things like the store address, there's no first/last name, but we need to supply a name regardless.
+        $firstName = (string)$address->firstName ?: $address->title;
+
         return new ShippyAddress([
             'email' => $order->email,
-            'firstName' => (string)$address->firstName,
+            'firstName' => $firstName,
             'lastName' => (string)$address->lastName,
             'companyName' => (string)$address->organization,
             'street1' => (string)$address->addressLine1,

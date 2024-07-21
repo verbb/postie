@@ -13,6 +13,34 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.4 - 2024-07-21
+
+### Added
+- Add Aramex, Aramex Australia and Aramex New Zealand providers.
+- Add “Site Code” setting for New Zealand Post for creating labels.
+- Add the ability to set a phone number field (from your order) for UPS International shipments, where this is required.
+
+### Changed
+- Change shipments and rates database table columns to `longText` to store large responses from providers.
+
+### Fixed
+- Fix rate testing requiring “State or Province”.
+- Fix enable carrier production APIs. (thanks @johnnynotsolucky).
+- Fix an error when getting carrier config.
+- Fix an error when viewing shipments in the control panel.
+- Fix an error when trying to edit shipping method services for some providers.
+- Fix UPS migration from OAuth provider.
+
+## 4.0.3 - 2024-06-26
+
+### Fixed
+- Fix shipment and label lodgement not factoring in the chosen line items when fetching rates.
+- Fix an error generating origin address for store, for some providers where name is required.
+- Fix lack of error-handling when creating shipments.
+- Fix missing before/after label creation events.
+- Improve error feedback when testing rates from the control panel.
+- Fix deprecation warning when testing rates from the control panel.
+
 ## 4.0.2 - 2024-06-08
 
 ### Fixed

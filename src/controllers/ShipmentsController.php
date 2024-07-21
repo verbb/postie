@@ -56,17 +56,28 @@ class ShipmentsController extends Controller
             return $this->asFailure('Unable to find Postie Rate for ' . $rateId);
         }
 
+        $lineItemObjects = [];
+
+        foreach ($lineItems as $lineItemId => $qty) {
+            if ((int)$qty && $lineItem = Commerce::getInstance()->getLineItems()->getLineItemById($lineItemId)) {
+                // Be sure to update the qty with what we've picked
+                $lineItem->qty = (int)$qty;
+
+                $lineItemObjects[] = $lineItem;
+            }
+        }
+
         $shipment = new Shipment([
             'orderId' => $order->id,
             'providerHandle' => $rate->providerHandle,
-            'lineItems' => $lineItems,
+            'lineItems' => $lineItemObjects,
         ]);
 
         if (!Postie::$plugin->getShipments()->lodgeShipment($shipment, $order, $rate)) {
             return $this->asFailure(Json::encode($shipment->getErrors()));
         }
 
-        return $this->asJson([]);
+        return $this->asJson(['success' => true]);
     }
 
     public function actionDownloadLabels(): ?Response

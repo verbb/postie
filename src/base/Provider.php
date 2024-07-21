@@ -2,6 +2,7 @@
 namespace verbb\postie\base;
 
 use verbb\postie\Postie;
+use verbb\postie\events\FetchLabelsEvent;
 use verbb\postie\events\FetchRatesEvent;
 use verbb\postie\events\PackOrderEvent;
 use verbb\postie\helpers\PostieHelper;
@@ -14,6 +15,7 @@ use verbb\postie\models\PackedBoxes;
 use Craft;
 use craft\base\SavableComponent;
 use craft\elements\Address;
+use craft\elements\User;
 use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\helpers\StringHelper;
@@ -33,6 +35,7 @@ use DVDoug\BoxPacker\PackedItemList;
 
 use verbb\shippy\Shippy;
 use verbb\shippy\carriers\CarrierInterface;
+use verbb\shippy\events\LabelEvent;
 use verbb\shippy\events\RateEvent;
 use verbb\shippy\models\Address as ShippyAddress;
 use verbb\shippy\models\LabelResponse;
@@ -61,6 +64,8 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public const EVENT_BEFORE_FETCH_RATES = 'beforeFetchRates';
     public const EVENT_AFTER_FETCH_RATES = 'afterFetchRates';
+    public const EVENT_BEFORE_FETCH_LABELS = 'beforeFetchLabels';
+    public const EVENT_AFTER_FETCH_LABELS = 'afterFetchLabels';
     public const EVENT_BEFORE_PACK_ORDER = 'beforePackOrder';
     public const EVENT_AFTER_PACK_ORDER = 'afterPackOrder';
 
@@ -273,7 +278,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         if ($this->restrictServices) {
             $services = array_filter($this->services, function($service) {
-                return $service['enabled'];
+                return $service['enabled'] ?? false;
             });
         }
 
@@ -286,13 +291,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         ];
     }
 
-    public function prepareForShippy(Shipment $shipment, Order $order): void
+    public function prepareForShippy(Shipment $shipment, Order $order, array $lineItems = []): void
     {
         // Add the carrier we want to fetch rates for
         $shipment->addCarrier($this->getCarrier());
 
         // Allow providers to pack the order, if they have specific boxes or just using the line items
-        $packedBoxes = $this->packOrder($order);
+        $packedBoxes = $this->packOrder($order, $lineItems);
 
         // Convert Postie packed boxes to Shippy packages
         foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
@@ -309,13 +314,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
     }
 
-    public function getLabels(Order $order, string $serviceCode): ?LabelResponse
+    public function getLabels(Order $order, string $serviceCode, array $lineItems = []): ?LabelResponse
     {
         // Create a Shippy shipment to get labels for
         $shipment = Postie::$plugin->getService()->getShippyShipmentForOrder($order);
 
         // Prepare the shipment based on the provider
-        $this->prepareForShippy($shipment, $order);
+        $this->prepareForShippy($shipment, $order, $lineItems);
 
         $carrier = $this->getCarrier();
 
@@ -448,7 +453,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $order = new Order([
             'currency' => 'USD',
-            'email' => 'test@test.com',
+            'customer' => new User([
+                'email' => 'test@test.com',
+            ]),
         ]);
 
         $from = new Address(array_merge([
@@ -512,6 +519,34 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $event->setRequest($fetchRatesEvent->request);
         $event->setData($fetchRatesEvent->response);
+    }
+
+    public function beforeFetchLabels(LabelEvent $event): void
+    {
+        $fetchLabelsEvent = new FetchLabelsEvent([
+            'request' => $event->getRequest(),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_LABELS)) {
+            $this->trigger(self::EVENT_BEFORE_FETCH_LABELS, $fetchLabelsEvent);
+        }
+
+        $event->setRequest($fetchLabelsEvent->request);
+    }
+
+    public function afterFetchLabels(LabelEvent $event): void
+    {
+        $fetchLabelsEvent = new FetchLabelsEvent([
+            'request' => $event->getRequest(),
+            'response' => $event->getData(),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_AFTER_FETCH_LABELS)) {
+            $this->trigger(self::EVENT_AFTER_FETCH_LABELS, $fetchLabelsEvent);
+        }
+
+        $event->setRequest($fetchLabelsEvent->request);
+        $event->setData($fetchLabelsEvent->response);
     }
 
 
@@ -649,7 +684,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return $boxes;
     }
 
-    public function packOrder(Order $order)
+    public function packOrder(Order $order, ?array $lineItems = [])
     {
         $packer = new InfalliblePacker();
 
@@ -663,6 +698,11 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
             // Allow event hander to override $packer
             $packer = $packOrderEvent->packer;
+        }
+
+        // We can pass in specific line items to pack, but default to the entire order
+        if (!$lineItems) {
+            $lineItems = PostieHelper::getOrderLineItems($order);
         }
 
         if ($this->packingMethod === self::PACKING_SINGLE_BOX) {
@@ -683,7 +723,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 'maxWeight' => $maxWeight,
             ]));
 
-            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
+            foreach ($lineItems as $lineItem) {
                 if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }
@@ -692,7 +732,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         // If packing boxes individually, create boxes exactly the same size as each item
         if ($this->packingMethod === self::PACKING_PER_ITEM) {
-            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
+            foreach ($lineItems as $lineItem) {
                 // Don't forget to factor in quantities
                 for ($i = 0; $i < $lineItem->qty; $i++) {
                     // Generate a box for each item. It'll be exactly fitted to the item
@@ -729,7 +769,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
 
             // For each item in the cart, add them to the packer to figure out the best fit
-            foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
+            foreach ($lineItems as $lineItem) {
                 if ($boxItem = $this->getBoxItemFromLineItem($lineItem)) {
                     $packer->addItem($boxItem, $lineItem->qty);
                 }

@@ -7,37 +7,31 @@ use verbb\postie\helpers\TestingHelper;
 use Craft;
 use craft\elements\Address;
 use craft\helpers\App;
+use craft\helpers\UrlHelper;
 
-use craft\commerce\elements\Order;
+use verbb\shippy\carriers\AramexAustralia as AramexAustraliaCarrier;
 
-use verbb\shippy\carriers\NewZealandPost as NewZealandPostCarrier;
-
-class NewZealandPost extends Provider
+class AramexAustralia extends Provider
 {
     // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
-        return Craft::t('postie', 'New Zealand Post');
+        return Craft::t('postie', 'Aramex Australia');
     }
 
     public static function getCarrierClass(): string
     {
-        return NewZealandPostCarrier::class;
+        return AramexAustraliaCarrier::class;
     }
-    
+
 
     // Properties
     // =========================================================================
 
     public ?string $clientId = null;
     public ?string $clientSecret = null;
-    public ?string $accountNumber = null;
-    public ?string $siteCode = null;
-
-    private int $maxDomesticWeight = 25000; // 30kg
-    private int $maxInternationalWeight = 30000;
 
 
     // Public Methods
@@ -53,21 +47,11 @@ class NewZealandPost extends Provider
         return App::parseEnv($this->clientSecret);
     }
 
-    public function getAccountNumber(): ?string
-    {
-        return App::parseEnv($this->accountNumber);
-    }
-
-    public function getSiteCode(): ?string
-    {
-        return App::parseEnv($this->siteCode);
-    }
-
     public function defineRules(): array
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['clientId', 'clientSecret', 'accountNumber'], 'required', 'when' => function($model) {
+        $rules[] = [['clientId', 'clientSecret'], 'required', 'when' => function($model) {
             return $model->enabled;
         }];
 
@@ -79,29 +63,17 @@ class NewZealandPost extends Provider
         $config = parent::getCarrierConfig();
         $config['clientId'] = $this->getClientId();
         $config['clientSecret'] = $this->getClientSecret();
-        $config['accountNumber'] = $this->getAccountNumber();
-        $config['siteCode'] = $this->getSiteCode();
 
         return $config;
     }
 
-    public function getMaxPackageWeight(Order $order): ?int
-    {
-        if ($this->getIsInternational($order)) {
-            return $this->maxInternationalWeight;
-        }
-
-        return $this->maxDomesticWeight;
-    }
-
     public function getTestingOriginAddress(): Address
     {
-        return TestingHelper::getTestAddress('NZ', ['locality' => 'Wellington']);
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'VIC']);
     }
 
     public function getTestingDestinationAddress(): Address
     {
-        return TestingHelper::getTestAddress('NZ', ['locality' => 'Christchurch']);
+        return TestingHelper::getTestAddress('AU', ['administrativeArea' => 'TAS']);
     }
-
 }

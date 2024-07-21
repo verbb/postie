@@ -286,6 +286,44 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/docs\/shipping-providers\/aramex-australia.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/shipping-providers\/aramex-australia.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/shipping-providers\/aramex.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/shipping-providers\/aramex.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
     "\/docs\/shipping-providers\/australia-post.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -681,6 +719,14 @@
       "oAP" : "\/src\/debug\/PostiePanel.php",
       "oF" : 0
     },
+    "\/src\/events\/FetchLabelsEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/FetchLabelsEvent.php",
+      "oF" : 0
+    },
     "\/src\/events\/FetchRatesEvent.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -797,6 +843,30 @@
       "hM" : 0,
       "oA" : 2,
       "oAP" : "\/src\/Postie.php",
+      "oF" : 0
+    },
+    "\/src\/providers\/Aramex.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/Aramex.php",
+      "oF" : 0
+    },
+    "\/src\/providers\/AramexAustralia.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/AramexAustralia.php",
+      "oF" : 0
+    },
+    "\/src\/providers\/AramexNewZealand.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/providers\/AramexNewZealand.php",
       "oF" : 0
     },
     "\/src\/providers\/AustraliaPost.php" : {

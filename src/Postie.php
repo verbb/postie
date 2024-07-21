@@ -192,7 +192,7 @@ class Postie extends Plugin
             $event->rules['postie/store-setup'] = 'postie/store-setup';
             $event->rules['postie/settings'] = 'postie/settings';
             $event->rules['postie/settings/general'] = 'postie/settings';
-            $event->rules['postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:{handle}>'] = 'postie/shipping-methods/edit';
+            $event->rules['postie/settings/shipping-methods/<providerHandle:{handle}>/<serviceHandle:(?:[^\/]*)?>'] = 'postie/shipping-methods/edit';
         });
     }
 

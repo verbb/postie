@@ -156,9 +156,13 @@ Craft.Postie.OrderShipmentModal = Garnish.Modal.extend({
 
         Craft.sendActionRequest('POST', 'postie/shipments/create-shipment', { data })
             .then((response) => {
-                Craft.cp.displayNotice(Craft.t('postie', 'Shipment Created.'));
+                if (response.success) {
+                    Craft.cp.displayNotice(Craft.t('postie', 'Shipment Created.'));
 
-                location.reload();
+                    location.reload();
+                } else {
+                    Craft.cp.displayError();
+                }
             })
             .catch(({response}) => {
                 if (response && response.data && response.data.message) {
