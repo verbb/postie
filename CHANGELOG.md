@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.0.4 - 2024-07-21
+
+### Added
+- Add Aramex, Aramex Australia and Aramex New Zealand providers.
+- Add “Site Code” setting for New Zealand Post for creating labels.
+- Add the ability to set a phone number field (from your order) for UPS International shipments, where this is required.
+
+### Changed
+- Change shipments and rates database table columns to `longText` to store large responses from providers.
+
+### Fixed
+- Fix rate testing requiring “State or Province”.
+- Fix enable carrier production APIs. (thanks @johnnynotsolucky).
+- Fix an error when getting carrier config.
+- Fix an error when viewing shipments in the control panel.
+- Fix an error when trying to edit shipping method services for some providers.
+- Fix UPS migration from OAuth provider.
+
 ## 4.0.3 - 2024-06-26
 
 ### Fixed
