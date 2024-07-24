@@ -1,12 +1,21 @@
 <?php
 namespace verbb\postie\providers;
 
+use verbb\postie\models\Box;
+use verbb\postie\models\Item;
+
 use Craft;
 use craft\helpers\App;
 
 use craft\commerce\elements\Order;
 
+use PhpUnitsOfMeasure\PhysicalQuantity\Length;
+use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
+
+use DVDoug\BoxPacker\Packer;
+
 use verbb\shippy\carriers\FedExFreight as FedExFreightCarrier;
+use verbb\shippy\models\Address;
 
 class FedExFreight extends FedEx
 {
@@ -132,18 +141,25 @@ class FedExFreight extends FedEx
     {
         $config = parent::getCarrierConfig();
         $config['freightAccountNumber'] = $this->getFreightAccountNumber();
-        $config['freightBillingStreetAddress'] = $this->getFreightBillingStreetAddress();
-        $config['freightBillingStreetAddress2'] = $this->getFreightBillingStreetAddress2();
-        $config['freightBillingCity'] = $this->getFreightBillingCity();
-        $config['freightBillingZipcode'] = $this->getFreightBillingZipcode();
-        $config['freightBillingStateCode'] = $this->getFreightBillingStateCode();
-        $config['freightBillingCountryCode'] = $this->getFreightBillingCountryCode();
-        $config['freightShipperStreetAddress'] = $this->getFreightShipperStreetAddress();
-        $config['freightShipperStreetAddress2'] = $this->getFreightShipperStreetAddress2();
-        $config['freightShipperCity'] = $this->getFreightShipperCity();
-        $config['freightShipperZipcode'] = $this->getFreightShipperZipcode();
-        $config['freightShipperStateCode'] = $this->getFreightShipperStateCode();
-        $config['freightShipperCountryCode'] = $this->getFreightShipperCountryCode();
+
+        // Format address information
+        $config['billing'] = new Address([
+            'street1' => $this->getFreightBillingStreetAddress(),
+            'street2' => $this->getFreightBillingStreetAddress2(),
+            'city' => $this->getFreightBillingCity(),
+            'stateProvince' => $this->getFreightBillingStateCode(),
+            'postalCode' => $this->getFreightBillingZipcode(),
+            'countryCode' => $this->getFreightBillingCountryCode(),
+        ]);
+
+        $config['shipper'] = new Address([
+            'street1' => $this->getFreightShipperStreetAddress(),
+            'street2' => $this->getFreightShipperStreetAddress2(),
+            'city' => $this->getFreightShipperCity(),
+            'stateProvince' => $this->getFreightShipperStateCode(),
+            'postalCode' => $this->getFreightShipperZipcode(),
+            'countryCode' => $this->getFreightShipperCountryCode(),
+        ]);
 
         return $config;
     }
@@ -151,5 +167,38 @@ class FedExFreight extends FedEx
     public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
+    }
+
+    public function getTestingPackage(): array
+    {
+        $packer = new Packer();
+
+        // For testing, use the max weight for the box/item
+        $box = new Box();
+        $box->setDimensions('Pallet', 1160, 1160, 1160, $this->maxWeight);
+        $packer->addBox($box);
+
+        $item = new Item();
+        $item->setDimensions('Test Item #1', 1160, 1160, 1160, $this->maxWeight);
+        $packer->addItem($item, 1);
+
+        $packedBoxes = $packer->pack();
+
+        $dimensionUnit = static::getDimensionUnit();
+        $weightUnit = static::getWeightUnit();
+
+        $list = [];
+
+        foreach ($packedBoxes as $packedBox) {
+            // Convert back to the provider's units
+            $list[] = [
+                'width' => (new Length($packedBox->getBox()->getOuterWidth(), 'mm'))->toUnit($dimensionUnit),
+                'length' => (new Length($packedBox->getBox()->getOuterLength(), 'mm'))->toUnit($dimensionUnit),
+                'height' => (new Length($packedBox->getBox()->getOuterDepth(), 'mm'))->toUnit($dimensionUnit),
+                'weight' => (new Mass($packedBox->getWeight(), 'g'))->toUnit($weightUnit),
+            ];
+        }
+
+        return $list[0] ?? [];
     }
 }
