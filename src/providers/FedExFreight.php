@@ -1,10 +1,18 @@
 <?php
 namespace verbb\postie\providers;
 
+use verbb\postie\models\Box;
+use verbb\postie\models\Item;
+
 use Craft;
 use craft\helpers\App;
 
 use craft\commerce\elements\Order;
+
+use PhpUnitsOfMeasure\PhysicalQuantity\Length;
+use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
+
+use DVDoug\BoxPacker\Packer;
 
 use verbb\shippy\carriers\FedExFreight as FedExFreightCarrier;
 use verbb\shippy\models\Address;
@@ -159,5 +167,38 @@ class FedExFreight extends FedEx
     public function getMaxPackageWeight(Order $order): ?int
     {
         return $this->maxWeight;
+    }
+
+    public function getTestingPackage(): array
+    {
+        $packer = new Packer();
+
+        // For testing, use the max weight for the box/item
+        $box = new Box();
+        $box->setDimensions('Pallet', 1160, 1160, 1160, $this->maxWeight);
+        $packer->addBox($box);
+
+        $item = new Item();
+        $item->setDimensions('Test Item #1', 1160, 1160, 1160, $this->maxWeight);
+        $packer->addItem($item, 1);
+
+        $packedBoxes = $packer->pack();
+
+        $dimensionUnit = static::getDimensionUnit();
+        $weightUnit = static::getWeightUnit();
+
+        $list = [];
+
+        foreach ($packedBoxes as $packedBox) {
+            // Convert back to the provider's units
+            $list[] = [
+                'width' => (new Length($packedBox->getBox()->getOuterWidth(), 'mm'))->toUnit($dimensionUnit),
+                'length' => (new Length($packedBox->getBox()->getOuterLength(), 'mm'))->toUnit($dimensionUnit),
+                'height' => (new Length($packedBox->getBox()->getOuterDepth(), 'mm'))->toUnit($dimensionUnit),
+                'weight' => (new Mass($packedBox->getWeight(), 'g'))->toUnit($weightUnit),
+            ];
+        }
+
+        return $list[0] ?? [];
     }
 }
