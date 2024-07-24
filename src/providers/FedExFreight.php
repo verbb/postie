@@ -7,6 +7,7 @@ use craft\helpers\App;
 use craft\commerce\elements\Order;
 
 use verbb\shippy\carriers\FedExFreight as FedExFreightCarrier;
+use verbb\shippy\models\Address;
 
 class FedExFreight extends FedEx
 {
@@ -132,18 +133,25 @@ class FedExFreight extends FedEx
     {
         $config = parent::getCarrierConfig();
         $config['freightAccountNumber'] = $this->getFreightAccountNumber();
-        $config['freightBillingStreetAddress'] = $this->getFreightBillingStreetAddress();
-        $config['freightBillingStreetAddress2'] = $this->getFreightBillingStreetAddress2();
-        $config['freightBillingCity'] = $this->getFreightBillingCity();
-        $config['freightBillingZipcode'] = $this->getFreightBillingZipcode();
-        $config['freightBillingStateCode'] = $this->getFreightBillingStateCode();
-        $config['freightBillingCountryCode'] = $this->getFreightBillingCountryCode();
-        $config['freightShipperStreetAddress'] = $this->getFreightShipperStreetAddress();
-        $config['freightShipperStreetAddress2'] = $this->getFreightShipperStreetAddress2();
-        $config['freightShipperCity'] = $this->getFreightShipperCity();
-        $config['freightShipperZipcode'] = $this->getFreightShipperZipcode();
-        $config['freightShipperStateCode'] = $this->getFreightShipperStateCode();
-        $config['freightShipperCountryCode'] = $this->getFreightShipperCountryCode();
+
+        // Format address information
+        $config['billing'] = new Address([
+            'street1' => $this->getFreightBillingStreetAddress(),
+            'street2' => $this->getFreightBillingStreetAddress2(),
+            'city' => $this->getFreightBillingCity(),
+            'stateProvince' => $this->getFreightBillingStateCode(),
+            'postalCode' => $this->getFreightBillingZipcode(),
+            'countryCode' => $this->getFreightBillingCountryCode(),
+        ]);
+
+        $config['shipper'] = new Address([
+            'street1' => $this->getFreightShipperStreetAddress(),
+            'street2' => $this->getFreightShipperStreetAddress2(),
+            'city' => $this->getFreightShipperCity(),
+            'stateProvince' => $this->getFreightShipperStateCode(),
+            'postalCode' => $this->getFreightShipperZipcode(),
+            'countryCode' => $this->getFreightShipperCountryCode(),
+        ]);
 
         return $config;
     }
