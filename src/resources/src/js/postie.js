@@ -59,14 +59,20 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
                     };
                 }
 
-                var $table = $('<div class="postie-rates-tester-table"></div>');
-                var $ul = $('<ul></ul').appendTo($table);
+                if (!response.data.rates || !response.data.rates.length) {
+                    var $table = $('<br><div>' + Craft.t('postie', 'No rates returned.') + '</div>');
 
-                $.each(response.data.rates, function(index, item) {
-                    $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">$' + item.rate + '</span></li>').appendTo($ul);
-                })
+                    this.$result.html($table);
+                } else {
+                    var $table = $('<div class="postie-rates-tester-table"></div>');
+                    var $ul = $('<ul></ul').appendTo($table);
 
-                this.$result.html($table);
+                    $.each(response.data.rates, function(index, item) {
+                        $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">$' + item.rate + '</span></li>').appendTo($ul);
+                    })
+
+                    this.$result.html($table);
+                }
             })
             .catch(({response}) => {
                 var errorMessage = '<br><code>' + response.data.message + '</code>';
