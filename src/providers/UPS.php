@@ -127,6 +127,7 @@ class UPS extends Provider
     public ?string $pickupType = null;
     public ?string $phoneField = null;
     public bool $includeInsurance = false;
+    public bool $addDeclaredValue = false;
 
     private float $maxWeight = 68038.9; // 150lbs
 
@@ -178,6 +179,7 @@ class UPS extends Provider
         $config['requireSignature'] = $this->requireSignature;
         $config['pickupType'] = $this->pickupType;
         $config['includeInsurance'] = $this->includeInsurance;
+        $config['addDeclaredValue'] = $this->addDeclaredValue;
 
         return $config;
     }
