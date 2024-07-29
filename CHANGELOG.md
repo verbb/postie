@@ -38,6 +38,21 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.5 - 2024-07-29
+
+### Added
+- Add `Add Declared Value` setting for UPS.
+
+### Changed
+- Update English translations
+- Testing rates now set a $15 price on packages for testing with providers.
+
+### Fixed
+- Fix rates testing not showing any feedback when no rates are returned.
+- Fix FedEx Freight rates testing to reflect a valid package by default.
+- Fix FedEx Freight not supply billing/shipping address info as configured.
+- Fix `isProduction` for providers set via config file not updating the provider setting in the control panel.
+
 ## 4.0.4 - 2024-07-21
 
 ### Added

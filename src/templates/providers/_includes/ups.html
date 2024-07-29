@@ -72,6 +72,16 @@
     errors: provider.getErrors('includeInsurance'),
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Add Declared Value' | t('postie'),
+    instructions: 'Includes the line item prices as a declared value for insurance.' | t('postie'),
+    id: 'addDeclaredValue',
+    name: 'addDeclaredValue',
+    on: provider.addDeclaredValue ?? false,
+    warning: macros.configWarning("providers.#{provider.handle}.addDeclaredValue", 'postie'),
+    errors: provider.getErrors('addDeclaredValue'),
+}) }}
+
 {{ forms.selectField({
     label: 'Phone Number Field' | t('postie'),
     instructions: 'Select the custom field used for the phone number of the destination (customer) address. This should be a custom field on your order. Required for international rates.' | t('postie'),

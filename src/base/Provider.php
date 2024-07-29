@@ -485,7 +485,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             'width' => $payload['width'],
             'height' => $payload['height'],
             'weight' => $payload['weight'],
-            'price' => '',
+            'price' => 15,
             'dimensionUnit' => $this->dimensionUnit,
             'weightUnit' => $this->weightUnit,
         ]));
