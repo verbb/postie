@@ -212,7 +212,9 @@ class Service extends Component
         $freeShippingItems = [];
 
         foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
-            $freeShippingItems[] = $lineItem->purchasable->hasFreeShipping();
+            if ($lineItem->purchasable) {
+                $freeShippingItems[] = $lineItem->purchasable->hasFreeShipping();
+            }
         }
 
         // Are _all_ items in the array the same? Does every item have free shipping?
