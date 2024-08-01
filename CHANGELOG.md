@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.8 - 2024-08-02
+
+### Fixed
+- Fix an error with checking for free shipping on a line item that no longer has a purchasable.
+
 ## 3.1.7 - 2024-04-10
 
 ### Added
