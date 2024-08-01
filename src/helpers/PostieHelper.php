@@ -114,11 +114,13 @@ class PostieHelper
                 }
             }
 
-            $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
-            $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
-            
-            if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
-                $items[] = $item;
+            if ($item->purchasable) {
+                $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
+                $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
+                
+                if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
+                    $items[] = $item;
+                }
             }
         }
 
