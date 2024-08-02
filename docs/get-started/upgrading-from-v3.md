@@ -1,6 +1,11 @@
 # Upgrading from v3
 While the [changelog](https://github.com/verbb/postie/blob/craft-4/CHANGELOG.md) is the most comprehensive list of changes, this guide provides a high-level overview and organizes changes by category.
 
+## Config Files
+Postie 4 is a major revamp of providers (explained further in this guide), and one of the first things you'll want to do is remove any `/config/postie.php` config file you have. The structure of this file will have changed, but more importantly you'll likely experience errors when upgrading to Postie 4.
+
+Either remove your `/config/postie.php` config file or comment out all items until following the rest of this guide and upgrade process.
+
 ## Manual Fetch Rates
 Previously, Postie provided a means to fetch rates manually through the existence of a POST variable. Instead, we have changed this to allow for certain routes to only allow the fetching of rates, which is of course configurable.
 
