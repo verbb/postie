@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.4 - 2024-08-03
+
+### Fixed
+- Fix breadcrumbs when editing a shipping method.
+- Fix an error with checking for free shipping on a line item that no longer has a purchasable.
+- Fix rounding of parcel dimension and weights for Australia Post for more accurate rates,
+
 ## 5.0.3 - 2024-07-29
 
 ### Added
