@@ -3,8 +3,8 @@
 
 {% set crumbs = [
     { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
-    { label: 'Settings' | t('postie'), url: url('postie/settings') },
-    { label: provider.name | t('postie'), url: url('postie/settings/providers/edit/' ~ provider.id) },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
+    { label: provider.name | t('postie'), url: url('postie/providers/edit/' ~ provider.id) },
 ] %}
 
 {% set fullPageForm = true %}

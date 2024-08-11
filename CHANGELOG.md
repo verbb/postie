@@ -53,6 +53,13 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.6 - 2024-08-03
+
+### Fixed
+- Fix breadcrumbs when editing a shipping method.
+- Fix an error with checking for free shipping on a line item that no longer has a purchasable.
+- Fix rounding of parcel dimension and weights for Australia Post for more accurate rates,
+
 ## 4.0.5 - 2024-07-29
 
 ### Added
