@@ -296,21 +296,25 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Add the carrier we want to fetch rates for
         $shipment->addCarrier($this->getCarrier());
 
-        // Allow providers to pack the order, if they have specific boxes or just using the line items
-        $packedBoxes = $this->packOrder($order, $lineItems);
+        // Only create packages once, as this can be called for multiple providers, we don't want to duplicate
+        // the packages for each provider for an order. Once added, packages are set.
+        if (!$shipment->getPackages()) {
+            // Allow providers to pack the order, if they have specific boxes or just using the line items
+            $packedBoxes = $this->packOrder($order, $lineItems);
 
-        // Convert Postie packed boxes to Shippy packages
-        foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
-            $shipment->addPackage(new Package([
-                'length' => $packedBox['length'],
-                'width' => $packedBox['width'],
-                'height' => $packedBox['height'],
-                'weight' => $packedBox['weight'],
-                'price' => $packedBox['price'],
-                'packageType' => $packedBox['type'],
-                'dimensionUnit' => $packedBoxes->getDimensionUnit(),
-                'weightUnit' => $packedBoxes->getWeightUnit(),
-            ]));
+            // Convert Postie packed boxes to Shippy packages
+            foreach ($packedBoxes->getSerializedPackedBoxList() as $packedBox) {
+                $shipment->addPackage(new Package([
+                    'length' => $packedBox['length'],
+                    'width' => $packedBox['width'],
+                    'height' => $packedBox['height'],
+                    'weight' => $packedBox['weight'],
+                    'price' => $packedBox['price'],
+                    'packageType' => $packedBox['type'],
+                    'dimensionUnit' => $packedBoxes->getDimensionUnit(),
+                    'weightUnit' => $packedBoxes->getWeightUnit(),
+                ]));
+            }
         }
     }
 
