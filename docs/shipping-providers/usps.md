@@ -13,9 +13,11 @@ In order to use USPS, you'll need to connect to their API.
 1. From the **Apps** section, follow the prompts to create a new app.
 1. Copy the **Consumer Key** from USPS and paste in the **Client ID** field in Postie.
 1. Copy the **Consumer Secret** from USPS and paste in the **Client Secret** field in Postie.
-1. Copy the **Account Number** from USPS and paste in the **Account Number** field in Postie.
+1. Locate the **Business Account Access** email sent by USPS upon creating your USPS business account.
+1. Copy the **EPS Account Number** from this email and paste in the **Client Secret** field in Postie.
 
 To create labels, you'll be required to supply a few more details.
 
-1. Copy the **Customer Registration ID** from USPS and paste in the **Customer Registration ID** field in Postie.
-1. Copy the **Mailer ID** from USPS and paste in the **Mailer ID** field in Postie.
+1. Locate the **Business Account Access** email sent by USPS upon creating your USPS business account.
+1. Copy the **CRID** from this email and paste in the **Customer Registration ID** field in Postie.
+1. Copy the **MID** from this email and paste in the **Mailer ID** field in Postie.
