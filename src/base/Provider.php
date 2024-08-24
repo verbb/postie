@@ -280,11 +280,19 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $services = array_filter($this->services, function($service) {
                 return $service['enabled'] ?? false;
             });
+
+            $services = array_keys($services);
+
+            // If we're restricting service, but not enabling any, this will send an empty array
+            // which is the same as sending all services are enabled. So send a dummy service.
+            if (!$services) {
+                $services = ['PLACEHOLDER'];
+            }
         }
 
         return [
             'isProduction' => $this->isProduction(),
-            'allowedServiceCodes' => array_keys($services),
+            'allowedServiceCodes' => $services,
             'settings' => [
                 'provider' => $this,
             ],
