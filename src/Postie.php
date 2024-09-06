@@ -36,6 +36,8 @@ use craft\commerce\elements\Variant;
 
 use yii\base\Event;
 
+use Throwable;
+
 class Postie extends Plugin
 {
     // Constants
@@ -145,25 +147,29 @@ class Postie extends Plugin
     {
         $variants = [];
 
-        $query = Variant::find()->limit($limit);
+        try {
+            $query = Variant::find()->limit($limit);
 
-        // Allow plugins to modify the variant query
-        $event = new ModifyShippableVariantsEvent([
-            'query' => $query,
-        ]);
+            // Allow plugins to modify the variant query
+            $event = new ModifyShippableVariantsEvent([
+                'query' => $query,
+            ]);
 
-        if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
-            $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
-        }
-
-        foreach (Db::each($event->query) as $variant) {
-            if (!$variant->product->type->hasDimensions) {
-                continue;
+            if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
+                $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
             }
 
-            if ($variant->width == 0 || $variant->height == 0 || $variant->length == 0 || $variant->weight == 0) {
-                $variants[] = $variant;
+            foreach (Db::each($event->query) as $variant) {
+                if (!$variant->product->type->hasDimensions) {
+                    continue;
+                }
+
+                if ($variant->width == 0 || $variant->height == 0 || $variant->length == 0 || $variant->weight == 0) {
+                    $variants[] = $variant;
+                }
             }
+        } catch (Throwable $e) {
+
         }
 
         return $variants;
