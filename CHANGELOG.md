@@ -60,6 +60,21 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.7 - 2024-09-07
+
+### Added
+- Add support for tax-inclusive rates for UPS, where applicable.
+
+### Changed
+- Update USPS service codes for new API.
+- Improve USPS rates by not returning duplicate services (that have the same price, just different description).
+
+### Fixed
+- Fix an error when fetching rates while restricting services, but no services are enabled.
+- Fix docs link for providers.
+- Fix USPS API type not being visible.
+- Fix multi-provider package duplication.
+
 ## 4.0.6 - 2024-08-03
 
 ### Fixed
