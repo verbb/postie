@@ -2,7 +2,7 @@
     "name": "verbb/postie",
     "description": "Get shipping rates, tracking status and print labels with Australia Post, UPS, USPS, FedEx, DHL Express, and more.",
     "type": "craft-plugin",
-    "version": "5.0.4",
+    "version": "5.0.5",
     "keywords": [
         "craft",
         "cms",
@@ -36,7 +36,7 @@
         "dvdoug/boxpacker": "^3.0",
         "php-units-of-measure/php-units-of-measure": "^2.1",
         "verbb/base": "^3.0.0",
-        "verbb/shippy": "^1.0.4"
+        "verbb/shippy": "^1.0.7"
     },
     "autoload": {
         "psr-4": {
