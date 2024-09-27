@@ -223,11 +223,11 @@ class UPS extends Provider
         if ($this->phoneField) {
             try {
                 $cart = Commerce::getInstance()->getCarts()->getCart();
-                $phoneValue = $cart->{$this->phoneField};
+                $phoneValue = (string)$cart->getFieldValue($this->phoneField);
 
                 if ($phoneValue) {
                     $payload = $event->getRequest()->getPayload();
-                    $payload['json']['RateRequest']['Shipment']['ShipTo']['Phone']['Number'] = $phoneValue;;
+                    $payload['json']['RateRequest']['Shipment']['ShipTo']['Phone']['Number'] = $phoneValue;
 
                     $event->getRequest()->setPayload($payload);
                 }
