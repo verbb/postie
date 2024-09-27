@@ -197,7 +197,9 @@ class UPS extends Provider
 
     public function getPhoneFieldOptions(): array
     {
-        $options = [];
+        $options = [
+            ['label' => Craft::t('postie', 'Select an option'), 'value' => ''],
+        ];
 
         $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
 
