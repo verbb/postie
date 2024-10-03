@@ -749,13 +749,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             }
         }
 
-        // if (count($this->getBoxSizes()) > 1) {
-        //     // throw new \Exception('d');
-        // }
-
-        Craft::dd($this->getBoxSizes());
-        // Craft::dd(count($this->getBoxSizes()));
-
         // Run 4D bin-packing to the best of our ability
         if ($this->packingMethod === self::PACKING_BOX) {
             // For all boxes we've defined, add them.
