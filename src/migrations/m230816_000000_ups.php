@@ -15,7 +15,6 @@ class m230816_000000_ups extends Migration
         $projectConfig = Craft::$app->getProjectConfig();
         $schemaVersion = $projectConfig->get('plugins.postie.schemaVersion', true);
 
-        // Craft::dd($projectConfig->get('plugins.postie'));
         if (version_compare($schemaVersion, '2.1.1', '>=')) {
             return true;
         }
