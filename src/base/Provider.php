@@ -319,6 +319,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                     'weight' => $packedBox['weight'],
                     'price' => $packedBox['price'],
                     'packageType' => $packedBox['type'],
+                    'reference' => $packedBox['name'],
                     'dimensionUnit' => $packedBoxes->getDimensionUnit(),
                     'weightUnit' => $packedBoxes->getWeightUnit(),
                 ]));
