@@ -433,7 +433,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
         $defaultBoxes = static::defineDefaultBoxes();
 
-        foreach ($defaultBoxes as $key => &$defaultBox) {
+        foreach ($defaultBoxes as $defaultBox) {
             $defaultBox['default'] = true;
 
             // Is this box already saved and has settings? We need to merge
@@ -445,15 +445,23 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 // Directly update the default box data with the saved data.
                 // This ensures the order defined in the provider is retained.
                 $defaultBox = array_merge($defaultBox, $savedData);
-
-                // Remove this from our saved data
-                unset($this->boxSizes[$index]);
             }
+
+            $boxSizes[] = $defaultBox;
         }
 
-        unset($defaultBox);
+        // Add in any custom boxes
+        foreach ($this->boxSizes as $boxSize) {
+            if ($boxSize['default']) {
+                continue;
+            }
 
-        return array_merge($defaultBoxes, $this->boxSizes);
+            $boxSize['default'] = false;
+
+            $boxSizes[] = $boxSize;
+        }
+
+        return $boxSizes;
     }
 
     public function getTestRates(array $payload): RateResponse
