@@ -429,39 +429,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getBoxSizesRows(): array
     {
-        $boxSizes = [];
+        // For brand-new providers, use the defaults.
+        if (!$this->boxSizes) {
+            $boxSizes = [];
 
-        $defaultBoxes = static::defineDefaultBoxes();
+            foreach (static::defineDefaultBoxes() as $defaultBox) {
+                $defaultBox['default'] = true;
 
-        foreach ($defaultBoxes as $defaultBox) {
-            $defaultBox['default'] = true;
-
-            // Is this box already saved and has settings? We need to merge
-            $savedData = ArrayHelper::firstWhere($this->boxSizes, 'id', $defaultBox['id']);
-
-            if ($savedData) {
-                $index = array_search($savedData, $this->boxSizes);
-
-                // Directly update the default box data with the saved data.
-                // This ensures the order defined in the provider is retained.
-                $defaultBox = array_merge($defaultBox, $savedData);
+                $boxSizes[] = $defaultBox;
             }
 
-            $boxSizes[] = $defaultBox;
+            return $boxSizes;
         }
 
-        // Add in any custom boxes
-        foreach ($this->boxSizes as $boxSize) {
-            if ($boxSize['default']) {
-                continue;
-            }
-
-            $boxSize['default'] = false;
-
-            $boxSizes[] = $boxSize;
-        }
-
-        return $boxSizes;
+        return $this->boxSizes;
     }
 
     public function getTestRates(array $payload): RateResponse
@@ -767,6 +748,13 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                 }
             }
         }
+
+        // if (count($this->getBoxSizes()) > 1) {
+        //     // throw new \Exception('d');
+        // }
+
+        Craft::dd($this->getBoxSizes());
+        // Craft::dd(count($this->getBoxSizes()));
 
         // Run 4D bin-packing to the best of our ability
         if ($this->packingMethod === self::PACKING_BOX) {
