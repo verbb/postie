@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.0.6 - 2024-10-09
+
+### Added
+- Add preset boxes for USPS.
+
+### Changed
+- Change USPS behaviour to now only return the cheapest rate for the same service code to prevent unnecessary duplicate rates.
+
+### Fixed
+- Fix an error for single-page checkouts when an email isn’t set on the cart yet.
+- Ensure packed boxes pass on reference value.
+- Fix logic for determining custom boxes.
+- Fix UPS Phone Number mapping not casting values as strings.
+- Fix UPS Phone Number mapping, not being able to select “no field”.
+- Fix USPS rates not using a minimum dimension/weight value for packages.
+
 ## 5.0.5 - 2024-09-07
 
 ### Added
