@@ -319,6 +319,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
                     'weight' => $packedBox['weight'],
                     'price' => $packedBox['price'],
                     'packageType' => $packedBox['type'],
+                    'reference' => $packedBox['name'],
                     'dimensionUnit' => $packedBoxes->getDimensionUnit(),
                     'weightUnit' => $packedBoxes->getWeightUnit(),
                 ]));
@@ -429,31 +430,20 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function getBoxSizesRows(): array
     {
-        $boxSizes = [];
+        // For brand-new providers, use the defaults.
+        if (!$this->boxSizes) {
+            $boxSizes = [];
 
-        $defaultBoxes = static::defineDefaultBoxes();
+            foreach (static::defineDefaultBoxes() as $defaultBox) {
+                $defaultBox['default'] = true;
 
-        foreach ($defaultBoxes as $key => &$defaultBox) {
-            $defaultBox['default'] = true;
-
-            // Is this box already saved and has settings? We need to merge
-            $savedData = ArrayHelper::firstWhere($this->boxSizes, 'id', $defaultBox['id']);
-
-            if ($savedData) {
-                $index = array_search($savedData, $this->boxSizes);
-
-                // Directly update the default box data with the saved data.
-                // This ensures the order defined in the provider is retained.
-                $defaultBox = array_merge($defaultBox, $savedData);
-
-                // Remove this from our saved data
-                unset($this->boxSizes[$index]);
+                $boxSizes[] = $defaultBox;
             }
+
+            return $boxSizes;
         }
 
-        unset($defaultBox);
-
-        return array_merge($defaultBoxes, $this->boxSizes);
+        return $this->boxSizes;
     }
 
     public function getTestRates(array $payload): RateResponse

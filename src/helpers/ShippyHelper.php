@@ -18,7 +18,7 @@ class ShippyHelper
         $firstName = (string)$address->firstName ?: $address->title;
 
         return new ShippyAddress([
-            'email' => $order->email,
+            'email' => (string)$order->email,
             'firstName' => $firstName,
             'lastName' => (string)$address->lastName,
             'companyName' => (string)$address->organization,
