@@ -7,6 +7,7 @@ use craft\helpers\ArrayHelper;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
+use craft\commerce\enums\LineItemType;
 
 class PostieHelper
 {
@@ -96,12 +97,14 @@ class PostieHelper
                 }
             }
 
-            if ($item->purchasable) {
-                $freeShippingFlagOnProduct = $item->purchasable->hasFreeShipping();
-                $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($item->getPurchasable());
-                
-                if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
-                    $items[] = $item;
+            if ($item->type !== LineItemType::Custom) {
+                if ($purchasable = $item->getPurchasable()) {
+                    $freeShippingFlagOnProduct = $purchasable->hasFreeShipping();
+                    $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($purchasable);
+                    
+                    if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
+                        $items[] = $item;
+                    }
                 }
             }
         }
