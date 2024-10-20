@@ -92,6 +92,11 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.9 - 2024-10-20
+
+### Fixed
+- Fix an error with DHL Express and Ship Time in some locales.
+
 ## 4.0.8 - 2024-10-09
 
 ### Added

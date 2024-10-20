@@ -7,6 +7,7 @@ use verbb\postie\helpers\TestingHelper;
 use Craft;
 use craft\elements\Address;
 use craft\helpers\App;
+use craft\helpers\DateTimeHelper;
 
 use craft\commerce\elements\Order;
 
@@ -45,6 +46,35 @@ class DHLExpress extends Provider
 
     // Public Methods
     // =========================================================================
+
+    public function __construct(array $config = [])
+    {
+        // Normalize `shipTime` - possibly a better way to do this...
+        // https://github.com/verbb/postie/issues/146
+        if (isset($config['shipTime']['time'])) {
+            $spaces = [
+                "\u{00A0}", // Non-breaking space
+                "\u{2000}", // En quad
+                "\u{2001}", // Em quad
+                "\u{2002}", // En space
+                "\u{2003}", // Em space
+                "\u{2004}", // Three-per-em space
+                "\u{2005}", // Four-per-em space
+                "\u{2006}", // Six-per-em space
+                "\u{2007}", // Figure space
+                "\u{2008}", // Punctuation space
+                "\u{2009}", // Thin space
+                "\u{200A}", // Hair space
+                "\u{202F}", // Narrow no-break space
+                "\u{205F}", // Medium mathematical space
+                "\u{3000}", // Ideographic space
+            ];
+
+            $config['shipTime']['time'] = str_replace($spaces, ' ', $config['shipTime']['time']);
+        }
+
+        parent::__construct($config);
+    }
 
     public function getClientId(): ?string
     {
