@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.7 - 2024-10-20
+
+### Fixed
+- Fix an error with DHL Express and Ship Time in some locales.
+- Fix an error when creating custom line items.
+
 ## 5.0.6 - 2024-10-09
 
 ### Added
