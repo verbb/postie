@@ -332,6 +332,10 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         // Create a Shippy shipment to get labels for
         $shipment = Postie::$plugin->getService()->getShippyShipmentForOrder($order);
 
+        if (!$shipment) {
+            return null;
+        }
+
         // Prepare the shipment based on the provider
         $this->prepareForShippy($shipment, $order, $lineItems);
 
