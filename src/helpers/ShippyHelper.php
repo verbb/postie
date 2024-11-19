@@ -15,7 +15,8 @@ class ShippyHelper
     public static function toAddress(Order $order, Address $address): ShippyAddress
     {
         // For things like the store address, there's no first/last name, but we need to supply a name regardless.
-        $firstName = (string)$address->firstName ?: $address->title;
+        // Note also the scenario where we are estimating shipping, and no custom details yet
+        $firstName = ((string)$address->firstName ?: $address->title) ?? 'Customer';
 
         return new ShippyAddress([
             'email' => (string)$order->email,
