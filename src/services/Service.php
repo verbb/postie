@@ -42,7 +42,7 @@ class Service extends Component
         return Commerce::getInstance()->getStores()->getCurrentStore()->getSettings()->getLocationAddress() ?? null;
     }
 
-    public function getShippyShipmentForOrder(Order $order): Shipment
+    public function getShippyShipmentForOrder(Order $order): ?Shipment
     {
         // Allow easy-testing of addresses at the plugin level
         $storeLocation = Postie::getStoreShippingAddress();
@@ -50,16 +50,23 @@ class Service extends Component
         // Allow easy-testing of addresses at the plugin level
         Postie::setOrderShippingAddress($order);
 
+        // Shipping address can be the estimated address too
+        $shippingAddress = $order->getShippingAddress() ?? $order->getEstimatedShippingAddress();
+
         // Set the Shippy logger for consolidated logging with Postie
         if (($logTarget = (Craft::$app->getLog()->targets['postie'] ?? null))) {
             Shippy::setLogger($logTarget->getLogger());
+        }
+
+        if (!$storeLocation || !$shippingAddress) {
+            return null;
         }
 
         // Create a Shippy shipment first for the origin/destination
         return new Shipment([
             'currency' => $order->currency,
             'from' => ShippyHelper::toAddress($order, $storeLocation),
-            'to' => ShippyHelper::toAddress($order, $order->shippingAddress),
+            'to' => ShippyHelper::toAddress($order, $shippingAddress),
         ]);
     }
 
@@ -87,6 +94,12 @@ class Service extends Component
 
         // Create a Shippy shipment to start getting rates for
         $shipment = $this->getShippyShipmentForOrder($order);
+
+        if (!$shipment) {
+            Postie::debugPaneLog('Unable to create Shipment for order.');
+
+            return [];
+        }
 
         foreach ($providers as $provider) {
             // Prepare the shipment based on the provider
