@@ -41,6 +41,20 @@
     }) }}
 </div>
 
+{{ forms.selectField({
+    label: 'Rates Type' | t('postie'),
+    instructions: 'Select the type of rates to return.' | t('postie'),
+    id: 'ratesType',
+    name: 'ratesType',
+    options: [
+        { label: 'Online' | t('postie'), value: 'online' },
+        { label: 'Post Office' | t('postie'), value: 'postOffice' },
+    ],
+    value: provider.ratesType,
+    warning: macros.configWarning("providers.#{provider.handle}.ratesType", 'postie'),
+    errors: provider.getErrors('ratesType'),
+}) }}
+
 {{ forms.lightswitchField({
     label: 'Check Compensation' | t('postie'),
     instructions: 'Whether to return rates where the order amount is greater than what will be compensated.' | t('postie'),
