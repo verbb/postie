@@ -154,6 +154,14 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return array_pop($classNameParts);
     }
 
+    public function settingsAttributes(): array
+    {
+        $attributes = parent::settingsAttributes();
+        $attributes[] = 'apiType';
+        
+        return $attributes;
+    }
+
     public function defineRules(): array
     {
         $rules = parent::defineRules();
