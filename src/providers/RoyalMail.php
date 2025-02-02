@@ -32,6 +32,7 @@ class RoyalMail extends Provider
     public ?string $clientId = null;
     public ?string $clientSecret = null;
     public ?string $clickAndDropApiKey = null;
+    public ?string $ratesType = 'online';
     public bool $acceptTerms = true;
     public bool $checkCompensation = true;
     public bool $includeVat = true;
@@ -65,6 +66,7 @@ class RoyalMail extends Provider
     public function getCarrierConfig(): array
     {
         $config = parent::getCarrierConfig();
+        $config['ratesType'] = $this->ratesType;
         $config['checkCompensation'] = $this->checkCompensation;
         $config['includeVat'] = $this->includeVat;
 
