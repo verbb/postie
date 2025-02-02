@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.10 - 2025-02-02
+
+### Added
+- Add the ability to set rates type for Royal Mail to Online or Post Office.
+- Add support for estimated shipping address for Commerce.
+- Add Online and Post Office rates for Royal Mail.
+- Add missing FedEx service codes.
+
+### Changed
+- Royal Mail rates now use Online pricing by default.
+- Update Royal Mail International tracked options for some countries.
+- Update `symfony/event-dispatcher` and `symfony/serializer` packages to support `^5.0`.
+
 ## 4.0.9 - 2024-10-20
 
 ### Fixed
