@@ -254,7 +254,7 @@ class ProvidersController extends Controller
             'enabled' => (bool)$this->request->getParam('enabled'),
             'isProduction' => (bool)$this->request->getParam('isProduction'),
             'markUpRate' => (float)$this->request->getParam('markUpRate'),
-            'markUpBase' => (float)$this->request->getParam('markUpBase'),
+            'markUpBase' => $this->request->getParam('markUpBase'),
             'restrictServices' => $this->request->getParam('restrictServices'),
             'services' => $services,
             'packingMethod' => $this->request->getParam('packingMethod'),
