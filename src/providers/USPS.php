@@ -201,6 +201,7 @@ class USPS extends Provider
     public ?string $accountNumber = null;
     public ?string $customerRegistrationId = null;
     public ?string $mailerId = null;
+    public bool $useLegacyApi = false;
 
     private float $maxDomesticWeight = 31751.5; // 20lbs
     private float $maxInternationalWeight = 9071.85;
@@ -258,6 +259,7 @@ class USPS extends Provider
         $config = parent::getCarrierConfig();
         $config['clientId'] = $this->getClientId();
         $config['clientSecret'] = $this->getClientSecret();
+        $config['useLegacyApi'] = $this->useLegacyApi;
 
         if ($this->getApiType() !== self::API_TRACKING) {
             $config['accountNumber'] = $this->getAccountNumber();
