@@ -26,13 +26,13 @@ class ShippingRule extends BaseShippingRule
 
     public function getBaseRate(): float
     {
-        if ($this->baseRate && isset($this->provider->markUpRate) && $this->provider->markUpRate != '') {
-            if ($this->provider->markUpBase == Provider::VALUE) {
-                $this->baseRate += (float)$this->provider->markUpRate;
+        if ($this->baseRate && isset($this->provider->getMarkUpRate()) && $this->provider->getMarkUpRate() != '') {
+            if ($this->provider->getMarkUpBase() == Provider::VALUE) {
+                $this->baseRate += (float)$this->provider->getMarkUpRate();
             }
 
-            if ($this->provider->markUpBase == Provider::PERCENTAGE) {
-                $this->baseRate += $this->baseRate * (float)$this->provider->markUpRate / 100;
+            if ($this->provider->getMarkUpBase() == Provider::PERCENTAGE) {
+                $this->baseRate += $this->baseRate * (float)$this->provider->getMarkUpRate() / 100;
             }
         }
 
