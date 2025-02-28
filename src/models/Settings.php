@@ -35,12 +35,9 @@ class Settings extends Model
                 '{cpTrigger}',
                 '{actionTrigger}',
             ], [
-                Craft::$app->getConfig()->getGeneral()->cpTrigger,
-                Craft::$app->getConfig()->getGeneral()->actionTrigger,
+                rtrim(Craft::$app->getConfig()->getGeneral()->cpTrigger, '/'),
+                rtrim(Craft::$app->getConfig()->getGeneral()->actionTrigger, '/'),
             ], $url);
-
-            // Ensure there's no double-slash, due to the replacements
-            $url = str_replace('//', '/', $url);
 
             // Escape slashes for regex
             $url = str_replace('/', '\/', $url);
