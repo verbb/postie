@@ -19,6 +19,7 @@ class Settings extends Model
 
     public array $routesChecks = [
         '/{cpTrigger}/commerce/orders/\d+',
+        '{actionTrigger}/commerce/orders/refresh',
         '/shop/shipping',
         '/shop/checkout/shipping',
     ];
@@ -30,7 +31,18 @@ class Settings extends Model
     public function hasMatchedRoute(): bool
     {
         foreach ($this->routesChecks as $url) {
-            $url = str_replace(['{cpTrigger}'], [Craft::$app->getConfig()->getGeneral()->cpTrigger], $url);
+            $url = str_replace([
+                '{cpTrigger}',
+                '{actionTrigger}',
+            ], [
+                Craft::$app->getConfig()->getGeneral()->cpTrigger,
+                Craft::$app->getConfig()->getGeneral()->actionTrigger,
+            ], $url);
+
+            // Ensure there's no double-slash, due to the replacements
+            $url = str_replace('//', '/', $url);
+
+            // Escape slashes for regex
             $url = str_replace('/', '\/', $url);
             $path = explode('?', Craft::$app->getRequest()->url)[0];
 
