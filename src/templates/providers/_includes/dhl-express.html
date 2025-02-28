@@ -15,20 +15,6 @@
     errors: provider.getErrors('apiType'),
 }) }}
 
-<div class="api-type-shipping {% if provider.apiType != 'shipping' %}hidden{% endif %}" style="margin-bottom: 24px;">
-    {{ forms.autosuggestField({
-        label: 'Account Number' | t('postie'),
-        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
-        id: 'accountNumber',
-        name: 'accountNumber',
-        value: provider.accountNumber ?? '',
-        required: true,
-        suggestEnvVars: true,
-        warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
-        errors: provider.getErrors('accountNumber'),
-    }) }}
-</div>
-
 <div class="api-type-rates api-type-shipping {% if provider.apiType == 'tracking' %}hidden{% endif %}" style="margin-bottom: 24px;">
     {{ forms.autosuggestField({
         label: 'Username' | t('postie'),
@@ -52,6 +38,18 @@
         suggestEnvVars: true,
         warning: macros.configWarning("providers.#{provider.handle}.password", 'postie'),
         errors: provider.getErrors('password'),
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: 'Account Number' | t('postie'),
+        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+        id: 'accountNumber',
+        name: 'accountNumber',
+        value: provider.accountNumber ?? '',
+        required: true,
+        suggestEnvVars: true,
+        warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
+        errors: provider.getErrors('accountNumber'),
     }) }}
 
     {{ forms.selectField({
