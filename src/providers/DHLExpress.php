@@ -115,7 +115,7 @@ class DHLExpress extends Provider
     {
         $config = parent::getCarrierConfig();
 
-        $shipDate = new DateTime($this->shipTime);
+        $shipDate = DateTimeHelper::toDateTime($this->shipTime);
 
         if ($this->shipDate === 'nextDay') {
             $shipDate = $shipDate->modify('+1 day');
