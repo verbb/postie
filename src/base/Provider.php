@@ -238,7 +238,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return App::parseEnv($this->markUpBase);
     }
 
-    public function getRestrictServices(): ?string
+    public function getRestrictServices(): bool|string
     {
         return App::parseBooleanEnv($this->restrictServices);
     }

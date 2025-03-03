@@ -72,7 +72,7 @@ class Service extends Component
         $settings = Postie::$plugin->getSettings();
 
         // Check if this route is enabled to fetch rates on. We're pretty guarded for rate-fetching for good reason.
-        if ($settings->enableRouteCheck) {
+        if ($settings->getEnableRouteCheck()) {
             if (!$settings->hasMatchedRoute()) {
                 Postie::debugPaneLog('Route `{route}` did not match required route to fetch rates.', ['route' => Craft::$app->getRequest()->url]);
 
@@ -149,7 +149,7 @@ class Service extends Component
         $settings = Postie::$plugin->getSettings();
 
         // Setup some caching mechanism to save API requests
-        if ($settings->enableCaching) {
+        if ($settings->getEnableCaching()) {
             $signature = PostieHelper::getSignature($order);
             $cacheKey = 'postie-shipment-' . $signature;
 
