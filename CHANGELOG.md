@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.0.11 - 2025-03-04
+
+### Added
+- Add support for `enableRouteCheck` and `enableCaching` to use .env variables.
+- Add support for `markUpRate`, `markUpBase`, `restrictServices`, and `packingMethod` provide settings to be .env variables.
+- Add support for legacy USPS API.
+
+### Changed
+- DHL Express Account Number is now required for rates and shipments.
+
+### Fixed
+- Fix an error for DHL Express with Ship Time.
+- Fix “Markup Base” setting not saving correctly.
+
 ## 4.0.10 - 2025-02-02
 
 ### Added
