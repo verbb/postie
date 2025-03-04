@@ -78,3 +78,13 @@
         errors: provider.getErrors('mailerId'),
     }) }}
 </div>
+
+{{ forms.lightswitchField({
+    label: 'Use Legacy API' | t('postie'),
+    instructions: 'Whether to use the legacy API. Use this only if your app was created on {url}.' | t('postie', { url: '[USPS Legacy Developers](https://developer.usps.com/)' }),
+    id: 'useLegacyApi',
+    name: 'useLegacyApi',
+    on: provider.useLegacyApi ?? false,
+    warning: macros.configWarning("providers.#{provider.handle}.useLegacyApi", 'postie'),
+    errors: provider.getErrors('useLegacyApi'),
+}) }}

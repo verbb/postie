@@ -100,16 +100,12 @@ class DHLExpress extends Provider
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['username', 'password'], 'required', 'when' => function($model) {
+        $rules[] = [['username', 'password', 'accountNumber'], 'required', 'when' => function($model) {
             return $model->enabled && $model->getApiType() !== self::API_TRACKING;
         }];
 
         $rules[] = [['clientId'], 'required', 'when' => function($model) {
             return $model->enabled && $model->getApiType() === self::API_TRACKING;
-        }];
-
-        $rules[] = [['accountNumber'], 'required', 'when' => function($model) {
-            return $model->enabled && $model->getApiType() === self::API_SHIPPING;
         }];
 
         return $rules;
@@ -119,7 +115,7 @@ class DHLExpress extends Provider
     {
         $config = parent::getCarrierConfig();
 
-        $shipDate = new DateTime($this->shipTime);
+        $shipDate = DateTimeHelper::toDateTime($this->shipTime);
 
         if ($this->shipDate === 'nextDay') {
             $shipDate = $shipDate->modify('+1 day');
@@ -136,9 +132,6 @@ class DHLExpress extends Provider
         } else {
             $config['username'] = $this->getUsername();
             $config['password'] = $this->getPassword();
-        }
-
-        if ($this->getApiType() === self::API_SHIPPING) {
             $config['accountNumber'] = $this->getAccountNumber();
         }
 

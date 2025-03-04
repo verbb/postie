@@ -3,6 +3,7 @@ namespace verbb\postie\models;
 
 use Craft;
 use craft\base\Model;
+use craft\helpers\App;
 
 use craft\commerce\Plugin as Commerce;
 
@@ -27,6 +28,16 @@ class Settings extends Model
 
     // Public Methods
     // =========================================================================
+
+    public function getEnableCaching(): bool|string
+    {
+        return App::parseBooleanEnv($this->enableCaching);
+    }
+
+    public function getEnableRouteCheck(): bool|string
+    {
+        return App::parseBooleanEnv($this->enableRouteCheck);
+    }
 
     public function hasMatchedRoute(): bool
     {

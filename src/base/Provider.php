@@ -173,7 +173,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     public function validateBoxSizes($attribute, $params, $validator): void
     {
-        if ($this->packingMethod === self::PACKING_BOX) {
+        if ($this->getPackingMethod() === self::PACKING_BOX) {
             if ($this->$attribute) {
                 $enabledBoxes = ArrayHelper::where($this->$attribute, 'enabled');
 
@@ -236,6 +236,26 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         return App::parseEnv($this->apiType);
     }
 
+    public function getMarkUpRate(): ?string
+    {
+        return App::parseEnv($this->markUpRate);
+    }
+
+    public function getMarkUpBase(): ?string
+    {
+        return App::parseEnv($this->markUpBase);
+    }
+
+    public function getRestrictServices(): bool|string
+    {
+        return App::parseBooleanEnv($this->restrictServices);
+    }
+
+    public function getPackingMethod(): ?string
+    {
+        return App::parseEnv($this->packingMethod);
+    }
+
     public function getIconUrl(): string
     {
         try {
@@ -284,7 +304,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $services = [];
 
-        if ($this->restrictServices) {
+        if ($this->getRestrictServices()) {
             $services = array_filter($this->services, function($service) {
                 return $service['enabled'] ?? false;
             });
@@ -719,7 +739,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
             $lineItems = PostieHelper::getOrderLineItems($order);
         }
 
-        if ($this->packingMethod === self::PACKING_SINGLE_BOX) {
+        if ($this->getPackingMethod() === self::PACKING_SINGLE_BOX) {
             $dimensions = $this->getOrderDimensions($order, static::getWeightUnit(), static::getDimensionUnit());
 
             // Let providers define the max weight for boxes
@@ -745,7 +765,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         // If packing boxes individually, create boxes exactly the same size as each item
-        if ($this->packingMethod === self::PACKING_PER_ITEM) {
+        if ($this->getPackingMethod() === self::PACKING_PER_ITEM) {
             foreach ($lineItems as $lineItem) {
                 // Don't forget to factor in quantities
                 for ($i = 0; $i < $lineItem->qty; $i++) {
@@ -763,7 +783,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         }
 
         // Run 4D bin-packing to the best of our ability
-        if ($this->packingMethod === self::PACKING_BOX) {
+        if ($this->getPackingMethod() === self::PACKING_BOX) {
             // For all boxes we've defined, add them.
             foreach ($this->getBoxSizes() as $boxInfo) {
                 $packer->addBox(new Box([
