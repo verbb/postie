@@ -522,6 +522,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function beforeFetchRates(RateEvent $event): void
     {
         $fetchRatesEvent = new FetchRatesEvent([
+            'carrier' => $event->getCarrier(),
             'request' => $event->getRequest(),
         ]);
 
@@ -535,6 +536,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function afterFetchRates(RateEvent $event): void
     {
         $fetchRatesEvent = new FetchRatesEvent([
+            'carrier' => $event->getCarrier(),
             'request' => $event->getRequest(),
             'response' => $event->getData(),
         ]);
@@ -550,6 +552,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function beforeFetchLabels(LabelEvent $event): void
     {
         $fetchLabelsEvent = new FetchLabelsEvent([
+            'carrier' => $event->getCarrier(),
             'request' => $event->getRequest(),
         ]);
 
@@ -563,6 +566,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     public function afterFetchLabels(LabelEvent $event): void
     {
         $fetchLabelsEvent = new FetchLabelsEvent([
+            'carrier' => $event->getCarrier(),
             'request' => $event->getRequest(),
             'response' => $event->getData(),
         ]);
