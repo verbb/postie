@@ -100,6 +100,9 @@ class Service extends Component
 
             $carrier = $provider->getCarrier();
 
+            // Store the current order against the carrier, to access later
+            $carrier->setSetting('order', $order);
+
             // Attach event handlers for Craft
             $carrier->on($carrier::EVENT_BEFORE_FETCH_RATES, [$provider, 'beforeFetchRates']);
             $carrier->on($carrier::EVENT_AFTER_FETCH_RATES, [$provider, 'afterFetchRates']);
