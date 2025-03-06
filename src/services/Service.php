@@ -16,6 +16,7 @@ use craft\commerce\events\RegisterAvailableShippingMethodsEvent;
 use yii\base\Component;
 
 use verbb\shippy\Shippy;
+use verbb\shippy\events\RateEvent;
 use verbb\shippy\models\Shipment;
 
 class Service extends Component
@@ -100,12 +101,14 @@ class Service extends Component
 
             $carrier = $provider->getCarrier();
 
-            // Store the current order against the carrier, to access later
-            $carrier->setSetting('order', $order);
-
             // Attach event handlers for Craft
-            $carrier->on($carrier::EVENT_BEFORE_FETCH_RATES, [$provider, 'beforeFetchRates']);
-            $carrier->on($carrier::EVENT_AFTER_FETCH_RATES, [$provider, 'afterFetchRates']);
+            $carrier->on($carrier::EVENT_BEFORE_FETCH_RATES, function(RateEvent $event) use ($provider, $order) {
+                $provider->beforeFetchRates($event, $order);
+            });
+
+            $carrier->on($carrier::EVENT_AFTER_FETCH_RATES, function(RateEvent $event) use ($provider, $order) {
+                $provider->afterFetchRates($event, $order);
+            });
         }
 
         // Actually fetch the rates
