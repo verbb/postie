@@ -1,6 +1,7 @@
 <?php
 namespace verbb\postie\migrations;
 
+use Craft;
 use craft\db\Migration;
 
 use craft\commerce\Plugin as Commerce;
@@ -31,6 +32,14 @@ class m230928_000000_shipments extends Migration
         $this->createIndex(null, '{{%postie_shipments}}', 'orderId');
         $this->addForeignKey(null, '{{%postie_shipments}}', 'orderId', '{{%commerce_orders}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, '{{%postie_shipments}}', 'providerHandle', '{{%postie_providers}}', 'handle', 'CASCADE', 'CASCADE');
+
+        // Don't make the same config changes twice
+        $projectConfig = Craft::$app->getProjectConfig();
+        $schemaVersion = $projectConfig->get('plugins.postie.schemaVersion', true);
+
+        if (version_compare($schemaVersion, '2.2.5', '>=')) {
+            return true;
+        }
 
         $orderStatusService = Commerce::getInstance()->getOrderStatuses();
 
