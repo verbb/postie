@@ -119,7 +119,10 @@ class Postie extends Plugin
             'url' => 'postie/providers',
         ];
 
-        $count = count(Postie::$plugin->getInvalidVariants());
+        // Cache the count for performance
+        $count = Craft::$app->getCache()->getOrSet('postie-variants', function() {
+            return count(Postie::$plugin->getInvalidVariants());
+        }, 24 * 60);
 
         $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
