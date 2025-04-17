@@ -20,7 +20,7 @@ class Settings extends Model
 
     public array $routesChecks = [
         '/{cpTrigger}/commerce/orders/\d+',
-        '{actionTrigger}/commerce/orders/refresh',
+        '/{actionTrigger}/commerce/orders/refresh',
         '/shop/shipping',
         '/shop/checkout/shipping',
     ];
@@ -51,10 +51,9 @@ class Settings extends Model
             ], $url);
 
             // Escape slashes for regex
-            $url = str_replace('/', '\/', $url);
             $path = explode('?', Craft::$app->getRequest()->url)[0];
 
-            if (preg_match('/^' . $url . '$/', $path, $matches)) {
+            if (preg_match('/' . str_replace('/', '\/', $url) . '$/', $path, $matches)) {
                 return true;
             }
         }
