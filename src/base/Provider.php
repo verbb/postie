@@ -23,6 +23,7 @@ use craft\helpers\UrlHelper;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
+use craft\commerce\enums\LineItemType;
 use craft\commerce\models\LineItem;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Length;
@@ -591,6 +592,15 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $settings = Commerce::getInstance()->getSettings();
 
+        // For custom line items, they must contain weight and dimension options
+        if ($lineItem->type === LineItemType::Custom) {
+            foreach (['weight', 'length', 'height', 'width'] as $prop) {
+                if (isset($lineItem->options[$prop])) {
+                    $lineItem->$prop = $lineItem->options[$prop];
+                }
+            }
+        }
+
         // We always deal with g/mm for box-packing, which is suitable for int's
         $weight = (new Mass($lineItem->weight, $settings->weightUnits))->toUnit('g');
         $length = (new Length($lineItem->length, $settings->dimensionUnits))->toUnit('mm');
@@ -643,12 +653,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected function getBoxItemFromLineItem(LineItem $lineItem): bool|Item
     {
-        $product = $lineItem->getPurchasable();
-
-        if (!$product) {
-            return false;
-        }
-
         $dimensions = $this->getLineItemDimensions($lineItem);
 
         // Check if any dimensions are blank, return false
@@ -669,12 +673,6 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     protected function getBoxFromLineItem(LineItem $lineItem): bool|Box
     {
-        $product = $lineItem->getPurchasable();
-
-        if (!$product) {
-            return false;
-        }
-
         $dimensions = $this->getLineItemDimensions($lineItem);
 
         // Check if any dimensions are blank, return false

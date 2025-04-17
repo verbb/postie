@@ -97,7 +97,18 @@ class PostieHelper
                 }
             }
 
-            if ($item->type !== LineItemType::Custom) {
+            // For custom line items, they must contain weight and dimension options
+            if ($item->type === LineItemType::Custom) {
+                foreach (['weight', 'length', 'height', 'width'] as $prop) {
+                    if (isset($item->options[$prop])) {
+                        $item->$prop = $item->options[$prop];
+                    }
+                }
+
+                if ($item->weight && $item->length && $item->height && $item->width) {
+                    $items[] = $item;
+                }
+            } else {
                 if ($purchasable = $item->getPurchasable()) {
                     $freeShippingFlagOnProduct = $purchasable->hasFreeShipping();
                     $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($purchasable);
