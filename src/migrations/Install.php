@@ -109,6 +109,15 @@ class Install extends Migration
     {
         $orderStatusService = Commerce::getInstance()->getOrderStatuses();
         $storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
+
+        // This means that project config hasn't been applied or Commerce hasn't fully installed. 
+        // Subsequent writes throw the following exception. 
+        //  An error occurred while executing the "verbb\postie\migrations\Install migration: 
+        // craft\commerce\services\Stores::getCurrentStore(): Return value must be of type craft\commerce\models\Store, null returned                                                                                                                                                                  
+
+        if (!$storeId) {
+            return;
+        }
         
         $statuses = [
             new OrderStatus([
