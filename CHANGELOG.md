@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.0.10 - 2025-05-01
+
+### Added
+- Add the current order to carrier data.
+- Add `carrier` to Label and Rates fetching events for the respective Shippy carrier.
+- Add support for custom line items when defining dimensions and weight in line item options.
+
+### Changed
+- Update `Provider::beforeFetchRates` and `Provider::afterFetchRates` method signature to include an `Order` argument.
+
+### Fixed
+- Fix migration for shipments running when already applied.
+- Fix an error when serializing order data to cache.
+- Fix `commerce/orders/refresh` route check for control panel orders.
+
 ## 5.0.9 - 2025-03-04
 
 ### Added
