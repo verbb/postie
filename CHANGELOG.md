@@ -131,6 +131,19 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.12 - 2025-05-01
+
+### Added
+- Add the current order to carrier data.
+- Add `carrier` to Label and Rates fetching events for the respective Shippy carrier.
+
+### Changed
+- Update `Provider::beforeFetchRates` and `Provider::afterFetchRates` method signature to include an `Order` argument.
+
+### Fixed
+- Fix migration for shipments running when already applied.
+- Fix an error when serializing order data to cache.
+
 ## 4.0.11 - 2025-03-04
 
 ### Added

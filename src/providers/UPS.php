@@ -217,7 +217,7 @@ class UPS extends Provider
         return $this->maxWeight;
     }
 
-    public function beforeFetchRates(RateEvent $event): void
+    public function beforeFetchRates(RateEvent $event, Order $order): void
     {
         // Add in the phone number for the recipient, which isn't included in an order address, but is required for international rates
         if ($this->phoneField) {
