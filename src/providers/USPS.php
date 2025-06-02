@@ -184,12 +184,7 @@ class USPS extends Provider
 
     public static function getServiceList(): array
     {
-        $storeLocation = Postie::getStoreShippingAddress();
-
-        $allServices = parent::getServiceList();
-        $services = $allServices[$storeLocation->countryCode] ?? $allServices['international'];
-
-        return $services;
+        return array_merge(...array_values(parent::getServiceList()));
     }
 
 
