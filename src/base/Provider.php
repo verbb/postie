@@ -730,6 +730,9 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
             // Allow event hander to override $packer
             $packer = $packOrderEvent->packer;
+
+            // Allow event handler to override $order
+            $order = $packOrderEvent->order;
         }
 
         // We can pass in specific line items to pack, but default to the entire order
