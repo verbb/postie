@@ -68,7 +68,36 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
                     var $ul = $('<ul></ul').appendTo($table);
 
                     $.each(response.data.rates, function(index, item) {
-                        $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">$' + item.rate + '</span></li>').appendTo($ul);
+                        let currencyValue = '$';
+                        const currency = item.currency || 'USD';
+
+                        const currencySymbols = {
+                            USD: '$',     // US Dollar
+                            EUR: '€',     // Euro
+                            GBP: '£',     // British Pound
+                            JPY: '¥',     // Japanese Yen
+                            CNY: '¥',     // Chinese Yuan
+                            INR: '₹',     // Indian Rupee
+                            KRW: '₩',     // South Korean Won
+                            RUB: '₽',     // Russian Ruble
+                            ZAR: 'R',     // South African Rand
+                            CHF: 'CHF',   // Swiss Franc
+                            SEK: 'kr',    // Swedish Krona
+                            NOK: 'kr',    // Norwegian Krone
+                            DKK: 'kr',    // Danish Krone
+                            AED: 'د.إ',   // UAE Dirham
+                            THB: '฿',     // Thai Baht
+                            TRY: '₺',     // Turkish Lira
+                            PLN: 'zł',    // Polish Zloty
+                            CZK: 'Kč',    // Czech Koruna
+                            HUF: 'Ft',    // Hungarian Forint
+                        };
+
+                        if (currency in currencySymbols) {
+                            currencyValue = currencySymbols[currency];
+                        }
+
+                        $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">' + currencyValue + item.rate + '</span></li>').appendTo($ul);
                     })
 
                     this.$result.html($table);
