@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.13 - 2025-07-18
+
+### Added
+- Add currency support for rates testing.
+
+### Changed
+- Update English translations.
+- Bump `verbb/shippy`.
+- Allow `beforePackOrder` to override the order in packOrder method.
+
+### Fixed
+- Fix UPS and USPS available services for international and domestic.
+
 ## 4.0.12 - 2025-05-01
 
 ### Added
