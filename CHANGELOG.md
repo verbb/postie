@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.0.11 - 2025-07-18
+
+### Added
+- Add currency support for rates testing.
+
+### Changed
+- Update English translations.
+- Bump `verbb/shippy`.
+
+### Fixed
+- Fix UPS and USPS available services for international and domestic.
+
 ## 5.0.10 - 2025-05-01
 
 ### Added
