@@ -6,7 +6,7 @@ use verbb\postie\events\ModifyShippingRuleEvent;
 
 use craft\helpers\UrlHelper;
 
-use craft\commerce\base\ShippingMethod as BaseShippingMethod;
+use craft\commerce\models\ShippingMethod as BaseShippingMethod;
 
 use Illuminate\Support\Collection;
 
