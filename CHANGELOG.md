@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.12 - 2025-08-13
+
+### Changed
+- Bump `verbb/shippy`.
+- Update base class for Commerce `ShippingMethod`.
+
 ## 5.0.11 - 2025-07-18
 
 ### Added
