@@ -40,6 +40,10 @@ class Settings extends Model
 
     public function hasMatchedRoute(): bool
     {
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return false;
+        }
+
         foreach ($this->routesChecks as $url) {
             $url = str_replace(['{cpTrigger}'], [Craft::$app->getConfig()->getGeneral()->cpTrigger], $url);
             $url = str_replace('/', '\/', $url);
