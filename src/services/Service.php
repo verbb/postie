@@ -82,6 +82,10 @@ class Service extends Component
         // Check if this route is enabled to fetch rates on. We're pretty guarded for rate-fetching for good reason.
         if ($settings->getEnableRouteCheck()) {
             if (!$settings->hasMatchedRoute()) {
+                if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+                    return [];
+                }
+
                 Postie::debugPaneLog('Route `{route}` did not match required route to fetch rates.', ['route' => Craft::$app->getRequest()->url]);
 
                 return [];
