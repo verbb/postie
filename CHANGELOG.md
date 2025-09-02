@@ -164,6 +164,11 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.15 - 2025-09-02
+
+### Changed
+- Bump `verbb/shippy`.
+
 ## 4.0.14 - 2025-08-12
 
 ### Changed
