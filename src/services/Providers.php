@@ -14,7 +14,7 @@ use Craft;
 use craft\base\MemoizableArray;
 use craft\db\Query;
 use craft\errors\MissingComponentException;
-use craft\events\ConfigEvent;
+use CraftCms\Cms\ProjectConfig\Events\ItemAdded;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Component as ComponentHelper;
 use craft\helpers\Db;
@@ -175,7 +175,7 @@ class Providers extends Component
         return true;
     }
 
-    public function handleChangedProvider(ConfigEvent $event): void
+    public function handleChangedProvider($event): void
     {
         $providerUid = $event->tokenMatches[0];
         $data = $event->newValue;
@@ -316,7 +316,7 @@ class Providers extends Component
         return true;
     }
 
-    public function handleDeletedProvider(ConfigEvent $event): void
+    public function handleDeletedProvider($event): void
     {
         $uid = $event->tokenMatches[0];
         $providerRecord = $this->_getProviderRecord($uid);
