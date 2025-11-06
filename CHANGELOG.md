@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.14 - 2025-11-06
+
+### Changed
+- Bump `verbb/shippy`.
+
+### Fixed
+- Fix an error when updating orders via the CLI.
+
 ## 5.0.13 - 2025-09-02
 
 ### Changed
