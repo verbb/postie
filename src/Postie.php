@@ -119,21 +119,9 @@ class Postie extends Plugin
             'url' => 'postie/providers',
         ];
 
-        // Cache the count for performance
-        $count = Craft::$app->getCache()->getOrSet('postie-variants', function() {
-            return count(Postie::$plugin->getInvalidVariants());
-        }, 24 * 60);
-
-        $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
-
-        if (!$storeLocation) {
-            $count++;
-        }
-
         $nav['subnav']['store-setup'] = [
             'label' => Craft::t('postie', 'Store Setup'),
             'url' => 'postie/store-setup',
-            'badgeCount' => $count,
         ];
 
         if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
