@@ -8,6 +8,9 @@
 ### Fixed
 - Fix an error when updating orders via the CLI.
 
+### Removed
+- Removed variant count from `getCpNavItems()`.
+
 ## 5.0.13 - 2025-09-02
 
 ### Changed
