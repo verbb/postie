@@ -1,4 +1,4 @@
-<p align="center"><img src="https://verbb.imgix.net/plugins/postie/postie-icon.svg" width="100" height="100" alt="Postie icon"></p>
+<p align="center"><img src="https://assets.verbb.io/plugins/postie/postie-icon.svg" width="100" height="100" alt="Postie icon"></p>
 <h1 align="center">Postie for Craft CMS</h1>
 
 Postie is a Craft CMS plugin for fetching shipping rates, lodging shipments, generating labels and shipment tracking from your preferred provider for Craft Commerce.
