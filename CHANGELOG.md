@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.16 - 2026-02-07
+
+### Changed
+- Bump `verbb/shippy`.
+
 ## 5.0.15 - 2025-11-29
 
 ### Changed
