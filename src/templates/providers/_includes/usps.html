@@ -40,13 +40,23 @@
 }) }}
 
 <div class="api-type-rates api-type-shipping {% if provider.apiType == 'tracking' %}hidden{% endif %}" style="margin-bottom: 24px;">
+    {{ forms.selectField({
+        label: 'Rate Price Type' | t('postie'),
+        instructions: 'Choose the USPS price type for rate lookups. Only use Contract / Negotiated when USPS has enabled contract pricing for your account.' | t('postie'),
+        name: 'priceType',
+        options: provider.getPriceTypeOptions(),
+        value: provider.priceType ?? 'COMMERCIAL',
+        warning: macros.configWarning("providers.#{provider.handle}.priceType", 'postie'),
+        errors: provider.getErrors('priceType'),
+    }) }}
+
     {{ forms.autosuggestField({
         label: 'Account Number' | t('postie'),
-        instructions: 'Enter your {name} Account Number here.' | t('postie', { name: provider.displayName() }),
+        instructions: 'Enter your {name} Account Number here. This is required for label creation and for Contract / Negotiated rate lookups.' | t('postie', { name: provider.displayName() }),
         id: 'accountNumber',
         name: 'accountNumber',
         value: provider.accountNumber ?? '',
-        required: true,
+        required: provider.apiType == 'shipping' or provider.priceType == 'CONTRACT',
         suggestEnvVars: true,
         warning: macros.configWarning("providers.#{provider.handle}.accountNumber", 'postie'),
         errors: provider.getErrors('accountNumber'),

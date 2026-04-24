@@ -193,6 +193,7 @@ class USPS extends Provider
 
     public ?string $clientId = null;
     public ?string $clientSecret = null;
+    public ?string $priceType = 'COMMERCIAL';
     public ?string $accountNumber = null;
     public ?string $customerRegistrationId = null;
     public ?string $mailerId = null;
@@ -220,6 +221,11 @@ class USPS extends Provider
         return App::parseEnv($this->accountNumber);
     }
 
+    public function getPriceType(): ?string
+    {
+        return App::parseEnv($this->priceType);
+    }
+
     public function getCustomerRegistrationId(): ?string
     {
         return App::parseEnv($this->customerRegistrationId);
@@ -239,7 +245,7 @@ class USPS extends Provider
         }];
 
         $rules[] = [['accountNumber'], 'required', 'when' => function($model) {
-            return $model->enabled && $model->getApiType() !== self::API_TRACKING;
+            return $model->enabled && ($model->getApiType() === self::API_SHIPPING || ($model->getApiType() !== self::API_TRACKING && $model->getPriceType() === 'CONTRACT'));
         }];
 
         $rules[] = [['customerRegistrationId', 'mailerId'], 'required', 'when' => function($model) {
@@ -254,9 +260,10 @@ class USPS extends Provider
         $config = parent::getCarrierConfig();
         $config['clientId'] = $this->getClientId();
         $config['clientSecret'] = $this->getClientSecret();
+        $config['priceType'] = $this->getPriceType();
         $config['useLegacyApi'] = $this->useLegacyApi;
 
-        if ($this->getApiType() !== self::API_TRACKING) {
+        if ($this->getApiType() === self::API_SHIPPING || ($this->getApiType() !== self::API_TRACKING && $this->getPriceType() === 'CONTRACT')) {
             $config['accountNumber'] = $this->getAccountNumber();
         }
         
@@ -274,6 +281,15 @@ class USPS extends Provider
             ['label' => Craft::t('postie', 'Rates Only'), 'value' => self::API_RATES],
             ['label' => Craft::t('postie', 'Tracking Only'), 'value' => self::API_TRACKING],
             ['label' => Craft::t('postie', 'All'), 'value' => self::API_SHIPPING],
+        ];
+    }
+
+    public function getPriceTypeOptions(): array
+    {
+        return [
+            ['label' => Craft::t('postie', 'Commercial'), 'value' => 'COMMERCIAL'],
+            ['label' => Craft::t('postie', 'Retail'), 'value' => 'RETAIL'],
+            ['label' => Craft::t('postie', 'Contract / Negotiated'), 'value' => 'CONTRACT'],
         ];
     }
 
