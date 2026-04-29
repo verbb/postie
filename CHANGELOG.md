@@ -193,6 +193,14 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.19 - 2026-04-29
+
+### Added
+- Add support for USPS setting a `priceType` to control Contract/Commercial/Retail rates.
+
+### Changed
+- Bump `verbb/shippy`.
+
 ## 4.0.18 - 2026-02-07
 
 ### Changed
