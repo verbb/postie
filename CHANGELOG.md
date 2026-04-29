@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.17 - 2026-04-29
+
+### Added
+- Add support for USPS setting a `priceType` to control Contract/Commercial/Retail rates.
+
+### Changed
+- Bump `verbb/shippy`.
+
 ## 5.0.16 - 2026-02-07
 
 ### Changed
