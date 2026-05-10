@@ -230,5 +230,7 @@ class UPS extends Provider
 
             }
         }
+
+        parent::beforeFetchRates($event, $order);
     }
 }
