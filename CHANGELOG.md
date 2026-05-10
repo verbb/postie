@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.18 - 2026-05-10
+
+### Changed
+- Call parent beforeFetchRates method in UPS provider.
+
 ## 5.0.17 - 2026-04-29
 
 ### Added
