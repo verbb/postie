@@ -206,6 +206,11 @@
 - Now requires Craft `5.0.0+`.
 - Now requires Craft Commerce `5.0.0+`.
 
+## 4.0.20 - 2026-05-11
+
+### Changed
+- Call parent beforeFetchRates method in UPS provider.
+
 ## 4.0.19 - 2026-04-29
 
 ### Added
