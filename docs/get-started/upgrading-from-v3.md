@@ -93,7 +93,7 @@ Old | What to do instead
 | `useTestEndpoint` | Use `isProduction` instead.
 
 #### FedEx
-We now use the more modern APIs from FedEx, which include new client credentials for OAuth authentication. You will need to generate new API details following our [guide](docs:shipping-providers/fedex).
+We now use the more modern APIs from FedEx, which include new client credentials for OAuth authentication. You will need to generate new API details following our [guide](docs:shipping-providers/fed-ex).
 
 Old | What to do instead
 --- | ---

@@ -915,7 +915,7 @@
 ## 2.2.0 - 2020-05-03
 
 ### Added
-- Added `manualFetchRates` config option, to allow you to manage manually fetching rates on-demand. Read the [docs](https://verbb.io/craft-plugins/postie/docs/setup-configuration/manually-fetching-rates) for more info.
+- Added `manualFetchRates` config option, to allow you to manage manually fetching rates on-demand.
 
 ### Changed
 - Greatly improve caching mechanism for initial requests to providers. This should result in faster rates-fetching.
@@ -985,7 +985,7 @@
 
 ### Added
 - Add `modifyRates` providing access to the raw response from a provider and the extracted shipping rates. See [docs](https://verbb.io/craft-plugins/postie/docs/developers/events#the-modifyRates-event).
-- All shipping rates now have additional options available on the shipping rule. See [docs](https://verbb.io/craft-plugins/postie/docs/setup-configuration/displaying-rates#rate-options).
+- All shipping rates now have additional options available on the shipping rule. See [docs](docs/feature-tour/displaying-rates).
 - Add negotiated rate support for UPS.
 
 ### Fixed
