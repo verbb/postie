@@ -5,11 +5,13 @@ use verbb\postie\Postie;
 use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\helpers\PostieHelper;
 use verbb\postie\helpers\ShippyHelper;
+use verbb\postie\models\Rate;
 use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\elements\Address;
+use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
@@ -165,25 +167,28 @@ class Service extends Component
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
-        // Setup some caching mechanism to save API requests
-        if ($settings->getEnableCaching()) {
-            $signature = PostieHelper::getSignature($order);
-            $cacheKey = 'postie-shipment-' . $signature;
+        // Because this function can be called multiple times, save available methods to a local cache
+        if ($this->_availableShippingMethods === null) {
+            // Completed orders should keep the checkout rate locked, unless an admin is explicitly
+            // recalculating the order in the control panel (RECALCULATION_MODE_ALL).
+            if ($order->isCompleted && $order->getRecalculationMode() !== Order::RECALCULATION_MODE_ALL) {
+                $this->_availableShippingMethods = $this->getShippingMethodsForCompletedOrder($order);
+            } else if ($settings->getEnableCaching()) {
+                $signature = PostieHelper::getSignature($order);
+                $cacheKey = 'postie-shipment-' . $signature;
 
-            // Get the rate from the cache (if any)
-            $cachedShippingMethods = Craft::$app->getCache()->get($cacheKey);
+                // Get the rate from the cache (if any)
+                $cachedShippingMethods = Craft::$app->getCache()->get($cacheKey);
 
-            // If is it not in the cache get rate via API
-            if ($cachedShippingMethods === false) {
-                $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
+                // If is it not in the cache get rate via API
+                if ($cachedShippingMethods === false) {
+                    $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
 
-                // Set this in our cache for the next request to be much quicker
-                if ($this->_availableShippingMethods) {
-                    Craft::$app->getCache()->set($cacheKey, $this->_availableShippingMethods, 0);
-                }
-            } else {
-                // Output info to the debug panel for clarity. Only print it once, as this is called multiple times
-                if ($this->_availableShippingMethods === null) {
+                    // Set this in our cache for the next request to be much quicker
+                    if ($this->_availableShippingMethods) {
+                        Craft::$app->getCache()->set($cacheKey, $this->_availableShippingMethods, 0);
+                    }
+                } else {
                     foreach ($cachedShippingMethods as $method) {
                         Postie::debugPaneLog('{provider}: Fetched rate `{rate}` for service `{service}` from cache.', [
                             'provider' => $method->provider->name,
@@ -191,16 +196,15 @@ class Service extends Component
                             'rate' => $method->rate,
                         ]);
                     }
-                }
 
-                $this->_availableShippingMethods = $cachedShippingMethods;
+                    $this->_availableShippingMethods = $cachedShippingMethods;
+                }
+            } else {
+                $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
             }
         }
 
-        // Because this function can be called multiple times, save available methods to a local cache
-        if ($this->_availableShippingMethods === null) {
-            $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
-        }
+        $this->_availableShippingMethods = $this->_availableShippingMethods ?? [];
 
         // Allow plugins to modify the shipping methods.
         $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([
@@ -220,5 +224,121 @@ class Service extends Component
 
             $event->shippingMethods[] = $shippingMethod;
         }
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * Return the shipping method locked in at checkout for a completed order.
+     *
+     * Prefers the rate stored in `postie_rates`, then the checkout shipping-method cache,
+     * then Commerce's `storedTotalShippingCost` for a matching Postie service handle.
+     *
+     * @return ShippingMethod[]
+     */
+    private function getShippingMethodsForCompletedOrder(Order $order): array
+    {
+        if (!$order->shippingMethodHandle) {
+            return [];
+        }
+
+        $providersService = Postie::$plugin->getProviders();
+        $storedRate = $this->_getStoredRateForOrder($order);
+
+        if ($storedRate) {
+            $provider = $storedRate->getProvider();
+
+            if ($provider) {
+                $shippingMethod = $providersService->getShippingMethodForService($provider, $storedRate->service);
+                $shippingMethod->rate = (float)$storedRate->rate;
+                $shippingMethod->rateOptions = $this->_rateOptionsFromStoredRate($storedRate);
+
+                if (!$shippingMethod->name && $order->shippingMethodName) {
+                    $shippingMethod->name = $order->shippingMethodName;
+                }
+
+                Postie::debugPaneLog('{provider}: Using stored rate `{rate}` for completed order service `{service}`.', [
+                    'provider' => $provider->name,
+                    'service' => $shippingMethod->handle,
+                    'rate' => $shippingMethod->rate,
+                ]);
+
+                return [$shippingMethod];
+            }
+        }
+
+        // Fall back to the shipping method cached during checkout, if still available
+        $cacheKey = 'postie-shipping-method:' . $order->uid;
+        $cachedShippingMethod = Craft::$app->getCache()->get($cacheKey);
+
+        if ($cachedShippingMethod instanceof ShippingMethod && $cachedShippingMethod->handle === $order->shippingMethodHandle) {
+            Postie::debugPaneLog('{provider}: Using checkout-cached rate `{rate}` for completed order service `{service}`.', [
+                'provider' => $cachedShippingMethod->provider->name ?? 'Postie',
+                'service' => $cachedShippingMethod->handle,
+                'rate' => $cachedShippingMethod->rate,
+            ]);
+
+            return [$cachedShippingMethod];
+        }
+
+        // Last resort: resolve the Postie service from the order handle and use Commerce's stored shipping total
+        foreach ($providersService->getAllEnabledProviders() as $provider) {
+            if (!isset($provider->services[$order->shippingMethodHandle])) {
+                continue;
+            }
+
+            $shippingMethod = $providersService->getShippingMethodForService($provider, $order->shippingMethodHandle);
+            $shippingMethod->rate = (float)$order->storedTotalShippingCost;
+            $shippingMethod->rateOptions = [];
+
+            if (!$shippingMethod->name && $order->shippingMethodName) {
+                $shippingMethod->name = $order->shippingMethodName;
+            }
+
+            Postie::debugPaneLog('{provider}: Using order storedTotalShippingCost `{rate}` for completed order service `{service}`.', [
+                'provider' => $provider->name,
+                'service' => $shippingMethod->handle,
+                'rate' => $shippingMethod->rate,
+            ]);
+
+            return [$shippingMethod];
+        }
+
+        Postie::debugPaneLog('No locked Postie shipping method found for completed order `{number}`.', [
+            'number' => $order->number,
+        ]);
+
+        return [];
+    }
+
+    private function _getStoredRateForOrder(Order $order): ?Rate
+    {
+        $rates = Postie::$plugin->getRates()->getRatesByOrderId((int)$order->id);
+
+        if (!$rates) {
+            return null;
+        }
+
+        foreach ($rates as $rate) {
+            if ($rate->service === $order->shippingMethodHandle) {
+                return $rate;
+            }
+        }
+
+        // Orders should only have one Postie rate, so fall back to the latest saved row
+        return end($rates) ?: null;
+    }
+
+    private function _rateOptionsFromStoredRate(Rate $rate): array
+    {
+        $response = $rate->response;
+
+        if (is_string($response) && $response !== '') {
+            $response = Json::decodeIfJson($response);
+        }
+
+        return is_array($response) ? $response : [];
     }
 }
