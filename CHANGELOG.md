@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.20 - 2026-08-10
+
+### Fixed
+- Fix completed orders losing their shipping adjustment (and appearing overpaid) when Commerce recalculates.
+
 ## 5.0.19 - 2026-06-20
 
 ### Changed
