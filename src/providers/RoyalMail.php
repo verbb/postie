@@ -52,6 +52,11 @@ class RoyalMail extends Provider
         return App::parseEnv($this->clientSecret);
     }
 
+    public function getClickAndDropApiKey(): ?string
+    {
+        return App::parseEnv($this->clickAndDropApiKey);
+    }
+
     public function defineRules(): array
     {
         $rules = parent::defineRules();
@@ -60,15 +65,23 @@ class RoyalMail extends Provider
             return $model->enabled && $model->getApiType() === self::API_SHIPPING;
         }];
 
+        $rules[] = [['clickAndDropApiKey'], 'required', 'when' => function($model) {
+            return $model->enabled && $model->useClickAndDropLabels && $model->getApiType() === self::API_SHIPPING;
+        }];
+
         return $rules;
     }
 
     public function getCarrierConfig(): array
     {
         $config = parent::getCarrierConfig();
+        $config['clientId'] = $this->getClientId();
+        $config['clientSecret'] = $this->getClientSecret();
+        $config['clickAndDropApiKey'] = $this->getClickAndDropApiKey();
         $config['ratesType'] = $this->ratesType;
         $config['checkCompensation'] = $this->checkCompensation;
         $config['includeVat'] = $this->includeVat;
+        $config['useClickAndDropLabels'] = $this->useClickAndDropLabels;
 
         return $config;
     }

@@ -39,6 +39,31 @@
         warning: macros.configWarning("providers.#{provider.handle}.clientSecret", 'postie'),
         errors: provider.getErrors('clientSecret'),
     }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Use Click & Drop Labels' | t('postie'),
+        instructions: 'Whether to create shipping labels via the Royal Mail Click & Drop API.' | t('postie'),
+        id: 'useClickAndDropLabels',
+        name: 'useClickAndDropLabels',
+        on: provider.useClickAndDropLabels ?? false,
+        toggle: 'click-and-drop-settings',
+        warning: macros.configWarning("providers.#{provider.handle}.useClickAndDropLabels", 'postie'),
+        errors: provider.getErrors('useClickAndDropLabels'),
+    }) }}
+
+    <div id="click-and-drop-settings" class="{% if not provider.useClickAndDropLabels %}hidden{% endif %}">
+        {{ forms.autosuggestField({
+            label: 'Click & Drop API Key' | t('postie'),
+            instructions: 'Enter your Royal Mail Click & Drop API Key here.' | t('postie'),
+            id: 'clickAndDropApiKey',
+            name: 'clickAndDropApiKey',
+            value: provider.clickAndDropApiKey ?? '',
+            required: true,
+            suggestEnvVars: true,
+            warning: macros.configWarning("providers.#{provider.handle}.clickAndDropApiKey", 'postie'),
+            errors: provider.getErrors('clickAndDropApiKey'),
+        }) }}
+    </div>
 </div>
 
 {{ forms.selectField({
@@ -57,7 +82,7 @@
 
 {{ forms.lightswitchField({
     label: 'Check Compensation' | t('postie'),
-    instructions: 'Whether to return rates where the order amount is greater than what will be compensated.' | t('postie'),
+    instructions: 'Whether to exclude rates when the order value exceeds what the service will compensate.' | t('postie'),
     id: 'checkCompensation',
     name: 'checkCompensation',
     on: provider.checkCompensation ?? false,
@@ -74,4 +99,3 @@
     warning: macros.configWarning("providers.#{provider.handle}.includeVat", 'postie'),
     errors: provider.getErrors('includeVat'),
 }) }}
-

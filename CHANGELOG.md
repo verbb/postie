@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Add Royal Mail Click & Drop settings for generating shipping labels.
+
+### Changed
+- Bump `verbb/shippy`.
+- Clarify Royal Mail Check Compensation setting instructions.
+
+### Fixed
+- Fix Royal Mail Client ID / Client Secret and Click & Drop options not being passed through to Shippy.
+- Fix Royal Mail rates often returning empty when Check Compensation was enabled (fixed in Shippy).
+
 ## 5.0.20 - 2026-08-10
 
 ### Fixed
