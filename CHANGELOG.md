@@ -1,12 +1,10 @@
 # Changelog
 
-## Unreleased
-
-### Added
-- Add Royal Mail Click & Drop settings for generating shipping labels.
+## 5.0.21 - 2026-08-20
 
 ### Changed
 - Bump `verbb/shippy`.
+- Add Royal Mail Click & Drop settings for generating shipping labels.
 - Clarify Royal Mail Check Compensation setting instructions.
 
 ### Fixed
