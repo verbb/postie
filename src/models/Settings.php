@@ -93,4 +93,14 @@ class Settings extends Model
         return $statuses;
     }
 
+    protected function defineRules(): array
+    {
+        $rules = parent::defineRules();
+        $rules[] = [['pluginName'], 'trim'];
+        $rules[] = [['pluginName'], 'required'];
+        $rules[] = [['pluginName'], 'string', 'max' => 52];
+
+        return $rules;
+    }
+
 }

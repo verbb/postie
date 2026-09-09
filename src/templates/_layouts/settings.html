@@ -1,4 +1,4 @@
-{% extends 'postie/_layouts' %}
+{% extends 'verbb-base/_layouts/settings' %}
 
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
@@ -6,35 +6,16 @@
 {% requireAdmin %}
 
 {% set crumbs = [
-    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
-    { label: 'Settings' | t('app'), url: url('postie/settings') },
-] %}
+    { label: 'Settings' | t('app'), url: url('settings') },
+    { label: 'Plugins' | t('app'), url: url('settings/plugins') },
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie/settings') },
+] | merge(crumbs ?? []) %}
 
-{% set selectedSubnavItem = 'settings' %}
-{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
-
-{% set navItems = {
-    'general': { title: 'General Settings' | t('postie') },
+{% set pageTabs = {
+    general: { title: 'General Settings' | t('postie'), url: url('postie/settings') },
 } %}
 
-{% block sidebar %}
-    <nav class="postie-settings-tabs">
-        <ul>
-            {% for handle, item in navItems %}
-                {% if item.heading is defined %}
-                    <li class="heading"><span>{{ item.heading }}</span></li>
-                {% else %}
-                    <li>
-                        <a href="{{ url('postie/settings/' ~ handle) }}" {% if handle == selectedTab %}class="sel"{% endif %}>
-                            <span class="label">{{ item.title }}</span>
-
-                            {% if item.badge is defined and item.badge %}
-                                <span class="badge">{{ item.badge }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </nav>
-{% endblock %}
+{% set pageTitle = pageTitle ?? false %}
+{% if title is not defined and pageTitle %}
+    {% set title = pageTitle %}
+{% endif %}
