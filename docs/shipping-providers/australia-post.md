@@ -10,7 +10,7 @@ Australia Post supports the following APIs:
 ## API Credentials
 In order to use Australia Post, you'll need to connect to their API. There are two different API's to pick from, depending on your requirements.
 
-### Postage Assessment Calculator (Rates only)
+### Postage Assessment Calculator (Rates Only)
 If you want to just fetch rates for shipments, you can use the Postage Assessment Calculator (PAC) API.
 
 1. Go to <a href="https://developers.auspost.com.au/apis/pacpcs-registration" target="_blank">Australia Post Developers website</a> and register for an API Key.

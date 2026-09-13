@@ -13,11 +13,11 @@
         "title": "Feature Tour",
         "collapsable": false,
         "children": [
-            "feature-tour/displaying-rates",
-            "feature-tour/tracking-status",
-            "feature-tour/shipments",
             "feature-tour/providers",
-            "feature-tour/box-packing"
+            "feature-tour/box-packing",
+            "feature-tour/displaying-rates",
+            "feature-tour/shipments",
+            "feature-tour/tracking-status"
         ]
     },
     {

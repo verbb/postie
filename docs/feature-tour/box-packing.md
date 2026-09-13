@@ -1,13 +1,13 @@
 # Box Packing
 Postie features several different mechanisms to pack boxes for accurate shipping quotes.
 
-## Pack items individually
+## Pack Items Individually
 When chosen, each item in the cart will be packed in a box fitted to the item. When purchasing multiple quantities of the same item, each item will still be in an individual box.
 
-## Pack items into boxes
+## Pack Items Into Boxes
 This will fit all items in one or many boxes, as defined by you, or pre-set boxes defined by the provider. Any items that do not fit these box constraints are fitted to an individual box.
 
-## Pack items into a single box
+## Pack Items Into a Single Box
 Given a collection of products, Postie will try to fit all items into a single box. Care should be taken with this approach, if an order contains large or bulk items, they might exceed provider allowances.
 
 ## 4D Box Packing

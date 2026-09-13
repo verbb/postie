@@ -3,7 +3,7 @@ Postie provides a collection of events for extending its functionality. Modules 
 
 ## Plugin Events
 
-### The `modifyVariantQuery` event
+### The `modifyVariantQuery` Event
 Postie will by default look at all variants across your site and report on whether weight and dimension values are set. You can modify this query to suit your needs.
 
 ```php
@@ -18,7 +18,7 @@ Event::on(Postie::class, Postie::EVENT_MODIFY_VARIANT_QUERY, function(ModifyShip
 
 ## Provider Events
 
-### The `beforeFetchRates` event
+### The `beforeFetchRates` Event
 The event that is triggered before rates are fetched.
 
 ```php
@@ -47,7 +47,7 @@ Event::on(USPS::class, USPS::EVENT_BEFORE_FETCH_RATES, function(FetchRatesEvent 
 });
 ```
 
-### The `afterFetchRates` event
+### The `afterFetchRates` Event
 The event that is triggered after rates are fetched.
 
 ```php
@@ -63,7 +63,7 @@ Event::on(USPS::class, USPS::EVENT_AFTER_FETCH_RATES, function(FetchRatesEvent $
 });
 ```
 
-### The `beforePackOrder` event
+### The `beforePackOrder` Event
 The event that is triggered before the order contents are packed in boxes.
 
 ```php
@@ -87,7 +87,7 @@ Event::on(USPS::class, Provider::EVENT_BEFORE_PACK_ORDER, function (PackOrderEve
 ```
 
 
-### The `afterPackOrder` event
+### The `afterPackOrder` Event
 The event that is triggered after the order contents are packed in boxes.
 
 ```php
@@ -102,7 +102,7 @@ Event::on(USPS::class, USPS::EVENT_AFTER_PACK_ORDER, function(PackOrderEvent $ev
 });
 ```
 
-### The `beforeSaveProvider` event
+### The `beforeSaveProvider` Event
 The event that is triggered before a provider is saved.
 
 ```php
@@ -117,7 +117,7 @@ Event::on(Providers::class, Providers::EVENT_BEFORE_SAVE_PROVIDER, function(Prov
 });
 ```
 
-### The `afterSaveProvider` event
+### The `afterSaveProvider` Event
 The event that is triggered after a provider is saved.
 
 ```php
@@ -132,7 +132,7 @@ Event::on(Providers::class, Providers::EVENT_AFTER_SAVE_PROVIDER, function(Provi
 });
 ```
 
-### The `beforeDeleteProvider` event
+### The `beforeDeleteProvider` Event
 The event that is triggered before a provider is deleted.
 
 ```php
@@ -146,7 +146,7 @@ Event::on(Providers::class, Providers::EVENT_BEFORE_DELETE_PROVIDER, function(Pr
 });
 ```
 
-### The `afterDeleteProvider` event
+### The `afterDeleteProvider` Event
 The event that is triggered after a provider is deleted.
 
 ```php
@@ -162,7 +162,7 @@ Event::on(Providers::class, Providers::EVENT_AFTER_DELETE_PROVIDER, function(Pro
 
 ## Shipping Method Events
 
-### The `beforeRegisterShippingMethods` event
+### The `beforeRegisterShippingMethods` Event
 The event that is triggered when rates are converted to shipping methods.
 
 ```php
@@ -177,7 +177,7 @@ Event::on(Service::class, Service::EVENT_BEFORE_REGISTER_SHIPPING_METHODS, funct
     // To modify the shipping methods, directly modify the variable via `$event->shippingMethods = ...`
 });
 ```
-### The `modifyShippingRule` event
+### The `modifyShippingRule` Event
 The event that is triggered to modify a shipping rule for a shipping method. This includes the description, price and more.
 
 ```php

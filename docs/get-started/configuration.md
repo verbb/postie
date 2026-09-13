@@ -1,35 +1,74 @@
 # Configuration
-Create a `postie.php` file under your `/config` directory with the following options available to you. You can also use multi-environment options to change these per environment.
 
-The below shows the defaults already used by Postie, so you don't need to add these options unless you want to modify the values.
+You can customise Postie’s settings using a PHP configuration file. This is optional: each setting has a default, so you only need to include the values you want to change.
+
+To override a setting, create `postie.php` in your Craft project’s `/config` directory and return an array of setting names and values. For example, the following will change the name displayed in the control panel:
 
 ```php
 <?php
 
 return [
-    '*' => [
-        'pluginName' => 'Postie',
-        'enableCaching' => true,
-        'enableRouteCheck' => true,
-        'shippedOrderStatus' => 'shipped',
-        'partiallyShippedOrderStatus' => 'partiallyShipped',
-        'routesChecks' => [
-            '/{cpTrigger}/commerce/orders/\d+',
-            '/checkout/shipping',
-            '/shop/checkout/shipping',
-        ],
-        'providers' => [],
-    ]
+    'pluginName' => 'Postie Tools',
 ];
 ```
 
-## Configuration options
-- `pluginName` - If you wish to customise the plugin name.
-- `enableCaching` - Whether to enable intelligent caching when fetching rates.
-- `enableRouteCheck` - Whether to enable route-checking to protect fetching live rates unnecessarily.
-- `shippedOrderStatus` - The Order Status handle to be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.
-- `partiallyShippedOrderStatus` - The Order Status handle to be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.
-- `routesChecks` - With `enableRouteCheck` enabled, only these routes will trigger fetching rates. Supports Regex and `{cpTrigger}`.
+All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults.
+
+## Configuration Options
+
+::: reference
+### `pluginName`
+
+**Type:** `string` · **Default:** `'Postie'`
+
+If you wish to customise the plugin name.
+:::
+
+
+::: reference
+### `enableCaching`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether to enable intelligent caching when fetching rates.
+:::
+
+
+::: reference
+### `enableRouteCheck`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether to enable route-checking to protect fetching live rates unnecessarily.
+:::
+
+
+::: reference
+### `shippedOrderStatus`
+
+**Type:** `string|null` · **Default:** `'shipped'`
+
+The Order Status handle to be used to mark an order as shipped for Postie to update when lodging a shipment when printing labels.
+:::
+
+
+::: reference
+### `partiallyShippedOrderStatus`
+
+**Type:** `string|null` · **Default:** `'partiallyShipped'`
+
+The Order Status handle to be used to mark an order as partially shipped for Postie to update when lodging a shipment when printing labels.
+:::
+
+
+::: reference
+### `routesChecks`
+
+**Type:** `array` · **Default:** `[ '/{cpTrigger}/commerce/orders/\d+', '/{actionTrigger}/commerce/orders/refresh', '/shop/shipping', '/shop/checkout/shipping', ]`
+
+With `enableRouteCheck` enabled, only these routes will trigger fetching rates. Supports Regex and `{cpTrigger}`.
+:::
+
 - `providers` - A collection of options for each provider.
 
 ### Providers

@@ -2,7 +2,7 @@
 Postie can create shipments for Commerce orders that are lodged with the respective provider APIs. Once lodged, a tracking number and label are returned and stored alongside the order. With this information, your shop owners can print the label to start the shipment process and notify your customers of the order being shipped with the tracking number.
 
 :::tip
-Not all providers support shipments. Be sure to check each [Shipping Provider](docs:shipping-providers) for more details.
+Not all providers support shipments. Be sure to check each [Shipping Provider](docs:feature-tour/providers) for more details.
 :::
 
 :::warning
