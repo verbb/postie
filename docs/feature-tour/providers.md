@@ -29,6 +29,8 @@ Each provider has the following settings available to configure.
 
 Administrators can review provider and shipping-method configuration in the control panel. Saving changes requires administrative changes to be allowed for the environment.
 
+Provider rate tests display carrier-supplied service names and errors as plain text.
+
 ## API Settings
 Every provider will require different API settings, so this section will change depending on the individual provider. See each [Shipping Provider](docs:feature-tour/providers) for more details.
 

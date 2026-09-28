@@ -51,20 +51,22 @@ var columns = [
     { name: '__slot:title', title: Craft.t('app', 'Name') },
     { name: '__slot:handle', title: Craft.t('app', 'Handle') },
     { name: 'carrier', title: Craft.t('app', 'Carrier'), callback: function(provider) {
-        let $icon = '';
-
         if (provider.isMissing) {
-            return '<span class="error">' + provider.label + '</span>';
+            return $('<span/>', { class: 'error' }).text(provider.label).prop('outerHTML');
         }
+
+        let $provider = $('<div/>', { class: 'postie-provider' });
 
         if (provider.icon) {
-            $icon = '<img class="postie-provider-icon" src="' + provider.icon + '">';
+            $('<img/>', {
+                class: 'postie-provider-icon',
+                src: provider.icon,
+            }).appendTo($provider);
         }
 
-        return '<div class="postie-provider">' +
-            $icon +
-            '<span class="postie-provider-label">' + provider.label + '</span>' +
-        '</div>';
+        $('<span/>', { class: 'postie-provider-label' }).text(provider.label).appendTo($provider);
+
+        return $provider.prop('outerHTML');
     } },
     { name: 'enabled', title: Craft.t('postie', 'Enabled'), callback: function(value) {
         if (value) {

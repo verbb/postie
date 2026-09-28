@@ -45,7 +45,7 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
         var data = $('#main-content').find('select, textarea, input').serialize();
 
         this.$testBtn.addClass('vui-loading');
-        this.$result.html('');
+        this.$result.empty();
 
         Craft.sendActionRequest('POST', 'postie/providers/test-rates', { data })
             .then((response) => {
@@ -60,12 +60,12 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
                 }
 
                 if (!response.data.rates || !response.data.rates.length) {
-                    var $table = $('<br><div>' + Craft.t('postie', 'No rates returned.') + '</div>');
+                    var $message = $('<div/>').text(Craft.t('postie', 'No rates returned.'));
 
-                    this.$result.html($table);
+                    this.$result.append($('<br/>'), $message);
                 } else {
                     var $table = $('<div class="postie-rates-tester-table"></div>');
-                    var $ul = $('<ul></ul').appendTo($table);
+                    var $ul = $('<ul/>').appendTo($table);
 
                     $.each(response.data.rates, function(index, item) {
                         let currencyValue = '$';
@@ -97,16 +97,27 @@ Craft.Postie.ProviderRatesTest = Garnish.Base.extend({
                             currencyValue = currencySymbols[currency];
                         }
 
-                        $('<li><span class="label">' + item.serviceName + '</span> <code>' + item.serviceCode + '</code> <span class="price">' + currencyValue + item.rate + '</span></li>').appendTo($ul);
+                        var $item = $('<li/>').appendTo($ul);
+
+                        $('<span/>', { class: 'label' }).text(item.serviceName).appendTo($item);
+                        $item.append(document.createTextNode(' '));
+                        $('<code/>').text(item.serviceCode).appendTo($item);
+                        $item.append(document.createTextNode(' '));
+                        $('<span/>', { class: 'price' }).text(currencyValue + item.rate).appendTo($item);
                     })
 
-                    this.$result.html($table);
+                    this.$result.append($table);
                 }
             })
-            .catch(({response}) => {
-                var errorMessage = '<br><code>' + response.data.message + '</code>';
+            .catch((error) => {
+                var message = error.response && error.response.data && error.response.data.message ?
+                    error.response.data.message :
+                    Craft.t('postie', 'Unable to fetch test rates.');
+                var $error = $('<span/>', { class: 'error' });
 
-                this.$result.html('<span class="error">' + errorMessage + '</span>');
+                $('<br/>').appendTo($error);
+                $('<code/>').text(message).appendTo($error);
+                this.$result.empty().append($error);
             })
             .finally(() => {
                 this.$testBtn.removeClass('vui-loading');

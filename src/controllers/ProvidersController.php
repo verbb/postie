@@ -233,11 +233,8 @@ class ProvidersController extends Controller
 
             return $this->asJson($rates);
         } catch (Throwable $e) {
-            $error = Craft::t('app', '{message}<br>{trace}', [
+            $error = Craft::t('postie', 'Unable to fetch test rates: {message}', [
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => nl2br($e->getTraceAsString()),
             ]);
 
             return $this->asFailure($error);
