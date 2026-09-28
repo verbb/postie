@@ -23,6 +23,20 @@ class ProvidersController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireCpRequest();
+
+        // Only established read-only actions remain available in read-only environments.
+        $this->requireAdmin(!in_array($action->id, ['index', 'edit', 'test-rates'], true));
+
+        return true;
+    }
+
     public function actionIndex(): Response
     {
         $providers = Postie::$plugin->getProviders()->getAllProviders();
@@ -167,7 +181,7 @@ class ProvidersController extends Controller
     {
         $this->requirePostRequest();
 
-        $providerHandle = $this->request->getParam('providerHandle');
+        $request = Craft::$app->getRequest();
         $providersId = $request->getRequiredParam('id');
 
         Postie::$plugin->getProviders()->deleteProviderById($providersId);

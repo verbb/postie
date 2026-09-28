@@ -6,6 +6,7 @@
 - Route plugin settings through the plugin’s authorized settings controller.
 
 ### Fixed
+- Fixed a high-severity authorization vulnerability.
 - Fixed a high-severity information disclosure vulnerability.
 - Fixed a high-severity shipment authorization vulnerability.
 

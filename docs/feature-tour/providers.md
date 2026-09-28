@@ -27,6 +27,8 @@ Is your provider not in the list above? [Contact us](https://verbb.io/contact), 
 
 Each provider has the following settings available to configure.
 
+Administrators can review provider and shipping-method configuration in the control panel. Saving changes requires administrative changes to be allowed for the environment.
+
 ## API Settings
 Every provider will require different API settings, so this section will change depending on the individual provider. See each [Shipping Provider](docs:feature-tour/providers) for more details.
 

@@ -15,6 +15,20 @@ class ShippingMethodsController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireCpRequest();
+
+        // Only the established read-only action remains available in read-only environments.
+        $this->requireAdmin($action->id !== 'edit');
+
+        return true;
+    }
+
     public function actionEdit(string $providerHandle, string $serviceHandle): Response
     {
         $provider = Postie::$plugin->getProviders()->getProviderByHandle($providerHandle);
