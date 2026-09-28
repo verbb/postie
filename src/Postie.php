@@ -227,6 +227,12 @@ class Postie extends Plugin
 
         // Uses order edit template hook to inject order shipments.
         Craft::$app->getView()->hook('cp.commerce.order.content', function(&$context) {
+            $userService = Craft::$app->getUser();
+
+            if (!$userService->checkPermission('postie-viewShipments') && !$userService->checkPermission('postie-createShipments')) {
+                return '';
+            }
+
             return Craft::$app->getView()->renderTemplate('postie/shipments', $context);
         });
 

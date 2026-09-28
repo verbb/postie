@@ -12,6 +12,7 @@ use craft\base\Component;
 use craft\base\MemoizableArray;
 use craft\db\Query;
 use craft\helpers\Db;
+use craft\helpers\Json;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
@@ -72,7 +73,7 @@ class Shipments extends Component
         $shipmentRecord->orderId = $shipment->orderId;
         $shipmentRecord->providerHandle = $shipment->providerHandle;
         $shipmentRecord->trackingNumber = $shipment->trackingNumber;
-        $shipmentRecord->lineItems = $shipment->lineItems;
+        $shipmentRecord->lineItems = $this->_normalizeLineItemQuantities($shipment->lineItems);
         $shipmentRecord->labels = $shipment->labels;
         $shipmentRecord->response = $shipment->response;
         $shipmentRecord->errors = $shipment->errors;
@@ -131,50 +132,26 @@ class Shipments extends Component
 
     public function lodgeShipment(Shipment $shipment, Order $order, Rate $rate): bool
     {
-        $provider = $rate->getProvider();
-
-        if (!$provider) {
-            return false;
-        }
-
-        $labelResponse = $provider->getLabels($order, $rate->service, $shipment->lineItems);
-
-        if ($labelResponse->errors) {
-            $shipment->addErrors($labelResponse->errors);
+        if (!$order->id) {
+            $shipment->addError('orderId', 'Unable to lodge a shipment without a saved order.');
 
             return false;
         }
 
-        $shipment->response = $labelResponse->response;
+        $lockName = 'postie:shipment:order:' . $order->id;
+        $mutex = Craft::$app->getMutex();
 
-        foreach ($labelResponse->labels as $label) {
-            $shipment->trackingNumber = $label->trackingNumber;
+        if (!$mutex->acquire($lockName, 5)) {
+            $shipment->addError('orderId', 'Another shipment is currently being created for this order.');
 
-            $shipment->labels = [
-                'id' => $label->labelId,
-                'data' => $label->labelData,
-                'mime' => $label->labelMime,
-            ];
-
-            if (!$this->saveShipment($shipment)) {
-                return false;
-            }
+            return false;
         }
 
-        // Move the order to either "Shipped" or "Partially Shipped"
-        if (!$this->getUnshippedLineItems($order)) {
-            $orderStatus = Postie::$plugin->getSettings()->getShippedOrderStatus();
-        } else {
-            $orderStatus = Postie::$plugin->getSettings()->getPartiallyShippedOrderStatus();
+        try {
+            return $this->_lodgeShipment($shipment, $order, $rate);
+        } finally {
+            $mutex->release($lockName);
         }
-
-        if ($orderStatus) {
-            $order->orderStatusId = $orderStatus->id;
-
-            Craft::$app->getElements()->saveElement($order);
-        }
-
-        return true;
     }
 
     public function getLineItems(Order $order): array
@@ -212,24 +189,247 @@ class Shipments extends Component
     {
         $order = $lineItem->getOrder();
 
-        $shipments = $this->getShipmentsByOrderId($order->id);
+        if (!$order?->id) {
+            return 0;
+        }
 
+        $shipments = $this->getShipmentsByOrderId($order->id);
         $quantity = $lineItem->qty;
 
         foreach ($shipments as $shipment) {
-            foreach ($shipment->lineItems as $lineItemId => $lineItemQty) {
-                if ((string)$lineItemId === (string)$lineItem->id) {
-                    $quantity -= $lineItemQty;
-                }
-            }
+            $quantity -= $shipment->lineItems[$lineItem->id] ?? 0;
         }
 
-        return $quantity;
+        return max(0, $quantity);
     }
 
 
     // Private Methods
     // =========================================================================
+
+    private function _lodgeShipment(Shipment $shipment, Order $order, Rate $rate): bool
+    {
+        $this->_shipments = null;
+
+        $lineItems = $this->_prepareLineItems($shipment, $order, $rate);
+
+        if ($lineItems === null) {
+            return false;
+        }
+
+        $provider = $rate->getProvider();
+
+        if (!$provider) {
+            $shipment->addError('providerHandle', 'Unable to find the shipping provider for this rate.');
+
+            return false;
+        }
+
+        $labelResponse = $provider->getLabels($order, $rate->service, $lineItems);
+
+        if (!$labelResponse) {
+            $shipment->addError('labels', 'Unable to create shipping labels.');
+
+            return false;
+        }
+
+        if ($labelResponse->errors) {
+            $shipment->addErrors($labelResponse->errors);
+
+            return false;
+        }
+
+        $shipment->response = $labelResponse->response;
+
+        if (!$labelResponse->labels) {
+            $shipment->addError('labels', 'The shipping provider did not return any labels.');
+
+            return false;
+        }
+
+        foreach ($labelResponse->labels as $label) {
+            $shipment->trackingNumber = $label->trackingNumber;
+
+            $shipment->labels = [
+                'id' => $label->labelId,
+                'data' => $label->labelData,
+                'mime' => $label->labelMime,
+            ];
+
+            if (!$this->saveShipment($shipment)) {
+                return false;
+            }
+        }
+
+        // Move the order to either "Shipped" or "Partially Shipped"
+        if (!$this->getUnshippedLineItems($order)) {
+            $orderStatus = Postie::$plugin->getSettings()->getShippedOrderStatus();
+        } else {
+            $orderStatus = Postie::$plugin->getSettings()->getPartiallyShippedOrderStatus();
+        }
+
+        if ($orderStatus) {
+            $order->orderStatusId = $orderStatus->id;
+
+            Craft::$app->getElements()->saveElement($order);
+        }
+
+        return true;
+    }
+
+    private function _prepareLineItems(Shipment $shipment, Order $order, Rate $rate): ?array
+    {
+        if ($shipment->orderId !== $order->id || $rate->orderId !== $order->id) {
+            $shipment->addError('orderId', 'The shipment and shipping rate must belong to the same order.');
+
+            return null;
+        }
+
+        if (!$shipment->providerHandle || $shipment->providerHandle !== $rate->providerHandle) {
+            $shipment->addError('providerHandle', 'The shipment provider does not match the shipping rate.');
+
+            return null;
+        }
+
+        if (!$rate->service) {
+            $shipment->addError('providerHandle', 'The shipping rate does not identify a provider service.');
+
+            return null;
+        }
+
+        $orderLineItems = [];
+
+        foreach ($order->getLineItems() as $lineItem) {
+            if ($lineItem->id) {
+                $orderLineItems[$lineItem->id] = $lineItem;
+            }
+        }
+
+        $lineItemQuantities = [];
+
+        foreach ($shipment->lineItems as $lineItemId => $quantity) {
+            if ($quantity instanceof LineItem) {
+                $lineItemId = $quantity->id;
+                $quantity = $quantity->qty;
+            }
+
+            $lineItemId = $this->_positiveInteger($lineItemId);
+            $quantity = $this->_nonNegativeInteger($quantity);
+
+            if (!$lineItemId || $quantity === null || isset($lineItemQuantities[$lineItemId])) {
+                $shipment->addError('lineItems', 'Shipment quantities must be whole numbers for unique line items.');
+
+                return null;
+            }
+
+            if ($quantity === 0) {
+                continue;
+            }
+
+            $lineItem = $orderLineItems[$lineItemId] ?? null;
+
+            if (!$lineItem) {
+                $shipment->addError('lineItems', 'A selected line item does not belong to this order.');
+
+                return null;
+            }
+
+            if ($quantity > $this->getShippableQty($lineItem)) {
+                $shipment->addError('lineItems', 'A selected quantity is greater than the remaining shippable quantity.');
+
+                return null;
+            }
+
+            $lineItemQuantities[$lineItemId] = $quantity;
+        }
+
+        if (!$lineItemQuantities) {
+            $shipment->addError('lineItems', 'Select at least one line item for the shipment.');
+
+            return null;
+        }
+
+        $lineItems = [];
+
+        foreach ($lineItemQuantities as $lineItemId => $quantity) {
+            $lineItem = clone $orderLineItems[$lineItemId];
+            $lineItem->qty = $quantity;
+            $lineItem->setOrder($order);
+            $lineItems[] = $lineItem;
+        }
+
+        return $lineItems;
+    }
+
+    private function _normalizeLineItemQuantities(mixed $lineItems): array
+    {
+        if (is_string($lineItems)) {
+            try {
+                $lineItems = Json::decodeIfJson($lineItems);
+            } catch (\Throwable) {
+                return [];
+            }
+        }
+
+        if (!is_array($lineItems)) {
+            return [];
+        }
+
+        $quantities = [];
+
+        foreach ($lineItems as $lineItemId => $quantity) {
+            if ($quantity instanceof LineItem) {
+                $lineItemId = $quantity->id;
+                $quantity = $quantity->qty;
+            } elseif (is_array($quantity)) {
+                $lineItemId = $quantity['id'] ?? null;
+                $quantity = $quantity['qty'] ?? null;
+            }
+
+            $lineItemId = $this->_positiveInteger($lineItemId);
+            $quantity = $this->_positiveInteger($quantity);
+
+            if ($lineItemId && $quantity) {
+                $quantities[$lineItemId] = ($quantities[$lineItemId] ?? 0) + $quantity;
+            }
+        }
+
+        return $quantities;
+    }
+
+    private function _positiveInteger(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (!is_string($value) || !preg_match('/^[1-9]\d*$/D', $value)) {
+            return null;
+        }
+
+        $value = filter_var($value, FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1],
+        ]);
+
+        return $value === false ? null : $value;
+    }
+
+    private function _nonNegativeInteger(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value >= 0 ? $value : null;
+        }
+
+        if (!is_string($value) || !preg_match('/^(?:0|[1-9]\d*)$/D', $value)) {
+            return null;
+        }
+
+        $value = filter_var($value, FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 0],
+        ]);
+
+        return $value === false ? null : $value;
+    }
 
     private function _shipments(): MemoizableArray
     {
@@ -237,6 +437,7 @@ class Shipments extends Component
             $shipments = [];
 
             foreach ($this->_createShipmentsQuery()->all() as $result) {
+                $result['lineItems'] = $this->_normalizeLineItemQuantities($result['lineItems'] ?? []);
                 $shipments[] = new Shipment($result);
             }
 

@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed a high-severity information disclosure vulnerability.
+- Fixed a high-severity shipment authorization vulnerability.
 
 ## 5.0.23 - 2026-09-14
 
