@@ -8,6 +8,7 @@ use craft\helpers\ArrayHelper;
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
 use craft\commerce\enums\LineItemType;
+use craft\commerce\models\LineItem;
 
 class PostieHelper
 {
@@ -37,6 +38,31 @@ class PostieHelper
         ]);
 
         return md5($signature);
+    }
+
+    public static function getLineItemFingerprintData(LineItem $lineItem): array
+    {
+        return [
+            'id' => $lineItem->id,
+            'uid' => $lineItem->uid,
+            'type' => $lineItem->type->value,
+            'purchasableId' => $lineItem->purchasableId,
+            'sku' => $lineItem->getSku(),
+            'description' => $lineItem->getDescription(),
+            'qty' => $lineItem->qty,
+            'price' => $lineItem->getPrice(),
+            'promotionalPrice' => $lineItem->getPromotionalPrice(),
+            'salePrice' => $lineItem->getSalePrice(),
+            'subtotal' => $lineItem->getSubtotal(),
+            'total' => $lineItem->getTotal(),
+            'weight' => $lineItem->weight,
+            'length' => $lineItem->length,
+            'width' => $lineItem->width,
+            'height' => $lineItem->height,
+            'shippingCategoryId' => $lineItem->shippingCategoryId,
+            'hasFreeShipping' => $lineItem->getHasFreeShipping(),
+            'options' => $lineItem->getOptions(),
+        ];
     }
 
     public static function getAddressLines(Address $address = null): array

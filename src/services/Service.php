@@ -2,6 +2,7 @@
 namespace verbb\postie\services;
 
 use verbb\postie\Postie;
+use verbb\postie\events\ModifyRateFingerprintEvent;
 use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\helpers\PostieHelper;
 use verbb\postie\helpers\ShippyHelper;
@@ -11,14 +12,19 @@ use verbb\postie\models\ShippingMethod;
 
 use Craft;
 use craft\elements\Address;
+use craft\helpers\App;
 use craft\helpers\Json;
+
+use yii\base\Component;
+
+use DateTimeInterface;
+use Stringable;
+use Throwable;
+use WeakMap;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
 use craft\commerce\events\RegisterAvailableShippingMethodsEvent;
-
-use yii\base\Component;
-
 use verbb\shippy\Shippy;
 use verbb\shippy\events\RateEvent;
 use verbb\shippy\models\Shipment;
@@ -29,12 +35,16 @@ class Service extends Component
     // =========================================================================
     
     public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
+    public const EVENT_MODIFY_RATE_FINGERPRINT = 'modifyRateFingerprint';
+
+    private const RATE_CACHE_VERSION = 2;
+    private const RATE_CACHE_PREFIX = 'postie-rates-v2:';
 
 
     // Properties
     // =========================================================================
 
-    private ?array $_availableShippingMethods = null;
+    private ?WeakMap $_availableShippingMethods = null;
 
 
     // Public Methods
@@ -147,6 +157,44 @@ class Service extends Component
         return $shippingMethods;
     }
 
+    public function createShippingMethodData(ShippingMethod $shippingMethod): array
+    {
+        return [
+            'providerHandle' => $shippingMethod->provider?->handle,
+            'serviceCode' => $shippingMethod->handle,
+            'serviceName' => $shippingMethod->name,
+            'rate' => $shippingMethod->rate,
+            'rateOptions' => $shippingMethod->rateOptions ?? [],
+        ];
+    }
+
+    public function createShippingMethodFromData(array $data): ?ShippingMethod
+    {
+        $providerHandle = $data['providerHandle'] ?? null;
+        $serviceCode = $data['serviceCode'] ?? null;
+
+        if (!is_string($providerHandle) || !is_string($serviceCode) || !isset($data['rate']) || !is_numeric($data['rate'])) {
+            return null;
+        }
+
+        $providersService = Postie::$plugin->getProviders();
+        $provider = $providersService->getProviderByHandle($providerHandle);
+
+        if (!$provider || !$provider->getEnabled()) {
+            return null;
+        }
+
+        $shippingMethod = $providersService->getShippingMethodForService($provider, $serviceCode);
+        $shippingMethod->rate = isset($data['rate']) ? (float)$data['rate'] : null;
+        $shippingMethod->rateOptions = is_array($data['rateOptions'] ?? null) ? $data['rateOptions'] : [];
+
+        if (!$shippingMethod->name && is_string($data['serviceName'] ?? null)) {
+            $shippingMethod->name = $data['serviceName'];
+        }
+
+        return $shippingMethod;
+    }
+
     public function registerShippingMethods(RegisterAvailableShippingMethodsEvent $event): void
     {
         $order = $event->order;
@@ -167,49 +215,18 @@ class Service extends Component
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
-        // Because this function can be called multiple times, save available methods to a local cache
-        if ($this->_availableShippingMethods === null) {
-            // Completed orders should keep the checkout rate locked, unless an admin is explicitly
-            // recalculating the order in the control panel (RECALCULATION_MODE_ALL).
-            if ($order->isCompleted && $order->getRecalculationMode() !== Order::RECALCULATION_MODE_ALL) {
-                $this->_availableShippingMethods = $this->getShippingMethodsForCompletedOrder($order);
-            } else if ($settings->getEnableCaching()) {
-                $signature = PostieHelper::getSignature($order);
-                $cacheKey = 'postie-shipment-' . $signature;
-
-                // Get the rate from the cache (if any)
-                $cachedShippingMethods = Craft::$app->getCache()->get($cacheKey);
-
-                // If is it not in the cache get rate via API
-                if ($cachedShippingMethods === false) {
-                    $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
-
-                    // Set this in our cache for the next request to be much quicker
-                    if ($this->_availableShippingMethods) {
-                        Craft::$app->getCache()->set($cacheKey, $this->_availableShippingMethods, 0);
-                    }
-                } else {
-                    foreach ($cachedShippingMethods as $method) {
-                        Postie::debugPaneLog('{provider}: Fetched rate `{rate}` for service `{service}` from cache.', [
-                            'provider' => $method->provider->name,
-                            'service' => $method->handle,
-                            'rate' => $method->rate,
-                        ]);
-                    }
-
-                    $this->_availableShippingMethods = $cachedShippingMethods;
-                }
-            } else {
-                $this->_availableShippingMethods = $this->getShippingMethodsForOrder($order);
-            }
+        // Completed orders should keep the checkout rate locked, unless an admin is explicitly
+        // recalculating the order in the control panel (RECALCULATION_MODE_ALL).
+        if ($order->isCompleted && $order->getRecalculationMode() !== Order::RECALCULATION_MODE_ALL) {
+            $shippingMethods = $this->getShippingMethodsForCompletedOrder($order);
+        } else {
+            $shippingMethods = $this->_getShippingMethodsForActiveOrder($order, $settings);
         }
-
-        $this->_availableShippingMethods = $this->_availableShippingMethods ?? [];
 
         // Allow plugins to modify the shipping methods.
         $modifyShippingMethodsEvent = new ModifyShippingMethodsEvent([
             'order' => $order,
-            'shippingMethods' => $this->_availableShippingMethods,
+            'shippingMethods' => $shippingMethods,
         ]);
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_REGISTER_SHIPPING_METHODS)) {
@@ -217,9 +234,7 @@ class Service extends Component
         }
 
         foreach ($modifyShippingMethodsEvent->shippingMethods as $shippingMethod) {
-            // Ensure that the shipping method has `storeId` set, otherwise a fatal error will be thrown.
-            // This can be removed at the next breakpoint, as it's already done when creating a new `ShippingMethod` but
-            // because these objects are cached, this won't be populated, so it's set here for safety for everyone.
+            // Integration-provided methods may not have a store yet, and Commerce requires one.
             $shippingMethod->storeId = Commerce::getInstance()->getStores()->getPrimaryStore()->id ?? null;
 
             $event->shippingMethods[] = $shippingMethod;
@@ -229,6 +244,267 @@ class Service extends Component
 
     // Private Methods
     // =========================================================================
+
+    private function _getShippingMethodsForActiveOrder(Order $order, Settings $settings): array
+    {
+        $providers = Postie::$plugin->getProviders()->getAllEnabledProviders();
+        $fingerprint = $this->_getRateFingerprint($order, $providers);
+        $memoized = $this->_availableShippingMethods?->offsetExists($order) ? $this->_availableShippingMethods[$order] : null;
+
+        if (($memoized['fingerprint'] ?? null) === $fingerprint && ($memoized['expiresAt'] ?? 0) > time() && !empty($memoized['rates']) && is_array($memoized['rates'])) {
+            return $this->_createShippingMethodsFromData($memoized['rates']);
+        }
+
+        if ($memoized !== null) {
+            unset($this->_availableShippingMethods[$order]);
+        }
+
+        $cacheKey = $order->uid ? self::RATE_CACHE_PREFIX . $order->uid : null;
+
+        if ($settings->getEnableCaching() && $cacheKey) {
+            $cachedEntry = $this->_getCachedRateEntry($cacheKey, $fingerprint);
+
+            if ($cachedEntry !== null) {
+                $this->_memoizeRates($order, $fingerprint, $cachedEntry['rates'], $cachedEntry['expiresAt']);
+
+                return $this->_createShippingMethodsFromData($cachedEntry['rates'], true);
+            }
+        }
+
+        if (!$settings->getEnableCaching() || !$cacheKey) {
+            $shippingMethods = $this->getShippingMethodsForOrder($order);
+            $rateData = $this->_createRateData($shippingMethods);
+
+            if ($rateData) {
+                $this->_memoizeRates($order, $fingerprint, $rateData, time() + $settings->getRateCacheDuration());
+            }
+
+            return $this->_createShippingMethodsFromData($rateData);
+        }
+
+        $mutex = Craft::$app->getMutex();
+        $lockName = 'postie:rates:' . hash('sha256', $cacheKey . ':' . $fingerprint);
+
+        if (!$mutex->acquire($lockName, 5)) {
+            $cachedEntry = $this->_getCachedRateEntry($cacheKey, $fingerprint);
+
+            return $cachedEntry === null ? [] : $this->_createShippingMethodsFromData($cachedEntry['rates'], true);
+        }
+
+        try {
+            $cachedEntry = $this->_getCachedRateEntry($cacheKey, $fingerprint);
+
+            if ($cachedEntry !== null) {
+                $rateData = $cachedEntry['rates'];
+                $expiresAt = $cachedEntry['expiresAt'];
+                $fromCache = true;
+            } else {
+                $shippingMethods = $this->getShippingMethodsForOrder($order);
+                $rateData = $this->_createRateData($shippingMethods);
+                $expiresAt = time() + $settings->getRateCacheDuration();
+                $fromCache = false;
+
+                if ($rateData) {
+                    Craft::$app->getCache()->set($cacheKey, [
+                        'version' => self::RATE_CACHE_VERSION,
+                        'fingerprint' => $fingerprint,
+                        'rates' => $rateData,
+                        'expiresAt' => $expiresAt,
+                    ], $settings->getRateCacheDuration());
+                }
+            }
+
+            if ($rateData) {
+                $this->_memoizeRates($order, $fingerprint, $rateData, $expiresAt);
+            }
+
+            return $this->_createShippingMethodsFromData($rateData, $fromCache);
+        } finally {
+            $mutex->release($lockName);
+        }
+    }
+
+    private function _getRateFingerprint(Order $order, array $providers): string
+    {
+        $commerceSettings = Commerce::getInstance()->getSettings();
+        $providerConfigs = [];
+
+        foreach ($providers as $provider) {
+            $providerConfigs[] = [
+                'handle' => $provider->handle,
+                'digest' => $this->_hashFingerprintData(Postie::$plugin->getProviders()->createProviderConfig($provider), true),
+            ];
+        }
+
+        $lineItems = [];
+
+        foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
+            $lineItems[] = PostieHelper::getLineItemFingerprintData($lineItem);
+        }
+
+        $data = [
+            'version' => self::RATE_CACHE_VERSION,
+            'order' => [
+                'id' => $order->id,
+                'uid' => $order->uid,
+                'storeId' => $order->storeId,
+                'siteId' => $order->siteId,
+                'currency' => $order->currency,
+                'email' => $order->email,
+                'totalQty' => $order->getTotalQty(),
+                'totalWeight' => $order->getTotalWeight(),
+                'itemSubtotal' => $order->getItemSubtotal(),
+                'totalDiscount' => $order->getTotalDiscount(),
+                'fields' => $order->getSerializedFieldValues(),
+                'lineItems' => $lineItems,
+            ],
+            'origin' => PostieHelper::getAddressLines(Postie::getStoreShippingAddress()),
+            'destination' => PostieHelper::getAddressLines($order->getShippingAddress() ?? $order->getEstimatedShippingAddress()),
+            'units' => [
+                'dimension' => $commerceSettings->dimensionUnits,
+                'weight' => $commerceSettings->weightUnits,
+            ],
+            'providers' => $providerConfigs,
+            'runtime' => $this->_getRuntimeFingerprintData($providers),
+        ];
+
+        $event = new ModifyRateFingerprintEvent([
+            'order' => $order,
+            'fingerprintData' => $data,
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_RATE_FINGERPRINT)) {
+            $this->trigger(self::EVENT_MODIFY_RATE_FINGERPRINT, $event);
+        }
+
+        return $this->_hashFingerprintData($event->fingerprintData);
+    }
+
+    private function _getRuntimeFingerprintData(array $providers): array
+    {
+        foreach ($providers as $provider) {
+            if (property_exists($provider, 'phoneField') && $provider->phoneField) {
+                try {
+                    return [
+                        'cartFields' => Commerce::getInstance()->getCarts()->getCart()->getSerializedFieldValues(),
+                    ];
+                } catch (Throwable) {
+                    return [];
+                }
+            }
+        }
+
+        return [];
+    }
+
+    private function _normalizeFingerprintValue(mixed $value, bool $parseEnv = false): mixed
+    {
+        if (is_array($value)) {
+            if (!array_is_list($value)) {
+                ksort($value);
+            }
+
+            foreach ($value as $key => $item) {
+                $value[$key] = $this->_normalizeFingerprintValue($item, $parseEnv);
+            }
+
+            return $value;
+        }
+
+        if (is_string($value)) {
+            return $parseEnv ? App::parseEnv($value) : $value;
+        }
+
+        if ($value instanceof DateTimeInterface) {
+            return $value->format(DateTimeInterface::ATOM);
+        }
+
+        if ($value instanceof Stringable) {
+            return (string)$value;
+        }
+
+        if (is_object($value)) {
+            return get_class($value);
+        }
+
+        return $value;
+    }
+
+    private function _hashFingerprintData(array $data, bool $parseEnv = false): string
+    {
+        $normalizedData = $this->_normalizeFingerprintValue($data, $parseEnv);
+        $encodedData = Json::encode($normalizedData, JSON_PRESERVE_ZERO_FRACTION);
+
+        return hash('sha256', Craft::$app->getSecurity()->hashData($encodedData));
+    }
+
+    private function _getCachedRateEntry(string $cacheKey, string $fingerprint): ?array
+    {
+        $cached = Craft::$app->getCache()->get($cacheKey);
+
+        if (!is_array($cached) || ($cached['version'] ?? null) !== self::RATE_CACHE_VERSION || ($cached['fingerprint'] ?? null) !== $fingerprint || !is_int($cached['expiresAt'] ?? null) || $cached['expiresAt'] <= time() || empty($cached['rates']) || !is_array($cached['rates'])) {
+            return null;
+        }
+
+        return [
+            'rates' => $cached['rates'],
+            'expiresAt' => $cached['expiresAt'],
+        ];
+    }
+
+    private function _memoizeRates(Order $order, string $fingerprint, array $rates, int $expiresAt): void
+    {
+        $this->_availableShippingMethods ??= new WeakMap();
+        $this->_availableShippingMethods[$order] = [
+            'fingerprint' => $fingerprint,
+            'rates' => $rates,
+            'expiresAt' => $expiresAt,
+        ];
+    }
+
+    private function _createRateData(array $shippingMethods): array
+    {
+        $rateData = [];
+
+        foreach ($shippingMethods as $shippingMethod) {
+            $data = $this->createShippingMethodData($shippingMethod);
+
+            if ($data['providerHandle'] && $data['serviceCode']) {
+                $rateData[] = $data;
+            }
+        }
+
+        return $rateData;
+    }
+
+    private function _createShippingMethodsFromData(array $rateData, bool $fromCache = false): array
+    {
+        $shippingMethods = [];
+
+        foreach ($rateData as $data) {
+            if (!is_array($data)) {
+                continue;
+            }
+
+            $shippingMethod = $this->createShippingMethodFromData($data);
+
+            if (!$shippingMethod) {
+                continue;
+            }
+
+            if ($fromCache) {
+                Postie::debugPaneLog('{provider}: Fetched rate `{rate}` for service `{service}` from cache.', [
+                    'provider' => $shippingMethod->provider->name,
+                    'service' => $shippingMethod->handle,
+                    'rate' => $shippingMethod->rate,
+                ]);
+            }
+
+            $shippingMethods[] = $shippingMethod;
+        }
+
+        return $shippingMethods;
+    }
 
     /**
      * Return the shipping method locked in at checkout for a completed order.
@@ -272,6 +548,12 @@ class Service extends Component
         // Fall back to the shipping method cached during checkout, if still available
         $cacheKey = 'postie-shipping-method:' . $order->uid;
         $cachedShippingMethod = Craft::$app->getCache()->get($cacheKey);
+
+        if ($cachedShippingMethod instanceof ShippingMethod) {
+            $cachedShippingMethod = $this->createShippingMethodFromData($this->createShippingMethodData($cachedShippingMethod));
+        } else if (is_array($cachedShippingMethod)) {
+            $cachedShippingMethod = $this->createShippingMethodFromData($cachedShippingMethod);
+        }
 
         if ($cachedShippingMethod instanceof ShippingMethod && $cachedShippingMethod->handle === $order->shippingMethodHandle) {
             Postie::debugPaneLog('{provider}: Using checkout-cached rate `{rate}` for completed order service `{service}`.', [

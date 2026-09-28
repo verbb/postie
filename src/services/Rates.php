@@ -49,25 +49,42 @@ class Rates extends Component
 
         // Did we have a cached shipping rate for Postie, set during the checkout?
         $cacheKey = 'postie-shipping-method:' . $order->uid;
-        $shippingMethod = Craft::$app->getCache()->get($cacheKey);
+        $shippingMethodData = Craft::$app->getCache()->get($cacheKey);
 
-        if (!$shippingMethod) {
+        if (!$shippingMethodData) {
             return;
         }
 
         try {
+            if ($shippingMethodData instanceof ShippingMethod) {
+                $shippingMethodData = Postie::$plugin->getService()->createShippingMethodData($shippingMethodData);
+            }
+
+            if (!is_array($shippingMethodData)) {
+                return;
+            }
+
+            $providerHandle = $shippingMethodData['providerHandle'] ?? null;
+            $serviceCode = $shippingMethodData['serviceCode'] ?? null;
+
+            if (!is_string($providerHandle) || !is_string($serviceCode) || $serviceCode !== $order->shippingMethodHandle || !isset($shippingMethodData['rate']) || !is_numeric($shippingMethodData['rate'])) {
+                return;
+            }
+
             $rate = new Rate();
             $rate->orderId = $order->id;
-            $rate->providerHandle = $shippingMethod->provider->handle;
-            $rate->rate = $shippingMethod->rate;
-            $rate->service = $shippingMethod->handle;
-            $rate->response = $shippingMethod->rateOptions;
+            $rate->providerHandle = $providerHandle;
+            $rate->rate = (float)($shippingMethodData['rate'] ?? 0);
+            $rate->service = $serviceCode;
+            $rate->response = is_array($shippingMethodData['rateOptions'] ?? null) ? $shippingMethodData['rateOptions'] : [];
 
             if (!$this->saveRate($rate)) {
                 Postie::error('Unable to save rate for order {id}: “{errors}”.', [
                     'id' => $order->id,
                     'errors' => Json::encode($rate->getErrors()),
                 ]);
+            } else {
+                Craft::$app->getCache()->delete($cacheKey);
             }
         } catch (Throwable $e) {
             Postie::error('Unable to store Postie shipping rate for order {id}: “{message}” {file}:{line}', [
@@ -98,7 +115,7 @@ class Rates extends Component
 
         // Store the shipping method to cache, so we can pick it up when the order is completed
         $cacheKey = 'postie-shipping-method:' . $order->uid;
-        Craft::$app->getCache()->set($cacheKey, $shippingMethod);
+        Craft::$app->getCache()->set($cacheKey, Postie::$plugin->getService()->createShippingMethodData($shippingMethod));
     }
 
     public function getRateById(int $id): ?Rate

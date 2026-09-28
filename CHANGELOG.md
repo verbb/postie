@@ -10,6 +10,7 @@
 - Fixed a high-severity authorization vulnerability.
 - Fixed a high-severity information disclosure vulnerability.
 - Fixed a high-severity shipment authorization vulnerability.
+- Fixed live carrier quotes being reused after inputs that affect the rate had changed.
 
 ## 5.0.23 - 2026-09-14
 

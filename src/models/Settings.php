@@ -15,6 +15,7 @@ class Settings extends Model
     public string $pluginName = 'Postie';
     public bool $enableCaching = true;
     public bool $enableRouteCheck = true;
+    public int $rateCacheDuration = 3600;
     public ?string $shippedOrderStatus = 'shipped';
     public ?string $partiallyShippedOrderStatus = 'partiallyShipped';
 
@@ -37,6 +38,11 @@ class Settings extends Model
     public function getEnableRouteCheck(): bool|string
     {
         return App::parseBooleanEnv($this->enableRouteCheck);
+    }
+
+    public function getRateCacheDuration(): int
+    {
+        return max(60, $this->rateCacheDuration);
     }
 
     public function hasMatchedRoute(): bool
@@ -99,6 +105,7 @@ class Settings extends Model
         $rules[] = [['pluginName'], 'trim'];
         $rules[] = [['pluginName'], 'required'];
         $rules[] = [['pluginName'], 'string', 'max' => 52];
+        $rules[] = [['rateCacheDuration'], 'integer', 'min' => 60];
 
         return $rules;
     }

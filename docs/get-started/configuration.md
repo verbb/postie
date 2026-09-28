@@ -35,6 +35,15 @@ Whether to enable intelligent caching when fetching rates.
 
 
 ::: reference
+### `rateCacheDuration`
+
+**Type:** `int` · **Default:** `3600`
+
+How long, in seconds, a live carrier quote may be reused when the order and every input that affects the quote remain unchanged. The minimum value is `60`. Each order keeps one current cached quote, and a changed address, line item, currency, store, provider configuration or other fingerprinted input causes Postie to fetch a fresh quote on an allowed route.
+:::
+
+
+::: reference
 ### `enableRouteCheck`
 
 **Type:** `bool` · **Default:** `true`

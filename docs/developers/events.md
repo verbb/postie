@@ -162,6 +162,22 @@ Event::on(Providers::class, Providers::EVENT_AFTER_DELETE_PROVIDER, function(Pro
 
 ## Shipping Method Events
 
+### The `modifyRateFingerprint` Event
+
+The event that is triggered before Postie creates the private fingerprint used to decide whether a cached live quote still matches an order. Postie includes its built-in order, address, line-item, store and unit inputs automatically, together with one-way digests of the enabled provider configurations. If custom rate or packing logic depends on additional data, add that data here so a change causes a fresh quote.
+
+Do not add secrets as array keys or log the fingerprint data. Postie hashes the complete data structure before using it for cache matching.
+
+```php
+use verbb\postie\events\ModifyRateFingerprintEvent;
+use verbb\postie\services\Service;
+use yii\base\Event;
+
+Event::on(Service::class, Service::EVENT_MODIFY_RATE_FINGERPRINT, function(ModifyRateFingerprintEvent $event) {
+    $event->fingerprintData['warehouseZone'] = Craft::$app->getConfig()->getCustom()->warehouseZone;
+});
+```
+
 ### The `beforeRegisterShippingMethods` Event
 The event that is triggered when rates are converted to shipping methods.
 
