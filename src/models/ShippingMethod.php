@@ -30,6 +30,19 @@ class ShippingMethod extends BaseShippingMethod
     // Public Methods
     // =========================================================================
 
+    public function fields(): array
+    {
+        $fields = parent::fields();
+
+        // The provider carries API credentials and must remain available at runtime, but it is not part of the public shipping-method representation.
+        unset($fields['provider']);
+
+        $fields['providerHandle'] = fn() => $this->provider?->handle;
+        $fields['providerName'] = fn() => $this->provider?->name;
+
+        return $fields;
+    }
+
     public function getType(): string
     {
         return $this->provider->name;
@@ -58,11 +71,6 @@ class ShippingMethod extends BaseShippingMethod
         $shippingRule->provider = $this->provider;
         $shippingRule->shippingMethod = $this;
         $shippingRule->options = $this->rateOptions;
-
-        // Drop any settings for the provider, these are returned with calculation requests
-        if (property_exists($shippingRule->provider, 'settings')) {
-            $shippingRule->provider->settings = [];
-        }
 
         // Allow plugins to modify the rule
         $modifyRuleEvent = new ModifyShippingRuleEvent([

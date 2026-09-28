@@ -5,6 +5,9 @@
 ### Changed
 - Route plugin settings through the plugin’s authorized settings controller.
 
+### Fixed
+- Fixed a high-severity information disclosure vulnerability.
+
 ## 5.0.23 - 2026-09-14
 
 ### Changed

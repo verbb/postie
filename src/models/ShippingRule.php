@@ -19,6 +19,19 @@ class ShippingRule extends BaseShippingRule
     // Public Methods
     // =========================================================================
 
+    public function fields(): array
+    {
+        $fields = parent::fields();
+
+        // Keep the runtime objects used for pricing out of public array and JSON representations.
+        unset($fields['provider'], $fields['shippingMethod']);
+
+        $fields['providerHandle'] = fn() => $this->provider?->handle;
+        $fields['providerName'] = fn() => $this->provider?->name;
+
+        return $fields;
+    }
+
     public function getOptions(): array
     {
         return $this->options;
