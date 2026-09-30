@@ -7,23 +7,23 @@ Fetch shipping rates, lodge shipments, generate labels and track deliveries with
 
 Connect one or more supported carriers for live checkout quotes. Postie is built to be extended too, so a project can add the provider it needs.
 
-- ![Aramex logo](../screenshots/output/providers/aramex.svg) **Aramex**
-- ![Aramex Australia logo](../screenshots/output/providers/aramex-australia.svg) **Aramex Australia**
-- ![Australia Post logo](../screenshots/output/providers/australia-post.svg) **Australia Post**
-- ![Bring logo](../screenshots/output/providers/bring.svg) **Bring**
-- ![Canada Post logo](../screenshots/output/providers/canada-post.svg) **Canada Post**
-- ![Colissimo logo](../screenshots/output/providers/colissimo.svg) **Colissimo**
-- ![DHL Express logo](../screenshots/output/providers/dhl-express.svg) **DHL Express**
-- ![Fastway logo](../screenshots/output/providers/fastway.svg) **Fastway**
-- ![FedEx logo](../screenshots/output/providers/fed-ex.svg) **FedEx**
-- ![Interparcel logo](../screenshots/output/providers/interparcel.svg) **Interparcel**
-- ![New Zealand Post logo](../screenshots/output/providers/new-zealand-post.svg) **New Zealand Post**
-- ![PostNL logo](../screenshots/output/providers/post-nl.svg) **PostNL**
-- ![Royal Mail logo](../screenshots/output/providers/royal-mail.png) **Royal Mail**
-- ![Sendle logo](../screenshots/output/providers/sendle.svg) **Sendle**
-- ![TNT Australia logo](../screenshots/output/providers/tnt-australia.svg) **TNT Australia**
-- ![UPS logo](../screenshots/output/providers/ups.svg) **UPS**
-- ![USPS logo](../screenshots/output/providers/usps.svg) **USPS**
+- ![Aramex logo](../screenshots/providers/aramex.svg) **Aramex**
+- ![Aramex Australia logo](../screenshots/providers/aramex-australia.svg) **Aramex Australia**
+- ![Australia Post logo](../screenshots/providers/australia-post.svg) **Australia Post**
+- ![Bring logo](../screenshots/providers/bring.svg) **Bring**
+- ![Canada Post logo](../screenshots/providers/canada-post.svg) **Canada Post**
+- ![Colissimo logo](../screenshots/providers/colissimo.svg) **Colissimo**
+- ![DHL Express logo](../screenshots/providers/dhl-express.svg) **DHL Express**
+- ![Fastway logo](../screenshots/providers/fastway.svg) **Fastway**
+- ![FedEx logo](../screenshots/providers/fed-ex.svg) **FedEx**
+- ![Interparcel logo](../screenshots/providers/interparcel.svg) **Interparcel**
+- ![New Zealand Post logo](../screenshots/providers/new-zealand-post.svg) **New Zealand Post**
+- ![PostNL logo](../screenshots/providers/post-nl.svg) **PostNL**
+- ![Royal Mail logo](../screenshots/providers/royal-mail.png) **Royal Mail**
+- ![Sendle logo](../screenshots/providers/sendle.svg) **Sendle**
+- ![TNT Australia logo](../screenshots/providers/tnt-australia.svg) **TNT Australia**
+- ![UPS logo](../screenshots/providers/ups.svg) **UPS**
+- ![USPS logo](../screenshots/providers/usps.svg) **USPS**
 <!-- feature-logo-grid-end -->
 
 <!-- feature-media media-size="large" -->
@@ -31,7 +31,7 @@ Connect one or more supported carriers for live checkout quotes. Postie is built
 
 Accurate rates start with accurate products. Postie points out variants that are missing dimensions or weight, so you can fix the gaps before a customer reaches checkout.
 
-![Postie listing a product variant with missing dimensions in Craft 5](../screenshots/output/feature-tour/product-dimensions.png)
+![Postie listing a product variant with missing dimensions in Craft 5](../screenshots/product-dimensions.png)
 <!-- feature-media-end -->
 
 <!-- feature-section media-size="large" -->
@@ -39,7 +39,7 @@ Accurate rates start with accurate products. Postie points out variants that are
 
 Ensure your customers’ products are packed as efficiently as possible by defining the box dimensions and weights your store keeps on hand. Pack every item separately, treat the order as one parcel, or use volume-based packing to match products against provider and custom boxes.
 
-![Postie packing methods and FedEx box sizes in Craft 5](../screenshots/output/feature-tour/packing.png)
+![Postie packing methods and FedEx box sizes in Craft 5](../screenshots/packing.png)
 <!-- feature-section-end -->
 
 <!-- feature-media media-size="large" -->
@@ -47,7 +47,7 @@ Ensure your customers’ products are packed as efficiently as possible by defin
 
 Fulfil an order the way stock actually leaves the warehouse. Lodge selected line items and quantities, keep several shipments against one Commerce order, download printable labels and give customers carrier-aware tracking information. Postie can move the order through partially shipped and shipped statuses as fulfilment progresses.
 
-![A lodged Australia Post shipment with tracking and label details on a Commerce order](../screenshots/output/feature-tour/shipments.png)
+![A lodged Australia Post shipment with tracking and label details on a Commerce order](../screenshots/shipments.png)
 <!-- feature-media-end -->
 
 <!-- feature-grid -->

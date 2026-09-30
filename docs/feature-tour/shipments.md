@@ -16,6 +16,8 @@ Orders can have multiple shipments, and can also partially ship order contents i
 
 Once created, a list of shipments will be shown against the order with the tracking number, tracking URL and the ability to download labels to be printed.
 
+![Shipments listed against a Commerce order](../../screenshots/shipments.png)
+
 ## Partial Shipments
 When creating a shipment, you can select the number of line items and quantity you wish to ship. This will create a shipment via the provider API and record a postage label and tracking number.
 

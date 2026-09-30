@@ -7,6 +7,8 @@ When chosen, each item in the cart will be packed in a box fitted to the item. W
 ## Pack Items Into Boxes
 This will fit all items in one or many boxes, as defined by you, or pre-set boxes defined by the provider. Any items that do not fit these box constraints are fitted to an individual box.
 
+![Postie's box packing settings](../../screenshots/packing.png)
+
 ## Pack Items Into a Single Box
 Given a collection of products, Postie will try to fit all items into a single box. Care should be taken with this approach, if an order contains large or bulk items, they might exceed provider allowances.
 

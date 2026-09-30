@@ -1,9 +1,0 @@
-{
-  "assets": [
-    {
-      "path": "providers/",
-      "kind": "source-artwork",
-      "note": "Carrier-owned logos displayed by Postie's provider catalogue."
-    }
-  ]
-}
