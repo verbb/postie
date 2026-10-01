@@ -113,8 +113,15 @@ class Providers extends Component
         return ArrayHelper::firstWhere($this->getAllProviders(), 'handle', $handle, true);
     }
 
-    public function createProviderConfig(ProviderInterface $provider): array
+    public function createProviderConfig(ProviderInterface $provider, bool $includeOverrides = false): array
     {
+        $settings = $provider->getSettings();
+
+        // Runtime overrides are already merged into the provider, but must not be written back to project config.
+        if (!$includeOverrides && $provider->handle) {
+            $settings = array_diff_key($settings, $this->getProviderOverrides($provider->handle));
+        }
+
         return [
             'name' => $provider->name,
             'handle' => $provider->handle,
@@ -128,7 +135,7 @@ class Providers extends Component
             'services' => $provider->services,
             'packingMethod' => $provider->packingMethod,
             'boxSizes' => $provider->boxSizes,
-            'settings' => ProjectConfigHelper::packAssociativeArrays($provider->getSettings()),
+            'settings' => ProjectConfigHelper::packAssociativeArrays($settings),
         ];
     }
 

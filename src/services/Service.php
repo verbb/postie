@@ -332,7 +332,8 @@ class Service extends Component
         foreach ($providers as $provider) {
             $providerConfigs[] = [
                 'handle' => $provider->handle,
-                'digest' => $this->_hashFingerprintData(Postie::$plugin->getProviders()->createProviderConfig($provider), true),
+                // Runtime overrides affect rates even though they must not be persisted to project config.
+                'digest' => $this->_hashFingerprintData(Postie::$plugin->getProviders()->createProviderConfig($provider, includeOverrides: true), true),
             ];
         }
 
