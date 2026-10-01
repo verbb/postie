@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a medium-severity information disclosure vulnerability.
+- Fixed a low-severity authorization vulnerability.
 
 ## 5.0.24 - 2026-09-30
 

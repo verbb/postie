@@ -16,6 +16,18 @@ class StoreSetupController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireCpRequest();
+        $this->requirePermission('accessPlugin-postie');
+
+        return true;
+    }
+
     public function actionIndex(): Response
     {
         /* @var Settings $settings */
