@@ -22,7 +22,7 @@ class UPSFreight extends UPS
     {
         return UPSFreightCarrier::class;
     }
-    
+
 
     // Properties
     // =========================================================================

@@ -12,5 +12,5 @@ class ProviderEvent extends Event
 
     public ?ProviderInterface $provider = null;
     public bool $isNew = false;
-    
+
 }

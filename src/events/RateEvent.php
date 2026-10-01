@@ -12,5 +12,5 @@ class RateEvent extends Event
 
     public Rate $rate;
     public bool $isNew = false;
-    
+
 }

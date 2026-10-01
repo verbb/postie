@@ -26,7 +26,7 @@ class TNTAustralia extends Provider
     {
         return TNTAustraliaCarrier::class;
     }
-    
+
 
     // Properties
     // =========================================================================

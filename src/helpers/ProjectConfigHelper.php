@@ -17,7 +17,7 @@ class ProjectConfigHelper
         return array_filter($configData);
     }
 
-    
+
     // Private Methods
     // =========================================================================
 

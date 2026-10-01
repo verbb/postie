@@ -12,7 +12,7 @@ class m240629_000000_response_columns extends Migration
     {
         $this->alterColumn('{{%postie_shipments}}', 'response', $this->longText());
         $this->alterColumn('{{%postie_rates}}', 'response', $this->longText());
-        
+
         return true;
     }
 

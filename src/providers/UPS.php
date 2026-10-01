@@ -110,7 +110,7 @@ class UPS extends Provider
     {
         return array_merge(...array_values(parent::getServiceList()));
     }
-    
+
 
     // Properties
     // =========================================================================

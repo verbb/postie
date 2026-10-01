@@ -266,7 +266,7 @@ class USPS extends Provider
         if ($this->getApiType() === self::API_SHIPPING || ($this->getApiType() !== self::API_TRACKING && $this->getPriceType() === 'CONTRACT')) {
             $config['accountNumber'] = $this->getAccountNumber();
         }
-        
+
         if ($this->getApiType() === self::API_SHIPPING) {
             $config['customerRegistrationId'] = $this->getCustomerRegistrationId();
             $config['mailerId'] = $this->getMailerId();

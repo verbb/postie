@@ -116,7 +116,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
 
     // Abstract Methods
     // =========================================================================
-    
+
     abstract public static function getCarrierClass(): string;
 
 
@@ -159,7 +159,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
     {
         $attributes = parent::settingsAttributes();
         $attributes[] = 'apiType';
-        
+
         return $attributes;
     }
 

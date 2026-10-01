@@ -26,7 +26,7 @@ class Sendle extends Provider
     {
         return SendleCarrier::class;
     }
-    
+
 
     // Properties
     // =========================================================================

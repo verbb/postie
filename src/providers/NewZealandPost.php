@@ -26,7 +26,7 @@ class NewZealandPost extends Provider
     {
         return NewZealandPostCarrier::class;
     }
-    
+
 
     // Properties
     // =========================================================================

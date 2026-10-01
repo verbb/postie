@@ -36,7 +36,7 @@ class FedExFreight extends FedEx
     {
         return [];
     }
-    
+
 
     // Properties
     // =========================================================================

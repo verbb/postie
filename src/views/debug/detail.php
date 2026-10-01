@@ -31,7 +31,7 @@ foreach ($panel->data['logs'] as $i => $log) {
     } else {
         $class = '';
     }
-?>
+    ?>
     <tr class="<?php echo $class; ?>" data-key="<?php echo $i; ?>">
         <td class="word-break-keep"><?php echo $log['datetime']->format('Y-m-d H:i:s'); ?></td>
         <td><?php echo $level; ?></td>

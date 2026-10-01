@@ -282,6 +282,7 @@ class Postie extends Plugin
             }
 
             $pref = Craft::$app->getRequest()->getIsCpRequest() ? 'enableDebugToolbarForCp' : 'enableDebugToolbarForSite';
+
             if (!$user->getPreference($pref)) {
                 return;
             }

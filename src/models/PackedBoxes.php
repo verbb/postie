@@ -75,7 +75,7 @@ class PackedBoxes extends Model
             $width = round($width, 2);
             $length = round($length, 2);
 
-            // Just in case there's a 0 weight item, we want to set a min weight. This can happen due to how the 
+            // Just in case there's a 0 weight item, we want to set a min weight. This can happen due to how the
             // box-packer only handles integers. https://github.com/dvdoug/BoxPacker/discussions/241
             if ($weight == 0) {
                 // Set minimum weight to 1g, but convert that to the provider units.

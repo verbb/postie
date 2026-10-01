@@ -33,7 +33,7 @@ class Service extends Component
 {
     // Constants
     // =========================================================================
-    
+
     public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
     public const EVENT_MODIFY_RATE_FINGERPRINT = 'modifyRateFingerprint';
 
@@ -551,7 +551,7 @@ class Service extends Component
 
         if ($cachedShippingMethod instanceof ShippingMethod) {
             $cachedShippingMethod = $this->createShippingMethodFromData($this->createShippingMethodData($cachedShippingMethod));
-        } else if (is_array($cachedShippingMethod)) {
+        } elseif (is_array($cachedShippingMethod)) {
             $cachedShippingMethod = $this->createShippingMethodFromData($cachedShippingMethod);
         }
 

@@ -156,11 +156,11 @@ class Providers extends Component
 
         if ($isNewProvider) {
             $provider->uid = StringHelper::UUID();
-            
+
             $provider->sortOrder = (new Query())
                     ->from(['{{%postie_providers}}'])
                     ->max('[[sortOrder]]') + 1;
-        } else if (!$provider->uid) {
+        } elseif (!$provider->uid) {
             $provider->uid = Db::uidById('{{%postie_providers}}', $provider->id);
         }
 
@@ -181,6 +181,7 @@ class Providers extends Component
         $data = $event->newValue;
 
         $transaction = Craft::$app->getDb()->beginTransaction();
+
         try {
             $providerRecord = $this->_getProviderRecord($providerUid, true);
             $isNewProvider = $providerRecord->getIsNewRecord();

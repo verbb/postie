@@ -189,7 +189,7 @@ class UPSLegacy extends Provider
             'TT_S_EU_TO_OTHER_STANDARD' => 'UPS Standard',
         ];
     }
-    
+
 
     // Properties
     // =========================================================================
@@ -448,14 +448,14 @@ class UPSLegacy extends Provider
 
                     if ($requireSignature === 'required') {
                         $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_SIGNATURE_REQUIRED);
-                    } else if ($requireSignature === 'adult') {
+                    } elseif ($requireSignature === 'adult') {
                         $deliveryConfirmation->setDcisType(DeliveryConfirmation::DELIVERY_CONFIRMATION_ADULT_SIGNATURE_REQUIRED);
                     }
 
                     $package->getPackageServiceOptions()->setDeliveryConfirmation($deliveryConfirmation);
                 }
 
-                $weightUnit = new UnitOfMeasurement;
+                $weightUnit = new UnitOfMeasurement();
                 $weightUnit->setCode($this->_getUnitOfMeasurement('weight'));
                 $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
@@ -464,7 +464,7 @@ class UPSLegacy extends Provider
                 $packageDimensions->setWidth(round($packedBox['width'], 2));
                 $packageDimensions->setLength(round($packedBox['length'], 2));
 
-                $unit = new UnitOfMeasurement;
+                $unit = new UnitOfMeasurement();
                 $unit->setCode($this->_getUnitOfMeasurement('dimension'));
 
                 $packageDimensions->setUnitOfMeasurement($unit);
@@ -486,7 +486,7 @@ class UPSLegacy extends Provider
 
             // Check for negotiated rates
             if ($this->getSetting('negotiatedRates') && $accountNumber = $this->getSetting('accountNumber')) {
-                $rateInformation = new RateInformation;
+                $rateInformation = new RateInformation();
                 $rateInformation->setNegotiatedRatesIndicator(1);
                 $shipment->setRateInformation($rateInformation);
 
@@ -517,7 +517,7 @@ class UPSLegacy extends Provider
             $surePost = $this->services['S_SURE_POST']->enabled ?? false;
 
             if ($surePost) {
-                $service = new Service;
+                $service = new Service();
                 $service->setCode(Service::S_SURE_POST);
                 $service->setDescription($service->getName());
                 $shipment->setService($service);
@@ -525,6 +525,7 @@ class UPSLegacy extends Provider
                 // If SurePost shipping dimensions are exceeded, an exception is thrown. We'll catch it, log it,
                 // and make sure SurePost is not a valid shipping method in this situation.
                 $surePostRate = null;
+
                 try {
                     $surePostRate = $this->_client->getRate($shipment);
                 } catch (InvalidResponseException $e) {
@@ -806,7 +807,7 @@ class UPSLegacy extends Provider
             $package = new Package();
             $package->getPackagingType()->setCode(PackagingType::PT_PACKAGE);
             $package->getPackageWeight()->setWeight(round($packedBox['weight'], 2));
-            $weightUnit = new UnitOfMeasurement;
+            $weightUnit = new UnitOfMeasurement();
             $weightUnit->setCode(UnitOfMeasurement::UOM_LBS);
             $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
 
@@ -815,7 +816,7 @@ class UPSLegacy extends Provider
             $packageDimensions->setWidth(round($packedBox['width'], 2));
             $packageDimensions->setLength(round($packedBox['length'], 2));
 
-            $unit = new UnitOfMeasurement;
+            $unit = new UnitOfMeasurement();
             $unit->setCode(UnitOfMeasurement::UOM_IN);
 
             $packageDimensions->setUnitOfMeasurement($unit);

@@ -12,5 +12,5 @@ class ShipmentEvent extends Event
 
     public Shipment $shipment;
     public bool $isNew = false;
-    
+
 }

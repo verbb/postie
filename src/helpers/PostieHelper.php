@@ -111,7 +111,7 @@ class PostieHelper
             if ($hasLineItemLevelShippingRelatedDiscounts) {
                 foreach ($discounts as $discount) {
                     $matchedLineItem = Commerce::getInstance()->getDiscounts()->matchLineItem($item, $discount, true);
-                    
+
                     if ($discount->hasFreeShippingForMatchingItems && $matchedLineItem) {
                         $hasFreeShippingFromDiscount = true;
                         break;
@@ -138,7 +138,7 @@ class PostieHelper
                 if ($purchasable = $item->getPurchasable()) {
                     $freeShippingFlagOnProduct = $purchasable->hasFreeShipping();
                     $shippable = Commerce::getInstance()->getPurchasables()->isPurchasableShippable($purchasable);
-                    
+
                     if (!$freeShippingFlagOnProduct && !$hasFreeShippingFromDiscount && $shippable) {
                         $items[] = $item;
                     }
