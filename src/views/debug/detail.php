@@ -1,4 +1,5 @@
 <?php
+use craft\helpers\Html;
 
 ?>
 <h1>Postie Log</h1>
@@ -34,8 +35,8 @@ foreach ($panel->data['logs'] as $i => $log) {
     ?>
     <tr class="<?php echo $class; ?>" data-key="<?php echo $i; ?>">
         <td class="word-break-keep"><?php echo $log['datetime']->format('Y-m-d H:i:s'); ?></td>
-        <td><?php echo $level; ?></td>
-        <td><?php echo $log['message']; ?></td>
+        <td><?php echo Html::encode($level); ?></td>
+        <td><?php echo Html::encode($log['message']); ?></td>
     </tr>
 <?php } ?>
 

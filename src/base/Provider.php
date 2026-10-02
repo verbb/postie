@@ -262,7 +262,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         try {
             $handle = StringHelper::toKebabCase(self::className());
 
-            return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/resources/dist/img/{$handle}.svg", true);
+            return Craft::$app->getAssetManager()->getPublishedUrl("@verbb/postie/web/assets/cp/dist/img/{$handle}.svg", true);
         } catch (Throwable $e) {
             return '';
         }

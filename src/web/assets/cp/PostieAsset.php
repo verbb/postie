@@ -1,10 +1,10 @@
 <?php
-namespace verbb\postie\assetbundles;
+namespace verbb\postie\web\assets\cp;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+use verbb\base\web\assets\cp\CpAsset as VerbbCpAsset;
 
 class PostieAsset extends AssetBundle
 {
@@ -13,7 +13,7 @@ class PostieAsset extends AssetBundle
 
     public function init(): void
     {
-        $this->sourcePath = "@verbb/postie/resources/dist";
+        $this->sourcePath = '@verbb/postie/web/assets/cp/dist';
 
         $this->depends = [
             VerbbCpAsset::class,
@@ -21,11 +21,11 @@ class PostieAsset extends AssetBundle
         ];
 
         $this->css = [
-            'css/postie.css',
+            'postie.css',
         ];
 
         $this->js = [
-            'js/postie.js',
+            'postie.js',
         ];
 
         parent::init();

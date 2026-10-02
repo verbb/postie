@@ -1,6 +1,6 @@
 {% extends parentLayout ?? '_layouts/cp' %}
 
-{% do view.registerAssetBundle('verbb\\postie\\assetbundles\\PostieAsset') %}
+{% do view.registerAssetBundle('verbb\\postie\\web\\assets\\cp\\PostieAsset') %}
 
 {% if title is not defined %}
     {% set title = craft.postie.getPluginName() | t('postie') %}

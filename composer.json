@@ -35,7 +35,7 @@
         "craftcms/commerce": "^5.0.0",
         "dvdoug/boxpacker": "^3.0",
         "php-units-of-measure/php-units-of-measure": "^2.1",
-        "verbb/base": "^3.0.18",
+        "verbb/base": "^3.0.19",
         "verbb/shippy": "^1.2.23"
     },
     "autoload": {

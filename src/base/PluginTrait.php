@@ -36,6 +36,9 @@ trait PluginTrait
     public static function config(): array
     {
         Plugin::bootstrapPlugin('postie');
+        Plugin::setFileLogging('postie', 'verbb\\postie\\*', [
+            'logContext' => false,
+        ]);
 
         // Push a new handler to the regular target to keep track of current-requests
         if ($logTarget = (Craft::$app->getLog()->targets['verbb\postie\*'] ?? null)) {
