@@ -114,15 +114,20 @@ class ShipmentsController extends Controller
         $data = $shipment->labels['data'] ?? null;
         $mime = $shipment->labels['mime'] ?? 'application/pdf';
 
-        if (!$data) {
+        if (!is_string($data) || $data === '') {
+            return $this->asFailure('Invalid label data for ' . $shipmentUid);
+        }
+
+        $labelContent = base64_decode($data, true);
+
+        if ($labelContent === false || $labelContent === '') {
             return $this->asFailure('Invalid label data for ' . $shipmentUid);
         }
 
         $extension = explode('/', $mime)[1] ?? 'pdf';
-        $filePath = Craft::$app->getPath()->getTempPath() . '/' . StringHelper::UUID() . '.' . $extension;
-        file_put_contents($filePath, base64_decode($data));
+        $fileName = StringHelper::UUID() . '.' . $extension;
 
-        return $this->response->sendFile($filePath, null, [
+        return $this->response->sendContentAsFile($labelContent, $fileName, [
             'mimeType' => $mime,
         ]);
     }
