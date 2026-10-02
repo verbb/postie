@@ -44,6 +44,17 @@ How long, in seconds, a live carrier quote may be reused when the order and ever
 
 
 ::: reference
+### `maxPackingQuantity`
+
+**Type:** `int` · **Default:** `1000`
+
+The maximum number of shippable units Postie will pack when calculating live rates. The limit applies to each line item and to the combined quantity across all shippable line items. An order that exceeds the limit receives no Postie rates, preventing unusually large quantities from consuming excessive server resources during packing.
+
+Products marked as free shipping, purchasable items made free by a matching discount, non-shippable products and custom items without complete weight and dimensions do not count towards this limit. The minimum value is `1`. Increase it in `config/postie.php` only when your store legitimately ships more than 1000 units in one order.
+:::
+
+
+::: reference
 ### `enableRouteCheck`
 
 **Type:** `bool` · **Default:** `true`

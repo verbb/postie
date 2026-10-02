@@ -16,6 +16,7 @@ class Settings extends Model
     public bool $enableCaching = true;
     public bool $enableRouteCheck = true;
     public int $rateCacheDuration = 3600;
+    public int $maxPackingQuantity = 1000;
     public ?string $shippedOrderStatus = 'shipped';
     public ?string $partiallyShippedOrderStatus = 'partiallyShipped';
 
@@ -43,6 +44,11 @@ class Settings extends Model
     public function getRateCacheDuration(): int
     {
         return max(60, $this->rateCacheDuration);
+    }
+
+    public function getMaxPackingQuantity(): int
+    {
+        return max(1, $this->maxPackingQuantity);
     }
 
     public function hasMatchedRoute(): bool
@@ -106,6 +112,7 @@ class Settings extends Model
         $rules[] = [['pluginName'], 'required'];
         $rules[] = [['pluginName'], 'string', 'max' => 52];
         $rules[] = [['rateCacheDuration'], 'integer', 'min' => 60];
+        $rules[] = [['maxPackingQuantity'], 'integer', 'min' => 1];
 
         return $rules;
     }

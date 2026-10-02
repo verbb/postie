@@ -104,6 +104,10 @@ class Service extends Component
             }
         }
 
+        if (!$this->_canPackOrder($order, $settings)) {
+            return [];
+        }
+
         $shippingMethods = [];
 
         $providersService = Postie::$plugin->getProviders();
@@ -247,6 +251,10 @@ class Service extends Component
 
     private function _getShippingMethodsForActiveOrder(Order $order, Settings $settings): array
     {
+        if (!$this->_canPackOrder($order, $settings)) {
+            return [];
+        }
+
         $providers = Postie::$plugin->getProviders()->getAllEnabledProviders();
         $fingerprint = $this->_getRateFingerprint($order, $providers);
         $memoized = $this->_availableShippingMethods?->offsetExists($order) ? $this->_availableShippingMethods[$order] : null;
@@ -322,6 +330,27 @@ class Service extends Component
         } finally {
             $mutex->release($lockName);
         }
+    }
+
+    private function _canPackOrder(Order $order, Settings $settings): bool
+    {
+        $maxPackingQuantity = $settings->getMaxPackingQuantity();
+        $packingQuantity = 0;
+
+        foreach (PostieHelper::getOrderLineItems($order) as $lineItem) {
+            // Check before accumulating so an oversized total cannot overflow.
+            if ($lineItem->qty > $maxPackingQuantity || $packingQuantity > $maxPackingQuantity - $lineItem->qty) {
+                Postie::debugPaneLog('Order exceeds the maximum packing quantity of {quantity}.', [
+                    'quantity' => $maxPackingQuantity,
+                ]);
+
+                return false;
+            }
+
+            $packingQuantity += $lineItem->qty;
+        }
+
+        return true;
     }
 
     private function _getRateFingerprint(Order $order, array $providers): string
