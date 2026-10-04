@@ -2,7 +2,7 @@
     "name": "verbb/postie",
     "description": "A Craft CMS plugin for Craft Commerce shipping rates, labels and tracking.",
     "type": "craft-plugin",
-    "version": "5.0.25",
+    "version": "5.0.26",
     "keywords": [
         "craft",
         "cms",

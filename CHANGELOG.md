@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.26 - 2026-10-05
 
 ### Fixed
 - Fixed a high-severity uncontrolled resource consumption vulnerability.
