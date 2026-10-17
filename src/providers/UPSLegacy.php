@@ -5,6 +5,7 @@ use verbb\postie\base\Provider;
 use verbb\postie\events\ModifyRatesEvent;
 use verbb\postie\helpers\TestingHelper;
 use verbb\postie\models\ShippingMethod;
+use verbb\postie\Postie;
 
 use Craft;
 use craft\helpers\Json;
@@ -34,6 +35,12 @@ use Throwable;
 
 class UPSLegacy extends Provider
 {
+    // Constants
+    // =========================================================================
+
+    public const EVENT_MODIFY_RATES = 'modifyRates';
+
+
     // Static Methods
     // =========================================================================
 

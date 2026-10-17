@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed missing event and plugin references in the legacy UPS provider.
+
 ## 5.0.27 - 2026-10-07
 
 ### Changed
