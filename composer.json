@@ -48,5 +48,8 @@
         "handle": "postie",
         "changelogUrl": "https://raw.githubusercontent.com/verbb/postie/craft-4/CHANGELOG.md",
         "class": "verbb\\postie\\Postie"
+    },
+    "scripts": {
+        "test:class-resolution-regressions": "@php tests/regression/class-resolution.php"
     }
 }

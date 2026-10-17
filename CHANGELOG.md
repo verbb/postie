@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a missing event class reference in the legacy UPS provider.
+
 ## 4.0.20 - 2026-05-11
 
 ### Changed
