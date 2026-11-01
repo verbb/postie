@@ -216,9 +216,9 @@ class ProvidersController extends Controller
         $providerData = $this->_getProviderFromPost();
 
         ArrayHelper::remove($providerData, 'type');
-        $settings = array_merge($providerData, ArrayHelper::remove($providerData, 'settings'));
+        $settings = ArrayHelper::remove($providerData, 'settings') ?? [];
 
-        Craft::configure($provider, $providerData);
+        Craft::configure($provider, array_merge($providerData, $settings));
 
         try {
             // Check to see if it's valid. Exceptions help to provide errors nicely
