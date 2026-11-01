@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.30 - 2026-11-01
 
 ### Fixed
 - Fixed domestic orders being treated as international, which applied international package weight limits for Australia Post, New Zealand Post, Sendle, TNT Australia and USPS.
