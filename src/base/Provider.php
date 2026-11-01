@@ -396,7 +396,7 @@ abstract class Provider extends SavableComponent implements ProviderInterface
         $sourceCountry = $storeLocation->countryCode ?? '';
         $destinationCountry = $order->shippingAddress->countryCode ?? '';
 
-        return $storeLocation !== $destinationCountry;
+        return $sourceCountry !== $destinationCountry;
     }
 
     public function getApiTypeOptions(): array
