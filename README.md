@@ -3,8 +3,6 @@
 
 Postie is a Craft CMS plugin for connecting Craft Commerce with shipping carriers. Fetch live rates at checkout, create shipments and labels, and keep tracking information available to the store and its customers.
 
-Postie supports more than one carrier, and each provider can add a flat or percentage allowance for packing and handling. Use the rate tester to check parcel details and returned services before they reach checkout.
-
 ## Features
 
 - Offer live shipping rates from supported carriers during checkout.
@@ -21,7 +19,7 @@ Postie supports more than one carrier, and each provider can add a flat or perce
 - Inspect rate requests and errors through the Craft debug toolbar.
 - Register custom providers and adjust shipping behaviour through plugin events.
 
-## Available Providers
+## Providers
 
 - Aramex
 - Aramex Australia
@@ -45,10 +43,12 @@ Postie supports more than one carrier, and each provider can add a flat or perce
 - USPS
 
 ## Documentation
+
 Visit the [Postie Plugin page](https://verbb.io/craft-plugins/postie) for all documentation, guides, pricing and developer resources.
 
 ## Support
-Get in touch with us via the [Postie Support page](https://verbb.io/craft-plugins/postie/support) or by [creating a Github issue](https://github.com/verbb/postie/issues)
+
+Get in touch with us via the [Postie Support page](https://verbb.io/craft-plugins/postie/support) or by [creating a GitHub issue](https://github.com/verbb/postie/issues).
 
 <h2></h2>
 

@@ -1,7 +1,5 @@
 Postie connects Craft Commerce with shipping carriers. Fetch live rates at checkout, create shipments and labels, and keep tracking information available to the store and its customers.
 
-Postie supports more than one carrier, and each provider can add a flat or percentage allowance for packing and handling. Use the rate tester to check parcel details and returned services before they reach checkout.
-
 ## Features
 
 - Offer live shipping rates from supported carriers during checkout.

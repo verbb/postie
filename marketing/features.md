@@ -45,7 +45,7 @@ Ensure your customers’ products are packed as efficiently as possible by defin
 <!-- feature-media media-size="large" -->
 ## Shipment tracking and fulfilment
 
-Fulfil an order the way stock actually leaves the warehouse. Lodge selected line items and quantities, keep several shipments against one Commerce order, download printable labels and give customers carrier-aware tracking information. Postie can move the order through partially shipped and shipped statuses as fulfilment progresses.
+Fulfil an order the way stock actually leaves the warehouse. Lodge selected line items and quantities, keep several shipments against one Commerce order, download printable labels and give customers carrier-aware tracking information, with status updates from carriers that support them. Postie can move the order through partially shipped and shipped statuses as fulfilment progresses.
 
 ![A lodged Australia Post shipment with tracking and label details on a Commerce order](../screenshots/shipments.png)
 <!-- feature-media-end -->
@@ -55,6 +55,5 @@ Fulfil an order the way stock actually leaves the warehouse. Lodge selected line
 - :icon[test-pipe] **Rates testing** Check origin, destination and parcel details against a provider before relying on its quote at checkout.
 - :icon[bug] **Debug details** Inspect Postie requests and responses in Craft’s Debug Toolbar when a quote needs investigating.
 - :icon[settings] **Control panel or configuration** Manage provider settings in Craft or keep them alongside the rest of a multi-environment project’s configuration.
-- :icon[route] **Delivery progress** Fetch shipment status and journey summaries from carriers that support tracking updates.
 - :icon[api] **Your own provider** Register project-specific carriers and adjust rate, packing and provider behaviour through documented events.
 <!-- feature-grid-end -->
