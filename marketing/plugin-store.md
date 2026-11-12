@@ -16,7 +16,7 @@ Postie connects Craft Commerce with shipping carriers. Fetch live rates at check
 - Inspect rate requests and errors through the Craft debug toolbar.
 - Register custom providers and adjust shipping behaviour through plugin events.
 
-## Available Providers
+## Providers
 
 - Aramex
 - Aramex Australia
