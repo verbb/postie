@@ -17,7 +17,8 @@
             "feature-tour/box-packing",
             "feature-tour/displaying-rates",
             "feature-tour/shipments",
-            "feature-tour/tracking-status"
+            "feature-tour/tracking-status",
+            "feature-tour/permissions"
         ]
     },
     {
