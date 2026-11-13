@@ -1,27 +1,14 @@
-# Provider
-You can register your own Provider to add support for other carriers, or even extend an existing Provider.
+# Custom Providers
 
-```php
-namespace modules\sitemodule;
+A provider connects Postie to a shipping carrier’s API to fetch rates and labels. Create a custom provider to add a carrier Postie doesn’t support, or to extend an existing provider.
 
-use modules\sitemodule\MyProvider;
-use verbb\postie\events\RegisterProviderTypesEvent;
-use verbb\postie\services\Providers;
-use yii\base\Event;
+Postie uses the [Shippy](https://github.com/verbb/shippy) package for all provider logic, so a custom provider has two parts. A Shippy carrier class talks to the carrier’s API, and a Postie provider class connects that carrier to Postie and holds its settings. Refer to the [Shippy docs](https://github.com/verbb/shippy) for more on creating a carrier.
 
-Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(RegisterProviderTypesEvent $event) {
-    $event->providerTypes[] = MyProvider::class;
-});
-```
+## Create the Provider Class
 
-## Example
-Postie uses the [Shippy](https://github.com/verbb/shippy) package for all provider logic. As such, you should first become familiar with how creating a custom carrier in Shippy works. Then, you can add support for your Shippy Carrier as a Postie Provider.
+This example uses a fictional `Wakanda Post` carrier, which needs an `apiKey` setting to authenticate with its API. Your carrier may have different requirements.
 
-For our example, let's use the fictional `Wakanda Post` carrier for the rest of this guide. This provider needs an `apiKey` setting to authenticate with the API. Your provider may have different requirements.
-
-Let's start by creating a very simple Shippy Carrier class. Again, refer to the [Shippy docs](https://github.com/verbb/shippy) for more.
-
-Create the following class in `modules/WakandaPostCarrier.php`.
+Start with the Shippy carrier class in `modules/WakandaPostCarrier.php`.
 
 ```php
 namespace modules\sitemodule;
@@ -127,9 +114,9 @@ class WakandaPostCarrier extends AbstractCarrier
 }
 ```
 
-Here, we've created a Shippy Carrier class that uses their (fictional) API endpoint to fetch rates. The logic of this class is up to you to implement the action fetching of the rates.
+The carrier uses the (fictional) API endpoint to fetch rates and translate them into Shippy rates. How you fetch and translate rates depends on the carrier’s API.
 
-Next, connect the Shippy Carrier to a new Postie Provider as `modules/WakandaPost.php`
+Next, connect the carrier to a Postie provider in `modules/WakandaPost.php`.
 
 ```php
 namespace modules\sitemodule;
@@ -182,5 +169,81 @@ class WakandaPost extends Provider
 }
 ```
 
-You can see the bulk of the logic for fetching rates resides in the `WakandaPostCarrier` class, and the `WakandaPost` class acts as the connector between Postie and Shippy.
+Most of the logic for fetching rates lives in the `WakandaPostCarrier` class, and the `WakandaPost` class connects Postie and Shippy.
 
+## Register the Provider
+
+Postie finds providers through the `registerProviderTypes` event. Register your class from your module or plugin’s `init()` method.
+
+```php
+use modules\sitemodule\MyProvider;
+use verbb\postie\events\RegisterProviderTypesEvent;
+use verbb\postie\services\Providers;
+use yii\base\Event;
+
+Event::on(Providers::class, Providers::EVENT_REGISTER_PROVIDER_TYPES, function(RegisterProviderTypesEvent $event) {
+    $event->providerTypes[] = MyProvider::class;
+});
+```
+
+## Methods
+
+Your provider class extends `verbb\postie\base\Provider`, which handles the common provider settings, box packing and rate markup. These are the methods a custom provider implements or commonly overrides.
+
+::: reference
+### `displayName()`
+
+**Returns:** `string`
+
+Returns the name of this provider, shown in the control panel.
+:::
+
+::: reference
+### `getCarrierClass()`
+
+**Returns:** `string`
+
+Returns the class name of the Shippy carrier this provider uses. Every provider must implement this static method.
+:::
+
+::: reference
+### `getCarrierConfig()`
+
+**Returns:** `array`
+
+Returns the configuration passed to the carrier class when Postie creates it. Call the parent method and add your own settings, such as an API key.
+:::
+
+::: reference
+### `defineRules()`
+
+**Returns:** `array`
+
+Returns the validation rules for this provider’s settings. Call the parent method and add rules for your own settings.
+:::
+
+::: reference
+### `getSettingsHtml()`
+
+**Returns:** `string|null`
+
+Returns the HTML for this provider’s settings in the control panel. By default, Postie renders a template from its own `postie/providers/_includes` folder, so override this to render your own settings template.
+:::
+
+::: reference
+### `defineDefaultBoxes()`
+
+**Returns:** `array`
+
+Returns the default boxes this provider offers for box packing. By default, a provider has no default boxes.
+:::
+
+::: reference
+### `getMaxPackageWeight()`
+
+**Arguments:** `$order` (`craft\commerce\elements\Order`), the order being packed.
+
+**Returns:** `int|null`
+
+Returns the maximum weight of a single package for the order, used when packing the order into a single box. Return `null` to use the order’s total weight.
+:::

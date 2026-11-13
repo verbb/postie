@@ -33,11 +33,11 @@
             "shipping-providers/colissimo",
             "shipping-providers/dhl-express",
             "shipping-providers/fastway",
-            "shipping-providers/fed-ex",
-            "shipping-providers/fed-ex-freight",
+            "shipping-providers/fedex",
+            "shipping-providers/fedex-freight",
             "shipping-providers/interparcel",
             "shipping-providers/new-zealand-post",
-            "shipping-providers/post-nl",
+            "shipping-providers/postnl",
             "shipping-providers/royal-mail",
             "shipping-providers/sendle",
             "shipping-providers/tnt-australia",
@@ -50,7 +50,7 @@
         "title": "Developers",
         "collapsable": false,
         "children": [
-            "developers/provider",
+            "developers/custom-providers",
             "developers/events"
         ]
     }

@@ -25,8 +25,6 @@ Instead, we only trigger requests to fetch rates based on the current route. Pai
 
 Postie only reuses a cached live quote when the same order still has the inputs that produced it, including its destination, shippable line items, prices, currency, store origin and provider settings. The cached value contains rate data rather than provider objects or credentials and expires after one hour by default. A matching cached quote can still be displayed from another route; the route check applies when Postie would otherwise need to contact a carrier.
 
-When updating from an earlier Postie release, the old permanent live-quote cache entries are no longer read. You can clear Craft's data caches once after deployment if you want to remove those orphaned entries immediately; this is optional and is not a data migration.
-
 By default, Postie will only fetch rates when on the following routes:
 - `/{cpTrigger}/commerce/orders/\d+`
 - `/shop/checkout/shipping`

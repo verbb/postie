@@ -6,7 +6,7 @@ Not all providers support shipments. Be sure to check each [Shipping Provider](d
 :::
 
 :::warning
-Be aware that most — if not all — providers charge your account each time a shipment is lodged. Be mindful when testing to set the "Is Production" value as appropriate.
+Be aware that most providers, if not all, charge your account each time a shipment is lodged. Be mindful when testing to set the "Is Production" value as appropriate.
 :::
 
 ## Shipment Summary
@@ -26,12 +26,30 @@ Due to this, you're also able to partially ship items by selecting certain quant
 ## Order Statuses
 Postie will create a **Shipped** and **Partially Shipped** order status (if they don't already exist) which will be used to change the order when creating shipments. When a shipment is created, if only partially fulfilled, the order will be marked as **Partially Shipped**. If all items in the order have been fulfilled, then the order status will change to **Shipped**.
 
-It might be a good idea to connect a Commerce email to this change in status to notify your customers that an item has been shipped. You can include the following in such an email:
+It might be a good idea to connect a Commerce email to this change in status to notify your customers that an item has been shipped.
+
+## Showing Shipping Details in Customer Emails
+
+A Commerce email template, such as one sent when an order moves to **Shipped**, can show which provider is delivering the order and the tracking details for each shipment. This example goes in the email's template, where Commerce provides the `order` variable:
 
 ```twig
-{% set shipments = craft.postie.getShipmentsForOrder(order) %}
+{% set rate = craft.postie.getRateByOrder(order) %}
 
-{% for shipment in shipments %}
-    {{ shipment.trackingNumber }}
+{% if rate and rate.provider %}
+    <p>Your order is on its way with {{ rate.provider }} ({{ order.shippingMethodName }}).</p>
+{% endif %}
+
+{% for shipment in order.shipments %}
+    <p>
+        Tracking number: {{ shipment.trackingNumber }}
+
+        {% if shipment.trackingUrl %}
+            <a href="{{ shipment.trackingUrl }}">Track your parcel</a>
+        {% endif %}
+    </p>
 {% endfor %}
 ```
+
+`craft.postie.getRateByOrder(order)` takes a Commerce order and returns the rate Postie saved when the customer completed the order with a Postie shipping method. The rate's `provider` is the shipping provider, which outputs its name, `providerHandle` is that provider's handle, `service` is the service code the customer chose and `rate` is the shipping cost Postie quoted. It returns `null` for an order that hasn't been completed or that used a shipping method from outside Postie, which is why the example checks it first.
+
+`order.shipments` returns the shipments created for the order, each with its `trackingNumber` and a `trackingUrl` for the provider's tracking page when the provider supports one. Shipments only exist once they've been created on the order's **Shipments** tab, so an email sent earlier in the order's life shows the provider line on its own.
