@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.1.0 - 2026-11-24
 
 ### Added
 - Added a setup checklist to the Providers page on new installs, which walks through the store location, a provider and product dimensions, and gives way to the providers list once the first provider is added.
