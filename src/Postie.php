@@ -15,6 +15,7 @@ use Craft;
 use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Address;
+use craft\elements\db\ElementQueryInterface;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterUrlRulesEvent;
@@ -134,23 +135,31 @@ class Postie extends Plugin
         return $nav;
     }
 
+    /**
+     * The variants Postie should be able to ship, after plugins have modified the query. The limit is set before the
+     * event, so a handler can still change it.
+     */
+    public function getShippableVariantQuery(?int $limit = null): ElementQueryInterface
+    {
+        $event = new ModifyShippableVariantsEvent([
+            'query' => Variant::find()->limit($limit),
+        ]);
+
+        if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
+            $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
+        }
+
+        return $event->query;
+    }
+
     public function getInvalidVariants(?int $limit = 50): array
     {
         $variants = [];
 
         try {
-            $query = Variant::find()->limit($limit);
+            $query = $this->getShippableVariantQuery($limit);
 
-            // Allow plugins to modify the variant query
-            $event = new ModifyShippableVariantsEvent([
-                'query' => $query,
-            ]);
-
-            if ($this->hasEventHandlers(self::EVENT_MODIFY_VARIANT_QUERY)) {
-                $this->trigger(self::EVENT_MODIFY_VARIANT_QUERY, $event);
-            }
-
-            foreach (Db::each($event->query) as $variant) {
+            foreach (Db::each($query) as $variant) {
                 if (!$variant->product->type->hasDimensions) {
                     continue;
                 }

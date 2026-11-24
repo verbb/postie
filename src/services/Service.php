@@ -6,6 +6,7 @@ use verbb\postie\events\ModifyRateFingerprintEvent;
 use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\helpers\PostieHelper;
 use verbb\postie\helpers\ShippyHelper;
+use verbb\postie\models\MissingProvider;
 use verbb\postie\models\Rate;
 use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
@@ -53,6 +54,59 @@ class Service extends Component
     public function getPrimaryStoreLocation(): ?Address
     {
         return Commerce::getInstance()->getStores()->getCurrentStore()->getSettings()->getLocationAddress() ?? null;
+    }
+
+    /**
+     * The setup checklist's steps for the Providers page, or null once an order has completed with a Postie rate, which
+     * is Postie's first real outcome and the checklist's last step.
+     */
+    public function getSetupSteps(): ?array
+    {
+        if (Postie::$plugin->getRates()->hasRates()) {
+            return null;
+        }
+
+        $store = Commerce::getInstance()->getStores()->getCurrentStore();
+        $location = $store->getSettings()->getLocationAddress();
+
+        // A provider whose class is no longer installed can't quote, so it doesn't count towards setup.
+        $providers = array_values(array_filter(Postie::$plugin->getProviders()->getAllProviders(), fn($provider) => !($provider instanceof MissingProvider)));
+        $enabledProviders = array_values(array_filter($providers, fn($provider) => $provider->getEnabled()));
+
+        // Providers offer every service unless they restrict them, in which case at least one must be turned on.
+        $quotingProvider = null;
+        $serviceCount = 0;
+
+        foreach ($enabledProviders as $provider) {
+            $enabledServices = array_filter($provider->services, fn($service) => $service['enabled'] ?? false);
+
+            if (!$provider->getRestrictServices() || $enabledServices) {
+                $quotingProvider = $provider;
+                $serviceCount = $provider->getRestrictServices() ? count($enabledServices) : 0;
+
+                break;
+            }
+        }
+
+        // Postie packs each order by its variants' weight and dimensions, so every variant of a product type with
+        // dimensions needs all four. Querying any of them limits the query to those product types.
+        $variantQuery = Postie::$plugin->getShippableVariantQuery();
+        $variantCount = (clone $variantQuery)->weight('>= 0')->count();
+        $packableCount = (clone $variantQuery)->weight('> 0')->width('> 0')->height('> 0')->length('> 0')->count();
+
+        return [
+            'location' => (bool)$location?->addressLine1,
+            'locationAddress' => $location,
+            'storeSettingsUrl' => $store->getStoreSettingsUrl(),
+            'providers' => $providers,
+            'provider' => (bool)$enabledProviders,
+            'firstProvider' => $enabledProviders[0] ?? $providers[0] ?? null,
+            'services' => $quotingProvider !== null,
+            'quotingProvider' => $quotingProvider,
+            'serviceCount' => $serviceCount,
+            'products' => $packableCount > 0 && $packableCount === $variantCount,
+            'hasVariants' => $variantCount > 0,
+        ];
     }
 
     public function getShippyShipmentForOrder(Order $order): ?Shipment

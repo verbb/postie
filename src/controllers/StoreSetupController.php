@@ -33,12 +33,17 @@ class StoreSetupController extends Controller
         /* @var Settings $settings */
         $settings = Postie::$plugin->getSettings();
 
+        $store = Commerce::getInstance()->getStores()->getCurrentStore();
         $storeLocation = Postie::$plugin->getService()->getPrimaryStoreLocation();
 
         return $this->renderTemplate('postie/store-setup', [
             'settings' => $settings,
             'storeLocation' => $storeLocation,
+            'storeSettingsUrl' => $store->getStoreSettingsUrl(),
             'variants' => Postie::$plugin->getInvalidVariants(),
+
+            // Querying by weight limits the variants to product types with dimensions, the ones Postie can pack.
+            'hasVariants' => Postie::$plugin->getShippableVariantQuery()->weight('>= 0')->exists(),
         ]);
     }
 }

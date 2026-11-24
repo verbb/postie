@@ -11,11 +11,13 @@
 {% set title = 'Store Setup' | t('postie') %}
 {% set selectedSubnavItem = 'store-setup' %}
 
+{% do view.registerAssetBundle('verbb\\postie\\web\\assets\\cp\\PluginKitAsset') %}
+
 {% block blockContent %}
 
 <h2>{{ 'Store Location' | t('commerce') }}</h2>
 
-<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ url('commerce/settings/stores') ~ '">Commerce Store Settings</a>' }) | raw }}</p>
+<p>{{ "In order to use Postie, you'll need to configure your Store Location so that the origin for postage can be calculated effectively. Update your Store Location via {url}." | t('postie', { url: '<a href="' ~ storeSettingsUrl ~ '">Commerce Store Settings</a>' }) | raw }}</p>
 
 {% if not storeLocation.addressLine1 %}
     <p class="warning with-icon">{{ 'Store location not configured.' | t('postie') }}</p>
@@ -33,7 +35,16 @@
 
 {% if variants | length == 0 %}
 
-    <p>{{ "Perfect! You don't need to update any products." | t('postie') }}</p>
+    {# A store with no products to check has nothing to report yet, which isn't the same as every product being ready. #}
+    {% if hasVariants %}
+        <pk-state-panel variant="success" heading="{{ 'Every product is ready to ship' | t('postie') }}">
+            {{ 'Each product has a weight and dimensions, so Postie can pack it.' | t('postie') }}
+        </pk-state-panel>
+    {% else %}
+        <pk-state-panel heading="{{ 'No products yet' | t('postie') }}">
+            {{ 'Once you add products in Commerce, any missing a weight or dimensions will show here.' | t('postie') }}
+        </pk-state-panel>
+    {% endif %}
 
 {% else %}
 

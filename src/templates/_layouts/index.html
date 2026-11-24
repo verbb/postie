@@ -2,6 +2,11 @@
 
 {% do view.registerAssetBundle('verbb\\postie\\web\\assets\\cp\\PostieAsset') %}
 
+{# Pages made of their own cards, such as the setup checklist, sit straight on the page background without Craft's content pane. #}
+{% if bareContent ?? false %}
+    {% set bodyClass = (bodyClass ?? [])|explodeClass|push('postie-bare-content') %}
+{% endif %}
+
 {% if title is not defined %}
     {% set title = craft.postie.getPluginName() | t('postie') %}
 {% endif %}
@@ -11,6 +16,7 @@
 
     {% endblock %}
 
+    {% if not (hidePluginFooter ?? false) %}
     <hr>
 
     <div id="plugin-footer">
@@ -34,4 +40,5 @@
             </a>
         </div>
     </div>
+    {% endif %}
 {% endblock %}

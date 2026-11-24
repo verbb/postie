@@ -1,0 +1,113 @@
+{# Postie's home until an order checks out with a Postie rate, in place of the providers list. #}
+{% extends 'postie/_layouts' %}
+
+{% do view.registerAssetBundle('verbb\\postie\\web\\assets\\cp\\PluginKitAsset') %}
+
+{% set crumbs = [
+    { label: craft.postie.getPluginName() | t('postie'), url: url('postie') },
+    { label: 'Providers' | t('postie'), url: url('postie/providers') },
+] %}
+
+{% set title = 'Providers' | t('postie') %}
+{% set selectedSubnavItem = 'providers' %}
+{% set bareContent = true %}
+{% set hidePluginFooter = true %}
+
+{# The New Provider button is left out of the header while the checklist shows, because step 2 does the same. #}
+
+{% block blockContent %}
+{% set canManageProviders = currentUser.admin and craft.app.config.general.allowAdminChanges %}
+{% set canEditStore = currentUser.can('commerce-manageGeneralStoreSettings') %}
+{% set firstProvider = setup.firstProvider %}
+{% set quotingProvider = setup.quotingProvider %}
+
+<pk-setup-checklist
+    heading="{{ 'Show Live Shipping Rates at Checkout' | t('postie') }}"
+    count-label="{{ '{done} of {total} done' | t('postie') }}"
+    done-label="{{ '(done)' | t('postie') }}"
+>
+    <span slot="intro">
+        {{ 'Your providers show here once an order checks out with a Postie rate. Each step ticks itself off when Postie sees it done.' | t('postie') }}
+
+        {% if not currentUser.admin %}
+            {{ 'An admin can add providers and choose their services.' | t('postie') }}
+        {% elseif not canManageProviders %}
+            {{ 'Providers are added where admin changes are allowed, then deployed.' | t('postie') }}
+        {% endif %}
+    </span>
+
+    <pk-setup-step heading="{{ 'Set your store location' | t('postie') }}"{{ setup.location ? ' done' }}>
+        {% if setup.location %}
+            {% set address = [setup.locationAddress.addressLine1, setup.locationAddress.locality, setup.locationAddress.postalCode] | filter | join(', ') %}
+            {{ 'Rates are quoted from {address}.' | t('postie', { address: address }) }}
+        {% else %}
+            {{ 'Carriers quote every rate from this address, so add it to your store’s settings.' | t('postie') }}
+        {% endif %}
+
+        {% if canEditStore %}
+            <a slot="action" class="btn" href="{{ setup.storeSettingsUrl }}">{{ 'Edit store' | t('postie') }}</a>
+            <a slot="change" href="{{ setup.storeSettingsUrl }}">{{ 'Change' | t('postie') }}</a>
+        {% endif %}
+    </pk-setup-step>
+
+    <pk-setup-step heading="{{ 'Add a provider' | t('postie') }}"{{ setup.provider ? ' done' }}>
+        {% if setup.provider %}
+            {# The checklist hides the providers list, so each one stays reachable from here. #}
+            {% set links = setup.providers | map(provider => tag('a', { href: provider.cpEditUrl, text: provider.name })) %}
+            {{ 'Added {providers}.' | t('postie', { providers: links | join(', ') }) | raw }}
+        {% elseif firstProvider %}
+            {{ '{provider} is turned off. Turn it on once its API credentials are in.' | t('postie', { provider: firstProvider.name }) }}
+        {% else %}
+            {{ 'Pick a carrier such as UPS or Australia Post and enter its API credentials.' | t('postie') }}
+        {% endif %}
+
+        {% if canManageProviders %}
+            {% if firstProvider %}
+                <a slot="action" class="btn" href="{{ firstProvider.cpEditUrl }}">{{ 'Edit provider' | t('postie') }}</a>
+            {% else %}
+                <a slot="action" class="btn" href="{{ url('postie/providers/new') }}">{{ 'New provider' | t('postie') }}</a>
+            {% endif %}
+
+            <a slot="change" href="{{ url('postie/providers/new') }}">{{ 'Add another' | t('postie') }}</a>
+        {% endif %}
+    </pk-setup-step>
+
+    <pk-setup-step heading="{{ 'Choose the services to offer' | t('postie') }}"{{ setup.services ? ' done' }}>
+        {% if quotingProvider and setup.serviceCount %}
+            {{ '{provider} offers {count, plural, =1{one service} other{# services}} at checkout.' | t('postie', { provider: quotingProvider.name, count: setup.serviceCount }) }}
+        {% elseif quotingProvider %}
+            {{ '{provider} offers all its services at checkout.' | t('postie', { provider: quotingProvider.name }) }}
+        {% elseif setup.provider %}
+            {{ '{provider} only offers the services you pick, and none are picked yet.' | t('postie', { provider: firstProvider.name }) }}
+        {% else %}
+            {{ 'Each provider offers all its services at checkout unless you pick which ones.' | t('postie') }}
+        {% endif %}
+
+        {% if canManageProviders and setup.provider %}
+            <a slot="action" class="btn" href="{{ firstProvider.cpEditUrl }}#services">{{ 'Choose services' | t('postie') }}</a>
+        {% endif %}
+
+        {% if canManageProviders and quotingProvider %}
+            <a slot="change" href="{{ quotingProvider.cpEditUrl }}#services">{{ 'Change' | t('postie') }}</a>
+        {% endif %}
+    </pk-setup-step>
+
+    <pk-setup-step heading="{{ 'Add weights and dimensions to products' | t('postie') }}"{{ setup.products ? ' done' }}>
+        {% if setup.products %}
+            {{ 'Each product has a weight and dimensions, so Postie can pack it.' | t('postie') }}
+        {% elseif setup.hasVariants %}
+            {{ 'Some products are missing a weight or dimensions, so Postie can’t pack them.' | t('postie') }}
+        {% else %}
+            {{ 'Postie packs each order by its products’ weight and dimensions, so add them to every product you ship.' | t('postie') }}
+        {% endif %}
+
+        {% if setup.hasVariants %}
+            <a slot="action" class="btn" href="{{ url('postie/store-setup') }}">{{ 'Review products' | t('postie') }}</a>
+        {% endif %}
+    </pk-setup-step>
+
+    <pk-setup-step heading="{{ 'Check out with a Postie rate' | t('postie') }}">
+        {{ 'Place an order on your storefront and choose one of Postie’s shipping methods.' | t('postie') }}
+    </pk-setup-step>
+</pk-setup-checklist>
+{% endblock %}

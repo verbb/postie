@@ -113,6 +113,11 @@
             });
         {% endjs %}
     {% else %}
-        <p class="error">{{ 'Unable to find Postie stored rate for order.' | t('postie') }}</p>
+        {# Most orders without a stored rate simply didn't use Postie, so this is an empty state rather than an error. #}
+        {% do view.registerAssetBundle('verbb\\postie\\web\\assets\\cp\\PluginKitAsset') %}
+
+        <pk-state-panel heading="{{ 'No shipments for this order' | t('postie') }}">
+            {{ 'Shipments can be created once an order is completed with one of Postie’s shipping methods.' | t('postie') }}
+        </pk-state-panel>
     {% endif %}
 </div>

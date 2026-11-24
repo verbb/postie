@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added a setup checklist to the Providers page, which walks through the store location, a provider, its services and product dimensions, and stays until the first order checks out with a Postie rate.
+
+### Changed
+- The Shipments tab now shows a neutral empty state on orders that didn’t use a Postie shipping method, in place of an error.
+- Store Setup’s Store Location link now opens the current store’s settings.
+
+### Fixed
+- Fixed Store Setup saying no products need updating on a store with no products.
+
 ## 5.0.30 - 2026-11-01
 
 ### Fixed
