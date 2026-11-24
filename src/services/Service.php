@@ -6,10 +6,10 @@ use verbb\postie\events\ModifyRateFingerprintEvent;
 use verbb\postie\events\ModifyShippingMethodsEvent;
 use verbb\postie\helpers\PostieHelper;
 use verbb\postie\helpers\ShippyHelper;
-use verbb\postie\models\MissingProvider;
 use verbb\postie\models\Rate;
 use verbb\postie\models\Settings;
 use verbb\postie\models\ShippingMethod;
+use verbb\postie\records\Provider as ProviderRecord;
 
 use Craft;
 use craft\elements\Address;
@@ -18,7 +18,9 @@ use craft\helpers\Json;
 
 use yii\base\Component;
 
+use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Stringable;
 use Throwable;
 use WeakMap;
@@ -37,6 +39,9 @@ class Service extends Component
 
     public const EVENT_BEFORE_REGISTER_SHIPPING_METHODS = 'beforeRegisterShippingMethods';
     public const EVENT_MODIFY_RATE_FINGERPRINT = 'modifyRateFingerprint';
+
+    // Installs from this date on show the setup checklist. Earlier installs never do.
+    public const SETUP_CHECKLIST_SINCE = '2026-11-23';
 
     private const RATE_CACHE_VERSION = 2;
     private const RATE_CACHE_PREFIX = 'postie-rates-v2:';
@@ -57,36 +62,26 @@ class Service extends Component
     }
 
     /**
-     * The setup checklist's steps for the Providers page, or null once an order has completed with a Postie rate, which
-     * is Postie's first real outcome and the checklist's last step.
+     * The setup checklist's steps for the Providers page, or null once the page has a provider to list. Sites that
+     * installed Postie before the checklist existed never see it.
      */
     public function getSetupSteps(): ?array
     {
-        if (Postie::$plugin->getRates()->hasRates()) {
+        // Craft records each install's date, so an existing site that updates Postie skips setup without a migration.
+        // The stored date is UTC, and comparing it in the site's timezone could move a 23 November install a day back.
+        $installDate = Craft::$app->getPlugins()->getStoredPluginInfo(Postie::$plugin->handle)['installDate'] ?? null;
+
+        if (!$installDate instanceof DateTime || (clone $installDate)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d') < self::SETUP_CHECKLIST_SINCE) {
+            return null;
+        }
+
+        // The first provider ends setup. Postie soft-deletes providers, so a trashed one still counts.
+        if (ProviderRecord::findWithTrashed()->exists()) {
             return null;
         }
 
         $store = Commerce::getInstance()->getStores()->getCurrentStore();
         $location = $store->getSettings()->getLocationAddress();
-
-        // A provider whose class is no longer installed can't quote, so it doesn't count towards setup.
-        $providers = array_values(array_filter(Postie::$plugin->getProviders()->getAllProviders(), fn($provider) => !($provider instanceof MissingProvider)));
-        $enabledProviders = array_values(array_filter($providers, fn($provider) => $provider->getEnabled()));
-
-        // Providers offer every service unless they restrict them, in which case at least one must be turned on.
-        $quotingProvider = null;
-        $serviceCount = 0;
-
-        foreach ($enabledProviders as $provider) {
-            $enabledServices = array_filter($provider->services, fn($service) => $service['enabled'] ?? false);
-
-            if (!$provider->getRestrictServices() || $enabledServices) {
-                $quotingProvider = $provider;
-                $serviceCount = $provider->getRestrictServices() ? count($enabledServices) : 0;
-
-                break;
-            }
-        }
 
         // Postie packs each order by its variants' weight and dimensions, so every variant of a product type with
         // dimensions needs all four. Querying any of them limits the query to those product types.
@@ -98,12 +93,6 @@ class Service extends Component
             'location' => (bool)$location?->addressLine1,
             'locationAddress' => $location,
             'storeSettingsUrl' => $store->getStoreSettingsUrl(),
-            'providers' => $providers,
-            'provider' => (bool)$enabledProviders,
-            'firstProvider' => $enabledProviders[0] ?? $providers[0] ?? null,
-            'services' => $quotingProvider !== null,
-            'quotingProvider' => $quotingProvider,
-            'serviceCount' => $serviceCount,
             'products' => $packableCount > 0 && $packableCount === $variantCount,
             'hasVariants' => $variantCount > 0,
         ];

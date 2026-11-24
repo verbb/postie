@@ -123,15 +123,6 @@ class Rates extends Component
         return $this->_rates()->firstWhere('id', $id);
     }
 
-    /**
-     * Whether any order has completed with one of Postie's rates. Rates are only stored for completed orders, and a
-     * trashed order keeps its rate, so this stays true once Postie has quoted its first real order.
-     */
-    public function hasRates(): bool
-    {
-        return RateRecord::find()->exists();
-    }
-
     public function getRatesByOrderId(int $orderId): array
     {
         return $this->_rates()->where('orderId', $orderId)->all();

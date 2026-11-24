@@ -39,7 +39,7 @@ class ProvidersController extends Controller
 
     public function actionIndex(): Response
     {
-        // Until an order completes with a Postie rate, the setup checklist takes the place of the providers list.
+        // On new installs, the setup checklist takes the place of the providers list until the first provider exists.
         if ($setup = Postie::$plugin->getService()->getSetupSteps()) {
             return $this->renderTemplate('postie/providers/_setup', compact('setup'));
         }

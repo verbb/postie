@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- Added a setup checklist to the Providers page, which walks through the store location, a provider, its services and product dimensions, and stays until the first order checks out with a Postie rate.
+- Added a setup checklist to the Providers page on new installs, which walks through the store location, a provider and product dimensions, and gives way to the providers list once the first provider is added.
 
 ### Changed
 - The Shipments tab now shows a neutral empty state on orders that didn’t use a Postie shipping method, in place of an error.
